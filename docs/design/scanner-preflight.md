@@ -1,0 +1,58 @@
+# Scanner preflight — partial coverage
+
+> **Design example only.** This is illustrative terminal/report output, not functionality implemented by the toolkit.
+
+```text
+RNC SECURITY AUDIT — PREFLIGHT EXAMPLE
+Illustrative day-zero output; no audit has actually run.
+
+Operation: Passive Audit
+Repository: agkwebsite
+Global Configuration: VALID
+Repository Configuration: VALID (scanner-specific settings assessed individually)
+
+ENABLED SCANNERS
+────────────────────────────────────────
+
+GITLEAKS                UNAVAILABLE
+  - Backend not found
+  - Invalid Gitleaks repository configuration
+  - Invalid Gitleaks toolkit settings
+  Planned action: SKIP; retain each reason in the report
+
+TRIVY                   READY
+  Backend: Docker
+  Profile: Container image vulnerability scan
+  Target Type: Container image
+  Target Image: agkwebsite:local
+  Settings: VALID
+  Planned action: REQUEST TARGET CONFIRMATION
+
+OWASP ZAP               UNAVAILABLE
+  - No application target ID configured in repository config
+  Planned action: SKIP; no target ID required for other scanners
+
+DISABLED SCANNERS
+────────────────────────────────────────
+
+SEMGREP                 DISABLED
+  - Disabled in repository config
+
+────────────────────────────────────────
+PREFLIGHT: 1 READY / 2 UNAVAILABLE / 1 DISABLED
+
+READY scanners may still run.
+Unavailable scanners are recorded as SKIPPED, not PASS or FAIL.
+No target confirmation is requested for an unavailable scanner.
+
+Proceed with ready scanners? [Y/N] Y
+Confirm Trivy's exact target image: [manual input]
+Configuration Correct? [Y/N] Y
+Begin Audit? [Y/N] Y
+
+AFTER RUN (ILLUSTRATIVE)
+Execution: COMPLETED (if Trivy completed with valid evidence)
+Coverage: PARTIAL
+Omissions: Gitleaks, OWASP ZAP — reasons retained
+CI exit policy: determined by configured strict/permissive policy
+```

@@ -1,0 +1,51 @@
+# Raw bypass report — private evidence example
+
+> **Design example only.** This is illustrative terminal/report output, not functionality implemented by the toolkit.
+
+```text
+BYPASSED INPUTS — PRIVATE RAW REPORT EXAMPLE
+This is a hypothetical future report format, NOT evidence of a completed scan.
+The file/directory exclusion capability is NOT implemented in Proof 1.
+
+Affected Scanners:
+  - Gitleaks
+  - Semgrep
+
+REPOSITORY CONFIGURATION
+  Files:
+    - tests/fixtures/example-token.txt
+    - docs/legacy/example-key.pem
+    - sample.env
+  Directories:
+    - vendor/
+    - generated/
+
+TOOLKIT CONFIGURATION
+  Files:
+    - .security-test-data
+  Directories:
+    - None
+
+REQUESTED EXCLUSIONS
+  Repository files: 3
+  Repository directories: 2
+  Toolkit files: 1
+  Toolkit directories: 0
+  Combined unique paths: 6 (hypothetical, no overlaps)
+
+VERIFIED APPLIED EXCLUSIONS
+  NOT EXECUTED — example only.
+  Future real reports must record, per scanner:
+    - actual applied paths and originating configuration
+    - matched versus invalid or unsupported exclusions
+    - enforcement method and verification result
+    - effective count after deduplication
+
+NON-ACCESS CONTRACT
+  The policy is to NOT ACCESS excluded paths. A scanner ignore rule
+  that only suppresses findings does not meet this contract.
+  A tested filtered snapshot may be required before scanning.
+  A Git-history or container-image scan needs a separate enforcement design.
+  If enforcement cannot be verified, report UNAVAILABLE/UNSUPPORTED;
+  do not claim the paths were bypassed.
+```
