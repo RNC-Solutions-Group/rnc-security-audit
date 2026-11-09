@@ -9,7 +9,9 @@ rnc-security-audit/
 │   ├── red-team.toml               # future active-test policy
 │   └── repo-example.config         # optional project config example (TOML)
 ├── docs/
-│   ├── PROOF-1.md                  # proof contract and acceptance
+│   ├── design/                     # design sketches (including this file)
+│   ├── implementation/
+│   │   └── proof-1.md              # proof contract and acceptance
 │   ├── SETUP.md                    # future user-facing install guide
 │   └── AUDIT-GUIDE.md              # future workflows and output interpretation
 ├── src/
@@ -53,6 +55,6 @@ rnc-security-audit/
 
 ## Proof discipline
 
-Only create the modules needed to complete [Proof 1](docs/PROOF-1.md) at first. The other files above are intended interfaces, not a mandate to implement every adapter/backend/mode in the first commit.
+Only create the modules needed to complete [Proof 1](../implementation/proof-1.md) at first. The other files above are intended interfaces, not a mandate to implement every adapter/backend/mode in the first commit.
 
 `settings.toml`, `repo-example.config`, `SETUP.md`, and `AUDIT-GUIDE.md` above are proposed files, **not present or functional today**. The only codebase will be this repository; a later packaged executable would build from it.

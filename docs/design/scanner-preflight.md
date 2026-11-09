@@ -1,3 +1,8 @@
+# Scanner preflight — partial coverage
+
+> **Design example only.** This is illustrative terminal/report output, not functionality implemented by the toolkit.
+
+```text
 RNC SECURITY AUDIT — PREFLIGHT EXAMPLE
 Illustrative day-zero output; no audit has actually run.
 
@@ -50,3 +55,4 @@ Execution: COMPLETED (if Trivy completed with valid evidence)
 Coverage: PARTIAL
 Omissions: Gitleaks, OWASP ZAP — reasons retained
 CI exit policy: determined by configured strict/permissive policy
+```

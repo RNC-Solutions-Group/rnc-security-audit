@@ -1,3 +1,8 @@
+# Target confirmation — application and image scans
+
+> **Design example only.** This is illustrative terminal/report output, not functionality implemented by the toolkit.
+
+```text
 RNC SECURITY AUDIT — TARGET CONFIRMATION EXAMPLE
 Illustrative day-zero output; target operations are not implemented.
 
@@ -33,3 +38,4 @@ POLICY NOTES
 - Unattended CI is limited to preapproved non-interactive scopes and cannot silently bypass target authorization.
 - Target ID and secret inputs must never be echoed in sanitized output.
 - A configured scanner runtime image is not the same thing as the image being scanned.
+```

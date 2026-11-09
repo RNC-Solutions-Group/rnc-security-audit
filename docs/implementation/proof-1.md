@@ -1,6 +1,6 @@
 # Proof 1 — Gitleaks end-to-end audit
 
-> **Planning contract — no implementation yet.** This is the first engineering checkpoint for [RNC Security Audit](../README.md), not a promise of a shipped release.
+> **Planning contract — no implementation yet.** This is the first engineering checkpoint for [RNC Security Audit](../../README.md), not a promise of a shipped release.
 
 ## Objective
 

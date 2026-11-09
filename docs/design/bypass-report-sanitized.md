@@ -1,3 +1,8 @@
+# Sanitized bypass report — published summary example
+
+> **Design example only.** This is illustrative terminal/report output, not functionality implemented by the toolkit.
+
+```text
 BYPASSED INPUTS — SANITIZED REPORT EXAMPLE
 This is an illustrative future schema, NOT output from a real audit.
 
@@ -21,3 +26,4 @@ applied counts and a coverage status after a real scan, with no path names,
 target IDs, sensitive settings, or private raw-report locations.
 If requested exclusions could not be enforced, disclose the shortfall
 and do not imply the scanner avoided those inputs.
+```

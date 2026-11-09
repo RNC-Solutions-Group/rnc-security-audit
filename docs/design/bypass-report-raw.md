@@ -1,3 +1,8 @@
+# Raw bypass report — private evidence example
+
+> **Design example only.** This is illustrative terminal/report output, not functionality implemented by the toolkit.
+
+```text
 BYPASSED INPUTS — PRIVATE RAW REPORT EXAMPLE
 This is a hypothetical future report format, NOT evidence of a completed scan.
 The file/directory exclusion capability is NOT implemented in Proof 1.
@@ -43,3 +48,4 @@ NON-ACCESS CONTRACT
   A Git-history or container-image scan needs a separate enforcement design.
   If enforcement cannot be verified, report UNAVAILABLE/UNSUPPORTED;
   do not claim the paths were bypassed.
+```

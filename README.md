@@ -146,7 +146,7 @@ File/directory exclusions are a **later capability, not a Proof 1 prerequisite**
 
 Scanner-provided ignore/allowlist flags are **not automatically proof of non-access**. Some rules suppress findings after reading files; Git history, container images, and archives are different target surfaces. Where non-access cannot be verified, label enforcement as unsupported/unavailable or use a tested filtered snapshot that does not expose excluded inputs. Never claim that a suppression rule prevented scanning.
 
-Private **raw** reporting should disclose the actual file and directory exclusions by config origin, affected scanner, effective count, validation result, and **verified enforcement method**. **Sanitized** reporting should disclose affected scanners and only aggregate file/directory counts per origin, without paths or sensitive target IDs. Both must distinguish requested exclusions from those **actually applied**. See the conceptual [raw](RAW-REPORT-BYPASSED.txt) and [sanitized](SANITIZED-REPORT-BYPASSED.txt) examples.
+Private **raw** reporting should disclose the actual file and directory exclusions by config origin, affected scanner, effective count, validation result, and **verified enforcement method**. **Sanitized** reporting should disclose affected scanners and only aggregate file/directory counts per origin, without paths or sensitive target IDs. Both must distinguish requested exclusions from those **actually applied**. See the conceptual [raw](docs/design/bypass-report-raw.md) and [sanitized](docs/design/bypass-report-sanitized.md) examples.
 
 ## Product roadmap — proofs before features
 
@@ -168,14 +168,14 @@ Candidate scanners for later evaluation include Trivy, Semgrep, Syft, Grype, OWA
 
 ### Day-zero design examples and execution plan
 
-The files currently in this draft PR are **illustrative**, not executable or validated output:
+The design sketches are organized under [docs/design/](docs/design/README.md), while capability-proof briefs live under [docs/implementation/](docs/implementation/README.md). These files are **illustrative**, not executable or validated output:
 
-- [CLI-CONCEPT.md](CLI-CONCEPT.md) — initial interactive flow and scanner preflight.
-- [CLI-2.txt](CLI-2.txt) — an enabled-but-unavailable scanner while others are ready.
-- [CLI-Target.txt](CLI-Target.txt) — explicit image/application target confirmation.
-- [RAW-REPORT-BYPASSED.txt](RAW-REPORT-BYPASSED.txt) and [SANITIZED-REPORT-BYPASSED.txt](SANITIZED-REPORT-BYPASSED.txt) — future input-bypass evidence presentation.
-- [STRUCTURE.md](STRUCTURE.md) — proposed package/module ownership, not created directories.
-- [docs/PROOF-1.md](docs/PROOF-1.md) — first Gitleaks proof scope, acceptance checks, and implementation sequence.
+- [CLI workflow](docs/design/cli-workflow.md) — initial interactive flow and scanner preflight.
+- [Scanner preflight](docs/design/scanner-preflight.md) — an enabled-but-unavailable scanner while others are ready.
+- [Target confirmation](docs/design/target-confirmation.md) — explicit image/application target confirmation.
+- [Private raw bypass report](docs/design/bypass-report-raw.md) and [Sanitized bypass report](docs/design/bypass-report-sanitized.md) — future input-bypass evidence presentation.
+- [Proposed application structure](docs/design/application-structure.md) — proposed package/module ownership, not created directories.
+- [Proof 1 implementation brief](docs/implementation/proof-1.md) — first Gitleaks proof scope, acceptance checks, and implementation sequence.
 
 ## Explicitly out of scope for the first proof
 
@@ -190,6 +190,6 @@ The files currently in this draft PR are **illustrative**, not executable or val
 
 ## What remains open
 
-The design contracts, tool eligibility and licensing, CI policy defaults, report schema, cross-platform backend compatibility, private configuration conventions, and portability choices all need practical validation. Open decisions are tracked as **proof acceptance questions** in [docs/PROOF-1.md](docs/PROOF-1.md), rather than prematurely presenting them as implemented capabilities.
+The design contracts, tool eligibility and licensing, CI policy defaults, report schema, cross-platform backend compatibility, private configuration conventions, and portability choices all need practical validation. Open decisions are tracked as **proof acceptance questions** in [Proof 1 implementation brief](docs/implementation/proof-1.md), rather than prematurely presenting them as implemented capabilities.
 
 This README is the working theory for the project. **No implementation, scan result, security assurance, release date, or supported-platform claim is implied.**
