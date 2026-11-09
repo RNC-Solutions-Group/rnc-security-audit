@@ -1,9 +1,9 @@
-BYPASSED INPUTS
-───────────────────────────────────────
+BYPASSED INPUTS — SANITIZED REPORT EXAMPLE
+This is an illustrative future schema, NOT output from a real audit.
 
 Affected Scanners:
-- Gitleaks
-- Trivy
+  - Gitleaks
+  - Semgrep
 
 REPOSITORY CONFIGURATION
   Files: 3
@@ -13,6 +13,11 @@ TOOLKIT CONFIGURATION
   Files: 1
   Directories: 0
 
-Effective Exclusions: 6
+Requested Unique Exclusions: 6 (illustrative)
+Verified Applied Exclusions: NOT EXECUTED (example only)
 
-Validation: PASSED
+A production sanitized report must replace NOT EXECUTED with verified
+applied counts and a coverage status after a real scan, with no path names,
+target IDs, sensitive settings, or private raw-report locations.
+If requested exclusions could not be enforced, disclose the shortfall
+and do not imply the scanner avoided those inputs.
