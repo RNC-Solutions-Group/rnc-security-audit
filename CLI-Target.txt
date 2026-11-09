@@ -1,0 +1,23 @@
+THIS AUDIT TARGETS AN APPLICATION
+OR CONTAINER IMAGE
+
+TRIVY
+Target Type: Container Image
+Configured Target: gitleaks:latest
+
+Confirm target image:
+> gitleaks:latest
+
+TARGET VERIFIED
+
+OWASP ZAP
+Target Type: Web Application
+Configured Target ID: [HIDDEN]
+
+Enter target ID to confirm:
+> ************
+
+TARGET VERIFIED
+
+Configuration Correct? [Y/N]
+Begin Audit? [Y/N]
