@@ -1,0 +1,37 @@
+RNC SECURITY AUDIT
+Operation: Passive Audit
+
+Repository: agkwebsite
+Configuration: VALID
+
+ENABLED SCANNERS
+───────────────────────────────────────
+
+GITLEAKS                READY
+  Backend: Docker
+  Profile: Repository
+  Scope: Working tree
+  Settings: Loaded
+
+TRIVY                   READY
+  Backend: Docker
+  Profile: Image vulnerability scan
+  Target Type: Container Image
+  Target Image: agkwebsite:local
+
+OWASP ZAP               NOT READY
+  Backend: Docker
+  Profile: Passive Web Assessment
+  Reason: Application target not configured
+
+DISABLED SCANNERS
+───────────────────────────────────────
+
+SEMGREP                 DISABLED
+  Reason: Disabled in repository config
+
+───────────────────────────────────────
+PREFLIGHT: FAILED
+
+1 enabled scanner is not ready.
+No scans have been executed.
