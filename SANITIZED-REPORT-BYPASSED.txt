@@ -1,0 +1,18 @@
+BYPASSED INPUTS
+───────────────────────────────────────
+
+Affected Scanners:
+- Gitleaks
+- Trivy
+
+REPOSITORY CONFIGURATION
+  Files: 3
+  Directories: 2
+
+TOOLKIT CONFIGURATION
+  Files: 1
+  Directories: 0
+
+Effective Exclusions: 6
+
+Validation: PASSED
