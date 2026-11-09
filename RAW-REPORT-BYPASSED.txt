@@ -1,0 +1,31 @@
+BYPASSED INPUTS
+───────────────────────────────────────
+
+Affected Scanners:
+- Gitleaks
+- Trivy
+
+REPOSITORY CONFIGURATION
+
+Files:
+  tests/fixtures/example-token.txt
+  docs/legacy/example-key.pem
+  sample.env
+
+Directories:
+  vendor/
+  generated/
+
+TOOLKIT CONFIGURATION
+
+Files:
+  .security-test-data
+
+Directories:
+  None
+
+───────────────────────────────────────
+
+Effective exclusions: 6
+Validation: PASSED
+Enforcement: Scanner-level exclusions
