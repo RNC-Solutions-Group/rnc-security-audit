@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import unicodedata
 from pathlib import Path
 from typing import Any, Iterable, Mapping
 
@@ -44,6 +45,11 @@ PUBLIC_FORBIDDEN_KEYS = frozenset({
     "line_text",
     "path",
 })
+PUBLIC_REPORT_FORBIDDEN_KEYS = PUBLIC_FORBIDDEN_KEYS | frozenset({
+    "finding_id",
+    "evidence_digest",
+    "content_sha256",
+})
 SECRET_SHAPED = (
     re.compile(r"RNC_SYNTH_KEY_[A-Z0-9_]+"),
     re.compile(r"(?:AKIA|ASIA)[A-Z0-9]{16}"),
@@ -52,6 +58,12 @@ SECRET_SHAPED = (
 )
 DRIVE_PATH = re.compile(r"^[A-Za-z]:[\\/]")
 ABS_PATH_FRAGMENT = re.compile(r"(?:^|[\s\"'])(?:/(?:home|Users|tmp|var|etc|opt|workspace)/)")
+WINDOWS_DEVICE_NAMES = {
+    "CON", "PRN", "AUX", "NUL",
+    *(f"COM{index}" for index in range(1, 10)),
+    *(f"LPT{index}" for index in range(1, 10)),
+}
+WINDOWS_FORBIDDEN_CHARS = frozenset('<>:"\\|?*')
 
 
 class ContractViolation(ValueError):
@@ -75,25 +87,56 @@ def sha256_bytes(value: bytes) -> str:
     return "sha256:" + hashlib.sha256(value).hexdigest()
 
 
+def _is_windows_reserved(segment: str) -> bool:
+    stem = segment.split(".", 1)[0].upper()
+    return stem in WINDOWS_DEVICE_NAMES
+
+
 def canonical_locator(locator: str) -> str:
+    """Return the one accepted canonical source locator.
+
+    This is deliberately a strict *trust-boundary* check, not a path cleaner.
+    Ambiguous spellings are rejected instead of normalized so two different
+    filesystem objects cannot collapse to one source identity. Adapters must
+    perform platform acquisition normalization (separators, NFC, case policy)
+    before calling this function.
+    """
     if not isinstance(locator, str) or not locator:
         raise ContractViolation("LOCATOR_INVALID", "locator must be a non-empty string")
-    value = locator.replace("\\", "/")
-    while value.startswith("./"):
-        value = value[2:]
-    while "//" in value:
-        value = value.replace("//", "/")
-    if value.startswith("/") or DRIVE_PATH.match(value) or value.startswith("~"):
-        raise ContractViolation("LOCATOR_INVALID", "locator must be relative to the source root")
-    parts = value.split("/")
-    if any(part in ("", ".", "..") for part in parts):
-        raise ContractViolation("LOCATOR_INVALID", "locator contains an empty, dot or traversal segment")
-    return value
+    if "\x00" in locator or any(ord(char) < 0x20 or ord(char) == 0x7F for char in locator):
+        raise ContractViolation("LOCATOR_INVALID", "locator contains a NUL or control character")
+    if any(unicodedata.category(char) in {"Cf", "Cs", "Zl", "Zp"} for char in locator):
+        raise ContractViolation("LOCATOR_INVALID", "locator contains a formatting or separator control character")
+    if unicodedata.normalize("NFC", locator) != locator:
+        raise ContractViolation("LOCATOR_NON_NFC", "locator must be NFC-normalized")
+    if "\\" in locator:
+        raise ContractViolation("LOCATOR_BACKSLASH", "locator must use forward slashes only")
+    if locator.startswith("/") or locator.startswith("//") or DRIVE_PATH.match(locator) or locator.startswith("~"):
+        raise ContractViolation("LOCATOR_ABSOLUTE", "locator must be relative to the source root")
+    if locator.startswith("./"):
+        raise ContractViolation("LOCATOR_DOT_PREFIX", "locator must not start with ./")
+    if locator.endswith("/"):
+        raise ContractViolation("LOCATOR_TRAILING_SEPARATOR", "locator must not end with a separator")
+    parts = locator.split("/")
+    if any(part == "" for part in parts):
+        raise ContractViolation("LOCATOR_EMPTY_SEGMENT", "locator contains an empty segment")
+    for part in parts:
+        if part in (".", ".."):
+            raise ContractViolation("LOCATOR_TRAVERSAL", "locator contains a dot or traversal segment")
+        if part != part.strip() or part.endswith("."):
+            raise ContractViolation("LOCATOR_AMBIGUOUS_SEGMENT", "locator has a trailing space or dot segment")
+        if any(char in WINDOWS_FORBIDDEN_CHARS for char in part):
+            raise ContractViolation("LOCATOR_FORBIDDEN_CHAR", "locator contains a platform-ambiguous character")
+        if _is_windows_reserved(part):
+            raise ContractViolation("LOCATOR_RESERVED_NAME", "locator contains a Windows device name")
+    if len(locator) > 4096:
+        raise ContractViolation("LOCATOR_TOO_LONG", "locator exceeds the supported path length")
+    return locator
 
 
 def make_unit_id(source_id: str, locator: str) -> str:
-    if not source_id:
-        raise ContractViolation("UNIT_ID_INVALID", "source_id is required")
+    if not isinstance(source_id, str) or not source_id or "\x00" in source_id:
+        raise ContractViolation("UNIT_ID_INVALID", "source_id must be a non-empty string without NUL")
     canonical = canonical_locator(locator)
     material = f"{source_id}\0{canonical}".encode("utf-8")
     return "u-" + hashlib.sha256(material).hexdigest()
@@ -575,7 +618,7 @@ def validate_records(
         "SCHEMA_VERSION_MISMATCH",
         "unit schema version differs",
     )
-    locator_keys = {(unit["source_id"], unit["locator"].replace("\\", "/")) for unit in execution["units"]}
+    locator_keys = {(unit["source_id"], unit["locator"]) for unit in execution["units"]}
     _expect(len(locator_keys) == len(execution["units"]), "UNIT_SOURCE_DUPLICATE", "duplicate source identity")
     for unit in execution["units"]:
         _validate_unit(unit, contents)
@@ -637,20 +680,29 @@ def validate_records(
     }
 
 
-def assert_public_safe(value: Any, *, path: str = "$") -> None:
+def assert_public_safe(value: Any, *, path: str = "$", forbidden: frozenset[str] = PUBLIC_FORBIDDEN_KEYS) -> None:
     """Reject likely secret bytes, private keys and locators in public documents."""
     if isinstance(value, dict):
         for key, child in value.items():
-            _expect(key.lower() not in PUBLIC_FORBIDDEN_KEYS, "PUBLIC_PRIVATE_KEY", f"forbidden public key {key!r} at {path}")
-            assert_public_safe(child, path=f"{path}.{key}")
+            _expect(key.lower() not in forbidden, "PUBLIC_PRIVATE_KEY", f"forbidden public key {key!r} at {path}")
+            assert_public_safe(child, path=f"{path}.{key}", forbidden=forbidden)
     elif isinstance(value, list):
         for index, child in enumerate(value):
-            assert_public_safe(child, path=f"{path}[{index}]")
+            assert_public_safe(child, path=f"{path}[{index}]", forbidden=forbidden)
     elif isinstance(value, str):
         for pattern in SECRET_SHAPED:
             _expect(not pattern.search(value), "PUBLIC_SECRET_SHAPED", f"secret-shaped value at {path}")
         _expect(not DRIVE_PATH.search(value), "PUBLIC_ABSOLUTE_PATH", f"absolute Windows path at {path}")
         _expect(not ABS_PATH_FRAGMENT.search(value), "PUBLIC_ABSOLUTE_PATH", f"absolute POSIX path at {path}")
+
+
+def assert_public_report_safe(value: Any) -> None:
+    """Stricter publication check for result/CI/summary documents.
+
+    Correlation identities and credential-derived digests are private evidence
+    even when they contain no raw credential bytes.
+    """
+    assert_public_safe(value, forbidden=PUBLIC_REPORT_FORBIDDEN_KEYS)
 
 
 def sorted_findings(findings: Iterable[dict]) -> list[dict]:

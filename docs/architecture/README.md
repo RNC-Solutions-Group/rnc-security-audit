@@ -12,6 +12,7 @@ CP0 supporting contracts:
 - [Architecture decisions](decisions.md) — approved decisions and the register.
 - [ADR-007: production detector language](adr-007-detector-language.md) — Rust selection and tradeoffs.
 - [Configuration migration](config-migration.md) — `.rncscanner.toml`, explicit legacy `security.config` mapping and fail-closed conflicts.
+- [Evidence privacy](evidence-privacy.md) — content/evidence/finding digest distinctions, public boundary and keyed-HMAC evaluation.
 - [Threat model](threat-model.md) — confidential evidence, authorization and fail-closed boundaries.
 - [Machine-readable schemas](../contracts/README.md) — six record schemas plus the unified configuration schema at `0.2.0`.
 - [Contract compatibility](../contracts/compatibility.md) — v0.1 to v0.2 changes and migration policy.

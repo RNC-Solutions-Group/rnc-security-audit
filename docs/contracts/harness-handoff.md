@@ -17,7 +17,7 @@ The external harness owns detection-accuracy grading. CP0 exports evidence; it d
 
 | CP0 record | Handoff field(s) | Rule |
 | --- | --- | --- |
-| `source-unit.locator` | `file` / truth `path` | Relative synthetic path only; never an absolute or private locator |
+| `source-unit.locator` | `file` / truth `path` | Strict canonical relative path only; never an absolute or private locator. No backslash/`./` repair. |
 | `finding.line` | `line` / truth `line_start`, `line_end` | External matching is line-addressed |
 | `finding.rule_id` | `rule_id` / truth `expected_rule_id` | Rule identity is preserved |
 | `finding.evidence_digest` | `secret_sha256`, `match_sha256` | Digest only; no matched bytes |

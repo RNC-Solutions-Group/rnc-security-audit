@@ -29,7 +29,8 @@
     "locator": {
       "type": "string",
       "minLength": 1,
-      "description": "Private canonical locator (forward slashes, relative to the authorized source root). Never publish as-is."
+      "maxLength": 4096,
+      "description": "Private canonical locator. Strict contract: NFC, forward-slash-only, relative to the authorized source root, case-sensitive, no dot/empty/traversal segments, no backslashes, no absolute/drive/UNC prefix, no control or platform-ambiguous characters. Never publish as-is."
     },
     "required_scope": {"type": "boolean"},
     "disposition": {"enum": ["INSPECTED", "VERIFIED_BLOCKED", "UNINSPECTED"]},

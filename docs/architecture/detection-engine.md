@@ -21,12 +21,14 @@ The input adapter owns source type, safe enumeration, stable IDs, encodings and 
 | --- | --- |
 | `schema_version`, `run_id`, `unit_id`, `source_id` | Unambiguous, versioned traceability across adapter, engine and report |
 | `source_kind` | Initially `working_tree_file`; Git history, archives and URLs are future, separate adapters |
-| `locator` | Private canonical relative locator; never published as-is |
+| `locator` | Private canonical relative locator; strict NFC, `/`-only, case-sensitive grammar; never published as-is |
 | `required_scope` | Whether the unit is required for trustworthy coverage |
 | `content` / `content_handle` | Bytes or bounded stream from the adapter, never arbitrary shell commands |
 | `encoding`, line-ending handling, `offset_map` | Stable byte/line mapping; bytes remain the authority |
 | `scope_plan_id`, `adapter_version` | Tie an inspected unit to the validated policy plan |
 | `ruleset_id`, `ruleset_version`, `ruleset_digest` | Exact rules used; reject unknown or malformed bundles |
+
+The adapter converts native platform separators to `/`, requires NFC, and checks case-collision behavior before calling the contract. `canonical_locator` rejects rather than repairs backslashes, `./`, repeated separators, absolute/drive/UNC paths, `.`/`..`, control characters, platform-ambiguous characters and Windows device names. Case is preserved and never folded. See [contracts/README.md](../contracts/README.md) for the complete grammar.
 
 Inputs are **read-only** from the engine's perspective. Symlink escape, oversized items, unreadable files, malformed archives, binary/encoding ambiguity, timeouts and cancellation are explicit execution outcomes, not silently clean files. The initial adapter must not follow symlinks outside approved scope and must resolve TOCTOU ambiguity by recording what was actually read.
 
@@ -61,6 +63,8 @@ Changes to patterns, validators, categories, entropy thresholds or candidate ver
 ```
 
 The event intentionally omits raw secret values. Private evidence may retain authorized raw content securely; **public reports must not emit matched bytes**. The finding's actionable/exempted status is **not an engine field** — it belongs to the post-scan policy record.
+
+The `evidence_digest` is an unkeyed SHA-256 of matched bytes. It is a private matching/integrity value, not a public redaction: low-entropy credentials can be guessed offline from an unkeyed digest. `finding_id` inherits that property and is also private. Public reports use aggregate counts and, if needed, CSPRNG run-scoped opaque IDs. See [evidence-privacy.md](evidence-privacy.md) for the digest classes and keyed-HMAC evaluation.
 
 ## Determinism and resource controls
 

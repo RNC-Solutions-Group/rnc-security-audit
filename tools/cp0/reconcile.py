@@ -12,6 +12,7 @@ from tools.cp0.contracts import (
     DEFAULT_ACCEPTED,
     RESULT_NAMES,
     SCHEMA_VERSION,
+    assert_public_report_safe,
     canonical_json,
     ci_decision,
     classify,
@@ -40,7 +41,7 @@ def _normalize(execution: dict, findings: list[dict], policy: dict) -> tuple[dic
 def build_result(execution: dict, findings: list[dict], policy: dict) -> dict:
     counts = compute_counts(execution["units"], findings, policy["dispositions"])
     code = classify(execution, policy, counts)
-    return {
+    result = {
         "schema_version": SCHEMA_VERSION,
         "run_id": execution["run_id"],
         "result_code": code,
@@ -59,6 +60,8 @@ def build_result(execution: dict, findings: list[dict], policy: dict) -> dict:
             "policy_digest": record_digest(policy),
         },
     }
+    assert_public_report_safe(result)
+    return result
 
 
 def reconcile(

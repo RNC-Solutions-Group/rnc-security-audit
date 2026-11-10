@@ -25,7 +25,20 @@ finding_id = "f-" + sha256(unit_id + NUL + rule_id + NUL + rule_version + NUL
 request_id = "r-" + sha256(policy_id + NUL + kind + NUL + selector)
 ```
 
-`canonical_locator` uses forward slashes, is relative to the authorized source root, rejects absolute paths, drive-prefixed paths, empty segments, `.` and `..`. `evidence_digest` is `sha256:` followed by the SHA-256 of the exact matched bytes. A finding carries only that digest, never the matched bytes. Raw bytes belong in a private evidence store outside public artifacts.
+`canonical_locator` is a **strict trust-boundary check, not a path cleaner**. It requires:
+
+- a non-empty Unicode string in NFC form; non-NFC input is rejected rather than normalized;
+- forward-slash separators only; backslashes are rejected;
+- a path relative to the authorized source root; leading `/`, `//`, `~`, drive prefixes and UNC forms are rejected;
+- no leading `./`, no repeated separators, no empty segments, no trailing separator;
+- no `.`/`..` segments, NUL/control characters, or platform-ambiguous characters (`<>:"\\|?*`);
+- no Windows device names (`CON`, `NUL`, `COM1`, etc.) and no segment with a trailing space or dot;
+- case-sensitive identity with no normalization or folding;
+- a maximum length of 4096 Unicode scalar values.
+
+Adapters must perform platform acquisition normalization (native separators, NFC, case-collision detection) before calling the contract. Distinct filesystem objects must never collapse to one source identity. Policy selectors are a separate glob grammar and are not passed through `canonical_locator`. The external harness adapter uses the same canonical locator contract. Regression tests cover accepted paths and each rejected class.
+
+`evidence_digest` is `sha256:` followed by the SHA-256 of the exact matched bytes. A finding carries only that digest, never the matched bytes. Raw bytes belong in a private evidence store outside public artifacts. Because a digest over a low-entropy credential can permit offline guessing, finding records and digests are **private evidence**, not public report fields; see the [evidence privacy boundary](../architecture/evidence-privacy.md).
 
 ## Cross-record invariants
 

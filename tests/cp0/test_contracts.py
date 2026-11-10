@@ -9,6 +9,7 @@ from pathlib import Path
 from tools.cp0.contracts import (
     ContractViolation,
     SCHEMA_VERSION,
+    assert_public_report_safe,
     assert_public_safe,
     canonical_locator,
     canonical_json,
@@ -115,8 +116,10 @@ class CP0ContractTests(unittest.TestCase):
 
     def test_identity_formulas_are_stable_and_reject_traversal(self):
         first = make_unit_id("source", "nested/file.txt")
-        second = make_unit_id("source", "nested\\file.txt")
+        second = make_unit_id("source", "nested/file.txt")
         self.assertEqual(first, second)
+        with self.assertRaises(ContractViolation):
+            canonical_locator("nested\\file.txt")
         with self.assertRaises(ContractViolation):
             canonical_locator("../outside.txt")
         with self.assertRaises(ContractViolation):
@@ -130,6 +133,37 @@ class CP0ContractTests(unittest.TestCase):
             make_finding_id(first, "rule", "1", 3, 10, digest),
             make_finding_id(first, "rule", "2", 3, 10, digest),
         )
+
+    def test_canonical_locator_is_strict_and_deterministic(self):
+        accepted = [
+            "file.txt",
+            "nested/deep/file.txt",
+            "café/résumé.txt",
+            "Case-Sensitive.TXT",
+        ]
+        for value in accepted:
+            self.assertEqual(canonical_locator(value), value)
+
+        rejected = [
+            "", "./file.txt", "a//b", "a/./b", "a/../b", "a/", "/a",
+            "\\a", "a\\b", "C:/a", "C:a", "//server/share", "~/a",
+            "a:b", "a*b", "a?b", "a<b", "a>b", "a|b", 'a"b',
+            "CON", "con.txt", "LPT1.log", "foo.", "foo ", "a/\x00b",
+            "cafe\u0301.txt",  # non-NFC
+            "a/\u202eb.txt",  # bidi formatting control
+        ]
+        for value in rejected:
+            with self.subTest(locator=value), self.assertRaises(ContractViolation):
+                canonical_locator(value)
+
+        # No platform-specific path normalization: a backslash is not accepted
+        # as a separator and case is never folded.
+        self.assertNotEqual(make_unit_id("s", "A.txt"), make_unit_id("s", "a.txt"))
+
+    def test_manifest_paths_use_the_same_canonical_contract(self):
+        loaded = load_v1()
+        for target in loaded["targets"]:
+            self.assertEqual(canonical_locator(target["path"]), target["path"])
 
     def test_perfect_bundle_validates(self):
         summary = validate_records(
@@ -307,6 +341,13 @@ class CP0ContractTests(unittest.TestCase):
             assert_public_safe({"locator": "private/file.txt"})
         with self.assertRaises(ContractViolation):
             assert_public_safe({"path": "C:/private/file.txt"})
+        with self.assertRaises(ContractViolation):
+            assert_public_report_safe({"finding_id": "f-" + "a" * 64})
+        with self.assertRaises(ContractViolation):
+            assert_public_report_safe({"evidence_digest": "sha256:" + "a" * 64})
+        with self.assertRaises(ContractViolation):
+            assert_public_report_safe({"content_sha256": "sha256:" + "a" * 64})
+        assert_public_report_safe(self.bundle["result"])
 
     def test_canonical_serialization_is_stable(self):
         self.assertEqual(

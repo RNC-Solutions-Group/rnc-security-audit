@@ -27,6 +27,12 @@ on:
 permissions:
   contents: read
 
+defaults:
+  run:
+    # GitHub's built-in bash shell runs with `-eo pipefail`; keep it explicit
+    # so `... | tee` cannot mask a failing validator or test command.
+    shell: bash
+
 concurrency:
   group: cp0-${{ github.ref }}
   cancel-in-progress: true
@@ -51,11 +57,28 @@ jobs:
 
       - name: Validate schemas, corpora and outcome tables
         run: |
+          set -o pipefail
           mkdir -p artifacts/cp0
           python -m tools.cp0.validate --json | tee artifacts/cp0/contracts.json
 
       - name: Run contract, config, corpus, harness and benchmark-infrastructure tests
-        run: python -m unittest discover -s tests/cp0 -v 2>&1 | tee artifacts/cp0/tests.log
+        run: |
+          set -o pipefail
+          python -m unittest discover -s tests/cp0 -v 2>&1 | tee artifacts/cp0/tests.log
+
+      - name: Negative pipeline-failure probe (expected failed step)
+        id: pipeline_probe
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          mkdir -p artifacts/cp0
+          false | tee artifacts/cp0/pipeline-probe.log
+
+      - name: Assert pipeline failure propagated
+        if: always()
+        run: |
+          test "${{ steps.pipeline_probe.outcome }}" = "failure"
+          echo "pipeline failure propagation verified" | tee artifacts/cp0/pipeline-probe-assertion.log
 
       - name: Generate full 1000-target corpus twice and prove byte-identical manifests
         run: |
@@ -128,6 +151,7 @@ jobs:
 
       - name: Record toolchain and runner metadata
         run: |
+          set -o pipefail
           mkdir -p artifacts/cp0
           {
             echo "runner=$RUNNER_OS/$RUNNER_ARCH"

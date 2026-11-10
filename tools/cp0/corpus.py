@@ -13,7 +13,7 @@ import re
 from pathlib import Path
 from typing import Any, Mapping
 
-from tools.cp0.contracts import ContractViolation, canonical_json, sha256_bytes
+from tools.cp0.contracts import ContractViolation, canonical_json, canonical_locator, sha256_bytes
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -78,10 +78,15 @@ def validate_manifest(path: Path, *, require_floor: bool = False) -> dict:
         relative = target.get("path")
         if not isinstance(target_id, str) or not target_id or target_id in ids:
             raise ContractViolation("MANIFEST_TARGET_ID", f"invalid/duplicate target ID {target_id!r}")
+        ids.add(target_id)
         if not isinstance(relative, str) or not relative or relative in paths:
             raise ContractViolation("MANIFEST_TARGET_PATH", f"invalid/duplicate path for {target_id}")
-        ids.add(target_id)
+        try:
+            relative = canonical_locator(relative)
+        except ContractViolation as exc:
+            raise ContractViolation("MANIFEST_TARGET_PATH", f"target {target_id}: {exc.message}") from exc
         paths.add(relative)
+        target["path"] = relative
         fixture = (root / relative).resolve()
         if not fixture.is_relative_to(root):
             raise ContractViolation("MANIFEST_PATH_ESCAPE", f"target {target_id} escapes the corpus root")

@@ -29,6 +29,8 @@ CLI arguments cannot inject executable commands, load unapproved rules from arbi
 
 An exclusion must identify a target unambiguously and be enforced **before source content is read by the detector**. The exact enforcement method is recorded—e.g. adapter-level enumeration/filtering or a verified filtered snapshot. A tool's ignore flag that suppresses output after reading **does not qualify**. Behavior must be validated per source kind (working tree is different from Git history, archive extraction and container layers).
 
+Policy selectors are a **declared glob grammar**, not source locators. The trust boundary canonicalizes discovered source locators first, then applies selectors to those canonical values; a selector never rewrites a locator. This prevents `./`, backslash, case or Unicode variants from collapsing distinct paths or bypassing a block. See the strict locator contract in [contracts/README.md](../contracts/README.md).
+
 For each requested block, store:
 
 - policy origin, stable policy ID, reason and normalized scope;

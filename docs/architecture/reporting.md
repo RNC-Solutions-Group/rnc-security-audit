@@ -69,11 +69,11 @@ The execution, detection and policy records contain **item-level audit trails** 
 
 ## Evidence handling and exports
 
-- **Private raw evidence:** controlled location outside public repository; strict permissions and retention, no automatic upload; may contain matched secrets and command diagnostics.
-- **Sanitized report:** redact matched values, sensitive path segments, target IDs, environment details and raw logs; fail closed when validation/redaction cannot be proven.
-- **Initial exports:** versioned JSON as the canonical contract and concise terminal summary. Human-readable Markdown may follow once schema is stable.
-- **Later exports:** SARIF, CI annotations, Markdown/HTML, comparison reports and machine APIs as **renderers over the same records**, not additional detection systems.
-- **Safety:** explicit user-approved scopes, no arbitrary command strings, no secrets in CI logs, no destructive cleanup outside run-owned files/resources.
+- **Private raw evidence:** controlled location outside public repository; strict permissions and retention, no automatic upload; may contain matched secrets, evidence digests, finding IDs and command diagnostics.
+- **Sanitized report:** redact matched values, sensitive path segments, target IDs, environment details and raw logs; **do not publish `evidence_digest` or `finding_id`** because an unkeyed digest over a low-entropy credential is guessable. Fail closed when validation/redaction cannot be proven.
+- **Initial exports:** versioned JSON as the canonical private contract and a concise terminal summary with counts only. Human-readable Markdown may follow once schema is stable.
+- **Later exports:** SARIF, CI annotations, Markdown/HTML, comparison reports and machine APIs as **renderers over the same records**, not additional detection systems. Public renderers must use opaque case IDs rather than credential-derived hashes.
+- **Safety:** explicit user-approved scopes, no arbitrary command strings, no secrets in CI logs, no destructive cleanup outside run-owned files/resources. See [evidence-privacy.md](evidence-privacy.md).
 
 ## Two different kinds of scoring
 

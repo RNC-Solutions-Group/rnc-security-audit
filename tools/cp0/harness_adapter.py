@@ -11,13 +11,13 @@ from __future__ import annotations
 
 import hashlib
 import json
-import re
 from pathlib import Path
 
 from tools.cp0.contracts import (
     ContractViolation,
     assert_public_safe,
     canonical_json,
+    canonical_locator,
     line_for_offset,
     record_digest,
 )
@@ -29,12 +29,10 @@ EXTERNAL_SCHEMA_VERSION = 1
 
 
 def _relative_path(value: str) -> str:
-    path = value.replace("\\", "/")
-    while path.startswith("./"):
-        path = path[2:]
-    if path.startswith("/") or re.match(r"^[A-Za-z]:/", path) or ".." in path.split("/"):
-        raise ContractViolation("HANDOFF_PATH", f"unsafe handoff path {value!r}")
-    return path
+    try:
+        return canonical_locator(value)
+    except ContractViolation as exc:
+        raise ContractViolation("HANDOFF_PATH", exc.message) from exc
 
 
 def _scope_item(target: dict, version: str) -> dict:
