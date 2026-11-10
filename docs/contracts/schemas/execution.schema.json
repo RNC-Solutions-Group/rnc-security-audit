@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.rncsolutionsgroup.com/security-audit/v0.1/execution.schema.json",
+  "title": "Execution and coverage record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "state", "evidence_valid", "units", "fatal_errors"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "run_id": {"type": "string", "minLength": 1},
+    "state": {"enum": ["COMPLETED", "ERROR", "INTERRUPTED"]},
+    "evidence_valid": {"type": "boolean"},
+    "units": {"type": "array", "items": {"$ref": "source-unit.schema.json"}},
+    "fatal_errors": {"type": "array", "items": {"type": "string"}},
+    "required_scanners_missing": {"type": "integer", "minimum": 0},
+    "engine_version": {"type": "string", "minLength": 1},
+    "ruleset_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}

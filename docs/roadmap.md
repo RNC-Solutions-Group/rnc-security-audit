@@ -26,8 +26,11 @@ CP0 and CP1 may define interfaces for downstream modules without implementing th
 - [ ] Approve canonical schemas and finalization rules for unit IDs, findings, policy events, reporting and CI decisions.
 - [ ] Define target manifest, required versus optional coverage, no-read enforcement and error taxonomy.
 - [ ] Prepare synthetic fixtures with **known truth by target** and independently defined expected report outputs.
-- [ ] Agree engine runtime/language criteria, rule-set licensing, redaction/sensitive evidence threat model and reproducible benchmark methodology.
-- [ ] Document a versioned config-schema migration from original `security.config` to the selected scanner/audit configuration names.
+- [x] Agree Go/Rust benchmark requirement, CI default codes `1,2`, full synthetic corpus scope and unified config migration direction in the [ADR register](architecture/decisions.md).
+- [x] Draft [config migration semantics](architecture/config-migration.md) and [threat model](architecture/threat-model.md).
+- [x] Create initial [machine-readable schemas](contracts/README.md) and authored + generated synthetic corpus specification with CP0 validation tests.
+- [ ] Observe Go/Rust benchmark CI artifact, confirm toolchain/platform fairness and document language selection criteria.
+- [ ] Approve final schema version, rule-set licensing, required-scope details, config filename, and CP1 entry gate.
 
 ### CP1 — prove the detector independently
 

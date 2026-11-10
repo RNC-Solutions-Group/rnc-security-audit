@@ -41,7 +41,7 @@ Every finalized scan receives **exactly one immutable result**. Numeric `result_
 
 **Precedence:** `FAILED > INCOMPLETE > ACTIONABLE > POLICY_APPLIED > CLEAN`. A higher-priority state determines the final classification, but **never removes lower-priority evidence** from the report. An inaccessible required file plus three real findings means `INCOMPLETE`, with all three findings still accounted for. A policy-authorized, verifiably blocked target is different from an inaccessible required target.
 
-CI decides which *completed* results are acceptable. For example, the proposed `rnc scan . --accept-results 1,2` yields process exit `0` for a final result of `POLICY_APPLIED`; `--accept-results 1` rejects the identical result. `INCOMPLETE` and `FAILED` remain nonzero in the initial contract. These are **proposed commands, not implemented functionality**.
+CI decides which *completed* results are acceptable. **The approved default is `CLEAN` and `POLICY_APPLIED` (codes `1,2`)**. For example, the proposed `rnc scan . --accept-results 1,2` yields process exit `0` for a final result of `POLICY_APPLIED`; `--accept-results 1` rejects the identical result. `INCOMPLETE` and `FAILED` remain nonzero in the initial contract. These are **proposed commands, not implemented functionality**.
 
 The authoritative details are in the [execution-status specification](docs/architecture/execution-status.md).
 
@@ -65,6 +65,7 @@ Reporting reconciles three independently verifiable, append-only logical records
 | Start here | Why |
 | --- | --- |
 | [Architecture index](docs/architecture/README.md) | Four interface contracts: engine, policy, reporting, status/CI |
+| [CP0 data contracts](docs/contracts/README.md) | Versioned JSON Schemas and cross-record invariants |
 | [Roadmap](docs/roadmap.md) | Capability proofs, priority, acceptance and deferred work |
 | [Implementation proofs](docs/implementation/README.md) | What each development checkpoint must demonstrate |
 | [Historical foundation](docs/foundation/README.md) | Preserved original orchestration concept, workflows, bypass-report sketches and first Gitleaks proof |
@@ -78,6 +79,8 @@ Reporting reconciles three independently verifiable, append-only logical records
 5. **Reuse the original audit orchestration** when integrating third-party security tools, execution backends, and passive/active modes.
 
 The current Gitleaks modernization and independent scan-harness projects are valuable **comparators and test infrastructure**, not a dependency for designing the RNC engine and not a reason to copy its limitations.
+
+**CP0 decisions (10 November 2026):** benchmark Go and Rust before choosing the detector language; use one versioned configuration model with explicit legacy migration; accept codes `1,2` by default in CI; and validate a full reproducible synthetic corpus plus language probes during CP0. [Decision register](docs/architecture/decisions.md) · [CP0 proof](docs/implementation/cp0-contract-validation.md).
 
 ## Safety and implementation status
 

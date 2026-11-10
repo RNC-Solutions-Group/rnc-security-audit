@@ -54,7 +54,7 @@ rnc scan . --accept-results 1,2  # result 2: process exit 0
 rnc scan . --accept-results 1    # same result 2: process exit 10
 ```
 
-The proposed safe default for a gating CI job is `--accept-results 1`. Codes `2` and `3` may be opted into for nonblocking or policy-adjusted workflows, with that choice logged. In the initial contract, `INCOMPLETE` and `FAILED` **cannot** be accepted as successful scans; changing that invariant would require a separate explicit design review, not a generic CLI override.
+**Approved CP0 default:** `--accept-results 1,2` (`CLEAN` and `POLICY_APPLIED`). Code `3` may be explicitly opted into for a nonblocking workflow, with that choice logged. Organizations may deliberately tighten acceptance to `1` only. In the initial contract, `INCOMPLETE` and `FAILED` **cannot** be accepted as successful scans; changing that invariant would require a separate explicit design review, not a generic CLI override.
 
 | Situation | Proposed OS process exit | Meaning |
 | --- | --- | --- |

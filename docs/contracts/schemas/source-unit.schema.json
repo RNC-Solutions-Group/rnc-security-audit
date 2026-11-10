@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.rncsolutionsgroup.com/security-audit/v0.1/source-unit.schema.json",
+  "title": "Normalized source unit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["run_id", "unit_id", "source_id", "source_kind", "locator", "required_scope", "disposition"],
+  "properties": {
+    "run_id": {"type": "string", "minLength": 1},
+    "unit_id": {"type": "string", "minLength": 1},
+    "source_id": {"type": "string", "minLength": 1},
+    "source_kind": {"enum": ["working_tree_file"]},
+    "locator": {"type": "string", "minLength": 1, "description": "Private canonical locator, not a public report path"},
+    "required_scope": {"type": "boolean"},
+    "disposition": {"enum": ["INSPECTED", "VERIFIED_BLOCKED", "UNINSPECTED"]},
+    "reason_codes": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "byte_length": {"type": "integer", "minimum": 0}
+  }
+}

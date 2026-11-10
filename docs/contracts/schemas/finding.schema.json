@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.rncsolutionsgroup.com/security-audit/v0.1/finding.schema.json",
+  "title": "Unmodified detector finding event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["run_id", "finding_id", "unit_id", "rule_id", "category", "start_byte", "end_byte", "confidence", "evidence_digest"],
+  "properties": {
+    "run_id": {"type": "string", "minLength": 1},
+    "finding_id": {"type": "string", "minLength": 1},
+    "unit_id": {"type": "string", "minLength": 1},
+    "rule_id": {"type": "string", "minLength": 1},
+    "category": {"type": "string", "minLength": 1},
+    "start_byte": {"type": "integer", "minimum": 0},
+    "end_byte": {"type": "integer", "minimum": 1},
+    "line": {"type": "integer", "minimum": 1},
+    "confidence": {"enum": ["low", "medium", "high", "unknown"]},
+    "validation": {"type": "array", "items": {"type": "string"}},
+    "evidence_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}
