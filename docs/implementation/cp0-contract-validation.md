@@ -8,7 +8,7 @@ The original CP0 branch established useful foundations: architecture specificati
 
 This audit corrected the contracts to schema **v0.2.0**, expanded the authored and generated corpus, added an independent harness/calibration path, executed the pinned external harness scoring engine against the handoff, built equivalent representative Go/Rust scanners, selected **Rust** in [ADR-007](../architecture/adr-007-detector-language.md), and produced an implementation-ready [CP1 handoff](cp1-detection-engine.md).
 
-**Readiness:** pending the final CI run and operator review. The CP0 gates and limitations are listed in §12–§13. No external corpus was executed and no scanner recall/precision claim is made.
+**Readiness:** **READY for operator acceptance**, subject to the limitations in §12. All required CI lanes passed in run 42905445240. No external corpus was executed and no scanner recall/precision claim is made.
 
 ## 2. Baseline claim verification
 
@@ -173,7 +173,9 @@ Both disposable scanners share:
 
 Profiles: 32 MiB low/high density, 2,000 small files (1/4 threads), 8 MiB FP-heavy, 8 MiB Unicode, 8 MiB expanded ruleset, 8 MiB worst-case, 8 MiB multiline. Every run is checked against an independently generated expected count and FNV-1a checksum. Alternating run order, warmups and five repetitions prevent ordering bias; peak RSS/CPU are captured through GNU time where available. Build times, binary sizes, toolchains and dependency trees are recorded.
 
-Local audit run (Windows, Go 1.27.3, Rust 1.85.0, 3 runs) showed both implementations correct on all 18 profiles. Rust had lower median latency on 13/18 profiles, including the security-relevant FP-heavy, worst-case and large-rule-set loads; Go was faster on the many-small-files profiles. The pinned CI run is the authoritative evidence and uses Go 1.23.4 / Rust 1.85.0 on one Ubuntu runner with five runs. Raw host-dependent results are retained as CI artifacts rather than copied as a release benchmark.
+The authoritative run is [CI run 42905445240](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/42905445240) on Ubuntu 24.04 with Go 1.23.4, Rust 1.85.0 and five alternating repetitions. Both implementations were correct on all 18 profiles. Rust had lower median latency on **17 of 18** profiles; the only Go advantage was Unicode whole-file (647.5 vs 624.3 MiB/s, about 4%, within runner noise). Rust was roughly 2–11× faster on FP-heavy, worst-case, multiline and large-rule-set loads, and faster on the many-small-file profiles. A local Windows run had shown Go faster on many-small-files; that did not reproduce on the pinned Linux runner and is retained only as environment-sensitivity evidence.
+
+CI build characteristics: Go 0.64 s / 1.87 MB stripped, Rust 15.1 s / 2.00 MB stripped, Rust dependency tree five pinned crates. Peak RSS was lower for Rust on most streaming profiles but not uniformly; the raw host-dependent values remain in the benchmark artifact rather than a committed release table.
 
 **Language decision:** Rust, [ADR-007](../architecture/adr-007-detector-language.md). Go remains a comparator; it is not a second production engine.
 
@@ -220,7 +222,15 @@ The workflow `.github/workflows/cp0-contracts.yml` has three required lanes:
 
 Missing toolchains fail the job; they are not skipped and reported as success. Artifacts are retained for 90 days. No secrets or raw matched values are uploaded.
 
-<!-- CI_EVIDENCE -->
+### Observed CI evidence — run 42905445240
+
+- Run: [42905445240](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/42905445240), head `acd5a8d253af627487e9625844b26e7b87e163d7`, conclusion **success**, all three required jobs passed.
+- `cp0-contracts-corpus-harness`: validator passed; **69/69** tests; harness self-check **18/18 (100%)**; deterministic corpus manifests; edge corpus validated; artifacts preserved.
+- `cp0-representative-benchmarks`: Go 1.23.4 / Rust 1.85.0; all 18 profiles correct; machine-readable artifact retained (artifact ID `13805226069`, digest `sha256:359f65a5c8c01b5d32337e782c1b4ed1156f2421f5980d460be92302e61c95f6`).
+- `cp0-external-harness-contract`: pinned external scoring engine accepted all four synthetic handoff cases; no external corpus was executed.
+- Full contract artifact: ID `13804557354`, digest `sha256:c35d73e923a0a023f037860c1b36d243273cff9fa57bb628b48e96d7a74d8bee`. External-contract artifact: ID `13803998652`, digest `sha256:2002e119ee3a0db2a11deca733e035d8eb4289845f90fb6f4df0c09c858c829e`.
+- The only workflow annotation is the GitHub Actions Node.js 20 deprecation warning; it did not affect job success. Action version pinning can be tightened in a later maintenance change.
+
 
 ## 12. Known limitations and deferred work
 
@@ -249,9 +259,9 @@ Missing toolchains fail the job; they are not skipped and reported as success. A
 - [x] Public/redaction checks fail closed for secret-shaped values and locators.
 - [x] Pinned external harness scoring engine accepts the synthetic handoff.
 - [x] CP1 module boundaries, interfaces, rule lifecycle, coverage and acceptance tests are documented.
-- [ ] Final CI run green and evidence recorded.
+- [x] Final CI run green and evidence recorded (run 42905445240, all required jobs).
 - [ ] Operator accepts the CP0 package; no merge or CP1 implementation by the agent.
 
 ## 14. Readiness classification
 
-**Pending final CI evidence.** If the required workflow is green, the CP0 package is **READY** for operator acceptance, with the limitations in §12 disclosed. It is not **accepted**, and CP1 remains blocked until the operator decides.
+**READY** for operator acceptance. All required CP0 CI lanes passed (run 42905445240), contracts and synthetic scoring reconcile, representative benchmarks are reproducible and a language decision is recorded. This is not **accepted**: §12 limitations remain disclosed, no PR is merged, and CP1 remains blocked until the operator decides.

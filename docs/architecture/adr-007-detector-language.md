@@ -18,9 +18,9 @@ The audit added a representative disposable scanner in both languages:
 - an 8 MiB worst-case near-prefix workload with no valid matches;
 - the same corpus bytes, expected finding count and FNV-1a checksum for both implementations.
 
-Measured results are retained as a machine-readable CI artifact. The local CP0 audit run (Windows, Go 1.27.3, Rust 1.85.0, three alternating repetitions) showed every workload correct and identical between implementations. Rust had the lower median latency on 13 of 18 profiles. The largest differences were on security-relevant adversarial/false-positive-heavy inputs (roughly 7–10×), large rulesets (3–5×), and large files (2–3×). Go was faster on the many-small-files profiles (roughly 2×) and tied on Unicode input.
+Measured results are retained as a machine-readable CI artifact. The authoritative run is [CI run 42905445240](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/42905445240) on Ubuntu 24.04 with Go 1.23.4, Rust 1.85.0 and five alternating repetitions. Every workload was correct and identical between implementations. Rust had the lower median latency on **17 of 18** profiles. The only Go advantage was `unicode` whole-file (647.5 vs 624.3 MiB/s, about 4%, within runner noise). Rust was roughly 2–11× faster on the security-relevant false-positive-heavy, worst-case, multiline and large-rule-set loads, and faster on large and many-small-file profiles in this runner.
 
-The pinned CI run uses Go 1.23.4 and Rust 1.85.0 on the same Ubuntu runner with five alternating repetitions; its artifact is the authoritative performance record. The local results are directionally consistent.
+A local Windows run (Go 1.27.3, Rust 1.85.0) showed Go faster on many-small-files; that result did not reproduce on the pinned Linux runner. The local run is retained as environment-sensitivity evidence, not as the decision basis.
 
 ## Options considered
 
@@ -36,9 +36,9 @@ The pinned CI run uses Go 1.23.4 and Rust 1.85.0 on the same Ubuntu runner with 
 | Criterion | Rust evidence | Go evidence | Weight |
 | --- | --- | --- | --- |
 | Correctness | Exact counts/checksums on all profiles | Exact counts/checksums on all profiles | Mandatory gate; tie |
-| Representative performance | Lower median latency on most profiles, including worst-case and FP-heavy | Better on many small files; acceptable on large files | High |
-| Build and CI cost | ~20 s cold build; one third-party ecosystem dependency tree | ~1 s build; standard library only | Medium |
-| Binary/distribution | 1.55 MB stripped; glibc dynamic by default | 2.16 MB stripped; static by default | Medium |
+| Representative performance | Lower median latency on 17/18 CI profiles, including worst-case and FP-heavy | One marginal Unicode win; slower on adversarial and large-rule-set loads | High |
+| Build and CI cost | 15.1 s cold build; five pinned crates in the lockfile | 0.64 s build; standard library only | Medium |
+| Binary/distribution | 2.00 MB stripped on CI; glibc dynamic by default | 1.87 MB stripped on CI; static by default | Medium |
 | Security | Memory-safe; `regex` rejects unsafe constructs and is linear-time | Memory-safe; RE2-style `regexp` is linear-time | Mandatory gate; tie |
 | Portability | Requires target toolchains/linkers; musl static builds mitigate glibc | `GOOS/GOARCH` cross-compiles directly | Medium |
 | Maintainability | Strong types, no GC, smaller runtime; dependency pinning required | Simpler build, fewer dependencies; GC and slower regex | Medium |
@@ -60,7 +60,7 @@ The decision does **not** treat the preliminary literal-byte result as sufficien
 
 - `python -m tools.cp0.bench_runner --runs 5 --output artifacts/cp0/representative-benchmarks.json`
 - Literal baseline preserved: `python -m tools.cp0.benchmark --runs 5 --output artifacts/cp0/literal-benchmarks.json`
-- Machine-readable artifacts are retained by the CP0 workflow; host-dependent raw output is not committed.
+- CI artifact `cp0-representative-benchmarks` (run 42905445240, digest `sha256:359f65a5c8c01b5d32337e782c1b4ed1156f2421f5980d460be92302e61c95f6`) is retained for 90 days; host-dependent raw output is not committed.
 - The CP0 report records the CI run, toolchain versions, runner, profile medians and limitations.
 
 ## Revisit triggers

@@ -32,6 +32,7 @@ CP0 and CP1 may define interfaces for downstream modules without implementing th
 - [x] Preserve and observe the compiled Go/Rust **primitive** benchmark baseline.
 - [x] Evaluate representative compiled rule/regex/validation/streaming/memory workloads and select Rust in [ADR-007](architecture/adr-007-detector-language.md).
 - [x] Execute the pinned external harness scoring engine against the CP0 handoff; external corpus execution remains deferred.
+- [x] Required CI lanes passed on run 42905445240: contracts/tests/harness, representative Go/Rust benchmarks, external scoring contract.
 - [ ] Operator accepts schema v0.2, Rust selection, `.rncscanner.toml`, required-scope details, rule-set licensing and CP1 entry gate.
 
 ### CP1 — prove the detector independently
