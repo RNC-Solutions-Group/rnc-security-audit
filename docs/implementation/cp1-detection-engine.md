@@ -123,9 +123,10 @@ No remote rule download, network validation or secret exfiltration is permitted 
 
 - Byte offsets are the authority. Line numbers are derived from bytes, treating LF, CRLF and CR as line boundaries consistently.
 - `line_end` is required when a match spans lines; otherwise equal to `line`.
-- `evidence_digest` is SHA-256 of exactly `bytes[start_byte..end_byte]`. Raw bytes stay in a private evidence store outside public artifacts.
-- Finding IDs do not include `run_id`; the same unit/rule/version/location/evidence is stable across runs.
+- `evidence_digest` is SHA-256 of exactly `bytes[start_byte..end_byte]`. It is a **private matching/integrity digest**, not a public redaction. Raw bytes and digests stay in the private evidence boundary; see [evidence-privacy.md](../architecture/evidence-privacy.md).
+- `finding_id` is a stable private correlation identity and must not be printed in ordinary logs or public reports. It does not include `run_id`; the same unit/rule/version/location/evidence is stable across runs.
 - No Unicode normalization, lowercasing or line-ending rewriting may change the finding's byte identity. Rule semantics may be case-sensitive unless the rule pattern explicitly says otherwise.
+- Source locators follow the strict CP0 grammar: NFC, forward-slash-only, relative, case-sensitive, no backslash/`./` repair. The adapter normalizes native acquisition paths and rejects collisions; detection code does not repair locators.
 
 ## Error and coverage propagation
 
