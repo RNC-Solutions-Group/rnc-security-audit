@@ -1,19 +1,68 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.rncsolutionsgroup.com/security-audit/v0.1/source-unit.schema.json",
+  "$id": "https://schemas.rncsolutionsgroup.com/security-audit/v0.2/source-unit.schema.json",
   "title": "Normalized source unit",
+  "description": "One canonical, non-overlapping scan target. A VERIFIED_BLOCKED or UNINSPECTED unit must not carry content evidence because its bytes were not inspected by the engine.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["run_id", "unit_id", "source_id", "source_kind", "locator", "required_scope", "disposition"],
+  "required": [
+    "schema_version",
+    "run_id",
+    "unit_id",
+    "source_id",
+    "source_kind",
+    "locator",
+    "required_scope",
+    "disposition",
+    "reason_codes"
+  ],
   "properties": {
+    "schema_version": {"const": "0.2.0"},
     "run_id": {"type": "string", "minLength": 1},
-    "unit_id": {"type": "string", "minLength": 1},
+    "unit_id": {
+      "type": "string",
+      "pattern": "^u-[0-9a-f]{64}$",
+      "description": "Stable identity: sha256(source_id + NUL + canonical_locator), prefixed u-."
+    },
     "source_id": {"type": "string", "minLength": 1},
     "source_kind": {"enum": ["working_tree_file"]},
-    "locator": {"type": "string", "minLength": 1, "description": "Private canonical locator, not a public report path"},
+    "locator": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Private canonical locator (forward slashes, relative to the authorized source root). Never publish as-is."
+    },
     "required_scope": {"type": "boolean"},
     "disposition": {"enum": ["INSPECTED", "VERIFIED_BLOCKED", "UNINSPECTED"]},
-    "reason_codes": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
-    "byte_length": {"type": "integer", "minimum": 0}
-  }
+    "reason_codes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[A-Z0-9_]+$"}
+    },
+    "byte_length": {"type": "integer", "minimum": 0},
+    "line_count": {"type": "integer", "minimum": 0},
+    "content_sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"disposition": {"const": "INSPECTED"}}, "required": ["disposition"]},
+      "then": {"required": ["byte_length", "line_count", "content_sha256"]}
+    },
+    {
+      "if": {
+        "properties": {"disposition": {"enum": ["VERIFIED_BLOCKED", "UNINSPECTED"]}},
+        "required": ["disposition"]
+      },
+      "then": {
+        "required": ["reason_codes"],
+        "properties": {"reason_codes": {"minItems": 1}},
+        "not": {
+          "anyOf": [
+            {"required": ["byte_length"]},
+            {"required": ["line_count"]},
+            {"required": ["content_sha256"]}
+          ]
+        }
+      }
+    }
+  ]
 }

@@ -1,0 +1,1 @@
+Optional clean target with ordinary text.
