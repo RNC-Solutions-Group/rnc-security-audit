@@ -1,6 +1,6 @@
 # RNC Security Audit
 
-> **Architecture foundation — design only (10 November 2026).** No RNC detection engine, working CLI, security assessment, or release is claimed by this repository today.
+> **CP0 audit package — contracts, synthetic truth and language selection (10 November 2026).** No RNC production detection engine, working CLI, security assessment, or release is claimed by this repository. CP1 remains gated on operator acceptance.
 
 **RNC Security Audit** is the working home for RNC's security platform. Its first-party secret-detection component is **RNC Scanner**. The wider application will eventually coordinate independent security tools as well. **RNC Security Toolkit** remains the prospective name for a portable distribution, not another codebase.
 
@@ -65,9 +65,13 @@ Reporting reconciles three independently verifiable, append-only logical records
 | Start here | Why |
 | --- | --- |
 | [Architecture index](docs/architecture/README.md) | Four interface contracts: engine, policy, reporting, status/CI |
-| [CP0 data contracts](docs/contracts/README.md) | Versioned JSON Schemas and cross-record invariants |
+| [CP0 data contracts v0.2](docs/contracts/README.md) | Seven schemas, canonical identities and cross-record invariants |
+| [Contract compatibility](docs/contracts/compatibility.md) | v0.1 → v0.2 changes and migration policy |
+| [Harness handoff](docs/contracts/harness-handoff.md) | Tested independent-harness compatibility and outstanding integration |
 | [Roadmap](docs/roadmap.md) | Capability proofs, priority, acceptance and deferred work |
-| [Implementation proofs](docs/implementation/README.md) | What each development checkpoint must demonstrate |
+| [CP0 audit report](docs/implementation/cp0-contract-validation.md) | Deliverable dispositions, evidence, limitations and readiness |
+| [CP1 handoff](docs/implementation/cp1-detection-engine.md) | Rust module boundaries, rules, coverage and acceptance tests |
+| [Language ADR](docs/architecture/adr-007-detector-language.md) | Rust selection and recorded Go tradeoffs |
 | [Historical foundation](docs/foundation/README.md) | Preserved original orchestration concept, workflows, bypass-report sketches and first Gitleaks proof |
 
 ## Development approach
@@ -80,7 +84,7 @@ Reporting reconciles three independently verifiable, append-only logical records
 
 The current Gitleaks modernization and independent scan-harness projects are valuable **comparators and test infrastructure**, not a dependency for designing the RNC engine and not a reason to copy its limitations.
 
-**CP0 decisions (10 November 2026):** benchmark Go and Rust before choosing the detector language; use one versioned configuration model with explicit legacy migration; accept codes `1,2` by default in CI; and validate a full reproducible synthetic corpus plus language probes during CP0. [Decision register](docs/architecture/decisions.md) · [CP0 proof](docs/implementation/cp0-contract-validation.md).
+**CP0 outcomes (10 November 2026):** contract revision `0.2.0` fixes impossible-result and coverage-accounting defects; the authored corpus expanded to 21 targets/26 markers/25 expected findings plus generated 1,000-target and large/oversize edge corpora; an independent synthetic harness grades controlled stub scenarios at **100%**; the pinned external harness scoring engine accepted the handoff; and representative equivalent Go/Rust benchmarks selected **Rust** for the CP1 detector, with Go tradeoffs preserved. Default CI acceptance remains `1,2`. [Decision register](docs/architecture/decisions.md) · [CP0 report](docs/implementation/cp0-contract-validation.md) · [ADR-007](docs/architecture/adr-007-detector-language.md).
 
 ## Safety and implementation status
 
@@ -89,6 +93,6 @@ The current Gitleaks modernization and independent scan-harness projects are val
 - Target scope and active network testing require explicit authorization. Future red-team modes are separate from CI or passive source checks.
 - Disabled/optional checks and unavailable **required** checks have different coverage consequences; zero inspected required targets is never `CLEAN`.
 - No mandatory cloud service, GUI, database, AI summary, or auto-remediation is required for the first proof.
-- Development happens on feature branches and through PRs. **The operator merges**; this documentation pass does not implement a scanner or authorize active tests.
+- Development happens on feature branches and through PRs. **The operator merges**; the CP0 audit does not implement the production scanner, merge a PR, or authorize active tests.
 
 For historical context, the [original day-zero README](docs/foundation/orchestration-v0/project-readme.md) is preserved byte-for-byte. It described an orchestrator **without** a first-party detection engine; that is now a historical design, not the governing architecture.
