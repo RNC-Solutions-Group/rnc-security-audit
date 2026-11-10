@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.rncsolutionsgroup.com/security-audit/v0.1/policy.schema.json",
+  "title": "Applied policy audit record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "effective_policy_digest", "applied_blocks", "dispositions"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "run_id": {"type": "string", "minLength": 1},
+    "effective_policy_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "applied_blocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["unit_id", "policy_id", "origin", "reason", "verified_non_access"],
+        "properties": {
+          "unit_id": {"type": "string", "minLength": 1},
+          "policy_id": {"type": "string", "minLength": 1},
+          "origin": {"enum": ["global", "repository", "cli"]},
+          "reason": {"type": "string", "minLength": 1},
+          "verified_non_access": {"const": true}
+        }
+      }
+    },
+    "dispositions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["finding_id", "status"],
+        "properties": {
+          "finding_id": {"type": "string", "minLength": 1},
+          "status": {"enum": ["ACTIONABLE", "EXEMPTED"]},
+          "policy_id": {"type": "string", "minLength": 1},
+          "origin": {"enum": ["global", "repository", "cli"]},
+          "reason": {"type": "string", "minLength": 1}
+        },
+        "allOf": [{"if": {"properties": {"status": {"const": "EXEMPTED"}}}, "then": {"required": ["policy_id", "origin", "reason"]}}]
+      }
+    },
+    "requested_policy_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+  }
+}

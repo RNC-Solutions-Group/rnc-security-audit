@@ -1,0 +1,36 @@
+{
+  "version": "synthetic-v0.1",
+  "description": "Entire CP0 authored synthetic truth corpus. All markers are deliberately nonfunctional RNC_SYNTH_* strings; external naturalistic corpora are separately inventoried.",
+  "marker_prefix": "RNC_SYNTH_KEY_",
+  "targets": [
+    {"id": "clean", "path": "clean.txt", "expected": []},
+    {"id": "env", "path": "credentials-a.env", "expected": [
+      {"marker": "RNC_SYNTH_KEY_AWS_ALPHA", "rule_id": "synthetic-aws", "count": 1},
+      {"marker": "RNC_SYNTH_KEY_GITHUB_BRAVO", "rule_id": "synthetic-github", "count": 1},
+      {"marker": "RNC_SYNTH_KEY_GENERIC_CHARLIE", "rule_id": "synthetic-generic", "count": 1}
+    ]},
+    {"id": "json", "path": "credentials-b.json", "expected": [
+      {"marker": "RNC_SYNTH_KEY_STRIPE_DELTA", "rule_id": "synthetic-stripe", "count": 1},
+      {"marker": "RNC_SYNTH_KEY_HTTPS_ECHO", "rule_id": "synthetic-https", "count": 1}
+    ]},
+    {"id": "unicode", "path": "mixed-lines.txt", "expected": [
+      {"marker": "RNC_SYNTH_KEY_GENERIC_FOXTROT", "rule_id": "synthetic-generic", "count": 1}
+    ]},
+    {"id": "duplicate", "path": "duplicate.txt", "expected": [
+      {"marker": "RNC_SYNTH_KEY_GENERIC_GOLF", "rule_id": "synthetic-generic", "count": 2}
+    ]},
+    {"id": "blocked", "path": "blocked.txt", "scope": "VERIFIED_BLOCKED", "expected": [
+      {"marker": "RNC_SYNTH_KEY_BLOCKED_HOTEL", "rule_id": "synthetic-blocked", "count": 1}
+    ]},
+    {"id": "exempt", "path": "exempted.txt", "expected": [
+      {"marker": "RNC_SYNTH_KEY_EXEMPT_INDIA", "rule_id": "synthetic-exempt", "count": 1},
+      {"marker": "RNC_SYNTH_KEY_EXEMPT_JULIET", "rule_id": "synthetic-exempt", "count": 1},
+      {"marker": "RNC_SYNTH_KEY_EXEMPT_KILO", "rule_id": "synthetic-exempt", "count": 1}
+    ]},
+    {"id": "decoys", "path": "decoys.txt", "expected": []},
+    {"id": "boundary", "path": "boundary.txt", "expected": [
+      {"marker": "RNC_SYNTH_KEY_EDGE_LIMA", "rule_id": "synthetic-edge", "count": 1},
+      {"marker": "RNC_SYNTH_KEY_EDGE_MIKE", "rule_id": "synthetic-edge", "count": 1}
+    ]}
+  ]
+}

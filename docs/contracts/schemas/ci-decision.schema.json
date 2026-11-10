@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.rncsolutionsgroup.com/security-audit/v0.1/ci-decision.schema.json",
+  "title": "Independent CI acceptance event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["run_id", "result_code", "accepted_result_codes", "accepted", "process_exit_code"],
+  "properties": {
+    "run_id": {"type": "string", "minLength": 1},
+    "result_code": {"enum": [1, 2, 3, 4, 5]},
+    "accepted_result_codes": {"type": "array", "uniqueItems": true, "items": {"enum": [1, 2, 3]}},
+    "accepted": {"type": "boolean"},
+    "process_exit_code": {"enum": [0, 10, 20, 30, 64, 130]}
+  }
+}

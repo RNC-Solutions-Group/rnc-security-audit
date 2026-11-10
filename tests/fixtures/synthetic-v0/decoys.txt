@@ -1,0 +1,4 @@
+These are deliberately invalid and should not be recognized as secrets:
+RNC_DECOY_SHORT
+RNC_DECOY_PUBLIC_LABEL
+RNC_DECOY_NOT_A_TOKEN

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.rncsolutionsgroup.com/security-audit/v0.1/result.schema.json",
+  "title": "Immutable finalized result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "result_code", "result", "counts", "reason_codes"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "run_id": {"type": "string", "minLength": 1},
+    "result_code": {"enum": [1, 2, 3, 4, 5]},
+    "result": {"enum": ["CLEAN", "POLICY_APPLIED", "ACTIONABLE", "INCOMPLETE", "FAILED"]},
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["discovered", "inspected", "verified_blocked", "uninspected", "detected", "actionable", "exempted"],
+      "properties": {
+        "discovered": {"type": "integer", "minimum": 0},
+        "inspected": {"type": "integer", "minimum": 0},
+        "verified_blocked": {"type": "integer", "minimum": 0},
+        "uninspected": {"type": "integer", "minimum": 0},
+        "detected": {"type": "integer", "minimum": 0},
+        "actionable": {"type": "integer", "minimum": 0},
+        "exempted": {"type": "integer", "minimum": 0}
+      }
+    },
+    "reason_codes": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+  },
+  "allOf": [
+    {"if": {"properties": {"result_code": {"const": 1}}}, "then": {"properties": {"result": {"const": "CLEAN"}}}},
+    {"if": {"properties": {"result_code": {"const": 2}}}, "then": {"properties": {"result": {"const": "POLICY_APPLIED"}}}},
+    {"if": {"properties": {"result_code": {"const": 3}}}, "then": {"properties": {"result": {"const": "ACTIONABLE"}}}},
+    {"if": {"properties": {"result_code": {"const": 4}}}, "then": {"properties": {"result": {"const": "INCOMPLETE"}}}},
+    {"if": {"properties": {"result_code": {"const": 5}}}, "then": {"properties": {"result": {"const": "FAILED"}}}}
+  ]
+}

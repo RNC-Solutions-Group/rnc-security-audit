@@ -1,0 +1,2 @@
+This is intentionally ordinary documentation.
+There are no credentials in this file.
