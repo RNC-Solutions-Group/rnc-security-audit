@@ -4,3 +4,5 @@ __pycache__/
 .venv/
 artifacts/
 .cp0-generated/
+tools/cp0/bench/target/
+AGENTS.md
