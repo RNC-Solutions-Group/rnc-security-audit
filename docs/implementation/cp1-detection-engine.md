@@ -1,10 +1,26 @@
 # CP1 — First-party RNC detection engine handoff
 
-> **Not authorized to implement until CP0 operator acceptance.** This is the implementation-ready CP1 brief. Rust is selected in [ADR-007](../architecture/adr-007-detector-language.md); no production engine exists.
+> **CP1 implementation complete; awaiting operator acceptance.** Rust is selected in [ADR-007](../architecture/adr-007-detector-language.md). The implementation lives in `crates/rnc-core` and `crates/rnc-cli`; see [CP1 validation](cp1-validation.md) for measured evidence, limitations and CI status.
 
 ## CP1 objective
 
 Implement one authorized local-working-tree adapter and the Rust detection core that consumes a versioned rule bundle, emits normalized v0.2 finding events, and accounts for every inspected, blocked, uninspected, failed or partially processed unit. Detection only: policy, reporting and CI enforcement remain outside this checkpoint.
+
+## Implemented modules
+
+| Module | Responsibility |
+| --- | --- |
+| `crates/rnc-core/src/path.rs` | Strict source-locator and unit identity |
+| `crates/rnc-core/src/input.rs` | Read-only deterministic discovery, scope pre-filter, limits |
+| `crates/rnc-core/src/rules.rs` | Rule bundle load, finite-bound validation, compile, digest |
+| `crates/rnc-core/src/validate.rs` | Deterministic candidate validation |
+| `crates/rnc-core/src/finding.rs` | Canonical finding events, byte/line index, private digests |
+| `crates/rnc-core/src/stream.rs` | Whole-file and bounded streaming matching |
+| `crates/rnc-core/src/coverage.rs` | v0.2 source-unit and execution records |
+| `crates/rnc-core/src/engine.rs` | Coverage-aware orchestration and stable ordering |
+| `crates/rnc-cli/src/main.rs` | Development CLI, safe summary, private JSON output |
+
+The production crate pins Rust 1.85.0 and dependencies in `Cargo.lock`. `cargo fmt`, `cargo clippy -- -D warnings`, `cargo test --workspace --locked` and release builds are required CI checks.
 
 ## Module boundaries
 

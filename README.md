@@ -1,6 +1,6 @@
 # RNC Security Audit
 
-> **CP0 audit package — contracts, synthetic truth and language selection (10 November 2026).** No RNC production detection engine, working CLI, security assessment, or release is claimed by this repository. CP1 remains gated on operator acceptance.
+> **CP0 + CP1 development package (10 November 2026).** A working Rust detection library and development CLI exist, validated against independent synthetic truth. No production deployment, security assessment, operator acceptance or release is claimed; no PR is merged.
 
 **RNC Security Audit** is the working home for RNC's security platform. Its first-party secret-detection component is **RNC Scanner**. The wider application will eventually coordinate independent security tools as well. **RNC Security Toolkit** remains the prospective name for a portable distribution, not another codebase.
 
@@ -71,18 +71,22 @@ Reporting reconciles three independently verifiable, append-only logical records
 | [Roadmap](docs/roadmap.md) | Capability proofs, priority, acceptance and deferred work |
 | [CP0 audit report](docs/implementation/cp0-contract-validation.md) | Deliverable dispositions, evidence, limitations and readiness |
 | [CP1 handoff](docs/implementation/cp1-detection-engine.md) | Rust module boundaries, rules, coverage and acceptance tests |
+| [CP1 validation](docs/implementation/cp1-validation.md) | Implemented engine, tests, performance, external scoring and limitations |
+| [Rule authoring](docs/implementation/cp1-rule-authoring.md) | Versioned data-only rule bundles and lifecycle |
 | [Language ADR](docs/architecture/adr-007-detector-language.md) | Rust selection and recorded Go tradeoffs |
 | [Historical foundation](docs/foundation/README.md) | Preserved original orchestration concept, workflows, bypass-report sketches and first Gitleaks proof |
 
 ## Development approach
 
-1. **Freeze interfaces and synthetic truth cases** before production detector work.
+1. **Freeze interfaces and synthetic truth cases** before production detector work. *(CP0)*
 2. **Build the RNC Scanner engine first**: deterministic input, rule evaluation, normalized immutable detection events, baseline performance and provenance.
 3. **Build accountable reporting second** with policy, reconciliation, five results, redaction and CI acceptance wired through explicit contracts.
 4. **Validate independently** using a scanner-agnostic harness and known fixtures, then broaden rules and input adapters.
 5. **Reuse the original audit orchestration** when integrating third-party security tools, execution backends, and passive/active modes.
 
 The current Gitleaks modernization and independent scan-harness projects are valuable **comparators and test infrastructure**, not a dependency for designing the RNC engine and not a reason to copy its limitations.
+
+**CP1 outcomes (10 November 2026):** a Rust workspace (`rnc-core` + `rnc-cli`) implements authorized local discovery, strict source paths, versioned synthetic rule bundles, whole-file and bounded streaming matching, deterministic findings, v0.2 execution records and a safe CLI. It detects all **25/25 v1**, **13/13 v0** and **3/3 edge** expected findings in independent truth, and the pinned external harness scoring engine accepts the actual CP1 handoff at **25/25**. See [CP1 validation](docs/implementation/cp1-validation.md) and [rule authoring](docs/implementation/cp1-rule-authoring.md).
 
 **CP0 outcomes (10 November 2026):** contract revision `0.2.0` fixes impossible-result and coverage-accounting defects; the authored corpus expanded to 21 targets/26 markers/25 expected findings plus generated 1,000-target and large/oversize edge corpora; an independent synthetic harness grades controlled stub scenarios at **100%**; the pinned external harness scoring engine accepted the handoff; representative equivalent Go/Rust benchmarks selected **Rust** for the CP1 detector; and all three required CI lanes passed in [run 42905889622](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/42905889622), with Go tradeoffs preserved. Default CI acceptance remains `1,2`. [Decision register](docs/architecture/decisions.md) · [CP0 report](docs/implementation/cp0-contract-validation.md) · [ADR-007](docs/architecture/adr-007-detector-language.md).
 
@@ -93,6 +97,6 @@ The current Gitleaks modernization and independent scan-harness projects are val
 - Target scope and active network testing require explicit authorization. Future red-team modes are separate from CI or passive source checks.
 - Disabled/optional checks and unavailable **required** checks have different coverage consequences; zero inspected required targets is never `CLEAN`.
 - No mandatory cloud service, GUI, database, AI summary, or auto-remediation is required for the first proof.
-- Development happens on feature branches and through PRs. **The operator merges**; the CP0 audit does not implement the production scanner, merge a PR, or authorize active tests.
+- Development happens on feature branches and through PRs. **The operator merges**; CP0 and CP1 are stacked on separate branches, and no merge, deployment or active network test is authorized by this work.
 
 For historical context, the [original day-zero README](docs/foundation/orchestration-v0/project-readme.md) is preserved byte-for-byte. It described an orchestrator **without** a first-party detection engine; that is now a historical design, not the governing architecture.

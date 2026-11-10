@@ -37,11 +37,13 @@ CP0 and CP1 may define interfaces for downstream modules without implementing th
 
 ### CP1 — prove the detector independently
 
-- [ ] Implement Rust source adapter + pre-scan input boundary with exact byte/line mapping, read-only access, symlink/traversal rejection and TOCTOU accounting.
-- [ ] Implement versioned rule bundle and candidate validation; no CI/report/exemption imports into the engine.
-- [ ] Emit normalized v0.2 finding events and explicit operational/coverage errors.
-- [ ] Test zero findings, known positives, duplicates, overlapping rules, invalid content, symlinks, encoding, limits, cancellation and interruption.
-- [ ] Record pinned build/ruleset and measured throughput/memory before optimization; compare against the CP0 comparator.
+- [x] Implement Rust source adapter + pre-scan input boundary with exact byte/line mapping, read-only access, symlink/traversal rejection and TOCTOU accounting.
+- [x] Implement versioned rule bundle and candidate validation; no CI/report/exemption imports into the engine.
+- [x] Emit normalized v0.2 finding events and explicit operational/coverage errors.
+- [x] Test zero findings, known positives, duplicates, overlapping rules, invalid content, symlinks, encoding, limits, cancellation/timeouts and interruption.
+- [x] Record pinned build/ruleset and measured throughput/memory before optimization; compare against the CP0 comparator.
+- [x] Pass independent synthetic truth for v1/v0/edge; pinned external harness scores actual CP1 output.
+- [ ] Required CP1 CI green and operator acceptance.
 
 ### CP2 — prove accountability and enforcement
 
