@@ -51,10 +51,14 @@ def build(destination: Path) -> dict:
     large_markers = [
         (0, b"RNC_SYNTH_KEY_EDGE_LARGE_ALPHA"),
         (1024 * 1024, b"RNC_SYNTH_KEY_EDGE_LARGE_BRAVO"),
-        (len(large) - 32, b"RNC_SYNTH_KEY_EDGE_LARGE_CHARLIE"),
+        (len(large) - 64, b"RNC_SYNTH_KEY_EDGE_LARGE_CHARLIE"),
     ]
     for offset, marker in large_markers:
         _place(large, offset, marker)
+        terminator = offset + len(marker)
+        if terminator >= len(large):
+            raise ValueError("large marker has no byte available for a terminating delimiter")
+        large[terminator] = 10
     large_path = destination / "large-2m.bin"
     large_path.write_bytes(large)
     targets.append(_target(
@@ -62,7 +66,7 @@ def build(destination: Path) -> dict:
         "large-2m.bin",
         bytes(large),
         [
-            {"marker": marker.decode("ascii"), "rule_id": "synthetic-edge-large", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE", "start_byte": offset, "end_byte": offset + len(marker)}
+            {"marker": marker.decode("ascii"), "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE", "start_byte": offset, "end_byte": offset + len(marker)}
             for offset, marker in large_markers
         ],
     ))
@@ -73,6 +77,7 @@ def build(destination: Path) -> dict:
     oversize_marker = b"RNC_SYNTH_KEY_EDGE_OVERSIZE_DELTA"
     oversize_offset = 8 * 1024 * 1024 + 128
     _place(oversize, oversize_offset, oversize_marker)
+    oversize[oversize_offset + len(oversize_marker)] = 10
     oversize_path = destination / "oversize-9m.bin"
     oversize_path.write_bytes(oversize)
     targets.append(_target(
@@ -80,7 +85,7 @@ def build(destination: Path) -> dict:
         "oversize-9m.bin",
         bytes(oversize),
         [
-            {"marker": oversize_marker.decode("ascii"), "rule_id": "synthetic-edge-large", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE", "start_byte": oversize_offset, "end_byte": oversize_offset + len(oversize_marker)}
+            {"marker": oversize_marker.decode("ascii"), "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE", "start_byte": oversize_offset, "end_byte": oversize_offset + len(oversize_marker)}
         ],
         scope="UNINSPECTED",
         reason="FILE_SIZE_LIMIT",

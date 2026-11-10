@@ -64,6 +64,15 @@ WINDOWS_DEVICE_NAMES = {
     *(f"LPT{index}" for index in range(1, 10)),
 }
 WINDOWS_FORBIDDEN_CHARS = frozenset('<>:"\\|?*')
+FORMAT_CONTROL_CODEPOINTS = (
+    {0x00AD, 0x061C, 0x180E, 0xFEFF, 0xE0001}
+    | set(range(0x200B, 0x2010))
+    | set(range(0x202A, 0x202F))
+    | set(range(0x2060, 0x2070))
+    | {0x2028, 0x2029}
+    | set(range(0xFFF9, 0xFFFC))
+    | set(range(0xE0020, 0xE0080))
+)
 
 
 class ContractViolation(ValueError):
@@ -103,9 +112,9 @@ def canonical_locator(locator: str) -> str:
     """
     if not isinstance(locator, str) or not locator:
         raise ContractViolation("LOCATOR_INVALID", "locator must be a non-empty string")
-    if "\x00" in locator or any(ord(char) < 0x20 or ord(char) == 0x7F for char in locator):
-        raise ContractViolation("LOCATOR_INVALID", "locator contains a NUL or control character")
-    if any(unicodedata.category(char) in {"Cf", "Cs", "Zl", "Zp"} for char in locator):
+    if any(unicodedata.category(char) in {"Cc", "Cs"} for char in locator):
+        raise ContractViolation("LOCATOR_INVALID", "locator contains a NUL, surrogate or control character")
+    if any(ord(char) in FORMAT_CONTROL_CODEPOINTS for char in locator):
         raise ContractViolation("LOCATOR_INVALID", "locator contains a formatting or separator control character")
     if unicodedata.normalize("NFC", locator) != locator:
         raise ContractViolation("LOCATOR_NON_NFC", "locator must be NFC-normalized")
