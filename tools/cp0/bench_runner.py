@@ -405,7 +405,11 @@ def measure(work: Path, runs: int) -> dict:
                         if metrics["peak_rss_kb"] is not None:
                             memory[language].append(metrics["peak_rss_kb"])
                         if metrics["user_seconds"] is not None and metrics["system_seconds"] is not None:
-                            cpu[language].append(100.0 * (metrics["user_seconds"] + metrics["system_seconds"]) / (metrics["wall_ms"] / 1000.0))
+                            cpu_seconds = metrics["user_seconds"] + metrics["system_seconds"]
+                            # GNU time reports hundredths of a second; a zero
+                            # reading for a sub-100 ms run is not measurable.
+                            if cpu_seconds > 0:
+                                cpu[language].append(100.0 * cpu_seconds / (metrics["wall_ms"] / 1000.0))
                 row = {
                     "workload": workload["name"],
                     "mode": mode,
