@@ -21,7 +21,7 @@ This audit corrected the contracts to schema **v0.2.0**, expanded the authored a
 | Twelve result-classification cases | Yes | 12 v0 cases preserved; 16 additional v0.2 cases added (28 total) |
 | Perfect / missed / false-positive stub modes | Partial | Existing stub emitted only findings; corrected to emit execution/policy/result/CI and calibrated by an independent harness |
 
-The claim “11 local tests” was accurate for the original tree. The audited suite now contains **69 tests** and covers the added contracts, corpus, harness, external handoff and benchmark infrastructure.
+The claim “11 local tests” was accurate for the original tree. The audited suite now contains **74 tests** and covers the added contracts, corpus, harness, external handoff and benchmark infrastructure.
 
 ## 3. Deliverable inventory and disposition
 
@@ -107,6 +107,18 @@ The single job did not run an independent scorer, representative benchmark or ex
 ### D15 — No publication-safety check
 
 The old tests did not reject secret-shaped values or private paths in public records. CP0 adds a fail-closed publication check and a redacted handoff.
+
+### D16 — CI pipeline failure propagation
+
+The workflow used `... | tee` logging with no explicit failure propagation guarantee. A failing validator or test could therefore be masked by the successful `tee` process. The workflow now sets `defaults.run.shell: bash` (GitHub's built-in Bash shell uses `-eo pipefail`), adds explicit `set -o pipefail` to piped steps, and includes a controlled negative probe: a deliberately failing `false | tee` step is marked `continue-on-error` but a following assertion requires its outcome to be `failure`. Static regression coverage is in `tests/cp0/test_ci_workflow.py`; runtime proof is in required CI.
+
+### D17 — Ambiguous source-path normalization
+
+The old `canonical_locator()` silently repaired backslashes, leading `./`, and repeated separators. On a POSIX filesystem, a backslash can be a filename character, so this could collapse distinct paths; on case-insensitive or normalization-sensitive platforms, similar collisions were possible. The locator is now a strict trust-boundary grammar: NFC, `/`-only, relative, case-sensitive, no `./`, empty, dot, traversal, trailing-separator, control, platform-ambiguous, device-name or absolute/drive/UNC forms. Adapters must normalize native acquisition paths before calling it. Policy selectors and harness paths follow the same trust boundary but remain a separate glob grammar. Positive, negative and cross-platform regression tests were added.
+
+### D18 — Sensitive credential-derived digests
+
+The unkeyed `evidence_digest` and the finding ID derived from it can permit offline guessing of low-entropy credentials. They are now explicitly classified as **private evidence**, not public report fields. The result and CI records remain publication-safe; the stricter `assert_public_report_safe` rejects `finding_id`, `evidence_digest`, `content_sha256`, locators and secret-shaped values. CP1's CLI summary will emit counts only, and JSON findings are a private export. HMAC-SHA-256 was evaluated for future cross-trust correlation but is not implemented without an approved key-management use case; see [evidence-privacy.md](../architecture/evidence-privacy.md).
 
 ## 5. Contract revision v0.2
 
@@ -216,16 +228,22 @@ No external corpus was downloaded or scanned. Native corpus scores and RNC norma
 
 The workflow `.github/workflows/cp0-contracts.yml` has three required lanes:
 
-1. **contracts, corpus and synthetic harness** — validation, 69 tests, deterministic 1,000-target generation twice, edge corpus, stub modes, harness self-check, handoff export;
+1. **contracts, corpus and synthetic harness** — validation, 74 tests, deterministic 1,000-target generation twice, edge corpus, stub modes, harness self-check, handoff export;
 2. **equivalent Go/Rust benchmarks** — pinned Go 1.23.4 and Rust 1.85.0, literal baseline, representative 18-profile benchmark, machine-readable artifacts;
 3. **pinned independent-harness scoring contract** — fetches the exact external revision by SHA and executes its truth loader/scoring engine on CP0 handoffs.
 
 Missing toolchains fail the job; they are not skipped and reported as success. Artifacts are retained for 90 days. No secrets or raw matched values are uploaded.
 
+### Observed CP0 correction CI — run 42911532951
+
+- Run: [42911532951](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/42911532951), head `67131a359097401fe88cc6d7d031fe66e4e9650a`, conclusion **success**.
+- All three required jobs passed. The contracts job ran **74/74 tests**, the controlled negative pipeline probe failed as intended, and the following assertion confirmed `outcome == failure`.
+- The strict canonical-locator and public-report privacy regressions are included in that run.
+
 ### Observed CI evidence — run 42905889622
 
 - Run: [42905889622](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/42905889622), head `a211b1a8f6da0d83f55b24afb3188373e18c6ed6`, conclusion **success**, all three required jobs passed.
-- `cp0-contracts-corpus-harness`: validator passed; **69/69** tests; harness self-check **18/18 (100%)**; deterministic corpus manifests; edge corpus validated; artifacts preserved.
+- `cp0-contracts-corpus-harness`: validator passed; **74/74** tests; harness self-check **18/18 (100%)**; deterministic corpus manifests; edge corpus validated; artifacts preserved.
 - `cp0-representative-benchmarks`: Go 1.23.4 / Rust 1.85.0; all 18 profiles correct; machine-readable artifact retained (artifact ID `13803834728`, digest `sha256:669228167c5bb509646a95f0b290f411a68c1516004d870b85563a792853f559`).
 - `cp0-external-harness-contract`: pinned external scoring engine accepted all four synthetic handoff cases; no external corpus was executed.
 - Full contract artifact: ID `13803883849`, digest `sha256:663ef2fb933a69bce3816a3d4ccaf22969aead934777bb3421ff9d0793a5c7bf`. External-contract artifact: ID `13805725583`, digest `sha256:a23ce6f61655665cc6b220bbc4aa00d881a9a5a36d989ca84f76855db0fda054`.
@@ -256,6 +274,9 @@ Missing toolchains fail the job; they are not skipped and reported as success. A
 - [x] Rust selection is recorded with alternatives and tradeoffs.
 - [x] `.rncscanner.toml` and explicit legacy migration are specified and reference-tested.
 - [x] Default CI acceptance and `4`/`5` rejection are enforced independently of result codes.
+- [x] CI pipeline failure propagation is explicit and proven by a controlled negative step.
+- [x] Source locators use one strict, cross-platform canonical grammar.
+- [x] Sensitive evidence digests are classified as private; public-report checks reject them.
 - [x] Public/redaction checks fail closed for secret-shaped values and locators.
 - [x] Pinned external harness scoring engine accepts the synthetic handoff.
 - [x] CP1 module boundaries, interfaces, rule lifecycle, coverage and acceptance tests are documented.
@@ -264,4 +285,4 @@ Missing toolchains fail the job; they are not skipped and reported as success. A
 
 ## 14. Readiness classification
 
-**READY** for operator acceptance. All required CP0 CI lanes passed (run 42905889622), contracts and synthetic scoring reconcile, representative benchmarks are reproducible and a language decision is recorded. This is not **accepted**: §12 limitations remain disclosed, no PR is merged, and CP1 remains blocked until the operator decides.
+**READY** for operator acceptance. All required CP0 CI lanes passed on the initial audit run; final correction CI is recorded in PR #4. Contracts and synthetic scoring reconcile, representative benchmarks are reproducible and a language decision is recorded. This is not **accepted**: §12 limitations remain disclosed, no PR is merged, and CP1 remains blocked until the operator decides.
