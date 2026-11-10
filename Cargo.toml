@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = ["crates/rnc-core", "crates/rnc-cli"]
+exclude = ["tools/cp0/bench"]
 
 [workspace.package]
 version = "0.1.0"
