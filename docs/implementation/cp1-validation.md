@@ -1,6 +1,6 @@
 # CP1 — Rust detection engine validation
 
-> **Status:** CP1 implementation complete; awaiting operator acceptance. CP0 corrections are on `feat/cp0-audit-hardening`; CP1 is on `feat/cp1-rust-detection-engine` and targets the CP0 branch as a stacked PR. No merge has occurred.
+> **Status:** CP1 implementation complete and CI-verified; awaiting operator acceptance. CP0 corrections are on `feat/cp0-audit-hardening`; CP1 is on `feat/cp1-rust-detection-engine` and targets the CP0 branch as a stacked PR. No merge has occurred.
 
 ## Implementation
 
@@ -89,6 +89,37 @@ Local rule compilation (`rnc rules validate`) measured ~8.8 ms median. Build tim
 
 These values are **production-engine measurements**, not the CP0 disposable-probe numbers. The CP0 Rust probe was faster because it performed no line index, rule validation, hashing or v0.2 record generation.
 
+## CI evidence — run 42921566453
+
+All required CP1 jobs passed on head `29677ed3efc07d3c5c1992a51c3cec74887aeff6`:
+
+| Lane | Result |
+| --- | --- |
+| Rust quality, integration and benchmark | PASS — fmt, clippy `-D warnings`, tests, release build, 5-case integration, benchmark |
+| Ubuntu 24.04 build/tests | PASS |
+| Windows latest build/tests | PASS |
+| macOS latest build/tests | PASS |
+| Dependency advisory audit | PASS — `cargo-audit` 0.22.1 |
+| Pinned external harness scores CP1 output | PASS — 25/25, no exceptions |
+| CP1 Python rule tests | PASS |
+
+Artifacts (90-day retention):
+
+- `cp1-rust-engine-evidence` — ID `13812122017`, digest `sha256:35d340a2164a3017ffd2c4f5cf0e11f26977aea0af523914083c4a25b903deda`.
+- `cp1-external-harness-score` — ID `13812880536`, digest `sha256:3b7cba92b8725a3074a4015af7229206d7f7dac02e7951beeb59c20ccd2db171`.
+
+CI release build: 18.46 s, 2.39 MB binary. Pinned Linux measurements (5 runs, single-threaded):
+
+| Workload | Whole MiB/s | Stream MiB/s |
+| --- | ---: | ---: |
+| 32 MiB / 64 markers | 322 | 291 |
+| 32 MiB / 4,096 markers | 259 | 100 |
+| 2,000 × 4 KiB | 109 | 99 |
+| 8 MiB FP-heavy | 122 | 116 |
+| 8 MiB Unicode | 279 | 190 |
+
+RSS was measured for all CI profiles; the large-file whole path peaked around 41–45 MB, streaming around 4–9 MB. The full sample set, medians, p95 and binary digest are in the artifact.
+
 ## Security and adversarial evidence
 
 - All fixtures are harmless synthetic `RNC_SYNTH_KEY_*` values.
@@ -124,9 +155,9 @@ These values are **production-engine measurements**, not the CP0 disposable-prob
 - [x] Actual CP1 handoff scored by pinned external engine.
 - [x] No raw credentials in logs/public artifacts.
 - [x] Performance and build evidence produced.
-- [ ] Required CI runs green and evidence recorded.
+- [x] Required CI runs green and evidence recorded.
 - [ ] Operator accepts CP0 and CP1.
 
 ## Readiness
 
-**Pending final CI.** Once required CP1 CI and the stacked PR checks pass, CP1 is **READY for operator review**. It is not accepted, deployed or merged by this work.
+**READY for operator review.** Required CI and cross-platform checks passed; independent synthetic truth and the pinned external scoring engine agree. CP1 is not accepted, deployed or merged by this work. A final CLI guard rejects private output paths inside the scan root; its regression test runs in the same suite and the final stacked PR CI rerun covers the final head.

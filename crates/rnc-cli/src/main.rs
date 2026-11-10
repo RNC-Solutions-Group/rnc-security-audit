@@ -187,6 +187,19 @@ fn run_scan(arguments: &[String]) -> i32 {
             return 1;
         }
     };
+    if let Some(output) = &args.output {
+        let parent = output.parent().unwrap_or_else(|| std::path::Path::new("."));
+        let resolved = std::fs::canonicalize(parent).unwrap_or_else(|_| parent.to_path_buf());
+        if resolved.starts_with(source.root())
+            || output.exists()
+                && std::fs::canonicalize(output)
+                    .map(|path| path.starts_with(source.root()))
+                    .unwrap_or(false)
+        {
+            eprintln!("error: private output must be outside the scan root");
+            return 1;
+        }
+    }
     let discovery = source.discover();
     let config = RunConfig {
         run_id: args.run_id,

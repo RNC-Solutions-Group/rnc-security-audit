@@ -20,7 +20,8 @@ fn scan_writes_private_json_and_safe_summary() {
         b"KEY=RNC_SYNTH_KEY_GENERIC_CLI_ALPHA\n",
     )
     .unwrap();
-    let output = temp.path().join("private.json");
+    let output_dir = tempfile::tempdir().unwrap();
+    let output = output_dir.path().join("private.json");
     let completed = Command::new(binary())
         .args([
             "scan",
@@ -95,4 +96,31 @@ fn rules_validate_is_useful_and_safe() {
     assert!(stdout.contains("Ruleset: rnc-synthetic-v1"));
     assert!(stdout.contains("Rules: 10"));
     assert!(stdout.contains("Digest: sha256:"));
+}
+
+#[test]
+fn private_output_inside_scan_root_is_rejected() {
+    let temp = tempfile::tempdir().unwrap();
+    fs::write(
+        temp.path().join("env.txt"),
+        b"KEY=RNC_SYNTH_KEY_GENERIC_CLI_ALPHA\n",
+    )
+    .unwrap();
+    let output = temp.path().join("private.json");
+    let completed = Command::new(binary())
+        .args([
+            "scan",
+            "--root",
+            temp.path().to_str().unwrap(),
+            "--rules",
+            rules().to_str().unwrap(),
+            "--format",
+            "json",
+            "--output",
+            output.to_str().unwrap(),
+        ])
+        .output()
+        .unwrap();
+    assert_eq!(completed.status.code(), Some(1));
+    assert!(!output.exists());
 }
