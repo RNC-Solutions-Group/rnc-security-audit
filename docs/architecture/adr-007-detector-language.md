@@ -27,7 +27,7 @@ A local Windows run (Go 1.27.3, Rust 1.85.0) showed Go faster on many-small-file
 | Option | Assessment |
 | --- | --- |
 | **Rust** | Selected. Best measured regex, adversarial and large-file throughput; memory-safe; small stripped binary; regex crate is linear-time and rejects backreferences/lookaround. Costs: slower cold builds, five pinned crates, target-specific cross-builds. |
-| **Go** | Rejected for the production engine, retained as a comparator. Fast builds, one static binary, trivial cross-compilation, standard library only. It was slower on representative regex-heavy workloads and especially on false-positive-heavy/worst-case inputs, though faster on many-small-files. |
+| **Go** | Rejected for the production engine, retained as a comparator. Fast builds, one static binary, trivial cross-compilation, standard library only. It was slower on representative regex-heavy workloads and especially on false-positive-heavy/worst-case inputs. A local Windows run showed a many-small-file advantage, but it did not reproduce on the pinned Linux runner. |
 | **Python** | Rejected for the detector core. The historical audit controller may remain Python, but byte-precise, high-throughput rule execution and portable distribution favor a compiled engine. |
 | **Defer selection** | Rejected. CP1 cannot begin without a stable language and module boundary; the evidence is sufficient for a reversible CP0 decision. |
 
@@ -36,7 +36,7 @@ A local Windows run (Go 1.27.3, Rust 1.85.0) showed Go faster on many-small-file
 | Criterion | Rust evidence | Go evidence | Weight |
 | --- | --- | --- | --- |
 | Correctness | Exact counts/checksums on all profiles | Exact counts/checksums on all profiles | Mandatory gate; tie |
-| Representative performance | Lower median latency on 17/18 CI profiles, including worst-case and FP-heavy | One marginal Unicode win; slower on adversarial and large-rule-set loads | High |
+| Representative performance | Lower median latency on 17/18 CI profiles, including worst-case and FP-heavy | One Unicode whole-file win; slower on adversarial, large-rule-set and small-file loads on CI | High |
 | Build and CI cost | 10.2 s cold build; five pinned crates in the lockfile | 0.43 s build; standard library only | Medium |
 | Binary/distribution | 2.00 MB stripped on CI; glibc dynamic by default | 1.87 MB stripped on CI; static by default | Medium |
 | Security | Memory-safe; `regex` rejects unsafe constructs and is linear-time | Memory-safe; RE2-style `regexp` is linear-time | Mandatory gate; tie |
