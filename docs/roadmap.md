@@ -29,7 +29,8 @@ CP0 and CP1 may define interfaces for downstream modules without implementing th
 - [x] Agree Go/Rust benchmark requirement, CI default codes `1,2`, full synthetic corpus scope and unified config migration direction in the [ADR register](architecture/decisions.md).
 - [x] Draft [config migration semantics](architecture/config-migration.md) and [threat model](architecture/threat-model.md).
 - [x] Create initial [machine-readable schemas](contracts/README.md) and authored + generated synthetic corpus specification with CP0 validation tests.
-- [ ] Observe Go/Rust benchmark CI artifact, confirm toolchain/platform fairness and document language selection criteria.
+- [x] Observe compiled Go/Rust **primitive** benchmark CI artifact, confirm same-runner toolchains/correctness, record nine comparable measured profiles.
+- [ ] Evaluate representative rule/regex/streaming/security workload before selecting Go or Rust for CP1.
 - [ ] Approve final schema version, rule-set licensing, required-scope details, config filename, and CP1 entry gate.
 
 ### CP1 — prove the detector independently

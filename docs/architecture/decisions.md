@@ -1,6 +1,6 @@
 # CP0 architecture decisions — ADR register
 
-Status: **Approved directions, implementation details pending benchmark evidence** (10 November 2026).
+Status: **Approved directions; initial Go/Rust primitive benchmark observed, language decision pending representative engine evidence** (10 November 2026).
 
 | ID | Decision | Consequence / next check |
 | --- | --- | --- |
@@ -13,7 +13,7 @@ Status: **Approved directions, implementation details pending benchmark evidence
 ## Decision review checkpoints
 
 1. Confirm CP0 schema shape and cross-record identity/count/finalization rules.
-2. Read actual CI-run Go/Rust benchmark artifacts; verify compiler/runtime versions, input digests, correctness, repetitions and hardware parity. These probes test only a small common primitive; **they cannot alone settle production language choice**.
+2. Review the [completed primitive Go/Rust benchmark](../implementation/cp0-contract-validation.md#observed-gorust-benchmark--github-actions-run-42877562151) and retained CI artifact. Rust was faster on this narrow workload, but these probes **cannot alone settle production language choice**.
 3. Record the selected language plus regex/streaming/validation prototype evidence in a follow-up ADR before CP1.
 4. Agree the unified config filename/namespace and compatibility warning/deprecation windows before adding parsers.
 

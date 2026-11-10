@@ -4,7 +4,7 @@ This folder will hold short capability-proof briefs, test commands and verified 
 
 | Checkpoint | Current state | First acceptance evidence |
 | --- | --- | --- |
-| CP0 — contracts | **In progress: schemas and local synthetic validation prepared; Go/Rust CI results pending** | [CP0 brief](cp0-contract-validation.md), reviewed schemas, precedence matrix, full corpus, benchmark evidence |
+| CP0 — contracts | **In progress: schemas, synthetic corpus and primitive Go/Rust CI pass; language/contract sign-off pending** | [CP0 brief](cp0-contract-validation.md), reviewed schemas, precedence matrix, full corpus, benchmark evidence |
 | CP1 — RNC detector | Not started | Deterministic synthetic detections and complete unit ledger |
 | CP2 — policy/reporting | Not started | Exact reconciliation, redaction, five outcomes and CI acceptance |
 | CP3 — harness | External work exists; integration not validated here | Synthetic stub grades exactly as predicted; independent scanner adapter |
