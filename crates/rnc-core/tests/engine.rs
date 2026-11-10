@@ -306,3 +306,24 @@ fn changed_file_is_not_inspected() {
     assert_eq!(report.execution.units[0].disposition, "UNINSPECTED");
     assert_eq!(report.execution.units[0].reason_codes, vec!["FILE_CHANGED"]);
 }
+
+#[cfg(unix)]
+#[test]
+fn replaced_file_is_not_followed_as_symlink() {
+    use std::os::unix::fs::symlink;
+    let temp = tempdir().unwrap();
+    let outside = tempdir().unwrap();
+    let path = temp.path().join("swap.txt");
+    write(&path, b"RNC_SYNTH_KEY_GENERIC_ALPHA\n");
+    let source = LocalSource::new(temp.path().to_path_buf(), &[], &[], &[]).unwrap();
+    let discovery = source.discover();
+    fs::remove_file(&path).unwrap();
+    write(
+        &outside.path().join("outside.txt"),
+        b"RNC_SYNTH_KEY_GENERIC_BRAVO\n",
+    );
+    symlink(outside.path().join("outside.txt"), &path).unwrap();
+    let report = scan(discovery, &rules_v1(), &config(ScanMode::Whole)).unwrap();
+    assert!(report.findings.is_empty());
+    assert_eq!(report.execution.units[0].disposition, "UNINSPECTED");
+}

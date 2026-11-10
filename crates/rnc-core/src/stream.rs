@@ -2,7 +2,7 @@
 
 use std::collections::HashSet;
 use std::fmt;
-use std::fs::{self, File};
+use std::fs::{self, File, OpenOptions};
 use std::io::{Read, Take};
 use std::path::Path;
 use std::time::{Instant, SystemTime};
@@ -59,6 +59,23 @@ impl fmt::Display for FileScanError {
             _ => write!(formatter, "{}", self.reason_code()),
         }
     }
+}
+
+fn open_readonly(path: &Path) -> std::io::Result<File> {
+    let mut options = OpenOptions::new();
+    options.read(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        options.custom_flags(libc::O_NOFOLLOW);
+    }
+    #[cfg(windows)]
+    {
+        use std::os::windows::fs::OpenOptionsExt;
+        // FILE_FLAG_OPEN_REPARSE_POINT: do not follow a substituted symlink.
+        options.custom_flags(0x0020_0000);
+    }
+    options.open(path)
 }
 
 #[derive(Debug)]
@@ -133,7 +150,7 @@ fn scan_whole(
     if Instant::now() >= config.deadline {
         return Err(FileScanError::Timeout);
     }
-    let file = File::open(path).map_err(|_| FileScanError::Io("open"))?;
+    let file = open_readonly(path).map_err(|_| FileScanError::Io("open"))?;
     let mut reader: Take<File> = file.take(config.max_file_bytes.saturating_add(1));
     let mut data = Vec::with_capacity(expected_size.min(config.max_file_bytes) as usize);
     reader
@@ -188,7 +205,7 @@ fn scan_stream(
         return Err(FileScanError::Io("stream_config"));
     }
     let overlap = rules.max_match_bytes.max(1);
-    let mut file = File::open(path).map_err(|_| FileScanError::Io("open"))?;
+    let mut file = open_readonly(path).map_err(|_| FileScanError::Io("open"))?;
     let mut chunk = vec![0u8; config.stream_chunk_bytes];
     let mut carry: Vec<u8> = Vec::with_capacity(overlap);
     let mut carry_offset = 0usize;

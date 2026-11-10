@@ -126,7 +126,7 @@ RSS was measured for all CI profiles; the large-file whole path peaked around 41
 - JSON findings contain no raw matched bytes.
 - Default summary contains no marker bytes, `evidence_digest` or `finding_id`.
 - JSON output requires an explicit path; on Unix it is created with mode `0600`.
-- Symlink files are never followed; symlink entries are recorded as uninspected.
+- Symlink entries are recorded as uninspected and never enumerated. File opens use `O_NOFOLLOW` on Unix and `FILE_FLAG_OPEN_REPARSE_POINT` on Windows so a file swapped for a symlink after discovery is rejected rather than followed.
 - Path traversal, backslashes, absolute/drive/UNC paths, `./`, repeated separators, dot segments, control/bidi characters and Windows device names are rejected.
 - The CLI never implements policy exemptions, result classification or CI acceptance.
 - Timeout and max-findings stops retain prior findings but mark the current/remaining units uninspected; a partial unit does not claim inspection.
