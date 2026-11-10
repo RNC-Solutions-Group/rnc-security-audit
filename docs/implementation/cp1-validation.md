@@ -139,7 +139,7 @@ RSS was measured for all CI profiles; the large-file whole path peaked around 41
 3. **No external corpus execution.** Levain/Leaky Repo/Prowlbench remain deferred; no external accuracy claim.
 4. **Same-line external collision.** The external harness is line-addressed; the CP1 handoff retains byte offsets but two same-rule findings on one line still need a composite policy or harness extension.
 5. **No full CP2 policy/config integration.** CP1 accepts explicit `--exclude`/`--skip`/`--optional` scope controls; it does not load `.rncscanner.toml` or apply exemptions.
-6. **Platform distribution.** Release builds are validated in CI on Linux/Windows/macOS where available; static musl packaging and installer work are deferred.
+6. **Platform distribution.** Release builds are validated in CI on Linux/Windows/macOS, and a static `x86_64-unknown-linux-musl` build is checked. Installer/signing work and non-x86_64 packaging are deferred; the musl binary is build-validated, not a released artifact.
 7. **No real credential validation or network verification.** This is intentional.
 8. **Synthetic rules only.** The committed bundles are test/synthetic rules, not a production signature set.
 
