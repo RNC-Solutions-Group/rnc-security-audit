@@ -1,7 +1,7 @@
 # CP3 validation - detection intelligence and accuracy
 
-> **Status:** CP3 corrective review complete; operator review pending. Provider
-> format recognition is not proof of an active, authorized, complete or
+> **Status:** CP3 corrective review complete; **READY FOR OPERATOR MERGE**.
+> Provider format recognition is not proof of an active, authorized, complete or
 > non-revoked credential.
 
 ## Repository state
@@ -10,16 +10,26 @@
 | --- | --- |
 | Branch | `feat/cp3` |
 | Reviewed starting head | `13b1d6b40cc56b7389bbd2eeef7d70794c15a68c` |
-| Final implementation head | `396a046839e78192dcb68b6686781f4011eeb4a0` |
+| Final implementation head | `8c004945fc64ac11d3947c73acc65b100c803d90` |
 | Documentation evidence | branch head at report time; see PR [#10](https://github.com/RNC-Solutions-Group/rnc-security-audit/pull/10) |
 | Pull request | [#10](https://github.com/RNC-Solutions-Group/rnc-security-audit/pull/10) |
-| Target | `main` |
+| Target | `feat/cp4` (operator redirected PR #10 from `main`) |
 | Merge | Operator-owned; no merge performed |
-| Base | `main` at `e54d5bc`; CP2 was merged into `feat/cp3`, not `main` |
+| Base | `feat/cp4` at `e54d5bc`; `main` remains at `e54d5bc` |
 
 The CP2 implementation, CP0-CP2 contracts and all synthetic v0/v1 truth are
 preserved. CP3 still uses a separate provider catalog; it does not change the
 synthetic bundles' schema or established digests.
+
+### Operator CI workflow correction
+
+The operator added commit `8c00494` ("Change push branch from feat/cp3 to main")
+to `.github/workflows/cp3-provider.yml`. It changes only the `push.branches`
+filter from `feat/cp3` to `main`; the `pull_request` trigger remains
+branch-independent, so PR #10 still executes after the target was redirected to
+`feat/cp4`. This is an operator-owned CI correction; the corrective CP3 code did
+not alter the workflow semantics. The green CP3 run below was created by the
+`pull_request` event at `8c00494`, not by a push to `feat/cp3`.
 
 ## Corrective findings and dispositions
 
@@ -56,7 +66,7 @@ See [cp3-detection-catalog.md](cp3-detection-catalog.md).
 
 | Suite | Result |
 | --- | --- |
-| Rust workspace, `--all-targets` | **95 tests** pass: 59 core + 8 CLI integration + 5 CLI unit + 15 engine + 4 provider + 2 AWS taxonomy + 2 GitHub installation |
+| Rust workspace, `--all-targets` | **106 tests** pass on Linux CI: 61 core + 10 CLI integration + 9 CLI unit + 18 engine + 4 provider + 2 AWS taxonomy + 2 GitHub installation. Local Windows runs **95** because platform-gated tests are excluded. |
 | CP0 contract/corpus/harness | **74 tests** pass |
 | CP1 synthetic rules | **5 tests** pass |
 | CP3 Python schema/scorer/adapter/security | **55 tests** pass |
@@ -258,51 +268,87 @@ CPU/RSS.
 | `small-many` | 411.3 | 324.7 | 300.8 | 400.4 |
 | `fp-heavy` | 260.5 | 235.9 | 298.9 | 253.8 |
 
-The new long installation-token workload completes at 123-145 ms across
-strategies. RegexSet remains faster than reference regex on large-high and
-large-low; auto deliberately stays on reference regex. The provider catalog is
-materially slower than the synthetic 10-rule CP2 baseline, as expected from 19
-rules, multiline PEM/JWT structure and validation. No validator was removed to
-recover throughput. Cross-version numbers are workload-plus-engine changes, not
-pure speedups.
+Final CI Linux benchmark (`cp3-benchmark-evidence`, run `43101673071`):
 
-Final CI Linux benchmark values and artifact IDs are recorded in the final
-evidence section after the final-head CI run.
+- Build: **33.304 s**
+- Binary: **3,172,912 bytes**, SHA-256
+  `10a1f757e0eb9d892dc54f74f247420af5e7ffa9ed51ef888f96c579bc959516`
+- Rule compilation: median **45.171 ms**, p95 **48.256 ms**
+- **88 profiles** (11 workloads x 2 modes x 4 strategies), all expected finding
+  counts correct
+
+| Workload | Regex ms | RegexSet ms | Prefilter ms | Auto ms | Regex peak RSS KiB | Regex CPU % |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `large-low` | 147.7 | 115.4 | 125.3 | 147.0 | 31,216 | 94.72 |
+| `large-high` | 189.9 | 156.8 | 164.3 | 189.6 | 39,936 | 94.78 |
+| `github-installation-long` | 107.4 | 99.9 | 104.1 | 107.3 | 27,088 | 93.08 |
+| `small-many` | 66.7 | 65.1 | 64.9 | 66.3 | 23,720 | 89.22 |
+| `fp-heavy` | 212.8 | 223.8 | 220.5 | 212.2 | 27,776 | 93.99 |
+
+On the controlled CI host, the new installation-token workload is
+**107.4 ms** under reference regex and **99.9 ms** under RegexSet. Large-high is
+**189.9 ms** regex and **156.8 ms** RegexSet. The RegexSet implementation
+remains the required-literal filter, not the pathological full-pattern set.
+The prior CI run for the 16-rule catalog measured build 35.158 s, binary
+3,168,816 bytes and compile median 39.1 ms; the corrected catalog adds a rule,
+a workload and the modern token path. That is a workload-plus-engine change,
+not a pure speedup or regression claim.
+
+The provider catalog is materially slower than the synthetic 10-rule CP2
+baseline, as expected from 19 rules, multiline PEM/JWT structure and validation.
+No validator was removed to recover throughput. Local and CI numbers are from
+different hosts and are not a controlled cross-host comparison.
 
 ## Required CI
 
-Final-head CI evidence: **blocked by GitHub Actions runner queue**. The corrective
-push created CP0/CP1/CP2/CP3 runs (including CP3 run `43096243646` and CP1 run
-`43096243637` at implementation head `396a046`), but at the time of this report
-they remained `queued` with zero jobs assigned for more than 20 minutes. No green
-conclusion is claimed for those runs. This is an external infrastructure
-condition, not a passing gate. The historical pre-correction CP3 run
-`43087012245` at `c8779e9` and docs-head run `43087717965` at `13b1d6b` passed all
-seven jobs; those runs are preserved as historical evidence and are not presented
-as validation of the corrected rules.
+Final implementation/workflow head `8c004945fc64ac11d3947c73acc65b100c803d90`
+passed the complete corrective matrix. The operator CI correction in `8c00494`
+changes only the push branch filter; the `pull_request` event is branch-independent
+and ran the PR-targeted workflows.
 
-The local equivalent final matrix is green:
+### CP3 required run
 
-- Rust `cargo fmt --check`, clippy with `-D warnings`, and `cargo test
-  --workspace --all-targets --locked`: **95 tests**;
-- CP0 **74**, CP1 **5**, CP3 **55** Python tests;
-- CP2 **20/20** differential and **23/23** policy cases;
-- **24/24** provider integration cases with backend equivalence;
-- **18/18** comparator negative controls;
-- AWS taxonomy 20 cases on all modes/strategies;
-- Gitleaks/Levain/Leaky re-runs in this report.
+[Run 43101673071](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/43101673071)
+completed **success**. All seven required jobs passed:
 
-Local sanitized evidence (not a substitute for CI):
+- quality, provider rules, byte accuracy and external adapter;
+- provider catalog benchmark;
+- Ubuntu 24.04 build/tests;
+- Windows build/tests;
+- macOS build/tests;
+- static Linux musl build;
+- dependency advisory audit.
 
-- `integration-corrected-final.json`:
-  `sha256:46bd329c...`; 24/24 correct, equivalent, three dataset groups.
-- `comparative-corrected-final.json`:
-  `sha256:4363551e...`; corrected Gitleaks scores in the table above.
-- `bench-final.json`: `sha256:d9ea000d...`; 88 profiles.
-- `external-corpora-final.json`: `sha256:645dbcf4...`; scoped Levain/Leaky results.
+The quality job ran 106 Rust tests (Linux; platform-gated tests make local
+Windows 95), 74 CP0 tests, 5 CP1 tests and 55 CP3 Python tests. It validated all
+19 provider rules under all four strategies and ran the 24-case provider
+integration: `all_correct=true`, `backend_equivalent=true`, three dataset groups,
+Tier 2 27/27, Tier 3 15/15 and Tier 4 14/14. The external line harness reported
+25 matched, 2 ambiguous, 0 false positives. Privacy check returned **PASS**.
 
-Final sanitized CI artifacts: not produced by the queued runs. The PR and this
-report explicitly record that absence; no artifact ID or digest is fabricated.
+The benchmark job produced **88 profiles**, all correct. Build **33.304 s**,
+binary **3,172,912 bytes**, SHA-256
+`10a1f757e0eb9d892dc54f74f247420af5e7ffa9ed51ef888f96c579bc959516`;
+rule compilation median **45.171 ms** (p95 **48.256 ms**).
+
+Sanitized artifacts:
+
+- `cp3-integration-accuracy-evidence` — artifact ID `13890589771`,
+  digest `sha256:ea90d5a2182ed060205e0da8c0ec71b201261d3d1d2b6c382179114bffc5e050`;
+  24/24 correct and equivalent; external 25 matched + 2 ambiguous; privacy PASS.
+- `cp3-benchmark-evidence` — artifact ID `13891343299`,
+  digest `sha256:642765a0e6f01cb86ed643a28c69f1059ed97f942f51bd9cb21c06ae0b863e53`;
+  88 profiles.
+
+### Other required checkpoints at the same head
+
+- CP0: [run 43101672932](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/43101672932) — success.
+- CP1: [run 43101672867](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/43101672867) — success.
+- CP2: [run 43101673069](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/43101673069) — success.
+
+The historical pre-correction CP3 runs `43087012245` at `c8779e9` and
+`43087717965` at `13b1d6b` remain preserved but are not evidence for the
+corrected rules.
 
 ## Historical pre-correction evidence
 
@@ -325,7 +371,7 @@ corrected implementation's score.
 **P0 - none identified.** No source-containment, report-publication, evidence
 integrity or CI-authority defect was found or introduced by the corrective work.
 
-**P1 - explicit conditions:**
+**P1 - documented residuals (not CP3 acceptance blockers):**
 
 - RNC Scanner has no Git-history input adapter. All external comparisons are
   filesystem-to-filesystem; Git-history capability is `NOT_APPLICABLE`.
@@ -355,10 +401,14 @@ integrity or CI-authority defect was found or introduced by the corrective work.
 
 ### Disposition
 
-**CONDITIONAL GO for operator review.** The AWS misclassification, one-to-one
-comparator defect and modern GitHub installation-token gap are corrected and
-tested. Controlled accuracy is 27/27, 15/15 and 14/14 with strategy equivalence.
-The conditions are the documented platform residuals, scoped external evidence,
-unavailable Betterleaks/Git-history comparisons, identifier-only AWS semantics
-and the hand-authored (not externally sourced) Tier 4 corpus. No condition is
-hidden as a passing accuracy claim. No merge was performed.
+**READY FOR OPERATOR MERGE.** The AWS misclassification, one-to-one comparator
+defect and modern GitHub installation-token gap are corrected and tested.
+Controlled accuracy is **27/27**, **15/15** and **14/14** with strategy
+equivalence. The final implementation/workflow head passed all four required
+checkpoint workflows and all seven CP3 jobs, including Ubuntu, Windows, macOS,
+musl and dependency audit. The documented residuals - absent Git-history adapter,
+unavailable Betterleaks, Windows #7-#9 platform hardening, scoped external
+corpora, identifier-only AWS semantics and the first-party Tier 4 corpus - remain
+visible but do not invalidate the corrective acceptance evidence. No condition
+is hidden as a passing accuracy claim. No merge was performed; the operator owns
+the merge decision.

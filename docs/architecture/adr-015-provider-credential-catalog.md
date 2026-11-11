@@ -1,6 +1,6 @@
 # ADR-015: Separately versioned provider credential catalog
 
-**Status:** Implemented for CP3; corrective update `2026.11.2`; operator review pending
+**Status:** Implemented for CP3; corrective update `2026.11.2`; final CI green; operator merge pending
 **Date:** 11 November 2026
 **Supersedes:** none. Extends ADR-009/010/011 without changing the reference regex backend.
 
