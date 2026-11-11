@@ -1,55 +1,69 @@
-//! Minimal RNC Scanner development CLI. Detection evidence only.
+//! RNC Scanner CP2 CLI: detection, policy, reporting and CI acceptance.
 
 use std::env;
 use std::fs::OpenOptions;
 use std::io::Write;
 #[cfg(unix)]
 use std::os::unix::fs::OpenOptionsExt;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use rnc_core::{scan, LoadedBundle, LocalSource, RunConfig, ScanLimits, ScanMode, ENGINE_VERSION};
+use rnc_core::{
+    load_effective, scan, BackendRequest, CliOverrides, LoadedBundle, LocalSource, RunConfig,
+    ScanLimits, ScanMode, ENGINE_VERSION,
+};
 
-const USAGE: &str = "rnc — RNC Scanner CP1 development CLI
+const USAGE: &str = "rnc — RNC Scanner CP2
 
 Usage:
   rnc scan --root DIR --rules FILE [options]
-  rnc rules validate --rules FILE
+  rnc rules validate --rules FILE [--strategy regex|regexset|prefilter|auto]
   rnc --version
 
 Scan options:
-  --output PATH              Write private normalized JSON evidence
-  --format summary|json      Output format; json requires --output
-  --run-id ID                Stable run identifier (default: rnc-<unix-ms>)
-  --mode auto|whole|stream   Scan mode (default: auto)
-  --exclude PATH             Verified pre-scan block; do not read PATH (repeatable)
-  --skip PATH                Record PATH as uninspected, do not read it (repeatable)
-  --optional PATH            Mark PATH optional for coverage (repeatable)
-  --max-file-bytes N         Per-file byte limit (default: 8388608)
-  --max-total-bytes N        Total inspected byte limit (default: 67108864)
-  --timeout-ms N             Scan timeout in milliseconds (default: 300000)
-  --max-findings N           Maximum findings before a hard stop (default: 10000)
-  --stream-chunk-bytes N     Streaming chunk size (default: 65536)
-  --stream-threshold N       Auto-stream files at least this large (default: 1048576)
+  --output PATH                 Report output (outside the scan root)
+  --format summary|sanitized|json|private
+                                summary (default), sanitized public JSON, or private evidence
+  --run-id ID                   Stable run identifier
+  --mode auto|whole|stream      Acquisition mode (default: auto)
+  --strategy NAME               regex|regexset|prefilter|auto (default: auto)
+  --config PATH                 Repository configuration; otherwise auto-discover
+  --global-config PATH          Global configuration with mandatory caps
+  --accept-result CODE          Accepted completed result code (repeatable)
+  --exclude PATH                Pre-scan block selector (alias: --block)
+  --block SELECTOR              Pre-scan block glob selector (repeatable)
+  --exempt SELECTOR             Post-scan exemption selector (repeatable)
+  --skip SELECTOR               Record matching paths uninspected
+  --optional SELECTOR           Mark matching units optional
+  --max-file-bytes N            Per-file cap (may only be narrowed by config)
+  --max-total-bytes N           Total byte cap
+  --timeout-ms N                Scan timeout
+  --max-findings N              Finding cap
+  --stream-chunk-bytes N        Bounded streaming chunk
+  --stream-threshold N          Auto-stream threshold
 
-The JSON output contains private finding IDs and evidence digests. Store it as
-private evidence; ordinary logs and summaries never contain them.";
+Private evidence contains finding IDs, evidence digests, policy selectors and
+locators. It is never printed to the console. Sanitized output contains only
+counts, result codes and safe metadata.";
 
 #[derive(Debug)]
 struct ScanArgs {
     root: PathBuf,
     rules: PathBuf,
     output: Option<PathBuf>,
-    format: String,
+    format: OutputFormat,
     run_id: String,
-    mode: ScanMode,
-    excludes: Vec<String>,
-    skips: Vec<String>,
-    optional: Vec<String>,
-    limits: ScanLimits,
-    stream_chunk_bytes: usize,
-    stream_threshold: u64,
+    config: Option<PathBuf>,
+    global_config: Option<PathBuf>,
+    overrides: CliOverrides,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum OutputFormat {
+    Summary,
+    Sanitized,
+    Private,
 }
 
 fn default_run_id() -> String {
@@ -76,15 +90,11 @@ fn parse_scan_args(arguments: &[String]) -> Result<ScanArgs, String> {
     let mut root = None;
     let mut rules = None;
     let mut output = None;
-    let mut format = "summary".to_string();
+    let mut format = OutputFormat::Summary;
     let mut run_id = default_run_id();
-    let mut mode = ScanMode::Auto;
-    let mut excludes = Vec::new();
-    let mut skips = Vec::new();
-    let mut optional = Vec::new();
-    let mut limits = ScanLimits::default();
-    let mut stream_chunk_bytes = rnc_core::input::DEFAULT_STREAM_CHUNK_BYTES;
-    let mut stream_threshold = 1024 * 1024u64;
+    let mut config = None;
+    let mut global_config = None;
+    let mut overrides = CliOverrides::default();
     let mut index = 0;
     while index < arguments.len() {
         let name = arguments[index].as_str();
@@ -95,74 +105,112 @@ fn parse_scan_args(arguments: &[String]) -> Result<ScanArgs, String> {
             "--root" => root = Some(PathBuf::from(value)),
             "--rules" => rules = Some(PathBuf::from(value)),
             "--output" => output = Some(PathBuf::from(value)),
-            "--format" => format = value.clone(),
+            "--format" => {
+                format = match value.as_str() {
+                    "summary" => OutputFormat::Summary,
+                    "sanitized" => OutputFormat::Sanitized,
+                    "json" | "private" => OutputFormat::Private,
+                    _ => {
+                        return Err(
+                            "--format must be summary, sanitized, json or private".to_string()
+                        )
+                    }
+                }
+            }
             "--run-id" => run_id = value.clone(),
             "--mode" => {
-                mode = match value.as_str() {
+                overrides.mode = Some(match value.as_str() {
                     "auto" => ScanMode::Auto,
                     "whole" => ScanMode::Whole,
                     "stream" => ScanMode::Stream,
                     _ => return Err("--mode must be auto, whole or stream".to_string()),
+                })
+            }
+            "--strategy" => {
+                overrides.strategy =
+                    Some(BackendRequest::parse(value).map_err(|error| error.to_string())?)
+            }
+            "--config" => config = Some(PathBuf::from(value)),
+            "--global-config" => global_config = Some(PathBuf::from(value)),
+            "--exclude" | "--block" => overrides.blocks.push(value.clone()),
+            "--exempt" => overrides.exemptions.push(value.clone()),
+            "--skip" => overrides.skips.push(value.clone()),
+            "--optional" => overrides.optional.push(value.clone()),
+            "--accept-result" => {
+                let code = value
+                    .parse::<u8>()
+                    .map_err(|_| "--accept-result must be 1, 2 or 3".to_string())?;
+                if !matches!(code, 1..=3) {
+                    return Err("--accept-result must be 1, 2 or 3".to_string());
                 }
+                overrides.accepted_result_codes.push(code);
             }
-            "--exclude" => excludes.push(value.clone()),
-            "--skip" => skips.push(value.clone()),
-            "--optional" => optional.push(value.clone()),
-            "--max-file-bytes" => limits.max_file_bytes = parse_u64(value, name)?,
-            "--max-total-bytes" => limits.max_total_bytes = parse_u64(value, name)?,
-            "--timeout-ms" => {
-                limits.timeout = std::time::Duration::from_millis(parse_u64(value, name)?)
+            "--max-file-bytes" => overrides.max_file_bytes = Some(parse_u64(value, name)?),
+            "--max-total-bytes" => overrides.max_total_bytes = Some(parse_u64(value, name)?),
+            "--timeout-ms" => overrides.timeout_ms = Some(parse_u64(value, name)?),
+            "--max-findings" => overrides.max_findings = Some(parse_usize(value, name)?),
+            "--stream-chunk-bytes" => {
+                overrides.stream_chunk_bytes = Some(parse_usize(value, name)?)
             }
-            "--max-findings" => limits.max_findings = parse_usize(value, name)?,
-            "--stream-chunk-bytes" => stream_chunk_bytes = parse_usize(value, name)?,
-            "--stream-threshold" => stream_threshold = parse_u64(value, name)?,
+            "--stream-threshold" => {
+                overrides.stream_threshold_bytes = Some(parse_u64(value, name)?)
+            }
             other => return Err(format!("unknown option {other}")),
         }
         index += 2;
     }
     let root = root.ok_or_else(|| "--root is required".to_string())?;
     let rules = rules.ok_or_else(|| "--rules is required".to_string())?;
-    if format != "summary" && format != "json" {
-        return Err("--format must be summary or json".to_string());
+    if output.is_some() && format == OutputFormat::Summary {
+        return Err("--output requires --format sanitized, json or private".to_string());
     }
-    if format == "json" && output.is_none() {
-        return Err("--format json requires --output for private evidence".to_string());
+    if format == OutputFormat::Private && output.is_none() {
+        return Err("--format json/private requires --output for private evidence".to_string());
     }
-    if format == "summary" && output.is_some() {
-        return Err("--output requires --format json".to_string());
-    }
-    if stream_chunk_bytes == 0 || stream_threshold == 0 {
+    if overrides.stream_chunk_bytes == Some(0) || overrides.stream_threshold_bytes == Some(0) {
         return Err("stream sizes must be positive".to_string());
     }
-    limits.validate().map_err(|error| error.to_string())?;
     Ok(ScanArgs {
         root,
         rules,
         output,
         format,
         run_id,
-        mode,
-        excludes,
-        skips,
-        optional,
-        limits,
-        stream_chunk_bytes,
-        stream_threshold,
+        config,
+        global_config,
+        overrides,
     })
 }
 
-fn write_private_json(path: &PathBuf, value: &serde_json::Value) -> Result<(), String> {
-    let payload = serde_json::to_vec_pretty(value).map_err(|error| error.to_string())?;
+fn output_is_safe(root: &Path, output: &Path) -> bool {
+    let parent = output.parent().unwrap_or_else(|| Path::new("."));
+    let resolved = std::fs::canonicalize(parent).unwrap_or_else(|_| parent.to_path_buf());
+    if resolved.starts_with(root) {
+        return false;
+    }
+    if output.exists() {
+        if let Ok(canonical) = std::fs::canonicalize(output) {
+            if canonical.starts_with(root) {
+                return false;
+            }
+        }
+    }
+    true
+}
+
+fn write_file(path: &Path, value: &[u8], private: bool) -> Result<(), String> {
+    #[cfg(windows)]
+    let _ = private;
     let mut options = OpenOptions::new();
     options.write(true).create(true).truncate(true);
     #[cfg(unix)]
-    options.mode(0o600);
+    options.mode(if private { 0o600 } else { 0o644 });
     let mut file = options
         .open(path)
-        .map_err(|error| format!("cannot create output: {error}"))?;
-    file.write_all(&payload)
+        .map_err(|error| format!("cannot create report: {error}"))?;
+    file.write_all(value)
         .and_then(|_| file.write_all(b"\n"))
-        .map_err(|error| format!("cannot write output: {error}"))
+        .map_err(|error| format!("cannot write report: {error}"))
 }
 
 fn run_scan(arguments: &[String]) -> i32 {
@@ -180,69 +228,136 @@ fn run_scan(arguments: &[String]) -> i32 {
             return 64;
         }
     };
-    let source = match LocalSource::new(args.root, &args.excludes, &args.skips, &args.optional) {
+    let effective = match load_effective(
+        &args.root,
+        args.config.as_deref(),
+        args.global_config.as_deref(),
+        &args.overrides,
+    ) {
+        Ok(config) => config,
+        Err(error) => {
+            eprintln!("error: {error}");
+            return 64;
+        }
+    };
+    if let Some(id) = &effective.ruleset.id {
+        if id != &bundle.definition.ruleset_id {
+            eprintln!("error: effective configuration selects a different ruleset");
+            return 64;
+        }
+    }
+    if let Some(version) = &effective.ruleset.version {
+        if !effective.migrated_legacy && version != &bundle.definition.ruleset_version {
+            eprintln!("error: effective configuration selects a different ruleset version");
+            return 64;
+        }
+    }
+    if let Some(digest) = &effective.ruleset.digest {
+        if digest != &bundle.digest {
+            eprintln!("error: effective configuration selects a different ruleset digest");
+            return 64;
+        }
+    }
+    if let Some(output) = &args.output {
+        if let Ok(root) = std::fs::canonicalize(&args.root) {
+            if !output_is_safe(&root, output) {
+                eprintln!("error: report output must be outside the scan root");
+                return 64;
+            }
+        }
+    }
+    let source = match LocalSource::new_with_policy(args.root.clone(), &effective.policy) {
         Ok(source) => source,
         Err(error) => {
             eprintln!("error: {error}");
-            return 1;
+            return 64;
         }
     };
-    if let Some(output) = &args.output {
-        let parent = output.parent().unwrap_or_else(|| std::path::Path::new("."));
-        let resolved = std::fs::canonicalize(parent).unwrap_or_else(|_| parent.to_path_buf());
-        if resolved.starts_with(source.root())
-            || output.exists()
-                && std::fs::canonicalize(output)
-                    .map(|path| path.starts_with(source.root()))
-                    .unwrap_or(false)
-        {
-            eprintln!("error: private output must be outside the scan root");
-            return 1;
-        }
-    }
     let discovery = source.discover();
     let config = RunConfig {
         run_id: args.run_id,
-        limits: args.limits,
-        mode: args.mode,
-        stream_threshold_bytes: args.stream_threshold,
-        stream_chunk_bytes: args.stream_chunk_bytes,
+        limits: ScanLimits {
+            max_file_bytes: effective.limits.max_file_bytes,
+            max_total_bytes: effective.limits.max_total_bytes,
+            timeout: effective.limits.timeout,
+            max_findings: effective.limits.max_findings,
+        },
+        mode: effective.mode,
+        stream_threshold_bytes: effective.stream_threshold_bytes,
+        stream_chunk_bytes: effective.stream_chunk_bytes,
+        strategy: effective.strategy,
+        policy: effective.policy.clone(),
+        accepted_result_codes: effective.accepted_result_codes.clone(),
+        config_source: effective.source.clone(),
+        config_provenance: effective.provenance.clone(),
     };
     let report = match scan(discovery, &bundle, &config) {
         Ok(report) => report,
         Err(error) => {
             eprintln!("error: {error}");
-            return 1;
+            return 30;
         }
     };
-    if args.format == "json" {
-        let output = args.output.expect("validated output");
-        match report.to_json_value() {
-            Ok(value) => {
-                if let Err(error) = write_private_json(&output, &value) {
-                    eprintln!("error: {error}");
-                    return 1;
-                }
-            }
-            Err(error) => {
-                eprintln!("error: {error}");
-                return 1;
+
+    match args.format {
+        OutputFormat::Summary => {
+            print!("{}", report.summary());
+            for warning in &report.warnings {
+                println!("Warning: {warning}");
             }
         }
+        OutputFormat::Sanitized => {
+            let payload = match serde_json::to_string_pretty(&report.sanitized_value()) {
+                Ok(payload) => payload,
+                Err(error) => {
+                    eprintln!("error: sanitized report failed: {error}");
+                    return 30;
+                }
+            };
+            if let Some(output) = &args.output {
+                if let Err(error) = write_file(output, payload.as_bytes(), false) {
+                    eprintln!("error: {error}");
+                    return 30;
+                }
+            } else {
+                println!("{payload}");
+            }
+        }
+        OutputFormat::Private => {
+            let output = match &args.output {
+                Some(output) => output,
+                None => {
+                    eprintln!("error: private report requires --output");
+                    return 64;
+                }
+            };
+            let value = match report.private_value() {
+                Ok(value) => value,
+                Err(error) => {
+                    eprintln!("error: private report failed: {error}");
+                    return 30;
+                }
+            };
+            let payload = match serde_json::to_string_pretty(&value) {
+                Ok(payload) => payload,
+                Err(error) => {
+                    eprintln!("error: private report failed: {error}");
+                    return 30;
+                }
+            };
+            if let Err(error) = write_file(output, payload.as_bytes(), true) {
+                eprintln!("error: {error}");
+                return 30;
+            }
+            print!("{}", report.summary());
+        }
     }
-    print!("{}", report.summary());
-    for warning in &report.warnings {
-        println!("Warning: {warning}");
-    }
-    if report.execution.state == rnc_core::ExecutionState::Completed {
-        0
-    } else {
-        1
-    }
+    report.ci.process_exit_code
 }
 
 fn run_rules_validate(arguments: &[String]) -> i32 {
     let mut rules = None;
+    let mut strategy = BackendRequest::Auto;
     let mut index = 0;
     while index < arguments.len() {
         match arguments[index].as_str() {
@@ -255,6 +370,23 @@ fn run_rules_validate(arguments: &[String]) -> i32 {
                     }
                 };
                 rules = Some(PathBuf::from(value));
+                index += 2;
+            }
+            "--strategy" => {
+                let value = match arguments.get(index + 1) {
+                    Some(value) => value,
+                    None => {
+                        eprintln!("error: --strategy requires a value");
+                        return 64;
+                    }
+                };
+                strategy = match BackendRequest::parse(value) {
+                    Ok(value) => value,
+                    Err(error) => {
+                        eprintln!("error: {error}");
+                        return 64;
+                    }
+                };
                 index += 2;
             }
             other => {
@@ -272,11 +404,34 @@ fn run_rules_validate(arguments: &[String]) -> i32 {
     };
     match LoadedBundle::load(&rules) {
         Ok(bundle) => {
+            let plan = match rnc_core::backend::MatchPlan::new(&bundle, strategy) {
+                Ok(plan) => plan,
+                Err(error) => {
+                    eprintln!("error: {error}");
+                    return 64;
+                }
+            };
             println!("Ruleset: {}", bundle.definition.ruleset_id);
             println!("Version: {}", bundle.definition.ruleset_version);
             println!("Rules: {}", bundle.rule_count());
             println!("Digest: {}", bundle.digest);
             println!("Max match bytes: {}", bundle.max_match_bytes);
+            println!(
+                "Requested strategy: {}",
+                plan.provenance().requested.as_str()
+            );
+            println!(
+                "Effective strategy: {}",
+                plan.provenance().effective.as_str()
+            );
+            println!(
+                "Required literals: {} of {} rules",
+                plan.provenance().rules_with_required_literals,
+                plan.provenance().rule_count
+            );
+            if let Some(reason) = &plan.provenance().fallback_reason {
+                println!("Fallback: {reason}");
+            }
             0
         }
         Err(error) => {
@@ -315,7 +470,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn json_requires_private_output() {
+    fn private_json_requires_output() {
         let args = vec![
             "--root".to_string(),
             ".".to_string(),
@@ -330,5 +485,11 @@ mod tests {
     #[test]
     fn default_run_id_is_nonempty() {
         assert!(default_run_id().starts_with("rnc-"));
+    }
+
+    #[test]
+    fn strategy_names_are_validated() {
+        assert!(BackendRequest::parse("prefilter").is_ok());
+        assert!(BackendRequest::parse("hyperscan").is_err());
     }
 }

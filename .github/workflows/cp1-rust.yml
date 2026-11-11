@@ -100,8 +100,7 @@ jobs:
           python -m tools.cp1.integration_check \
             --binary target/release/rnc \
             --output artifacts/cp1/integration.json \
-            --edge-corpus artifacts/cp1/edge-corpus \
-            --handoff-dir artifacts/cp1/handoff
+            --edge-corpus artifacts/cp1/edge-corpus
 
       - name: Benchmark the real engine
         run: |
@@ -117,7 +116,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: cp1-rust-engine-evidence
-          path: artifacts/cp1/
+          path: |
+            artifacts/cp1/integration.json
+            artifacts/cp1/benchmark.json
+            artifacts/cp1/build-seconds.txt
+            artifacts/cp1/binary.sha256
           if-no-files-found: warn
           retention-days: 90
 
@@ -164,11 +167,21 @@ jobs:
       - name: Install pinned Python dependency
         run: python -m pip install --disable-pip-version-check --no-cache-dir -r requirements-cp0.txt
 
-      - name: Download CP1 evidence and handoff
-        uses: actions/download-artifact@v4
-        with:
-          name: cp1-rust-engine-evidence
-          path: artifacts/cp1
+      - name: Install pinned Rust compiler
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+
+      - name: Build scanner and generate private handoff
+        run: |
+          cargo build --release --workspace --locked
+          mkdir -p artifacts/cp1
+          python -m tools.cp0.generate_edge_corpus --output artifacts/cp1/edge-corpus
+          python -m tools.cp1.integration_check \
+            --binary target/release/rnc \
+            --output artifacts/cp1/integration.json \
+            --edge-corpus artifacts/cp1/edge-corpus \
+            --handoff-dir "$RUNNER_TEMP/cp1-handoff"
 
       - name: Check out the pinned independent harness
         run: |

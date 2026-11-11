@@ -1,0 +1,248 @@
+name: CP2 integrated scanner
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/cp2-integrated.yml"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "rust-toolchain.toml"
+      - "rustfmt.toml"
+      - "crates/**"
+      - "rules/**"
+      - "tools/cp2/**"
+      - "tools/cp1/**"
+      - "tests/**"
+      - "docs/**"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/cp2-integrated.yml"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "crates/**"
+      - "rules/**"
+      - "tools/cp2/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: "1"
+
+concurrency:
+  group: cp2-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rust-quality-integration-policy:
+    name: "required: quality, integration, policy and classification"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --disable-pip-version-check --no-cache-dir -r requirements-cp0.txt
+      - name: Install pinned Rust
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal --component rustfmt,clippy
+          rustup default 1.85.0
+          rustc --version
+          cargo --version
+      - name: Formatting
+        run: cargo fmt --all -- --check
+      - name: Lint with warnings denied
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+      - name: Rust tests
+        run: cargo test --workspace --locked
+      - name: CP0 regression tests
+        run: python -m unittest discover -s tests/cp0 -v
+      - name: CP1 regression tests
+        run: python -m unittest discover -s tests/cp1 -v
+      - name: Build release scanner
+        run: |
+          mkdir -p artifacts/cp2
+          START=$(date +%s%N)
+          cargo build --release --workspace --locked
+          END=$(date +%s%N)
+          python -c "print(round((int('$END') - int('$START')) / 1e9, 3))" > artifacts/cp2/build-seconds.txt
+          sha256sum target/release/rnc | awk '{print $1}' > artifacts/cp2/binary.sha256
+          ls -l target/release/rnc
+      - name: Generate edge corpus
+        run: python -m tools.cp0.generate_edge_corpus --output artifacts/cp2/edge-corpus
+      - name: Multi-strategy differential and independent truth
+        env:
+          HANDOFF_DIR: ${{ runner.temp }}/cp2-handoff
+        run: |
+          python -m tools.cp2.integration_check \
+            --binary target/release/rnc \
+            --output artifacts/cp2/integration.json \
+            --edge-corpus artifacts/cp2/edge-corpus \
+            --handoff-dir "$HANDOFF_DIR"
+      - name: Configuration, policy, exemption and CI classification
+        run: |
+          python -m tools.cp2.policy_check \
+            --binary target/release/rnc \
+            --output artifacts/cp2/policy.json
+      - name: CP1 compatibility integration
+        run: |
+          python -m tools.cp1.integration_check \
+            --binary target/release/rnc \
+            --output artifacts/cp2/cp1-compat.json \
+            --edge-corpus artifacts/cp2/edge-corpus
+      - name: Preserve sanitized evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cp2-integration-policy-evidence
+          path: |
+            artifacts/cp2/integration.json
+            artifacts/cp2/policy.json
+            artifacts/cp2/cp1-compat.json
+            artifacts/cp2/build-seconds.txt
+            artifacts/cp2/binary.sha256
+          if-no-files-found: warn
+          retention-days: 90
+
+  external-harness-scoring:
+    name: "required: pinned external harness scores all strategies"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --disable-pip-version-check --no-cache-dir -r requirements-cp0.txt
+      - name: Install pinned Rust
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+      - name: Build scanner
+        run: cargo build --release --workspace --locked
+      - name: Generate edge corpus and private handoffs
+        run: |
+          mkdir -p artifacts/cp2
+          python -m tools.cp0.generate_edge_corpus --output artifacts/cp2/edge-corpus
+          python -m tools.cp2.integration_check \
+            --binary target/release/rnc \
+            --output artifacts/cp2/integration.json \
+            --edge-corpus artifacts/cp2/edge-corpus \
+            --handoff-dir "$RUNNER_TEMP/cp2-handoff"
+      - name: Check out pinned independent harness
+        run: |
+          mkdir -p "$RUNNER_TEMP/scanner-harness"
+          git -C "$RUNNER_TEMP/scanner-harness" init -q
+          git -C "$RUNNER_TEMP/scanner-harness" remote add origin https://github.com/RNC-Solutions-Group/gitleaks.git
+          git -C "$RUNNER_TEMP/scanner-harness" fetch -q --depth 1 origin 86de44bf1cb13abf9a0c375a8b91d102c9b6dc9f
+          git -C "$RUNNER_TEMP/scanner-harness" checkout -q --detach FETCH_HEAD
+          git -C "$RUNNER_TEMP/scanner-harness" rev-parse HEAD
+      - name: Score every strategy
+        run: |
+          for strategy in regex regexset prefilter auto; do
+            python -m tools.cp1.external_harness_score \
+              --harness-root "$RUNNER_TEMP/scanner-harness" \
+              --handoff "$RUNNER_TEMP/cp2-handoff/v1-whole-${strategy}.json" \
+              --expected 25 \
+              --output "artifacts/cp2/external-${strategy}.json"
+          done
+      - name: Preserve external scoring evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cp2-external-harness-score
+          path: artifacts/cp2/external-*.json
+          if-no-files-found: warn
+          retention-days: 90
+
+  benchmark:
+    name: "required: multi-strategy benchmark"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --disable-pip-version-check --no-cache-dir -r requirements-cp0.txt
+      - name: Install pinned Rust
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+      - name: Build release scanner
+        run: |
+          mkdir -p artifacts/cp2
+          START=$(date +%s%N)
+          cargo build --release --workspace --locked
+          END=$(date +%s%N)
+          python -c "print(round((int('$END') - int('$START')) / 1e9, 3))" > artifacts/cp2/bench-build-seconds.txt
+          sha256sum target/release/rnc | awk '{print $1}' > artifacts/cp2/bench-binary.sha256
+      - name: Benchmark all strategies and modes
+        run: |
+          python -m tools.cp2.bench \
+            --binary target/release/rnc \
+            --runs 3 \
+            --build-seconds "$(cat artifacts/cp2/bench-build-seconds.txt)" \
+            --binary-sha256 "$(cat artifacts/cp2/bench-binary.sha256)" \
+            --output artifacts/cp2/benchmark.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cp2-benchmark-evidence
+          path: artifacts/cp2/benchmark.json
+          if-no-files-found: warn
+          retention-days: 90
+
+  cross-platform:
+    name: "required: ${{ matrix.os }} build and tests"
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Rust
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+          rustc --version
+      - run: cargo build --release --workspace --locked
+      - run: cargo test --workspace --locked
+
+  static-musl:
+    name: "required: static Linux musl build"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Rust and musl target
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+          rustup target add x86_64-unknown-linux-musl
+      - run: cargo build --release --locked --target x86_64-unknown-linux-musl
+      - run: file target/x86_64-unknown-linux-musl/release/rnc
+
+  dependency-audit:
+    name: "required: dependency advisory audit"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Rust
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+      - run: cargo install cargo-audit --locked --version 0.22.1
+      - run: cargo audit --deny warnings

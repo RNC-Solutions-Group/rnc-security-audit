@@ -18,6 +18,11 @@ pub struct RunConfig {
     pub mode: ScanMode,
     pub stream_threshold_bytes: u64,
     pub stream_chunk_bytes: usize,
+    pub strategy: crate::backend::BackendRequest,
+    pub policy: crate::policy::PolicySpec,
+    pub accepted_result_codes: Vec<u8>,
+    pub config_source: String,
+    pub config_provenance: std::collections::BTreeMap<String, String>,
 }
 
 impl Default for RunConfig {
@@ -28,6 +33,11 @@ impl Default for RunConfig {
             mode: ScanMode::Auto,
             stream_threshold_bytes: 1024 * 1024,
             stream_chunk_bytes: crate::input::DEFAULT_STREAM_CHUNK_BYTES,
+            strategy: crate::backend::BackendRequest::Auto,
+            policy: crate::policy::PolicySpec::empty(),
+            accepted_result_codes: vec![1, 2],
+            config_source: "defaults".to_string(),
+            config_provenance: std::collections::BTreeMap::new(),
         }
     }
 }
@@ -36,16 +46,60 @@ impl Default for RunConfig {
 pub struct ScanReport {
     pub execution: ExecutionRecord,
     pub findings: Vec<Finding>,
+    pub policy: crate::policy::PolicyRecord,
+    pub result: crate::result::ResultRecord,
+    pub ci: crate::result::CiDecision,
+    pub plan: crate::backend::PlanProvenance,
+    pub configuration: ConfigurationInfo,
     pub warnings: Vec<String>,
 }
 
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct ConfigurationInfo {
+    pub source: String,
+    pub provenance: std::collections::BTreeMap<String, String>,
+    pub accepted_result_codes: Vec<u8>,
+}
+
 impl ScanReport {
-    pub fn to_json_value(&self) -> Result<serde_json::Value, CoreError> {
+    /// Private evidence bundle. The three ledgers are the v0.2 records; the
+    /// execution plan and effective policy are additive private metadata.
+    pub fn private_value(&self) -> Result<serde_json::Value, CoreError> {
         Ok(serde_json::json!({
-            "format_version": "rnc-cp1-output-v1",
+            "format_version": "rnc-cp2-output-v1",
             "execution": self.execution,
             "findings": self.findings,
+            "policy": self.policy,
+            "result": self.result,
+            "ci": self.ci,
+            "execution_plan": self.plan,
+            "configuration": self.configuration,
         }))
+    }
+
+    /// CP1-compatible alias. The document remains private.
+    pub fn to_json_value(&self) -> Result<serde_json::Value, CoreError> {
+        self.private_value()
+    }
+
+    /// Sanitized machine-readable summary. It contains no locators, finding
+    /// identifiers, evidence digests, policy selectors or raw matched bytes.
+    pub fn sanitized_value(&self) -> serde_json::Value {
+        serde_json::json!({
+            "format_version": "rnc-cp2-sanitized-v1",
+            "engine_version": self.result.engine_version,
+            "ruleset_id": self.result.ruleset_id,
+            "ruleset_digest": self.result.ruleset_digest,
+            "result_code": self.result.result_code,
+            "result": self.result.result,
+            "coverage": self.result.coverage,
+            "evidence_valid": self.result.evidence_valid,
+            "counts": self.result.counts,
+            "reason_codes": self.result.reason_codes,
+            "accepted_result_codes": self.ci.accepted_result_codes,
+            "accepted": self.ci.accepted,
+            "process_exit_code": self.ci.process_exit_code,
+        })
     }
 
     pub fn summary(&self) -> String {
@@ -56,17 +110,29 @@ impl ScanReport {
              Run: {}\n\
              Execution: {}\n\
              Ruleset: {} ({})\n\
+             Backend: {} (requested {})\n\
              Inspected: {} (blocked {}, uninspected {}, required uninspected {})\n\
-             Findings: {}\n",
+             Findings: {} (actionable {}, exempted {})\n\
+             Result: {} ({}), coverage {}\n\
+             CI accepted: {} (exit {})\n",
             execution.run_id,
             execution.state.as_str(),
             execution.ruleset_id,
             execution.ruleset_digest,
+            self.plan.effective.as_str(),
+            self.plan.requested.as_str(),
             execution.inspected_count(),
             execution.blocked_count(),
             execution.uninspected_count(),
             execution.required_uninspected_count(),
-            self.findings.len()
+            self.findings.len(),
+            self.result.counts.actionable,
+            self.result.counts.exempted,
+            self.result.result,
+            self.result.result_code,
+            self.result.coverage,
+            self.ci.accepted,
+            self.ci.process_exit_code
         )
     }
 }
@@ -83,6 +149,7 @@ pub fn scan(
     let deadline = Instant::now()
         .checked_add(config.limits.timeout)
         .unwrap_or_else(Instant::now);
+    let plan = crate::backend::MatchPlan::new(rules, config.strategy)?;
     let mut execution = ExecutionRecord::new(&config.run_id, rules);
     let mut findings = Vec::new();
     let mut warnings = discovery.warnings.clone();
@@ -162,7 +229,7 @@ pub fn scan(
                     &unit.path,
                     &unit_id,
                     &config.run_id,
-                    rules,
+                    &plan,
                     &file_config,
                     unit.size,
                     unit.modified,
@@ -244,9 +311,26 @@ pub fn scan(
     sort_findings(&mut findings);
     warnings.sort();
     warnings.dedup();
+    let now_unix = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|duration| duration.as_secs())
+        .unwrap_or(0);
+    let policy =
+        crate::policy::build_policy(&config.run_id, &units, &findings, &config.policy, now_unix)?;
+    let result = crate::result::build_result(&execution, &findings, &policy)?;
+    let ci = crate::result::ci_decision(&result, &config.accepted_result_codes)?;
     Ok(ScanReport {
         execution,
         findings,
+        policy,
+        result,
+        ci,
+        plan: plan.provenance().clone(),
+        configuration: ConfigurationInfo {
+            source: config.config_source.clone(),
+            provenance: config.config_provenance.clone(),
+            accepted_result_codes: config.accepted_result_codes.clone(),
+        },
         warnings,
     })
 }

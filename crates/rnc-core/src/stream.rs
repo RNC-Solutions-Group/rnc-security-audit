@@ -9,12 +9,11 @@ use std::time::{Instant, SystemTime};
 
 use sha2::{Digest, Sha256};
 
+use crate::backend::{MatchError, MatchPlan};
 use crate::finding::{
     build_finding, line_count, line_end_for_range, line_for_offset, Finding, LineIndex,
 };
 use crate::path::sha256_hex;
-use crate::rules::LoadedBundle;
-use crate::validate::validate_candidate;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ScanMode {
@@ -90,7 +89,7 @@ pub fn scan_file(
     path: &Path,
     unit_id: &str,
     run_id: &str,
-    rules: &LoadedBundle,
+    plan: &MatchPlan,
     config: &ScanFileConfig,
     expected_size: u64,
     expected_modified: Option<SystemTime>,
@@ -103,7 +102,7 @@ pub fn scan_file(
             path,
             unit_id,
             run_id,
-            rules,
+            plan,
             config,
             expected_size,
             expected_modified,
@@ -112,7 +111,7 @@ pub fn scan_file(
             path,
             unit_id,
             run_id,
-            rules,
+            plan,
             config,
             expected_size,
             expected_modified,
@@ -142,7 +141,7 @@ fn scan_whole(
     path: &Path,
     unit_id: &str,
     run_id: &str,
-    rules: &LoadedBundle,
+    plan: &MatchPlan,
     config: &ScanFileConfig,
     expected_size: u64,
     expected_modified: Option<SystemTime>,
@@ -177,7 +176,7 @@ fn scan_whole(
         Some(&line_index),
         unit_id,
         run_id,
-        rules,
+        plan,
         &mut findings,
         &mut seen,
         config.max_findings,
@@ -196,7 +195,7 @@ fn scan_stream(
     path: &Path,
     unit_id: &str,
     run_id: &str,
-    rules: &LoadedBundle,
+    plan: &MatchPlan,
     config: &ScanFileConfig,
     expected_size: u64,
     expected_modified: Option<SystemTime>,
@@ -204,7 +203,7 @@ fn scan_stream(
     if config.stream_chunk_bytes == 0 {
         return Err(FileScanError::Io("stream_config"));
     }
-    let overlap = rules.max_match_bytes.max(1);
+    let overlap = plan.bundle().max_match_bytes.max(1);
     let mut file = open_readonly(path).map_err(|_| FileScanError::Io("open"))?;
     let mut chunk = vec![0u8; config.stream_chunk_bytes];
     let mut carry: Vec<u8> = Vec::with_capacity(overlap);
@@ -242,7 +241,7 @@ fn scan_stream(
             None,
             unit_id,
             run_id,
-            rules,
+            plan,
             &mut findings,
             &mut seen,
             config.max_findings,
@@ -268,7 +267,7 @@ fn scan_stream(
             None,
             unit_id,
             run_id,
-            rules,
+            plan,
             &mut findings,
             &mut seen,
             config.max_findings,
@@ -298,120 +297,119 @@ fn scan_window(
     line_index: Option<&LineIndex>,
     unit_id: &str,
     run_id: &str,
-    rules: &LoadedBundle,
+    plan: &MatchPlan,
     findings: &mut Vec<Finding>,
     seen: &mut HashSet<(String, usize, usize)>,
     max_findings: usize,
     final_window: bool,
     deadline: Instant,
 ) -> Result<(), FileScanError> {
-    for rule in &rules.compiled {
+    let candidates = plan
+        .candidates(data, deadline)
+        .map_err(|error| match error {
+            MatchError::Timeout => FileScanError::Timeout,
+            MatchError::Backend(_) => FileScanError::Io("backend"),
+        })?;
+    for candidate in candidates {
         if Instant::now() >= deadline {
             return Err(FileScanError::Timeout);
         }
-        let compiled = &rule.regex;
-        for captures in compiled.captures_iter(data) {
-            if Instant::now() >= deadline {
-                return Err(FileScanError::Timeout);
-            }
-            let matched = captures.get(rule.definition.capture_group);
-            let matched = match matched {
-                Some(value) => value,
-                None => continue,
-            };
-            let start = matched.start();
-            let end = matched.end();
-            if start >= end {
-                continue;
-            }
-            if !final_window && end == data.len() {
-                // The regex may have matched a prefix cut by the chunk edge.
-                // The overlap guarantees the complete match is visible in the
-                // next window; do not emit the truncated candidate now.
-                continue;
-            }
-            let candidate = &data[start..end];
-            let validation = match validate_candidate(candidate, &rule.definition.validators) {
+        let start = candidate.start;
+        let end = candidate.end;
+        if start >= end || end > data.len() {
+            continue;
+        }
+        if !final_window && end == data.len() {
+            // The backend may have matched a prefix cut by the chunk edge. The
+            // overlap guarantees the complete match is visible in the next
+            // window; do not emit the truncated candidate now.
+            continue;
+        }
+        let rule = plan
+            .bundle()
+            .compiled
+            .get(candidate.rule_index)
+            .ok_or(FileScanError::Io("backend_rule"))?;
+        let candidate_bytes = &data[start..end];
+        let validation =
+            match crate::validate::validate_candidate(candidate_bytes, &rule.definition.validators)
+            {
                 Ok(validation) => validation,
                 Err(_) => continue,
             };
-            let absolute_start = absolute_offset + start;
-            let absolute_end = absolute_offset + end;
-            if !seen.insert((
-                rule.definition.rule_id.clone(),
-                absolute_start,
-                absolute_end,
-            )) {
-                continue;
-            }
-            let (line, last_line) = if let Some(index) = line_index {
-                (
-                    index
-                        .line_at(absolute_start)
-                        .map_err(|_| FileScanError::Io("match_line"))?,
-                    index
-                        .line_at({
-                            let mut last = absolute_end - 1;
-                            while last > absolute_start
-                                && matches!(data[last - absolute_offset], 10 | 13)
-                            {
-                                last -= 1;
-                            }
-                            last
-                        })
-                        .map_err(|_| FileScanError::Io("match_line_end"))?,
-                )
-            } else {
-                (
-                    line_at_window_start
-                        + line_for_offset(data, start)
-                            .map_err(|_| FileScanError::Io("match_line"))?
-                        - 1,
-                    line_at_window_start
-                        + line_end_for_range(data, start, end)
-                            .map_err(|_| FileScanError::Io("match_line_end"))?
-                        - 1,
-                )
-            };
-            let line_end = if last_line > line {
-                Some(last_line)
-            } else {
-                None
-            };
-            let finding = build_finding(
-                run_id,
-                unit_id,
-                &rule.definition.rule_id,
-                &rule.definition.rule_version,
-                &rule.definition.category,
-                start,
-                end,
-                line,
-                line_end,
-                &rule.definition.confidence,
-                validation,
-                data,
+        let absolute_start = absolute_offset + start;
+        let absolute_end = absolute_offset + end;
+        if !seen.insert((
+            rule.definition.rule_id.clone(),
+            absolute_start,
+            absolute_end,
+        )) {
+            continue;
+        }
+        let (line, last_line) = if let Some(index) = line_index {
+            (
+                index
+                    .line_at(absolute_start)
+                    .map_err(|_| FileScanError::Io("match_line"))?,
+                index
+                    .line_at({
+                        let mut last = absolute_end - 1;
+                        while last > absolute_start
+                            && matches!(data[last - absolute_offset], 10 | 13)
+                        {
+                            last -= 1;
+                        }
+                        last
+                    })
+                    .map_err(|_| FileScanError::Io("match_line_end"))?,
             )
-            .map_err(|_| FileScanError::Io("build_finding"))?;
-            // The finding builder computed offsets relative to the window for
-            // digesting, then absolute offsets for identity. Rebuild is
-            // unnecessary; rewrite the byte range to the absolute coordinates
-            // and recompute the digest/identity over the full match bytes.
-            let mut finding = finding;
-            finding.start_byte = absolute_start;
-            finding.end_byte = absolute_end;
-            finding.finding_id = crate::finding::finding_id(
-                unit_id,
-                &rule.definition.rule_id,
-                &rule.definition.rule_version,
-                absolute_start,
-                absolute_end,
-                &finding.evidence_digest,
-            );
-            findings.push(finding);
-            if findings.len() > max_findings {
-                return Err(FileScanError::FindingsLimit);
-            }
+        } else {
+            (
+                line_at_window_start
+                    + line_for_offset(data, start).map_err(|_| FileScanError::Io("match_line"))?
+                    - 1,
+                line_at_window_start
+                    + line_end_for_range(data, start, end)
+                        .map_err(|_| FileScanError::Io("match_line_end"))?
+                    - 1,
+            )
+        };
+        let line_end = if last_line > line {
+            Some(last_line)
+        } else {
+            None
+        };
+        let finding = build_finding(
+            run_id,
+            unit_id,
+            &rule.definition.rule_id,
+            &rule.definition.rule_version,
+            &rule.definition.category,
+            start,
+            end,
+            line,
+            line_end,
+            &rule.definition.confidence,
+            validation,
+            data,
+        )
+        .map_err(|_| FileScanError::Io("build_finding"))?;
+        // The finding builder computes the digest over the window match, then
+        // the absolute byte coordinates and identity are applied here.
+        let mut finding = finding;
+        finding.start_byte = absolute_start;
+        finding.end_byte = absolute_end;
+        finding.finding_id = crate::finding::finding_id(
+            unit_id,
+            &rule.definition.rule_id,
+            &rule.definition.rule_version,
+            absolute_start,
+            absolute_end,
+            &finding.evidence_digest,
+        );
+        findings.push(finding);
+        if findings.len() > max_findings {
+            return Err(FileScanError::FindingsLimit);
         }
     }
     Ok(())
@@ -496,12 +494,13 @@ mod tests {
         data.extend_from_slice(b" suffix\n");
         fs::write(&path, &data).unwrap();
         let rules = bundle("RNC_SYNTH_KEY_TEST_[A-Z0-9_]{1,32}", 128);
+        let plan = MatchPlan::new(&rules, crate::backend::BackendRequest::Regex).unwrap();
         let deadline = Instant::now() + std::time::Duration::from_secs(5);
         let whole = scan_file(
             &path,
             "u-test",
             "r",
-            &rules,
+            &plan,
             &ScanFileConfig {
                 mode: ScanMode::Whole,
                 stream_chunk_bytes: 32,
@@ -517,7 +516,7 @@ mod tests {
             &path,
             "u-test",
             "r",
-            &rules,
+            &plan,
             &ScanFileConfig {
                 mode: ScanMode::Stream,
                 stream_chunk_bytes: 32,

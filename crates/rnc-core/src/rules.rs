@@ -42,6 +42,7 @@ pub struct RuleBundle {
 pub struct CompiledRule {
     pub definition: RuleDefinition,
     pub regex: Regex,
+    pub required_literal: Option<Vec<u8>>,
 }
 
 #[derive(Debug, Clone)]
@@ -110,9 +111,12 @@ impl LoadedBundle {
                 )));
             }
             maximum = maximum.max(max_len);
+            let required_literal = crate::backend::required_literal(&definition.pattern)
+                .map_err(|error| CoreError::Rule(format!("{}: {error}", definition.rule_id)))?;
             compiled.push(CompiledRule {
                 definition: definition.clone(),
                 regex,
+                required_literal,
             });
         }
         let digest = bundle_digest(&bundle)?;

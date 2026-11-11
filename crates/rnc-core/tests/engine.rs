@@ -4,7 +4,9 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::Duration;
 
-use rnc_core::{scan, ExecutionState, LoadedBundle, LocalSource, RunConfig, ScanLimits, ScanMode};
+use rnc_core::{
+    scan, ExecutionState, LoadedBundle, LocalSource, PolicySpec, RunConfig, ScanLimits, ScanMode,
+};
 use tempfile::tempdir;
 
 fn rules_v1() -> LoadedBundle {
@@ -19,6 +21,11 @@ fn config(mode: ScanMode) -> RunConfig {
         mode,
         stream_threshold_bytes: 1024 * 1024,
         stream_chunk_bytes: 32,
+        strategy: rnc_core::BackendRequest::Auto,
+        policy: PolicySpec::empty(),
+        accepted_result_codes: vec![1, 2],
+        config_source: "test-defaults".to_string(),
+        config_provenance: std::collections::BTreeMap::new(),
     }
 }
 
@@ -37,9 +44,29 @@ fn scan_tree(
     skips: &[String],
     optional: &[String],
 ) -> rnc_core::ScanReport {
-    let source = LocalSource::new(root.to_path_buf(), excludes, skips, optional).unwrap();
+    let mut spec = PolicySpec::empty();
+    for (index, selector) in excludes.iter().enumerate() {
+        spec.add_block(
+            &format!("TEST-EXCLUDE-{index}"),
+            rnc_core::policy::PolicyOrigin::Cli,
+            selector,
+            "test pre-scan block",
+            "1",
+            false,
+        )
+        .unwrap();
+    }
+    for selector in skips {
+        spec.add_skip(selector).unwrap();
+    }
+    for selector in optional {
+        spec.add_optional(selector).unwrap();
+    }
+    let source = LocalSource::new_with_policy(root.to_path_buf(), &spec).unwrap();
     let discovery = source.discover();
-    scan(discovery, rules, config).unwrap()
+    let mut effective = config.clone();
+    effective.policy = spec;
+    scan(discovery, rules, &effective).unwrap()
 }
 
 #[test]
@@ -326,4 +353,24 @@ fn replaced_file_is_not_followed_as_symlink() {
     let report = scan(discovery, &rules_v1(), &config(ScanMode::Whole)).unwrap();
     assert!(report.findings.is_empty());
     assert_eq!(report.execution.units[0].disposition, "UNINSPECTED");
+}
+
+#[test]
+fn invalid_policy_fails_even_with_no_findings() {
+    let temp = tempdir().unwrap();
+    write(&temp.path().join("clean.txt"), b"benign\n");
+    let mut spec = PolicySpec::empty();
+    spec.errors.push("POLICY_INVALID".to_string());
+    let source = LocalSource::new_with_policy(temp.path().to_path_buf(), &spec).unwrap();
+    let discovery = source.discover();
+    let mut cfg = config(ScanMode::Whole);
+    cfg.policy = spec;
+    let report = scan(discovery, &rules_v1(), &cfg).unwrap();
+    assert_eq!(report.result.result_code, 5);
+    assert!(!report.policy.policy_valid);
+    assert!(report
+        .result
+        .reason_codes
+        .contains(&"POLICY_INVALID".to_string()));
+    assert_eq!(report.ci.process_exit_code, 30);
 }

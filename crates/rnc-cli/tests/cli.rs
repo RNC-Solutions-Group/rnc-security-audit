@@ -40,8 +40,13 @@ fn scan_writes_private_json_and_safe_summary() {
         ])
         .output()
         .unwrap();
-    assert!(completed.status.success(), "{:?}", completed);
+    assert_eq!(completed.status.code(), Some(10), "{:?}", completed);
     let summary = String::from_utf8(completed.stdout).unwrap();
+    assert!(summary.contains("Result: ACTIONABLE (3)"), "{summary}");
+    assert!(
+        summary.contains("CI accepted: false (exit 10)"),
+        "{summary}"
+    );
     assert!(summary.contains("Findings: 1"), "{summary}");
     assert!(!summary.contains("RNC_SYNTH_KEY_"));
     assert!(!summary.contains("evidence_digest"));
@@ -121,6 +126,74 @@ fn private_output_inside_scan_root_is_rejected() {
         ])
         .output()
         .unwrap();
-    assert_eq!(completed.status.code(), Some(1));
+    assert_eq!(completed.status.code(), Some(64));
+    assert!(!output.exists());
+}
+
+#[test]
+fn sanitized_output_contains_no_private_evidence() {
+    let temp = tempfile::tempdir().unwrap();
+    fs::write(
+        temp.path().join("env.txt"),
+        b"KEY=RNC_SYNTH_KEY_GENERIC_CLI_ALPHA\n",
+    )
+    .unwrap();
+    let completed = Command::new(binary())
+        .args([
+            "scan",
+            "--root",
+            temp.path().to_str().unwrap(),
+            "--rules",
+            rules().to_str().unwrap(),
+            "--format",
+            "sanitized",
+            "--run-id",
+            "sanitized-test",
+        ])
+        .output()
+        .unwrap();
+    assert_eq!(completed.status.code(), Some(10));
+    let stdout = String::from_utf8(completed.stdout).unwrap();
+    let document: serde_json::Value = serde_json::from_str(&stdout).unwrap();
+    assert_eq!(document["result_code"], 3);
+    assert_eq!(document["accepted"], false);
+    for forbidden in [
+        "RNC_SYNTH_KEY_",
+        "finding_id",
+        "evidence_digest",
+        "env.txt",
+        "locator",
+    ] {
+        assert!(!stdout.contains(forbidden), "leaked {forbidden}");
+    }
+}
+
+#[test]
+fn publication_failure_is_not_a_successful_scan() {
+    let temp = tempfile::tempdir().unwrap();
+    fs::write(
+        temp.path().join("env.txt"),
+        b"KEY=RNC_SYNTH_KEY_GENERIC_CLI_ALPHA\n",
+    )
+    .unwrap();
+    let blocker = tempfile::tempdir().unwrap();
+    let parent = blocker.path().join("not-a-directory");
+    fs::write(&parent, b"blocker").unwrap();
+    let output = parent.join("evidence.json");
+    let completed = Command::new(binary())
+        .args([
+            "scan",
+            "--root",
+            temp.path().to_str().unwrap(),
+            "--rules",
+            rules().to_str().unwrap(),
+            "--format",
+            "private",
+            "--output",
+            output.to_str().unwrap(),
+        ])
+        .output()
+        .unwrap();
+    assert_eq!(completed.status.code(), Some(30));
     assert!(!output.exists());
 }

@@ -161,7 +161,7 @@ def _run(binary: Path, workload: dict, mode: str, rules: Path, time_wrapper: str
     started = time.perf_counter_ns()
     result = subprocess.run(wrapped, capture_output=True, text=True, timeout=300)
     elapsed_ms = (time.perf_counter_ns() - started) / 1_000_000
-    if result.returncode != 0:
+    if result.returncode not in (0, 10, 20):
         raise RuntimeError(f"scan failed for {workload['name']}/{mode} (exit {result.returncode}): {result.stderr.strip()} stdout={result.stdout.strip()[:200]}")
     count = _summary_count(result.stdout)
     if count != workload["expected"]:

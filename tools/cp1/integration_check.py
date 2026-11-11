@@ -31,7 +31,6 @@ from tools.cp0.contracts import (
 )
 from tools.cp0.corpus import load_v0, load_v1, validate_manifest
 from tools.cp0.harness_adapter import build_handoff, conformance_score
-from tools.cp0.reconcile import reconcile_bundle
 from tools.cp1.rules import canonical_digest as rules_digest, load as load_rules
 
 
@@ -73,7 +72,7 @@ def _run_cli(binary: Path, stage: Path, rules: Path, output: Path, *, mode: str,
     for value in optional:
         command.extend(["--optional", value])
     completed = subprocess.run(command, capture_output=True, text=True, timeout=120)
-    if completed.returncode != 0:
+    if completed.returncode not in (0, 10, 20):
         raise RuntimeError(f"CLI failed ({completed.returncode}): {completed.stderr.strip()}")
     document = json.loads(output.read_text(encoding="utf-8"))
     return document, completed.stdout, completed.returncode
@@ -177,23 +176,26 @@ def _validate_records(document: dict, rules_loaded: dict, contents: dict[str, by
     schemas, registry = schema_registry()
     execution = document["execution"]
     findings = document["findings"]
-    Draft202012Validator(schemas["execution.schema.json"], registry=registry).validate(execution)
+    policy = document["policy"]
+    result = document["result"]
+    ci = document["ci"]
+    for name, value in (
+        ("execution.schema.json", execution),
+        ("policy.schema.json", policy),
+        ("result.schema.json", result),
+        ("ci-decision.schema.json", ci),
+    ):
+        Draft202012Validator(schemas[name], registry=registry).validate(value)
     for unit in execution["units"]:
         Draft202012Validator(schemas["source-unit.schema.json"], registry=registry).validate(unit)
     for finding in findings:
         Draft202012Validator(schemas["finding.schema.json"], registry=registry).validate(finding)
-    expected = rules_loaded["expected_findings"]
-    policy = _policy_for(execution, findings, expected)
     content_by_unit = {}
     for unit in execution["units"]:
         if unit["disposition"] == "INSPECTED":
             content_by_unit[unit["unit_id"]] = contents[next(target["id"] for target in rules_loaded["targets"] if target["path"] == unit["locator"])]
-    result, ci = reconcile_bundle(execution, findings, policy, contents=content_by_unit)
-    Draft202012Validator(schemas["result.schema.json"], registry=registry).validate(result)
-    Draft202012Validator(schemas["ci-decision.schema.json"], registry=registry).validate(ci)
     summary = validate_records(execution, findings, policy, result, ci, contents=content_by_unit)
     return policy, result, ci, summary
-
 
 def _compare_truth(loaded: dict, document: dict, contents: dict[str, bytes], corpus: str) -> dict:
     execution = document["execution"]
@@ -300,6 +302,8 @@ def run(binary: Path, corpus: str, mode: str, handoff_dir: Path | None = None) -
             raise AssertionError(f"{corpus}: handoff conformance missed findings: {conformance}")
         if result["result_code"] != 3:
             raise AssertionError(f"{corpus}: expected ACTIONABLE integration result, got {result['result_code']}")
+        if ci["process_exit_code"] != exit_code:
+            raise AssertionError(f"{corpus}: CI exit {ci['process_exit_code']} != process exit {exit_code}")
         if handoff_dir is not None:
             handoff_dir.mkdir(parents=True, exist_ok=True)
             (handoff_dir / f"{corpus}-{mode}.json").write_text(
@@ -339,6 +343,8 @@ def run_edge(binary: Path, edge_root: Path) -> dict:
         metrics = _compare_truth(loaded, document, loaded["contents"], "edge")
         if result["result_code"] != 4:
             raise AssertionError(f"edge: expected INCOMPLETE, got {result['result_code']}")
+        if ci["process_exit_code"] != exit_code:
+            raise AssertionError(f"edge: CI exit mismatch")
         return {
             "corpus": loaded["summary"]["version"],
             "mode": "stream",
