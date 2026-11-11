@@ -7,7 +7,7 @@
 use std::collections::BTreeSet;
 use std::fs;
 use std::path::{Path, PathBuf};
-use std::time::{Duration, SystemTime};
+use std::time::{Duration, Instant, SystemTime};
 
 use crate::error::CoreError;
 use crate::path::{canonical_locator, unit_id};
@@ -18,6 +18,44 @@ pub const DEFAULT_MAX_TOTAL_BYTES: u64 = 64 * 1024 * 1024;
 pub const DEFAULT_TIMEOUT_MS: u64 = 300_000;
 pub const DEFAULT_MAX_FINDINGS: usize = 10_000;
 pub const DEFAULT_STREAM_CHUNK_BYTES: usize = 64 * 1024;
+pub const DEFAULT_DISCOVERY_ENTRIES: usize = 1_000_000;
+pub const DEFAULT_DISCOVERY_DEPTH: usize = 128;
+pub const DEFAULT_DISCOVERY_TIMEOUT: Duration = Duration::from_secs(300);
+pub const DEFAULT_POLICY_WORK: u64 = 50_000_000;
+
+#[derive(Debug, Clone, Copy)]
+pub struct DiscoveryBudget {
+    pub deadline: Instant,
+    pub max_entries: usize,
+    pub max_depth: usize,
+    pub max_policy_work: u64,
+}
+
+impl Default for DiscoveryBudget {
+    fn default() -> Self {
+        Self {
+            deadline: Instant::now() + DEFAULT_DISCOVERY_TIMEOUT,
+            max_entries: DEFAULT_DISCOVERY_ENTRIES,
+            max_depth: DEFAULT_DISCOVERY_DEPTH,
+            max_policy_work: DEFAULT_POLICY_WORK,
+        }
+    }
+}
+
+fn consume_policy_budget(budget: &mut u64, cost: u64) -> bool {
+    if *budget < cost {
+        return false;
+    }
+    *budget -= cost;
+    true
+}
+
+fn abort_policy_budget(discovery: &mut Discovery) {
+    discovery.aborted = true;
+    discovery
+        .fatal_errors
+        .push("POLICY_BUDGET_EXCEEDED".to_string());
+}
 
 #[derive(Debug, Clone)]
 pub struct ScanLimits {
@@ -79,10 +117,14 @@ pub struct DiscoveredUnit {
 
 #[derive(Debug, Default)]
 pub struct Discovery {
+    pub root: PathBuf,
     pub units: Vec<DiscoveredUnit>,
     pub fatal_errors: Vec<String>,
     pub warnings: Vec<String>,
     pub unmatched_selectors: usize,
+    pub aborted: bool,
+    pub entries_seen: usize,
+    pub matched_scope_selectors: BTreeSet<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -143,8 +185,32 @@ impl LocalSource {
     }
 
     pub fn discover(&self) -> Discovery {
-        let mut discovery = Discovery::default();
-        self.walk(Path::new(""), &[], false, false, &mut discovery);
+        self.discover_with_budget(DiscoveryBudget::default())
+    }
+
+    pub fn discover_until(&self, deadline: Instant) -> Discovery {
+        self.discover_with_budget(DiscoveryBudget {
+            deadline,
+            ..DiscoveryBudget::default()
+        })
+    }
+
+    pub fn discover_with_budget(&self, budget: DiscoveryBudget) -> Discovery {
+        let mut discovery = Discovery {
+            root: self.root.clone(),
+            ..Discovery::default()
+        };
+        let mut policy_budget = budget.max_policy_work;
+        self.walk(
+            Path::new(""),
+            &[],
+            false,
+            false,
+            0,
+            &mut discovery,
+            budget,
+            &mut policy_budget,
+        );
         discovery
             .units
             .sort_by(|left, right| left.locator.cmp(&right.locator));
@@ -159,13 +225,11 @@ impl LocalSource {
                 discovery.unmatched_selectors += 1;
             }
         }
-        let discovered: BTreeSet<&str> = discovery
-            .units
-            .iter()
-            .map(|unit| unit.locator.as_str())
-            .collect();
         for selector in self.skips.iter().chain(self.optional.iter()) {
-            if !discovered.iter().any(|locator| selector.matches(locator)) {
+            if !discovery
+                .matched_scope_selectors
+                .contains(selector.as_str())
+            {
                 discovery.unmatched_selectors += 1;
             }
         }
@@ -177,19 +241,97 @@ impl LocalSource {
         discovery
     }
 
+    fn directory_within_root(&self, directory: &Path) -> bool {
+        match fs::canonicalize(directory) {
+            Ok(canonical) => {
+                #[cfg(windows)]
+                {
+                    let root = self
+                        .root
+                        .to_string_lossy()
+                        .replace("\\\\?\\", "")
+                        .replace('/', "\\")
+                        .to_ascii_lowercase();
+                    let canonical = canonical
+                        .to_string_lossy()
+                        .replace("\\\\?\\", "")
+                        .replace('/', "\\")
+                        .to_ascii_lowercase();
+                    let base = root.clone();
+                    let prefix = if root.ends_with('\\') {
+                        root
+                    } else {
+                        format!("{root}\\")
+                    };
+                    canonical == base || canonical.starts_with(&prefix)
+                }
+                #[cfg(not(windows))]
+                {
+                    canonical.starts_with(&self.root)
+                }
+            }
+            Err(_) => false,
+        }
+    }
+
+    #[allow(clippy::too_many_arguments)]
     fn walk(
         &self,
         prefix: &Path,
         inherited_blocks: &[String],
         inherited_skip: bool,
         inherited_optional: bool,
+        depth: usize,
         discovery: &mut Discovery,
+        budget: DiscoveryBudget,
+        policy_budget: &mut u64,
     ) {
+        if discovery.aborted {
+            return;
+        }
+        if Instant::now() >= budget.deadline {
+            discovery.aborted = true;
+            discovery.fatal_errors.push("DISCOVERY_TIMEOUT".to_string());
+            return;
+        }
+        if depth > budget.max_depth {
+            discovery.aborted = true;
+            discovery
+                .fatal_errors
+                .push("DISCOVERY_DEPTH_LIMIT".to_string());
+            return;
+        }
         let directory = if prefix.as_os_str().is_empty() {
             self.root.clone()
         } else {
             self.root.join(prefix)
         };
+        if !self.directory_within_root(&directory) {
+            discovery.aborted = true;
+            discovery.fatal_errors.push("DIRECTORY_ESCAPE".to_string());
+            return;
+        }
+        if fs::symlink_metadata(&directory)
+            .map(|metadata| metadata.file_type().is_symlink())
+            .unwrap_or(false)
+        {
+            discovery.aborted = true;
+            discovery
+                .fatal_errors
+                .push("DIRECTORY_SYMLINK_ESCAPE".to_string());
+            return;
+        }
+        #[cfg(windows)]
+        if fs::symlink_metadata(&directory).is_ok_and(|metadata| {
+            use std::os::windows::fs::MetadataExt;
+            metadata.file_attributes() & 0x0400 != 0
+        }) {
+            discovery.aborted = true;
+            discovery
+                .fatal_errors
+                .push("DIRECTORY_REPARSE_ESCAPE".to_string());
+            return;
+        }
         let entries = match fs::read_dir(&directory) {
             Ok(entries) => entries,
             Err(_) => {
@@ -217,10 +359,26 @@ impl LocalSource {
                     continue;
                 }
             };
+            discovery.entries_seen += 1;
+            if discovery.entries_seen > budget.max_entries {
+                discovery.aborted = true;
+                discovery
+                    .fatal_errors
+                    .push("DISCOVERY_ENTRY_LIMIT".to_string());
+                return;
+            }
             names.push(name);
         }
         names.sort();
         for name in names {
+            if discovery.aborted {
+                return;
+            }
+            if Instant::now() >= budget.deadline {
+                discovery.aborted = true;
+                discovery.fatal_errors.push("DISCOVERY_TIMEOUT".to_string());
+                return;
+            }
             let relative = if prefix.as_os_str().is_empty() {
                 name.clone()
             } else {
@@ -236,21 +394,45 @@ impl LocalSource {
                 }
             };
             let path = self.root.join(&relative);
+            let path_segments = relative.split('/').count();
             let mut block_matches = inherited_blocks.to_vec();
             for request in &self.blocks {
+                if !consume_policy_budget(policy_budget, request.matcher.cost(path_segments)) {
+                    abort_policy_budget(discovery);
+                    return;
+                }
                 if request.matcher.matches(&locator)
                     && !block_matches.iter().any(|id| id == &request.request_id)
                 {
                     block_matches.push(request.request_id.clone());
                 }
             }
-            let skip =
-                inherited_skip || self.skips.iter().any(|selector| selector.matches(&locator));
-            let optional = inherited_optional
-                || self
-                    .optional
-                    .iter()
-                    .any(|selector| selector.matches(&locator));
+            let mut skip = inherited_skip;
+            for selector in &self.skips {
+                if !consume_policy_budget(policy_budget, selector.cost(path_segments)) {
+                    abort_policy_budget(discovery);
+                    return;
+                }
+                if selector.matches(&locator) {
+                    skip = true;
+                    discovery
+                        .matched_scope_selectors
+                        .insert(selector.as_str().to_string());
+                }
+            }
+            let mut optional = inherited_optional;
+            for selector in &self.optional {
+                if !consume_policy_budget(policy_budget, selector.cost(path_segments)) {
+                    abort_policy_budget(discovery);
+                    return;
+                }
+                if selector.matches(&locator) {
+                    optional = true;
+                    discovery
+                        .matched_scope_selectors
+                        .insert(selector.as_str().to_string());
+                }
+            }
             let metadata = match fs::symlink_metadata(&path) {
                 Ok(metadata) => metadata,
                 Err(_) => {
@@ -293,7 +475,10 @@ impl LocalSource {
                     &block_matches,
                     skip,
                     optional,
+                    depth + 1,
                     discovery,
+                    budget,
+                    policy_budget,
                 );
             } else if file_type.is_file() {
                 let scope = if !block_matches.is_empty() {
@@ -459,5 +644,108 @@ mod tests {
             discovery.units[0].scope,
             PreScanScope::Skipped("SYMLINK_NOT_FOLLOWED")
         );
+    }
+
+    #[test]
+    fn discovery_budget_fails_closed() {
+        let temp = tempfile::tempdir().unwrap();
+        File::create(temp.path().join("a.txt"))
+            .unwrap()
+            .write_all(b"a")
+            .unwrap();
+        File::create(temp.path().join("b.txt"))
+            .unwrap()
+            .write_all(b"b")
+            .unwrap();
+        let source = LocalSource::new(temp.path().to_path_buf(), &[], &[], &[]).unwrap();
+        let discovery = source.discover_with_budget(DiscoveryBudget {
+            max_entries: 1,
+            ..DiscoveryBudget::default()
+        });
+        assert!(discovery.aborted);
+        assert!(discovery
+            .fatal_errors
+            .contains(&"DISCOVERY_ENTRY_LIMIT".to_string()));
+        let discovery = source.discover_with_budget(DiscoveryBudget {
+            deadline: Instant::now() - std::time::Duration::from_secs(1),
+            ..DiscoveryBudget::default()
+        });
+        assert!(discovery.aborted);
+        assert!(discovery
+            .fatal_errors
+            .contains(&"DISCOVERY_TIMEOUT".to_string()));
+    }
+
+    #[test]
+    fn discovery_depth_limit_fails_closed() {
+        let temp = tempfile::tempdir().unwrap();
+        fs::create_dir_all(temp.path().join("one/two/three")).unwrap();
+        File::create(temp.path().join("one/two/three/file.txt"))
+            .unwrap()
+            .write_all(b"x")
+            .unwrap();
+        let source = LocalSource::new(temp.path().to_path_buf(), &[], &[], &[]).unwrap();
+        let discovery = source.discover_with_budget(DiscoveryBudget {
+            max_depth: 1,
+            ..DiscoveryBudget::default()
+        });
+        assert!(discovery.aborted);
+        assert!(discovery
+            .fatal_errors
+            .contains(&"DISCOVERY_DEPTH_LIMIT".to_string()));
+    }
+
+    #[test]
+    fn policy_evaluation_budget_fails_closed() {
+        let temp = tempfile::tempdir().unwrap();
+        File::create(temp.path().join("a.txt"))
+            .unwrap()
+            .write_all(b"a")
+            .unwrap();
+        let mut spec = PolicySpec::empty();
+        spec.add_block(
+            "B",
+            PolicyOrigin::Repository,
+            "**/*.txt",
+            "budget test",
+            "1",
+            false,
+        )
+        .unwrap();
+        let source = LocalSource::new_with_policy(temp.path().to_path_buf(), &spec).unwrap();
+        let discovery = source.discover_with_budget(DiscoveryBudget {
+            max_policy_work: 1,
+            ..DiscoveryBudget::default()
+        });
+        assert!(discovery.aborted);
+        assert!(discovery
+            .fatal_errors
+            .contains(&"POLICY_BUDGET_EXCEEDED".to_string()));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn directory_symlink_escape_is_not_enumerated() {
+        use std::os::unix::fs::symlink;
+        let temp = tempfile::tempdir().unwrap();
+        let outside = tempfile::tempdir().unwrap();
+        File::create(outside.path().join("outside.txt"))
+            .unwrap()
+            .write_all(b"RNC_SYNTH_KEY_AWS_OUTSIDE")
+            .unwrap();
+        symlink(outside.path(), temp.path().join("escape")).unwrap();
+        let source = LocalSource::new(temp.path().to_path_buf(), &[], &[], &[]).unwrap();
+        let discovery = source.discover();
+        assert!(!discovery.aborted);
+        assert!(discovery
+            .units
+            .iter()
+            .all(|unit| unit.locator != "escape/outside.txt"));
+        let link = discovery
+            .units
+            .iter()
+            .find(|unit| unit.locator == "escape")
+            .expect("symlink entry recorded");
+        assert_eq!(link.scope, PreScanScope::Skipped("SYMLINK_NOT_FOLLOWED"));
     }
 }

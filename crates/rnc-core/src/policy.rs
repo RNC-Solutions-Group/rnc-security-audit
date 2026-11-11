@@ -14,6 +14,11 @@ use crate::coverage::SCHEMA_VERSION;
 use crate::error::CoreError;
 use crate::finding::Finding;
 
+pub const MAX_SELECTOR_SCALARS: usize = 4096;
+pub const MAX_SELECTOR_SEGMENTS: usize = 64;
+pub const MAX_MATCH_SEGMENTS: usize = 256;
+pub const MAX_POLICY_SELECTORS: usize = 256;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum PolicyOrigin {
@@ -62,7 +67,7 @@ impl ScopeGlob {
                 "policy selector must not be empty".to_string(),
             ));
         }
-        if value.chars().count() > 4096 {
+        if value.chars().count() > MAX_SELECTOR_SCALARS {
             return Err(CoreError::Input(
                 "policy selector exceeds the supported length".to_string(),
             ));
@@ -141,6 +146,11 @@ impl ScopeGlob {
         if segments.is_empty() {
             return Err(CoreError::Input("policy selector is empty".to_string()));
         }
+        if segments.len() > MAX_SELECTOR_SEGMENTS {
+            return Err(CoreError::Input(
+                "policy selector has too many segments".to_string(),
+            ));
+        }
         Ok(Self {
             raw: value.to_string(),
             segments,
@@ -156,34 +166,51 @@ impl ScopeGlob {
         self.specificity
     }
 
+    pub fn cost(&self, path_segments: usize) -> u64 {
+        (self.segments.len().max(1) as u64)
+            .saturating_mul(path_segments.max(1) as u64)
+            .saturating_add(self.raw.len() as u64)
+    }
+
     pub fn matches(&self, locator: &str) -> bool {
         let parts: Vec<&str> = locator.split('/').collect();
+        if parts.len() > MAX_MATCH_SEGMENTS {
+            return false;
+        }
         matches_segments(&self.segments, &parts)
     }
 }
 
 fn matches_segments(pattern: &[GlobSegment], parts: &[&str]) -> bool {
-    if pattern.is_empty() {
-        return parts.is_empty();
-    }
-    match &pattern[0] {
-        GlobSegment::Any => {
-            for skip in 0..=parts.len() {
-                if matches_segments(&pattern[1..], &parts[skip..]) {
-                    return true;
+    // Bounded dynamic programming over (pattern position, path position).
+    // Consecutive `**` segments no longer create combinatorial recursion.
+    let rows = pattern.len() + 1;
+    let columns = parts.len() + 1;
+    let mut table = vec![false; rows * columns];
+    let index = |row: usize, column: usize| row * columns + column;
+    table[index(pattern.len(), parts.len())] = true;
+    for row in (0..pattern.len()).rev() {
+        for column in (0..=parts.len()).rev() {
+            let value = match &pattern[row] {
+                GlobSegment::Any => {
+                    table[index(row + 1, column)]
+                        || (column < parts.len() && table[index(row, column + 1)])
                 }
-            }
-            false
-        }
-        GlobSegment::Literal(value) => {
-            !parts.is_empty() && parts[0] == value && matches_segments(&pattern[1..], &parts[1..])
-        }
-        GlobSegment::Pattern(value) => {
-            !parts.is_empty()
-                && glob_segment(value, parts[0])
-                && matches_segments(&pattern[1..], &parts[1..])
+                GlobSegment::Literal(literal) => {
+                    column < parts.len()
+                        && parts[column] == literal
+                        && table[index(row + 1, column + 1)]
+                }
+                GlobSegment::Pattern(pattern) => {
+                    column < parts.len()
+                        && glob_segment(pattern, parts[column])
+                        && table[index(row + 1, column + 1)]
+                }
+            };
+            table[index(row, column)] = value;
         }
     }
+    table[index(0, 0)]
 }
 
 fn glob_segment(pattern: &str, value: &str) -> bool {
@@ -340,6 +367,26 @@ pub struct PolicySpec {
     pub skips: Vec<ScopeGlob>,
     pub optional: Vec<ScopeGlob>,
     pub errors: Vec<String>,
+    declarations: BTreeMap<String, PolicyDeclaration>,
+}
+
+#[derive(Debug, Clone, serde::Serialize, PartialEq, Eq)]
+struct PolicyDeclaration {
+    policy_id: String,
+    version: String,
+    origin: PolicyOrigin,
+    mandatory: bool,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    entries: Vec<PolicyDeclarationEntry>,
+}
+
+#[derive(Debug, Clone, serde::Serialize, PartialEq, Eq, PartialOrd, Ord)]
+struct PolicyDeclarationEntry {
+    kind: String,
+    selector: String,
+    reason: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    expires_unix: Option<u64>,
 }
 
 impl Default for PolicySpec {
@@ -357,6 +404,7 @@ impl PolicySpec {
             skips: Vec::new(),
             optional: Vec::new(),
             errors: Vec::new(),
+            declarations: BTreeMap::new(),
         }
     }
 
@@ -378,6 +426,7 @@ impl PolicySpec {
                 "duplicate block request selector".to_string(),
             ));
         }
+        let matcher = ScopeGlob::parse(selector)?;
         self.ensure_policy(policy_id, origin, version, mandatory)?;
         self.blocks.push(BlockRule {
             request_id,
@@ -385,9 +434,10 @@ impl PolicySpec {
             origin,
             selector: selector.to_string(),
             reason: reason.to_string(),
-            matcher: ScopeGlob::parse(selector)?,
+            matcher,
         });
-        Ok(())
+        self.declare(policy_id, "BLOCK", selector, reason, None)?;
+        self.refresh_policy_digests()
     }
 
     #[allow(clippy::too_many_arguments)]
@@ -411,6 +461,7 @@ impl PolicySpec {
                 "duplicate exemption request selector".to_string(),
             ));
         }
+        let matcher = parse_exemption_selector(selector)?;
         self.ensure_policy(policy_id, origin, version, mandatory)?;
         self.exemptions.push(ExemptionRule {
             request_id,
@@ -418,9 +469,47 @@ impl PolicySpec {
             origin,
             selector: selector.to_string(),
             reason: reason.to_string(),
-            matcher: parse_exemption_selector(selector)?,
+            matcher,
             expires_unix,
         });
+        self.declare(policy_id, "EXEMPTION", selector, reason, expires_unix)?;
+        self.refresh_policy_digests()
+    }
+
+    fn declare(
+        &mut self,
+        policy_id: &str,
+        kind: &str,
+        selector: &str,
+        reason: &str,
+        expires_unix: Option<u64>,
+    ) -> Result<(), CoreError> {
+        let declaration = self
+            .declarations
+            .get_mut(policy_id)
+            .ok_or_else(|| CoreError::Input("policy declaration missing".to_string()))?;
+        let entry = PolicyDeclarationEntry {
+            kind: kind.to_string(),
+            selector: selector.to_string(),
+            reason: reason.to_string(),
+            expires_unix,
+        };
+        if declaration.entries.contains(&entry) {
+            return Err(CoreError::Input("duplicate policy declaration".to_string()));
+        }
+        declaration.entries.push(entry);
+        declaration.entries.sort();
+        Ok(())
+    }
+
+    fn refresh_policy_digests(&mut self) -> Result<(), CoreError> {
+        for policy in &mut self.effective_policies {
+            let declaration = self
+                .declarations
+                .get(&policy.policy_id)
+                .ok_or_else(|| CoreError::Input("policy declaration missing".to_string()))?;
+            policy.digest = digest_canonical(declaration)?;
+        }
         Ok(())
     }
 
@@ -451,7 +540,7 @@ impl PolicySpec {
                 "mandatory policy must originate globally".to_string(),
             ));
         }
-        let digest = digest_bytes(format!("{policy_id}\0{version}").as_bytes());
+        let digest = String::new();
         if let Some(existing) = self
             .effective_policies
             .iter()
@@ -459,7 +548,6 @@ impl PolicySpec {
         {
             if existing.origin != origin
                 || existing.version != version
-                || existing.digest != digest
                 || existing.mandatory != mandatory
             {
                 return Err(CoreError::Input(format!(
@@ -477,12 +565,27 @@ impl PolicySpec {
         });
         self.effective_policies
             .sort_by(|left, right| left.policy_id.cmp(&right.policy_id));
+        self.declarations.insert(
+            policy_id.to_string(),
+            PolicyDeclaration {
+                policy_id: policy_id.to_string(),
+                version: version.to_string(),
+                origin,
+                mandatory,
+                entries: Vec::new(),
+            },
+        );
         Ok(())
     }
 
     pub fn validate(&self) -> Result<(), CoreError> {
         if !self.errors.is_empty() {
             return Err(CoreError::Input(self.errors.join(",")));
+        }
+        if self.blocks.len() + self.exemptions.len() + self.skips.len() + self.optional.len()
+            > MAX_POLICY_SELECTORS
+        {
+            return Err(CoreError::Input("too many policy selectors".to_string()));
         }
         let mut ids = BTreeSet::new();
         for policy in &self.effective_policies {
@@ -938,5 +1041,98 @@ mod tests {
             .collect();
         assert_eq!(statuses["NARROW"], "APPLIED");
         assert_eq!(statuses["WIDE"], "UNSUPPORTED");
+    }
+
+    #[test]
+    fn policy_digests_bind_content_not_declaration_order() {
+        fn build(order: bool, selector: &str, expiry: Option<u64>) -> (String, String) {
+            let mut spec = PolicySpec::empty();
+            let mut add = |sel: &str| {
+                spec.add_block("POL", PolicyOrigin::Repository, sel, "reason", "1", false)
+                    .unwrap();
+            };
+            if order {
+                add("a/**");
+                add(selector);
+            } else {
+                add(selector);
+                add("a/**");
+            }
+            spec.add_exemption(
+                "POL",
+                PolicyOrigin::Repository,
+                "path:fixtures/**",
+                "fixture",
+                "1",
+                false,
+                expiry,
+            )
+            .unwrap();
+            let record = build_policy("r", &[], &[], &spec, 0).unwrap();
+            (
+                spec.effective_policies[0].digest.clone(),
+                record.effective_policy_digest,
+            )
+        }
+        let first = build(true, "b/**", None);
+        let reordered = build(false, "b/**", None);
+        assert_eq!(first, reordered);
+        let changed_selector = build(true, "c/**", None);
+        assert_ne!(first.0, changed_selector.0);
+        let changed_expiry = build(true, "b/**", Some(100));
+        assert_ne!(first.0, changed_expiry.0);
+        assert_ne!(first.1, changed_expiry.1);
+    }
+
+    #[test]
+    fn conflicting_policy_declarations_fail() {
+        let mut spec = PolicySpec::empty();
+        spec.add_block(
+            "POL",
+            PolicyOrigin::Repository,
+            "a/**",
+            "reason",
+            "1",
+            false,
+        )
+        .unwrap();
+        assert!(spec
+            .add_block("POL", PolicyOrigin::Cli, "a/**", "reason", "1", false,)
+            .is_err());
+        assert!(spec
+            .add_block(
+                "POL",
+                PolicyOrigin::Repository,
+                "a/**",
+                "reason",
+                "2",
+                false,
+            )
+            .is_err());
+    }
+
+    #[test]
+    fn pathological_recursive_globs_are_bounded_and_deterministic() {
+        let selector = std::iter::repeat_n("**", 32).collect::<Vec<_>>().join("/");
+        let glob = ScopeGlob::parse(&selector).unwrap();
+        let path = std::iter::repeat_n("segment", 200)
+            .collect::<Vec<_>>()
+            .join("/");
+        let first = glob.matches(&path);
+        let second = glob.matches(&path);
+        assert_eq!(first, second);
+        assert!(first);
+        assert!(
+            ScopeGlob::parse(&std::iter::repeat_n("**", 65).collect::<Vec<_>>().join("/")).is_err()
+        );
+    }
+
+    #[test]
+    fn selector_count_limit_is_enforced() {
+        let mut spec = PolicySpec::empty();
+        for index in 0..=MAX_POLICY_SELECTORS {
+            spec.add_skip(&format!("path-{index}")).unwrap();
+        }
+        assert!(spec.validate().is_err());
     }
 }

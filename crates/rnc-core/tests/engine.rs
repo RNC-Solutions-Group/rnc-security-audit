@@ -26,6 +26,7 @@ fn config(mode: ScanMode) -> RunConfig {
         accepted_result_codes: vec![1, 2],
         config_source: "test-defaults".to_string(),
         config_provenance: std::collections::BTreeMap::new(),
+        deadline: None,
     }
 }
 
@@ -375,4 +376,64 @@ fn invalid_policy_fails_even_with_no_findings() {
         .reason_codes
         .contains(&"POLICY_INVALID".to_string()));
     assert_eq!(report.ci.process_exit_code, 30);
+}
+
+#[cfg(unix)]
+#[test]
+fn ancestor_directory_substitution_is_not_followed() {
+    use std::os::unix::fs::symlink;
+    let temp = tempdir().unwrap();
+    let outside = tempdir().unwrap();
+    write(
+        &temp.path().join("nested/secret.txt"),
+        b"RNC_SYNTH_KEY_GENERIC_ALPHA\n",
+    );
+    let source = LocalSource::new(temp.path().to_path_buf(), &[], &[], &[]).unwrap();
+    let discovery = source.discover();
+    fs::remove_file(temp.path().join("nested/secret.txt")).unwrap();
+    fs::remove_dir(temp.path().join("nested")).unwrap();
+    write(
+        &outside.path().join("secret.txt"),
+        b"RNC_SYNTH_KEY_GENERIC_BRAVO\n",
+    );
+    symlink(outside.path(), temp.path().join("nested")).unwrap();
+    let report = scan(discovery, &rules_v1(), &config(ScanMode::Whole)).unwrap();
+    assert!(report.findings.is_empty());
+    assert_eq!(report.execution.units[0].disposition, "UNINSPECTED");
+}
+
+#[test]
+fn aborted_discovery_cannot_produce_a_trustworthy_result() {
+    let temp = tempdir().unwrap();
+    write(&temp.path().join("a.txt"), b"benign\n");
+    write(&temp.path().join("b.txt"), b"benign\n");
+    let source = LocalSource::new(temp.path().to_path_buf(), &[], &[], &[]).unwrap();
+    let discovery = source.discover_with_budget(rnc_core::input::DiscoveryBudget {
+        max_entries: 1,
+        ..rnc_core::input::DiscoveryBudget::default()
+    });
+    let cfg = config(ScanMode::Whole);
+    let report = scan(discovery, &rules_v1(), &cfg).unwrap();
+    assert_eq!(report.execution.state, ExecutionState::Error);
+    assert!(report
+        .execution
+        .fatal_errors
+        .iter()
+        .any(|code| code == "DISCOVERY_ENTRY_LIMIT"));
+    assert_eq!(report.result.result_code, 5);
+    assert_eq!(report.ci.process_exit_code, 30);
+}
+
+#[test]
+fn removed_file_is_not_inspected() {
+    let temp = tempdir().unwrap();
+    let path = temp.path().join("removed.txt");
+    write(&path, b"RNC_SYNTH_KEY_GENERIC_ALPHA\n");
+    let source = LocalSource::new(temp.path().to_path_buf(), &[], &[], &[]).unwrap();
+    let discovery = source.discover();
+    fs::remove_file(&path).unwrap();
+    let report = scan(discovery, &rules_v1(), &config(ScanMode::Whole)).unwrap();
+    assert!(report.findings.is_empty());
+    assert_eq!(report.execution.units[0].disposition, "UNINSPECTED");
+    assert_eq!(report.result.result_code, 4);
 }

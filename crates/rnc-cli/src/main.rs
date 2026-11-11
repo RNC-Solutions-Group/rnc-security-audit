@@ -1,13 +1,11 @@
 //! RNC Scanner CP2 CLI: detection, policy, reporting and CI acceptance.
 
 use std::env;
-use std::fs::OpenOptions;
-use std::io::Write;
-#[cfg(unix)]
-use std::os::unix::fs::OpenOptionsExt;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::process;
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::{Instant, SystemTime, UNIX_EPOCH};
+
+mod report;
 
 use rnc_core::{
     load_effective, scan, BackendRequest, CliOverrides, LoadedBundle, LocalSource, RunConfig,
@@ -182,48 +180,6 @@ fn parse_scan_args(arguments: &[String]) -> Result<ScanArgs, String> {
     })
 }
 
-fn output_is_safe(root: &Path, output: &Path) -> bool {
-    let parent = output.parent().unwrap_or_else(|| Path::new("."));
-    let resolved = std::fs::canonicalize(parent).unwrap_or_else(|_| parent.to_path_buf());
-    if resolved.starts_with(root) {
-        return false;
-    }
-    if output.exists() {
-        if let Ok(canonical) = std::fs::canonicalize(output) {
-            if canonical.starts_with(root) {
-                return false;
-            }
-        }
-    }
-    true
-}
-
-fn write_file(path: &Path, value: &[u8], private: bool) -> Result<(), String> {
-    if let Ok(metadata) = std::fs::symlink_metadata(path) {
-        if metadata.file_type().is_symlink() {
-            return Err("report output must not be a symbolic link".to_string());
-        }
-    }
-    #[cfg(windows)]
-    let _ = private;
-    let mut options = OpenOptions::new();
-    options.write(true).create(true).truncate(true);
-    #[cfg(unix)]
-    options.mode(if private { 0o600 } else { 0o644 });
-    let mut file = options
-        .open(path)
-        .map_err(|error| format!("cannot create report: {error}"))?;
-    #[cfg(unix)]
-    if private {
-        use std::os::unix::fs::PermissionsExt;
-        file.set_permissions(std::fs::Permissions::from_mode(0o600))
-            .map_err(|error| format!("cannot restrict report permissions: {error}"))?;
-    }
-    file.write_all(value)
-        .and_then(|_| file.write_all(b"\n"))
-        .map_err(|error| format!("cannot write report: {error}"))
-}
-
 fn run_scan(arguments: &[String]) -> i32 {
     let args = match parse_scan_args(arguments) {
         Ok(args) => args,
@@ -269,22 +225,37 @@ fn run_scan(arguments: &[String]) -> i32 {
             return 64;
         }
     }
-    if let Some(output) = &args.output {
-        if let Ok(root) = std::fs::canonicalize(&args.root) {
-            if !output_is_safe(&root, output) {
-                eprintln!("error: report output must be outside the scan root");
-                return 64;
+    let root = match std::fs::canonicalize(&args.root) {
+        Ok(root) => root,
+        Err(error) => {
+            eprintln!("error: cannot resolve scan root: {error}");
+            return 64;
+        }
+    };
+    let destination = match (&args.output, args.format) {
+        (Some(output), form) => {
+            match report::ReportDestination::new(output, &root, form == OutputFormat::Private) {
+                Ok(destination) => Some(destination),
+                Err(error) => {
+                    eprintln!("error: {error}");
+                    return 64;
+                }
             }
         }
-    }
-    let source = match LocalSource::new_with_policy(args.root.clone(), &effective.policy) {
+        (None, _) => None,
+    };
+    let source = match LocalSource::new_with_policy(root, &effective.policy) {
         Ok(source) => source,
         Err(error) => {
             eprintln!("error: {error}");
             return 64;
         }
     };
-    let discovery = source.discover();
+    let started = Instant::now();
+    let deadline = started
+        .checked_add(effective.limits.timeout)
+        .unwrap_or(started);
+    let discovery = source.discover_until(deadline);
     let config = RunConfig {
         run_id: args.run_id,
         limits: ScanLimits {
@@ -301,6 +272,7 @@ fn run_scan(arguments: &[String]) -> i32 {
         accepted_result_codes: effective.accepted_result_codes.clone(),
         config_source: effective.source.clone(),
         config_provenance: effective.provenance.clone(),
+        deadline: Some(deadline),
     };
     let report = match scan(discovery, &bundle, &config) {
         Ok(report) => report,
@@ -325,8 +297,8 @@ fn run_scan(arguments: &[String]) -> i32 {
                     return 30;
                 }
             };
-            if let Some(output) = &args.output {
-                if let Err(error) = write_file(output, payload.as_bytes(), false) {
+            if let Some(destination) = &destination {
+                if let Err(error) = destination.write(payload.as_bytes()) {
                     eprintln!("error: {error}");
                     return 30;
                 }
@@ -335,13 +307,6 @@ fn run_scan(arguments: &[String]) -> i32 {
             }
         }
         OutputFormat::Private => {
-            let output = match &args.output {
-                Some(output) => output,
-                None => {
-                    eprintln!("error: private report requires --output");
-                    return 64;
-                }
-            };
             let value = match report.private_value() {
                 Ok(value) => value,
                 Err(error) => {
@@ -356,9 +321,14 @@ fn run_scan(arguments: &[String]) -> i32 {
                     return 30;
                 }
             };
-            if let Err(error) = write_file(output, payload.as_bytes(), true) {
-                eprintln!("error: {error}");
-                return 30;
+            if let Some(destination) = &destination {
+                if let Err(error) = destination.write(payload.as_bytes()) {
+                    eprintln!("error: {error}");
+                    return 30;
+                }
+            } else {
+                eprintln!("error: private report requires --output");
+                return 64;
             }
             print!("{}", report.summary());
         }

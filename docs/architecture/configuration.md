@@ -16,7 +16,7 @@ If `.rncscanner.toml` and `security.config` both exist and no explicit config is
 
 - **Overridable scalar settings:** CLI > repository > global.
 - **Resource caps:** effective value is the most restrictive (minimum) across global, repository and CLI. A lower-trust source cannot enlarge a global cap.
-- **Accepted result codes:** the effective set is the intersection of every explicitly configured list and the CLI list. An empty intersection is an error; `INCOMPLETE`/`FAILED` are never acceptable.
+- **Accepted result codes:** default is `{1,2}`. A global list is the mandatory cap and may include `3`. Repository configuration may only narrow to a subset of the default/global cap; it cannot independently add `3`. An explicit CLI list may broaden the default when no global cap exists, but must remain a subset of a global cap. Per-code provenance records `default`, `global`, `repository` or `cli`. `INCOMPLETE`/`FAILED` are never acceptable. See [ADR-013](adr-013-ci-acceptance-authority.md).
 - **Mandatory policies:** only global configuration may set `mandatory = true`. Repository and CLI cannot remove global blocks or exemptions; policy requests are additive. A SHA-256 policy declaration conflict is rejected.
 - **Reporting safety:** `sanitized_only` and `redaction_fail_closed`, if present, must be true. `follow_symlinks` must be false.
 
@@ -53,6 +53,7 @@ reason = "approved synthetic fixture"
 # mandatory is forbidden outside global configuration
 
 [ci]
+# Repository configuration may narrow, never broaden beyond the global/default cap.
 accepted_result_codes = [1, 2]
 ```
 
@@ -64,7 +65,7 @@ Unknown fields are rejected. All configuration values are validated before sourc
 
 ## Provenance
 
-The private evidence bundle records the configuration source, per-setting origins (`global`, `repository`, `cli`), accepted codes and the effective policy ledger. Policy entries carry origin/version/digest/mandatory. Protected values are never printed in sanitized output.
+The private evidence bundle records the configuration source, per-setting origins (`global`, `repository`, `cli`), per-code CI acceptance authority and the effective policy ledger. Policy digests are content-bound: selectors, expiration, origin, mandatory status and version all participate; declaration order does not. Policy entries carry origin/version/digest/mandatory. Protected values are never printed in sanitized output.
 
 ## Selector grammar
 

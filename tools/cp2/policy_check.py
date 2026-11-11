@@ -265,15 +265,44 @@ def run(binary: Path) -> dict:
         # enforcement, never the immutable result.
         root = base / "accept-actionable"
         _write(root / "a.txt", "RNC_SYNTH_KEY_GENERIC_ALPHA\n")
-        accept_all = _config(
-            base,
-            "accept-all.toml",
-            'schema_version = "0.2.0"\n[ci]\naccepted_result_codes = [1, 2, 3]\n',
+        completed, doc, _ = _run(
+            binary, root,
+            args=["--accept-result", "3"],
+            run_id="accept-actionable",
         )
-        completed, doc, _ = _run(binary, root, config=accept_all, run_id="accept-actionable")
         assert completed.returncode == 0 and doc["result"]["result_code"] == 3
         assert doc["ci"]["accepted"] is True
         cases.append({"case": "accept_actionable", "exit": 0, "result": 3})
+
+        # Repository configuration may not independently authorize ACTIONABLE.
+        root = base / "repo-authority"
+        _write(root / "a.txt", "RNC_SYNTH_KEY_GENERIC_ALPHA\n")
+        repo_authority = _config(
+            base,
+            "repo-authority.toml",
+            'schema_version = "0.2.0"\n[ci]\naccepted_result_codes = [1, 2, 3]\n',
+        )
+        completed, _, _ = _run(binary, root, config=repo_authority, run_id="repo-authority")
+        assert completed.returncode == 64
+        cases.append({"case": "repository_actionable_denied", "exit": 64, "result": None})
+
+        # A trusted global cap may explicitly authorize ACTIONABLE.
+        global_authority = _config(
+            base,
+            "global-authority.toml",
+            'schema_version = "0.2.0"\n[ci]\naccepted_result_codes = [1, 2, 3]\n',
+        )
+        completed, doc, _ = _run(
+            binary, root,
+            global_config=global_authority,
+            run_id="global-authority",
+        )
+        assert completed.returncode == 0 and doc["result"]["result_code"] == 3
+        assert any(
+            key.startswith("ci.accepted_result_codes.3") and value == "global"
+            for key, value in doc["configuration"]["provenance"].items()
+        )
+        cases.append({"case": "global_actionable_allowed", "exit": 0, "result": 3})
 
         # 20. POLICY_APPLIED is rejected or accepted only by CI policy; its
         # result code never changes.

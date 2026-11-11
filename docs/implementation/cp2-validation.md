@@ -1,183 +1,192 @@
-# CP2 integrated scanner — validation report
+# CP2 integrated scanner — validation and security-hardening report
 
-> **Status:** CP2 implementation and required CP2 CI complete; awaiting operator review. PR [#6](https://github.com/RNC-Solutions-Group/rnc-security-audit/pull/6) targets `main`; no merge has occurred. CP0/CP1 foundation commits are present in `feat/cp2`.
+> **Status:** CP2 hardening implementation complete; required CP2, CP1 and CP0 CI is green at `560bce7`. Awaiting operator review. PR [#6](https://github.com/RNC-Solutions-Group/rnc-security-audit/pull/6) targets `main`; no merge has occurred. This report applies to the hardened CP2 branch, not the superseded pre-hardening head.
 
 ## Repository state
 
 | Item | Value |
 | --- | --- |
 | Branch | `feat/cp2` |
-| Starting commit | `e20ac29` (operator merge of CP1 into `feat/cp2`) |
-| Final implementation commit | `5a97de5` (plus this documentation commit) |
+| Starting commit (prior CP2) | `4875fe2` |
+| Hardening commits | `41517ae`, `ca521b1`, `aa72abe`, `560bce7` |
+| Final implementation commit | `560bce7` (plus this documentation commit) |
 | PR | https://github.com/RNC-Solutions-Group/rnc-security-audit/pull/6 |
 | Target | `main` |
-| Merge status | Open / unmerged |
+| Merge status | Open / unmerged / mergeable |
+| `main` | Unchanged at `e54d5bc` |
 
-## Implementation
+## Findings and corrections
 
-| Area | Delivery |
-| --- | --- |
-| Backends | `crates/rnc-core/src/backend.rs`: reference regex, RegexSet, Aho-Corasick prefilter, capability/provenance |
-| Candidate contract | `MatchCandidate { rule_index, start, end }`; capture semantics applied before validation |
-| Planner | `auto` → reference regex; explicit strategies; deterministic fallback with recorded reason |
-| Streaming | Bounded windows, max-match carry, deferred edge candidates, final-carry rescan |
-| Configuration | `crates/rnc-core/src/config.rs`: TOML, global/repository/CLI, mandatory caps, provenance, legacy migration |
-| Scope policy | `crates/rnc-core/src/policy.rs` + `input.rs`: glob selectors, inherited directory blocks, verified non-access |
-| Exemptions | Post-detection dispositions; raw findings immutable; expiry/shadowing deterministic |
-| Ledgers | Execution, findings and policy records reconciled before finalization |
-| Classification | Five results with `FAILED > INCOMPLETE > ACTIONABLE > POLICY_APPLIED > CLEAN` |
-| CI | Default `{1,2}`, explicit `3`, never `4/5`; exits 0/10/20/30 and 64 for invalid invocation |
-| Reporting | Sanitized allowlist JSON; private evidence outside root; `0600` on Unix; publication failure is nonzero |
-| CLI | `scan`, `rules validate`, strategy/config/acceptance/policy options |
+### P0 — report output path and filesystem safety
 
-### Strategies
+**Original issue:** unresolved relative parents fell back to their original representation; symlink checking and file opening were separate path operations; a destination could be redirected or partially written.
 
-| Requested | Effective | Mechanism |
-| --- | --- | --- |
-| `regex` | reference regex | Every rule's exact regex; authoritative |
-| `regexset` | RegexSet | Set selects patterns, exact regex extracts spans |
-| `prefilter` | Aho-Corasick | Proven required literals filter rules; exact regex remains authoritative |
-| `auto` | reference regex | Conservative; no unjustified promotion |
+**Correction:** `crates/rnc-cli/src/report.rs`
 
-Required-literal extraction is sound-by-construction and conservative: alternation requires a common prefix across every branch; variable/optional constructs stop extraction; no-literal rules always run exact regex.
+- Relative paths resolve against the process working directory; resolution failure is fatal.
+- The parent is canonicalized and must exist; the parent and final path must be outside the canonical scan root.
+- Final symlinks/reparse points, directories and non-regular files are rejected.
+- Unix creates a unique temporary file with `openat(O_CREAT|O_EXCL|O_NOFOLLOW)` in the already-open parent directory, writes/flushes/fsyncs, sets `0600` for private evidence, rechecks the final object, and publishes with `renameat`. Parent substitution cannot redirect the operation.
+- Windows opens/verifies a parent directory handle, creates a temporary file, verifies the temp handle resolves within that parent, then publishes with `NtSetInformationFile(FileRenameInformation)` relative to the verified parent handle.
+- Interrupted/failed writes leave the old destination untouched; temp files are removed where possible. Publication failure exits `30`.
 
-## Correctness
+**Regression tests:** bare relative output inside root; `../` relative; absolute inside/outside; existing regular replacement; final symlink; symlinked parent into root; deterministic parent substitution; deterministic final-component substitution; invalid parent; Unix mode `0600`; read-only parent I/O failure; symlink report rejection; atomic replacement. Unix tests passed in a Linux container and in CI.
 
-### Test inventory
+**Residual:** Windows private evidence relies on inherited directory ACLs rather than Unix mode bits; this is documented in [source-acquisition.md](../architecture/source-acquisition.md) and not claimed as equivalent.
 
-- **52 Rust tests**: path/config/policy/result/backend units, engine integration, CLI integration.
-- **5 CP1 Python rule tests** and **74 CP0 regression tests**.
-- **20 CP2 integration cases**: v0/v1/edge × whole/stream × regex/regexset/prefilter/auto.
-- **22 CP2 policy/configuration/classification scenarios** in Linux CI.
-- **4 external scoring handoffs**, one per strategy.
+### P0 — authorized source root containment
 
-### Independent truth
+**Original issue:** `symlink_metadata` plus final-component `O_NOFOLLOW` did not prevent ancestor-directory substitution between discovery and open.
 
-Every strategy produced:
+**Correction:** `crates/rnc-core/src/input.rs`, `stream.rs`
 
-| Corpus | Modes | Expected | Actual | Result |
-| --- | --- | ---: | ---: | --- |
-| synthetic-v1 | whole, stream | 25 | 25 | ACTIONABLE (3) |
-| synthetic-v0 | whole, stream | 13 | 13 | ACTIONABLE (3) |
-| synthetic-edge | stream | 3 | 3 | INCOMPLETE (4) |
+- Unix opens the root and every intermediate directory with `openat` + `O_NOFOLLOW`; the final file is opened with `O_NOFOLLOW`. Reads and size/mtime checks use the descriptor.
+- Windows rejects reparse-point ancestors/final targets, opens with `FILE_FLAG_OPEN_REPARSE_POINT`, and verifies the opened handle with `GetFinalPathNameByHandleW` against the canonical root before reading.
+- Discovery canonicalizes every directory and verifies it remains under the root; symlink/reparse directories are rejected or recorded as uninspected. Directory-wide blocks are inherited before file content access.
+- Discovery has finite entry, depth, time and policy-work budgets. Exhaustion produces `DISCOVERY_TIMEOUT`, `DISCOVERY_ENTRY_LIMIT`, `DISCOVERY_DEPTH_LIMIT`, `POLICY_BUDGET_EXCEEDED`, `DIRECTORY_ESCAPE`/`DIRECTORY_SYMLINK_ESCAPE` fatal errors, never a completed clean scan.
 
-All 20 cases validated v0.2 schemas and cross-record invariants. Canonical findings, units, result and CI exit were identical across strategies. Edge cases include LF/CRLF/CR-only, BOM/Unicode, binary/invalid UTF-8, multiline, overlapping rules, repeated markers, boundary crossing, empty files, oversize and optional coverage.
+**Regression tests:** final-component symlink substitution; ancestor-directory substitution; directory symlink escape; removed file; changed file; symlink loop/entry; malformed paths; discovery entry/depth/timeout; policy budget; Unix mode-`000` blocked file proving non-access; all strategy differentials after acquisition changes.
 
-### External harness
+**Residual:** Windows directory enumeration remains path-based; an ancestor substitution during enumeration is a documented race. Content reads and report publication use handle-verified paths. Unix report/source file operations are `openat`-relative.
 
-Pinned revision `86de44bf1cb13abf9a0c375a8b91d102c9b6dc9f` scored the actual CP2 handoff for **each** strategy:
+### P1 — CI acceptance authority
 
-| Strategy | Expected | Matched | Missed | Unexpected | False positive | Duplicate |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| regex | 25 | 25 | 0 | 0 | 0 | 0 |
-| regexset | 25 | 25 | 0 | 0 | 0 | 0 |
-| prefilter | 25 | 25 | 0 | 0 | 0 | 0 |
-| auto | 25 | 25 | 0 | 0 | 0 | 0 |
+**Original issue:** repository configuration could add `ACTIONABLE (3)` when no higher-level list existed.
 
-Scoring status `COMPLETED`, execution `PASS`. This is synthetic scoring-engine integration only: **no external corpus was executed and no production accuracy claim is made.**
+**Correction:** `config.rs`, `run_scan`
 
-### Policy/classification scenarios
+- Default `{1,2}`.
+- Global configuration may broaden to include `3`; its list is the mandatory cap.
+- Explicit trusted CLI `--accept-result 3` may broaden when no global cap exists.
+- Repository configuration may only narrow to a subset of the default/global cap; repository-only authorization of `3` fails closed with exit `64`.
+- CLI cannot exceed a global cap. `4`/`5` are never accepted.
+- Per-code provenance records `default`, `global`, `repository` or `cli`.
 
-CI passed 22 scenarios:
+**Regression tests:** repository-only actionable denial; CLI actionable acceptance; global actionable acceptance; mandatory global override of repository/CLI; repository narrowing; incomplete/failed always rejected; immutable result; exit codes.
 
-clean; verified pre-scan block; mixed exemption; fully exempted; incomplete required coverage; failed execution; optional uninspected; zero required scope; requested-but-unmatched block/exemption; mandatory global block; global acceptance cap; dual repository sources; reviewed legacy migration; limit precedence; invalid selector; sanitized output; explicit actionable acceptance; rejected `POLICY_APPLIED`; incomplete-with-findings; overlapping-block collision; Unix unreadable-file no-access proof.
+### P1 — resource-bounded policy matching and discovery
 
-The incomplete-with-findings case proves lower-priority actionable evidence remains present while the final result is `INCOMPLETE`.
+**Original issue:** recursive `**` matching enumerated segment assignments; discovery ran outside the main deadline.
+
+**Correction:** `policy.rs`, `input.rs`, `engine.rs`, CLI
+
+- Glob matching uses bounded dynamic programming over pattern/path positions.
+- Limits: 4096 selector scalars, 64 selector segments, 256 matched path segments, 256 selectors.
+- Discovery: 1,000,000 entries, depth 128, overall scan deadline (discovery and detection share the CLI deadline), 50,000,000 estimated policy-work units.
+- Policy work is charged before matching; exhaustion aborts discovery with a fatal code.
+
+**Regression tests:** 32 consecutive `**` segments against 200 path segments; 65-segment rejection; selector-count limit; entry/depth/timeout/policy budgets; deterministic repeated runs; deep/Unicode/long path discovery.
+
+### P2 — policy digest and provenance integrity
+
+**Original issue:** individual policy digests derived only from policy ID/version.
+
+**Correction:** `policy.rs`
+
+`EffectivePolicy.digest` now binds a canonical declaration containing policy ID, version, origin, mandatory status, and all block/exemption selectors, reasons and expirations. Declaration order is canonicalized. Effective-policy digest, policy record digest and final result digest remain linked. Duplicate policy IDs with conflicting version/origin/mandatory declarations fail.
+
+**Regression tests:** equivalent inputs/order give identical digests; selector change changes digest; expiry change changes digest; conflicting declarations fail; policy/result digests validate against the CP0 reference reconciler.
+
+## Security behavior by platform
+
+| Property | Linux | macOS | Windows |
+| --- | --- | --- | --- |
+| Source content root containment | `openat` + `O_NOFOLLOW` chain | same | reparse checks + final handle path verification |
+| Ancestor substitution during read | rejected | rejected | rejected by handle path verification |
+| Directory enumeration containment | canonical check + symlink rejection | same | canonical check + reparse rejection; path-based residual race |
+| Pre-scan block before content open | yes | yes | yes |
+| Report atomic publication | `openat`/`renameat`, temp + fsync | same | parent handle + `NtSetInformationFile`, temp + fsync |
+| Private evidence mode | `0600` | `0600` | inherited ACL, documented |
+| Final/parent symlink report rejection | yes | yes | reparse checks + handle verification |
+
+## Validation
+
+- **78 Rust tests on Unix** (42 core + 17 engine + 9 CLI unit/report + 10 CLI integration); **67 on Windows** (platform-gated tests account for the difference). `cargo fmt --check`, clippy `-D warnings`, release builds pass.
+- **74 CP0 regression tests**; **5 CP1 Python rule tests**.
+- **20 CP2 integration cases**: v0/v1/edge × whole/stream × regex/regexset/prefilter/auto; all v0.2 records valid; all expected findings found; all strategies canonical-equivalent.
+- **24 policy/configuration/classification scenarios** on Linux CI (clean, blocked, exemptions, mixed, incomplete, failed, optional/zero scope, unmatched requests, mandatory global, repository/global/CLI acceptance, dual config, legacy migration, limits, invalid selector, sanitized output, incomplete-with-findings, block collision, no-access).
+- Pinned external harness revision `86de44bf1cb13abf9a0c375a8b91d102c9b6dc9f`: **25/25 expected, 25 matched, 0 missed, 0 unexpected, 0 false positive, 0 duplicate** for each of regex, regexset, prefilter and auto. No external corpus was executed; no production accuracy claim.
+- CP1 compatibility integration remains green. CP0 regression workflow remains green.
+
+### Security negative controls
+
+The deterministic `write_with_hook` tests fail against the pre-correction path-based report logic (parent/final substitution). The ancestor-substitution and Unix mode-`000` block tests fail against a final-component-only check. Repository-only `accepted_result_codes = [1,2,3]` fails against the old intersection-only model. The 32-`**`/200-segment test exercises the old combinatorial matcher shape. Policy digest tests fail when only ID/version is hashed.
 
 ## Performance
 
-CI run [42947298472](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/42947298472), Linux x86_64, 4 vCPU, 3 repetitions per profile, release build:
+Final CI run [42955912642](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/42955912642), Linux x86_64, 4 vCPU, release build, 3 repetitions:
 
-- Build: 21.473 s; binary: 3,021,360 bytes; binary digest `sha256:ea678524…`.
-- Host: `Linux-7.0.0-1017-azure-x86_64-with-glibc2.39`.
-- CP1 reference build from the previous checkpoint: 18.46 s, 2.39 MB binary. Runner load varies; compare correctness and relative strategy behavior, not absolute milliseconds across runs.
+- Build: **31.184 s**; binary **3,095,088 bytes**.
+- Prior CP2 reference run: 21.473 s, 3,021,360 bytes.
 
-Representative medians:
+| Workload | Auto whole median | Throughput | CPU | Peak RSS |
+| --- | ---: | ---: | ---: | ---: |
+| large-low 32 MiB | 112.6 ms | 284.2 MiB/s | 88.8% | 41,692 KiB |
+| large-high 32 MiB | 152.1 ms | 210.4 MiB/s | 92.1% | 45,748 KiB |
+| 2,000 × 4 KiB | 95.7 ms | 81.6 MiB/s | 93.1% | 17,200 KiB |
+| FP-heavy 8 MiB | 71.6 ms | 111.7 MiB/s | 83.8% | 17,400 KiB |
+| Unicode 8 MiB | 30.7 ms | 260.8 MiB/s | 65.2% | 14,552 KiB |
 
-| Workload | Mode | Regex ms / MiB/s | RegexSet ms / MiB/s | Prefilter ms / MiB/s | Auto |
-| --- | --- | --- | --- | --- | --- |
-| large-low 32 MiB | whole | 64.6 / 495.7 | 60.1 / 532.0 | 58.6 / 546.1 | regex 63.2 / 506.7 |
-| large-high 32 MiB | whole | 92.8 / 344.8 | 91.1 / 351.1 | 94.8 / 337.6 | regex 94.7 / 337.9 |
-| large-low 32 MiB | stream | 64.7 / 494.3 | 60.1 / 532.7 | 57.6 / 555.4 | regex 63.3 / 505.7 |
-| large-high 32 MiB | stream | 201.9 / 158.5 | 197.1 / 162.4 | 196.1 / 163.2 | regex 196.1 / 163.2 |
-| 2,000 × 4 KiB | whole | 55.4 / 141.0 | 53.2 / 146.8 | 52.6 / 148.5 | regex 54.4 / 143.7 |
-| FP-heavy 8 MiB | whole | 42.4 / 188.7 | 46.7 / 171.2 | 64.9 / 123.3 | regex 42.9 / 186.6 |
-| Unicode 8 MiB | whole | 19.0 / 420.2 | 17.9 / 447.0 | 16.8 / 476.4 | regex 18.3 / 436.1 |
+Same-host controlled comparison (prior `4875fe2` binary vs hardened):
 
-Peak RSS was approximately 42–46 MB for whole large-file scans and 4.8–25 MB for streaming; CPU was approximately 52–96% of one core. Full samples, p95, files/s and per-profile CPU/RSS are in the artifact. Because this run was materially faster than the preceding CP2 run on the same runner class, absolute values are reported as observed rather than as a stable production prediction.
+| Workload | Prior | Hardened | Delta |
+| --- | ---: | ---: | ---: |
+| large-low whole | 102 ms | 125 ms | ~+23% |
+| 2,000 small files whole | 367 ms | 501 ms | ~+36% |
 
-### Interpretation
+The final CI run was slower across all profiles than the preceding CI run, including unaffected CPU-bound work; that is consistent with host/environment variance. The controlled comparison shows a real acquisition cost from canonical checks, per-component reparse metadata and `openat` traversal, which is the intended security tradeoff. No security control was removed to recover performance.
 
-- No portable strategy has a uniform advantage. Prefilter helps low-density/large and Unicode workloads but is materially slower on the false-positive-heavy workload because many rules have matching literals.
-- RegexSet is close to regex and slightly better on large/Unicode profiles, but not uniformly.
-- Auto therefore remains the reference backend. Explicit acceleration remains available for controlled use.
-- CP2 is slower than CP1 on some profiles because it materializes candidates, validates all ledgers, computes record digests and builds configuration/policy. This is integrated-work overhead, not a like-for-like primitive comparison. No regression is hidden; the reference strategy remains the default.
-- CP2 remains single-threaded.
+No separate phase timing for discovery/matching/reporting is instrumented; total wall-clock includes discovery, and separate phase figures are not claimed. This is a measurement limitation, not a claim of zero overhead.
 
-## Security and adversarial validation
-
-- Strict canonical locators; traversal/backslash/drive/UNC/control/bidi/device-name rejection.
-- Symlink entries uninspected; `O_NOFOLLOW`/Windows reparse-point open closes discovery-to-read substitution.
-- Pre-scan block proof on Unix by blocking a mode-`000` file: it remains `VERIFIED_BLOCKED`, which is only possible because it was not opened.
-- Directory-wide blocks are inherited during enumeration; file contents are not opened.
-- Duplicate/overlapping block requests resolve one deterministic winner; shadowed requests remain `UNSUPPORTED`.
-- Exemptions cannot rewrite findings; expired/shadowed/unmatched requests do not apply.
-- Unknown TOML fields, dual sources, mandatory-policy escalation, unsafe reporting and symlink following fail closed.
-- Private output outside root with `0600` on Unix; sanitized output contains no locators, finding IDs, evidence digests or raw bytes.
-- `FILE_CHANGED`, size/total/finding limits, timeout, partial reads and output publication failure are explicit failures or coverage gaps.
-- No real credentials were used.
+Strategy behavior is unchanged: no portable alternative has a uniform advantage; `auto` remains reference regex. Prefilter remains slower on FP-heavy content.
 
 ## Known issues
 
 ### P0
 
-None identified.
+None identified after the corrections above.
 
 ### P1
 
-1. **No OS-signal cancellation.** Cooperative deadline interruption exists; Ctrl-C/termination handling is deferred.
-2. **Prefilter regression on FP-heavy content.** Explicit prefilter is slower; auto does not select it. Investigate rule-literal density and candidate reuse before any promotion.
+1. **No OS-signal cancellation.** Cooperative deadlines/timeout accounting exist; SIGINT handling remains deferred.
+2. **Windows directory-enumeration race.** File reads and report publication use handle-verified paths; path-based `read_dir` remains a documented residual race on Windows.
+3. **Windows private ACLs.** Private evidence relies on inherited destination ACLs; Unix `0600` equivalence is not claimed.
 
 ### P2
 
-1. Single-threaded execution; parallel characteristics are recorded as not implemented.
-2. Same-rule/same-line external-harness ambiguity remains; findings are byte-addressed but the pinned harness is line-addressed.
-3. External corpora (Levain/Leaky Repo/Prowlbench) remain deferred.
-4. Installer/signing and non-x86_64 packaging deferred; x86_64 musl build passes.
-5. Committed rules are synthetic test rules, not a production signature set.
-6. The private envelope is schema-checked by the independent Python validator in CI, not by a Rust JSON-Schema runtime.
+1. Single-threaded execution; parallelism not implemented.
+2. External corpora (Levain/Leaky Repo/Prowlbench) not executed.
+3. Same-rule/same-line external-harness ambiguity remains; RNC findings stay byte-addressed.
+4. Installer/signing and non-x86_64 packaging deferred; x86_64 musl passes.
+5. Rules remain synthetic test rules.
+6. Phase-level discovery/matching/reporting timings are not separately instrumented.
 
 ## CI
 
-CP2 workflow [42947298472](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/42947298472) at `5a97de5` passed all required jobs; CP0 and CP1 regression workflows also passed:
+| Workflow | Result |
+| --- | --- |
+| CP2 [42955912642](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/42955912642) | All 8 required jobs pass: quality/integration/policy, benchmark, all-strategy external scoring, Ubuntu/Windows/macOS, musl, audit |
+| CP1 [42955912636](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/42955912636) | All 7 required jobs pass |
+| CP0 [42955912646](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/42955912646) | All 3 required jobs pass |
 
-- quality, integration, policy and classification;
-- multi-strategy benchmark;
-- external harness scoring for all strategies;
-- Ubuntu, Windows, macOS;
-- static Linux musl;
-- dependency advisory audit.
+Final artifacts:
 
-Artifacts:
-
-- `cp2-integration-policy-evidence` — ID `13822479059`, digest `sha256:d1642e7a8fccd82cef9a2057154a6d158c638906ced04130db5375c1239ab9a9`.
-- `cp2-benchmark-evidence` — ID `13822714653`, digest `sha256:25a4fcb911da8967fa5925cef4cb5ca0711b0caf90c19178ac58f4257eb8a1e6`.
-- `cp2-external-harness-score` — ID `13823177341`, digest `sha256:371feebf9ad7d0b599e926565101e8dc798075d1781124f5af3e8d7f6422e1c9`.
-
-Sanitized CI artifacts contain no private findings, locators or evidence digests. Private handoffs are generated in runner temp and scored without upload.
+- `cp2-integration-policy-evidence` — ID `13827550520`, digest `sha256:0618536ddbd780d8b218db065b966f7c2b8faebaa56f546e02ac74e08be51422`.
+- `cp2-benchmark-evidence` — ID `13827250922`, digest `sha256:fa58b0f3acd2a7b51976712241f7fdadd4d62a57bd1edd88a2f9e9cd2eecdd46`.
+- `cp2-external-harness-score` — ID `13826414825`, digest `sha256:b7ab8c02eae2e68a2043d452492b5b833bc92d7a70db2b77164c31ffbe417029`.
 
 ## Acceptance
 
-- [x] Functional multi-strategy architecture with reference regex preserved.
-- [x] RegexSet and Aho-Corasick strategies functional and differential-equivalent.
-- [x] Deterministic planner and explicit fallback provenance.
-- [x] Production unified configuration with mandatory caps and legacy migration.
-- [x] Verified pre-scan blocks and post-scan exemptions.
-- [x] Three ledgers, five-state classifier and CI exit semantics.
-- [x] Sanitized/private reporting with redaction and path controls.
-- [x] Independent synthetic scoring for every strategy.
-- [x] Security/adversarial coverage and cross-platform/static-musl builds.
-- [x] Documentation and ADRs.
+- [x] Output destinations cannot escape the reporting boundary (Unix fd-relative; Windows handle-relative).
+- [x] Private evidence publication is atomic, restrictive on Unix, and fails closed.
+- [x] Authorized source content is root-contained (Unix openat chain; Windows handle verification).
+- [x] Documentation distinguishes documented platform guarantees; Windows enumeration/ACL residuals are explicit.
+- [x] Repository configuration cannot authorize `ACTIONABLE`; global/CLI authority and provenance are enforced.
+- [x] Policy matching is dynamically bounded; discovery and policy work are finite.
+- [x] Policy declaration digests bind content.
+- [x] All three strategies remain canonically equivalent; external scoring remains valid.
+- [x] CP0/CP1/CP2 regressions and cross-platform CI pass.
+- [x] Documentation, ADRs and operator guide updated.
 - [ ] Operator review and merge.
 
-**Readiness: READY for operator review.** All required CP2 CI gates pass; no unresolved correctness mismatch or security-critical defect is known. The P1/P2 items above are disclosed, not concealed; the default path avoids the measured prefilter regression.
+**Final disposition: CONDITIONAL GO for operator review.** All required CI is green and no known P0 defect remains. The conditions are explicit: accept the documented Windows directory-enumeration/ACL residual and deferred OS-signal cancellation, or authorize a follow-up for full Windows handle-relative discovery and cancellation. This is not a claim of identical platform guarantees.

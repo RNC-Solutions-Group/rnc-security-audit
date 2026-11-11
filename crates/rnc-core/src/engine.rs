@@ -23,6 +23,7 @@ pub struct RunConfig {
     pub accepted_result_codes: Vec<u8>,
     pub config_source: String,
     pub config_provenance: std::collections::BTreeMap<String, String>,
+    pub deadline: Option<Instant>,
 }
 
 impl Default for RunConfig {
@@ -38,6 +39,7 @@ impl Default for RunConfig {
             accepted_result_codes: vec![1, 2],
             config_source: "defaults".to_string(),
             config_provenance: std::collections::BTreeMap::new(),
+            deadline: None,
         }
     }
 }
@@ -146,9 +148,11 @@ pub fn scan(
     if config.run_id.trim().is_empty() {
         return Err(CoreError::Input("run_id must be non-empty".to_string()));
     }
-    let deadline = Instant::now()
-        .checked_add(config.limits.timeout)
-        .unwrap_or_else(Instant::now);
+    let deadline = config.deadline.unwrap_or_else(|| {
+        Instant::now()
+            .checked_add(config.limits.timeout)
+            .unwrap_or_else(Instant::now)
+    });
     let plan = crate::backend::MatchPlan::new(rules, config.strategy)?;
     let mut execution = ExecutionRecord::new(&config.run_id, rules);
     let mut findings = Vec::new();
@@ -156,6 +160,7 @@ pub fn scan(
     for code in &discovery.fatal_errors {
         execution.add_fatal(code);
     }
+    let source_root = discovery.root;
     let units = discovery.units;
     let mut total_bytes = 0u64;
     let mut timed_out = false;
@@ -226,7 +231,8 @@ pub fn scan(
                     }
                 };
                 match scan_file(
-                    &unit.path,
+                    &source_root,
+                    &unit.locator,
                     &unit_id,
                     &config.run_id,
                     &plan,
