@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.rncsolutionsgroup.com/security-audit/v0.2/provider-rule-bundle.schema.json",
+  "title": "RNC Scanner provider credential rule bundle",
+  "description": "Data-only provider credential catalog. Patterns must compile in the Rust linear-time byte-regex engine, have a finite maximum match length, and declare a bounded candidate capture. Metadata is digest-bound and does not grant runtime trust.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "ruleset_id", "ruleset_version", "rules"],
+  "properties": {
+    "schema_version": {"const": "0.2.0"},
+    "ruleset_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "ruleset_version": {"type": "string", "minLength": 1, "maxLength": 128},
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 512,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rule_id",
+          "rule_version",
+          "category",
+          "provider",
+          "family",
+          "credential_type",
+          "context",
+          "pattern",
+          "capture_group",
+          "validators",
+          "confidence",
+          "max_match_bytes",
+          "max_candidate_bytes",
+          "fixture_set",
+          "provenance"
+        ],
+        "properties": {
+          "rule_id": {"type": "string", "minLength": 1, "maxLength": 128},
+          "rule_version": {"type": "string", "minLength": 1, "maxLength": 128},
+          "category": {"type": "string", "minLength": 1, "maxLength": 128},
+          "provider": {"type": "string", "pattern": "^[a-z0-9-]{1,96}$"},
+          "family": {"type": "string", "pattern": "^[a-z0-9-]{1,96}$"},
+          "credential_type": {"type": "string", "pattern": "^[a-z0-9-]{1,96}$"},
+          "context": {"enum": ["assignment", "bearer", "container", "standalone", "uri"]},
+          "pattern": {"type": "string", "minLength": 1, "maxLength": 16384},
+          "capture_group": {"type": "integer", "minimum": 0, "maximum": 255},
+          "validators": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "MARKER_FORMAT",
+                "MARKER_SUFFIX",
+                "ASCII_ONLY",
+                "NOT_PLACEHOLDER",
+                "ENTROPY_MIN_3_5",
+                "BASE64URL",
+                "HEX",
+                "AWS_ACCESS_KEY_ID",
+                "AWS_SERVICE_BEARER_TOKEN_ID",
+                "AWS_CONTEXT_SPECIFIC_CREDENTIAL_ID",
+                "AWS_SECRET_ACCESS_KEY",
+                "GOOGLE_API_KEY",
+                "GITHUB_CLASSIC_PAT",
+                "GITHUB_FINE_GRAINED_PAT",
+                "GITHUB_OAUTH_TOKEN",
+                "GITHUB_APP_INSTALLATION_TOKEN",
+                "GITLAB_PAT",
+                "STRIPE_SECRET_KEY",
+                "SLACK_TOKEN",
+                "SENDGRID_API_KEY",
+                "NPM_TOKEN",
+                "PEM_PRIVATE_KEY",
+                "JWT_BEARER",
+                "DATABASE_URI",
+                "GENERIC_SECRET_ASSIGNMENT"
+              ]
+            }
+          },
+          "confidence": {"enum": ["low", "medium", "high", "unknown"]},
+          "max_match_bytes": {"type": "integer", "minimum": 1, "maximum": 1048576},
+          "max_candidate_bytes": {"type": "integer", "minimum": 1, "maximum": 1048576},
+          "fixture_set": {"type": "string", "minLength": 1, "maxLength": 256},
+          "provenance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source", "references", "reviewed"],
+            "properties": {
+              "source": {"type": "string", "minLength": 1, "maxLength": 256},
+              "references": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 16,
+                "items": {"type": "string", "pattern": "^https?://\\S+$"}
+              },
+              "reviewed": {"type": "string", "minLength": 1, "maxLength": 64},
+              "notes": {"type": "string", "maxLength": 2048}
+            }
+          }
+        }
+      }
+    }
+  }
+}

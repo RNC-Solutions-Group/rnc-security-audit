@@ -1,0 +1,409 @@
+{
+  "counts": {
+    "expected_items": 15,
+    "files": 10,
+    "negative_files": 1,
+    "positive_files": 9
+  },
+  "dataset_id": "rnc-provider-fixtures-tier3-heldout",
+  "dataset_version": "2026.11.1",
+  "files": [
+    {
+      "byte_length": 137,
+      "expected_count": 2,
+      "path": "mixed/app.env",
+      "sha256": "ee2b6425beb06eda10f9552ae2e8c6b4d23f241e45472259367137ec303ab5ee"
+    },
+    {
+      "byte_length": 263,
+      "expected_count": 3,
+      "path": "mixed/config.yaml",
+      "sha256": "ad284702d92306a3653c224dacce917042e0382187b70add741bc558b5a5dee8"
+    },
+    {
+      "byte_length": 93,
+      "expected_count": 2,
+      "path": "edge/same-line.txt",
+      "sha256": "570e48c25f436be06ff858487a2b4da2f77bcaa133cecd536d620f6b5aa6dfc3"
+    },
+    {
+      "byte_length": 77,
+      "expected_count": 2,
+      "path": "edge/crlf.txt",
+      "sha256": "78df580134ed3da769c3aa04a9f59bdd66e6c1073e415ab484f7d5625eedafa5"
+    },
+    {
+      "byte_length": 113,
+      "expected_count": 2,
+      "path": "edge/binary.dat",
+      "sha256": "ec0273e601ecd03d86972cdf381147c30782f3e358b65452bbf22d7b4b990d31"
+    },
+    {
+      "byte_length": 897,
+      "expected_count": 1,
+      "path": "edge/multiline.pem",
+      "sha256": "dd7fd6bd47a9c32efde6cb632f2afae48d9962220589fe456646d3eb3bf123d2"
+    },
+    {
+      "byte_length": 45,
+      "expected_count": 1,
+      "path": "edge/unicode.txt",
+      "sha256": "21e7087391a661082b170d98dd967ee35af74eb56ff58124e1aff4b960793ff1"
+    },
+    {
+      "byte_length": 196,
+      "expected_count": 0,
+      "path": "edge/decoys.md",
+      "sha256": "f688d3ccde1b86696f4e7764fbf2677c3f4f297015dd3a7641b96c4407d5e1e9"
+    },
+    {
+      "byte_length": 76,
+      "expected_count": 1,
+      "path": "edge/generic.conf",
+      "sha256": "3fddd289b870095454a2876800c8f8fda3ab8231bc52fea5a043d6775d445268"
+    },
+    {
+      "byte_length": 166,
+      "expected_count": 1,
+      "path": "edge/jwt.txt",
+      "sha256": "2d724dae9d785cf1a6d2a0a118ce69fe0caba05349f0880e27c08e7500012519"
+    }
+  ],
+  "items": [
+    {
+      "category": "sendgrid-api-key",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier3-heldout",
+      "dataset_version": "2026.11.1",
+      "end_byte": 71,
+      "expected_rule_id": "sendgrid-api-key",
+      "finding_id": "t-cb18cc9d35c96f1d0b7caedcb680bd5b6761734c3f2195a18de0442de2fc81f8",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "api-key",
+        "detector_confidence": "high",
+        "provider_family": "sendgrid-api-key"
+      },
+      "path": "edge/binary.dat",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "f4e85820cf1564ebaf704a72d806be05fc0b90f25811ef6a54f19a06e7fc7e34",
+      "start_byte": 2
+    },
+    {
+      "category": "npm-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier3-heldout",
+      "dataset_version": "2026.11.1",
+      "end_byte": 112,
+      "expected_rule_id": "npm-auth-token",
+      "finding_id": "t-4b6230779246c6d485a42061d65014f554152ee2bff1309fe875a5262c4804a2",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "auth-token",
+        "detector_confidence": "high",
+        "provider_family": "npm-token"
+      },
+      "path": "edge/binary.dat",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "e6ce734922888404e06ddc530818d4caf74df6d5769239d8fce35d8d83b80ca7",
+      "start_byte": 72
+    },
+    {
+      "category": "gitlab-pat",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier3-heldout",
+      "dataset_version": "2026.11.1",
+      "end_byte": 32,
+      "expected_rule_id": "gitlab-personal-access-token",
+      "finding_id": "t-07522898b8ec861b4a0e50ee36de54873eac8830e93641bed4808e939a013199",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "personal-access-token",
+        "detector_confidence": "high",
+        "provider_family": "gitlab-pat"
+      },
+      "path": "edge/crlf.txt",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "cf9f56998c28c05f8ac8674d12ec5c839f65c263141521bf1c7ef9c6ad00fd1e",
+      "start_byte": 6
+    },
+    {
+      "category": "generic-secret-assignment",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier3-heldout",
+      "dataset_version": "2026.11.1",
+      "end_byte": 75,
+      "expected_rule_id": "generic-secret-assignment",
+      "finding_id": "t-31de28a8e57849a203be3ba1caef98323212a17f2ed196ec6413391db84c259a",
+      "line_end": 2,
+      "line_start": 2,
+      "metadata": {
+        "credential_type": "assigned-secret",
+        "detector_confidence": "low",
+        "provider_family": "generic-secret-assignment"
+      },
+      "path": "edge/crlf.txt",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "4696d69c4c8dbf95794ffe816f4007c61cde6c9607c91efb238c5b36a19167f6",
+      "start_byte": 43
+    },
+    {
+      "category": "generic-secret-assignment",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier3-heldout",
+      "dataset_version": "2026.11.1",
+      "end_byte": 47,
+      "expected_rule_id": "generic-secret-assignment",
+      "finding_id": "t-b2db306de47b91d64f8e132fea439afe55e39815b43b3fea50d4f20eda78dbe2",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "assigned-secret",
+        "detector_confidence": "low",
+        "provider_family": "generic-secret-assignment"
+      },
+      "path": "edge/generic.conf",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "e0f910b5d18dacd50cc6a3e39c26a43a1bd6821801b65840cacd13489c04f312",
+      "start_byte": 15
+    },
+    {
+      "category": "jwt-bearer",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier3-heldout",
+      "dataset_version": "2026.11.1",
+      "end_byte": 165,
+      "expected_rule_id": "jwt-bearer-token",
+      "finding_id": "t-0bf6bf8b00dc6bc50bf3b66214dc123d667d5f136a55dd21f51fbc16fc34f4ce",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "bearer-token",
+        "detector_confidence": "medium",
+        "provider_family": "jwt-bearer"
+      },
+      "path": "edge/jwt.txt",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "f05312968bedcfdbc326e6bcd2f315dda5499980a0e9f15116750e9b580667c6",
+      "start_byte": 22
+    },
+    {
+      "category": "pem-private-key",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier3-heldout",
+      "dataset_version": "2026.11.1",
+      "end_byte": 889,
+      "expected_rule_id": "pem-private-key",
+      "finding_id": "t-118a835cfd447ffbdefc39623b10001e89e2a37d75d3924033a7c144c5bf1125",
+      "line_end": 16,
+      "line_start": 2,
+      "metadata": {
+        "credential_type": "private-key-container",
+        "detector_confidence": "high",
+        "provider_family": "pem-private-key"
+      },
+      "path": "edge/multiline.pem",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "06eff9dd110dd7757b11ce2aac5bdc0fbec899f92c0e7a2e611f239c236ca675",
+      "start_byte": 7
+    },
+    {
+      "category": "github-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier3-heldout",
+      "dataset_version": "2026.11.1",
+      "end_byte": 45,
+      "expected_rule_id": "github-classic-pat",
+      "finding_id": "t-4ea8a94ba3ed8b3f590eb4a49cb64bcc4102d44d71556ad657584451a5e96b1d",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "classic-personal-access-token",
+        "detector_confidence": "high",
+        "provider_family": "github-token"
+      },
+      "path": "edge/same-line.txt",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "51193132d9e93ef56d125345f6b030cc36a352e6a93db5e301115eb524be8579",
+      "start_byte": 5
+    },
+    {
+      "category": "github-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier3-heldout",
+      "dataset_version": "2026.11.1",
+      "end_byte": 92,
+      "expected_rule_id": "github-classic-pat",
+      "finding_id": "t-f56b8a1e30e47975b93c0e4d067799ec0987741cdb491e5f7f6e93f39fdf9520",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "classic-personal-access-token",
+        "detector_confidence": "high",
+        "provider_family": "github-token"
+      },
+      "path": "edge/same-line.txt",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "2a588f0ba2c20602319a1027ceddaed034a173f8b5fdb6a3f65921c77693ce3f",
+      "start_byte": 52
+    },
+    {
+      "category": "stripe-secret-key",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier3-heldout",
+      "dataset_version": "2026.11.1",
+      "end_byte": 39,
+      "expected_rule_id": "stripe-secret-api-key",
+      "finding_id": "t-7ea8d2a21a766e51682a6599cdb1e44f74e4a703bf9255a6ac5b85813c0f7721",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "secret-api-key",
+        "detector_confidence": "high",
+        "provider_family": "stripe-secret-key"
+      },
+      "path": "edge/unicode.txt",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "3930527a25be1cb100964f595697340ce687d58e2627bad027ea37555df38a48",
+      "start_byte": 7
+    },
+    {
+      "category": "aws-credentials",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier3-heldout",
+      "dataset_version": "2026.11.1",
+      "end_byte": 38,
+      "expected_rule_id": "aws-access-key-id",
+      "finding_id": "t-c89edc80f808a12a096e0dbc4d8c027248a527f882d8e6b4392a77c52b07b142",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "access-key-id",
+        "detector_confidence": "high",
+        "provider_family": "aws-credentials"
+      },
+      "path": "mixed/app.env",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "3e5a9ec0d5c3d945165059dfc90c7c90384220dfa218754317174a6889b8637b",
+      "start_byte": 18
+    },
+    {
+      "category": "google-cloud-api-key",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier3-heldout",
+      "dataset_version": "2026.11.1",
+      "end_byte": 93,
+      "expected_rule_id": "google-api-key",
+      "finding_id": "t-b690f76a20fef37b798e2771ffaf78783908a52568222e0935ddd9af92e5603c",
+      "line_end": 2,
+      "line_start": 2,
+      "metadata": {
+        "credential_type": "api-key",
+        "detector_confidence": "high",
+        "provider_family": "google-cloud-api-key"
+      },
+      "path": "mixed/app.env",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "bde54ec79f133a80dcf7d505b52bfcac82d1dc64f41679b3a5b7983c786cfab8",
+      "start_byte": 54
+    },
+    {
+      "category": "github-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier3-heldout",
+      "dataset_version": "2026.11.1",
+      "end_byte": 110,
+      "expected_rule_id": "github-fine-grained-pat",
+      "finding_id": "t-4334d89787540a539e1b69525fd990d1dd6b1bd911b36aa3c7a3e8d9c9ff5657",
+      "line_end": 2,
+      "line_start": 2,
+      "metadata": {
+        "credential_type": "fine-grained-personal-access-token",
+        "detector_confidence": "high",
+        "provider_family": "github-token"
+      },
+      "path": "mixed/config.yaml",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "a247448648314cd964d9b35fdb30dd6912564ea95d17271c00452e4c723d521b",
+      "start_byte": 17
+    },
+    {
+      "category": "slack-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier3-heldout",
+      "dataset_version": "2026.11.1",
+      "end_byte": 182,
+      "expected_rule_id": "slack-token",
+      "finding_id": "t-0210bca1bcf3e58c50d8428028116b4b47add9dc303d627ae1fcac4513ecd549",
+      "line_end": 4,
+      "line_start": 4,
+      "metadata": {
+        "credential_type": "bot-or-user-token",
+        "detector_confidence": "medium",
+        "provider_family": "slack-token"
+      },
+      "path": "mixed/config.yaml",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "e706405db406bb7467ab993d8fc0f31f28e9fe0dabb0d727884924c0d04c03c9",
+      "start_byte": 127
+    },
+    {
+      "category": "database-connection-string",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier3-heldout",
+      "dataset_version": "2026.11.1",
+      "end_byte": 247,
+      "expected_rule_id": "database-connection-credential",
+      "finding_id": "t-7a4135e9ed14940eadc1aa7947c84944f512de2530cf0cbf94a9d771930904a9",
+      "line_end": 5,
+      "line_start": 5,
+      "metadata": {
+        "credential_type": "connection-uri-userinfo",
+        "detector_confidence": "medium",
+        "provider_family": "database-connection-string"
+      },
+      "path": "mixed/config.yaml",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "e6cb3fb6649abc55da00642a98755a408261ad5a8058ec562ab1abdbf02c5c66",
+      "start_byte": 206
+    }
+  ],
+  "manifest_id": "rnc-cp3-provider-truth-tier3-heldout",
+  "manifest_version": "2026.11.1",
+  "negative_files": [
+    "edge/decoys.md"
+  ],
+  "provenance": {
+    "detector_output_used": false,
+    "fixture_material": "deterministic harmless synthetic values; no live credentials",
+    "generator": "tools/cp3/fixtures.py"
+  },
+  "schema_version": 1,
+  "scoring_policy": {
+    "allow_partial": false,
+    "id": "byte-range-v1",
+    "negative_oracle": true,
+    "one_to_one": true,
+    "require_line": true,
+    "version": "1"
+  },
+  "source_root": "tests/fixtures/providers/tier3"
+}

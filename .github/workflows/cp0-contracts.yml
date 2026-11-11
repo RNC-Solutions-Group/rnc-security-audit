@@ -1,22 +1,131 @@
-name: CP0 contract and Go-Rust probe
+name: CP0 contracts, corpus, harness and benchmarks
 
 on:
   pull_request:
     paths:
       - ".github/workflows/cp0-contracts.yml"
+      - ".gitattributes"
+      - "docs/contracts/**"
+      - "docs/architecture/**"
+      - "tools/cp0/**"
+      - "tests/cp0/**"
+      - "tests/fixtures/**"
+      - "requirements-cp0.txt"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/cp0-contracts.yml"
+      - ".gitattributes"
       - "docs/contracts/**"
       - "tools/cp0/**"
-      - "tests/**"
+      - "tests/cp0/**"
+      - "tests/fixtures/**"
       - "requirements-cp0.txt"
   workflow_dispatch:
 
 permissions:
   contents: read
 
+defaults:
+  run:
+    # GitHub's built-in bash shell runs with `-eo pipefail`; keep it explicit
+    # so `... | tee` cannot mask a failing validator or test command.
+    shell: bash
+
+concurrency:
+  group: cp0-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  contracts-and-probes:
+  contracts-corpus-harness:
+    name: "required: contracts, corpus and synthetic harness"
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pinned Python dependency
+        run: |
+          python -m pip install --disable-pip-version-check --no-cache-dir -r requirements-cp0.txt
+
+      - name: Validate schemas, corpora and outcome tables
+        run: |
+          set -o pipefail
+          mkdir -p artifacts/cp0
+          python -m tools.cp0.validate --json | tee artifacts/cp0/contracts.json
+
+      - name: Run contract, config, corpus, harness and benchmark-infrastructure tests
+        run: |
+          set -o pipefail
+          python -m unittest discover -s tests/cp0 -v 2>&1 | tee artifacts/cp0/tests.log
+
+      - name: Negative pipeline-failure probe (expected failed step)
+        id: pipeline_probe
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          mkdir -p artifacts/cp0
+          false | tee artifacts/cp0/pipeline-probe.log
+
+      - name: Assert pipeline failure propagated
+        if: always()
+        run: |
+          test "${{ steps.pipeline_probe.outcome }}" = "failure"
+          echo "pipeline failure propagation verified" | tee artifacts/cp0/pipeline-probe-assertion.log
+
+      - name: Generate full 1000-target corpus twice and prove byte-identical manifests
+        run: |
+          python -m tools.cp0.generate_corpus --output artifacts/cp0/corpus-a
+          python -m tools.cp0.generate_corpus --output artifacts/cp0/corpus-b
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          import sys
+          first = Path("artifacts/cp0/corpus-a/manifest.json").read_bytes()
+          second = Path("artifacts/cp0/corpus-b/manifest.json").read_bytes()
+          assert first == second, "generated corpus manifest is not deterministic"
+          print("corpus manifest sha256:", hashlib.sha256(first).hexdigest())
+          PY
+
+      - name: Generate and validate the large/oversize edge corpus
+        run: |
+          python -m tools.cp0.generate_edge_corpus --output artifacts/cp0/edge-corpus
+          python -m tools.cp0.validate --json --edge artifacts/cp0/edge-corpus > artifacts/cp0/contracts-with-edge.json
+
+      - name: Emit and score controlled stub modes
+        run: |
+          python -m tools.cp0.synthetic_stub --mode perfect --output artifacts/cp0/stub-perfect.json
+          python -m tools.cp0.synthetic_stub --mode miss-one --output artifacts/cp0/stub-miss-one.json
+          python -m tools.cp0.synthetic_stub --mode false-positive --output artifacts/cp0/stub-false-positive.json
+          python -m tools.cp0.harness --bundle artifacts/cp0/stub-perfect.json --output artifacts/cp0/score-perfect.json
+          python -m tools.cp0.harness --bundle artifacts/cp0/stub-miss-one.json --output artifacts/cp0/score-miss-one.json
+          python -m tools.cp0.harness --bundle artifacts/cp0/stub-false-positive.json --output artifacts/cp0/score-false-positive.json
+          python -m tools.cp0.harness --self-check --output artifacts/cp0/harness-self-check.json
+
+      - name: Export external-harness handoff
+        run: |
+          python -m tools.cp0.harness_adapter --corpus v1 --mode perfect --output artifacts/cp0/handoff-perfect.json
+
+      - name: Preserve contracts and synthetic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cp0-contracts-corpus-harness
+          path: artifacts/cp0/
+          if-no-files-found: warn
+          retention-days: 90
+
+  representative-benchmarks:
+    name: "required: equivalent Go and Rust benchmarks"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -30,34 +139,82 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.23.4"
+          cache: false
 
-      - name: Select pinned Rust compiler
+      - name: Install pinned Rust compiler
         run: |
           rustup toolchain install 1.85.0 --profile minimal
           rustup default 1.85.0
-          go version
           rustc --version
+          cargo --version
+          go version
 
-      - name: Validate contracts and unit tests
+      - name: Record toolchain and runner metadata
         run: |
-          python -m pip install -r requirements-cp0.txt
+          set -o pipefail
           mkdir -p artifacts/cp0
-          python -m tools.cp0.validate | tee artifacts/cp0/contracts.json
-          python -m unittest discover -s tests/cp0 -v
+          {
+            echo "runner=$RUNNER_OS/$RUNNER_ARCH"
+            echo "image=$ImageOS"
+            go version
+            rustc --version
+            cargo --version
+            python --version
+            uname -a
+          } | tee artifacts/cp0/toolchains.txt
 
-      - name: Build full synthetic fixture corpus
-        run: |
-          python -m tools.cp0.generate_corpus --output artifacts/cp0/corpus
+      - name: Preserve preliminary literal probe as the baseline
+        run: python -m tools.cp0.benchmark --runs 5 --output artifacts/cp0/literal-benchmarks.json
 
-      - name: Run comparable Go and Rust language probes
-        run: |
-          python -m tools.cp0.benchmark --runs 5 --output artifacts/cp0/benchmarks.json
+      - name: Run equivalent representative scanner benchmarks
+        run: python -m tools.cp0.bench_runner --runs 5 --output artifacts/cp0/representative-benchmarks.json
 
-      - name: Preserve CP0 evidence
+      - name: Preserve machine-readable benchmark evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cp0-contract-corpus-benchmarks
+          name: cp0-representative-benchmarks
           path: artifacts/cp0/
           if-no-files-found: warn
-          retention-days: 14
+          retention-days: 90
+
+  external-harness-contract:
+    name: "required: pinned independent-harness scoring contract"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pinned Python dependency
+        run: python -m pip install --disable-pip-version-check --no-cache-dir -r requirements-cp0.txt
+
+      - name: Check out the pinned independent harness
+        run: |
+          mkdir -p "$RUNNER_TEMP/scanner-harness"
+          git -C "$RUNNER_TEMP/scanner-harness" init -q
+          git -C "$RUNNER_TEMP/scanner-harness" remote add origin https://github.com/RNC-Solutions-Group/gitleaks.git
+          git -C "$RUNNER_TEMP/scanner-harness" fetch -q --depth 1 origin 86de44bf1cb13abf9a0c375a8b91d102c9b6dc9f
+          git -C "$RUNNER_TEMP/scanner-harness" checkout -q --detach FETCH_HEAD
+          git -C "$RUNNER_TEMP/scanner-harness" rev-parse HEAD
+
+      - name: Execute the external scoring engine on the CP0 handoff
+        env:
+          RNC_HARNESS_ROOT: ${{ runner.temp }}/scanner-harness
+        run: |
+          mkdir -p artifacts/cp0
+          python -m tools.cp0.external_harness_check --output artifacts/cp0/external-harness.json
+
+      - name: Preserve external-contract evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cp0-external-harness-contract
+          path: artifacts/cp0/
+          if-no-files-found: warn
+          retention-days: 90

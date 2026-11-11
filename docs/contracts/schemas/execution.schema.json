@@ -1,19 +1,57 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.rncsolutionsgroup.com/security-audit/v0.1/execution.schema.json",
+  "$id": "https://schemas.rncsolutionsgroup.com/security-audit/v0.2/execution.schema.json",
   "title": "Execution and coverage record",
+  "description": "Private execution ledger. Optional-scope gaps are represented in the units array and do not become required coverage gaps merely because they are missing.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "run_id", "state", "evidence_valid", "units", "fatal_errors"],
+  "required": [
+    "schema_version",
+    "run_id",
+    "state",
+    "evidence_valid",
+    "engine_version",
+    "ruleset_id",
+    "ruleset_digest",
+    "source_adapter",
+    "units",
+    "fatal_errors",
+    "failure_codes"
+  ],
   "properties": {
-    "schema_version": {"const": "0.1.0"},
+    "schema_version": {"const": "0.2.0"},
     "run_id": {"type": "string", "minLength": 1},
     "state": {"enum": ["COMPLETED", "ERROR", "INTERRUPTED"]},
     "evidence_valid": {"type": "boolean"},
-    "units": {"type": "array", "items": {"$ref": "source-unit.schema.json"}},
-    "fatal_errors": {"type": "array", "items": {"type": "string"}},
-    "required_scanners_missing": {"type": "integer", "minimum": 0},
     "engine_version": {"type": "string", "minLength": 1},
-    "ruleset_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
-  }
+    "ruleset_id": {"type": "string", "minLength": 1},
+    "ruleset_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "source_adapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1}
+      }
+    },
+    "units": {"type": "array", "items": {"$ref": "source-unit.schema.json"}},
+    "fatal_errors": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "failure_codes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[A-Z0-9_]+$"}
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "anyOf": [
+          {"properties": {"state": {"enum": ["ERROR", "INTERRUPTED"]}}, "required": ["state"]},
+          {"properties": {"fatal_errors": {"minItems": 1}}, "required": ["fatal_errors"]}
+        ]
+      },
+      "then": {"properties": {"failure_codes": {"minItems": 1}}}
+    }
+  ]
 }

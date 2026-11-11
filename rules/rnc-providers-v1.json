@@ -1,0 +1,524 @@
+{
+  "schema_version": "0.2.0",
+  "ruleset_id": "rnc-providers-v1",
+  "ruleset_version": "2026.11.2",
+  "rules": [
+    {
+      "rule_id": "aws-access-key-id",
+      "rule_version": "2026.11.2",
+      "category": "cloud-credential",
+      "provider": "aws",
+      "family": "aws-credentials",
+      "credential_type": "access-key-id",
+      "context": "standalone",
+      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}((?:AKIA|ASIA)[A-Z0-9]{16})\\b",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "AWS_ACCESS_KEY_ID"
+      ],
+      "confidence": "high",
+      "max_match_bytes": 128,
+      "max_candidate_bytes": 20,
+      "fixture_set": "tests/fixtures/providers/tier2",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Recognizes only the documented AKIA access-key and ASIA temporary STS access-key identifier prefixes. Other IAM unique-ID prefixes are ordinary resource identifiers and are not access-key findings. Presence of an identifier is not proof of an active or usable credential."
+      }
+    },
+    {
+      "rule_id": "aws-sts-service-bearer-token-id",
+      "rule_version": "2026.11.2",
+      "category": "cloud-credential",
+      "provider": "aws",
+      "family": "aws-credentials",
+      "credential_type": "service-bearer-token-id",
+      "context": "standalone",
+      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}(ABIA[A-Z0-9]{16})\\b",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "AWS_SERVICE_BEARER_TOKEN_ID"
+      ],
+      "confidence": "medium",
+      "max_match_bytes": 128,
+      "max_candidate_bytes": 20,
+      "fixture_set": "tests/cp3/aws-identifier-taxonomy.json",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html",
+          "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_bearer.html"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "ABIA identifies the access key ID component of an AWS STS service bearer token. A bare identifier is not a complete usable bearer token; validity and scope are not established."
+      }
+    },
+    {
+      "rule_id": "aws-context-specific-credential-id",
+      "rule_version": "2026.11.2",
+      "category": "cloud-credential",
+      "provider": "aws",
+      "family": "aws-credentials",
+      "credential_type": "context-specific-credential-id",
+      "context": "standalone",
+      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}(ACCA[A-Z0-9]{16})\\b",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "AWS_CONTEXT_SPECIFIC_CREDENTIAL_ID"
+      ],
+      "confidence": "medium",
+      "max_match_bytes": 128,
+      "max_candidate_bytes": 20,
+      "fixture_set": "tests/cp3/aws-identifier-taxonomy.json",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "AWS documents ACCA only as a context-specific credential prefix. Public documentation does not define the complete credential or its usable scope, so this rule reports a sensitive identifier rather than an access key or proof of an active credential."
+      }
+    },
+    {
+      "rule_id": "aws-secret-access-key",
+      "rule_version": "2026.11.1",
+      "category": "cloud-credential",
+      "provider": "aws",
+      "family": "aws-credentials",
+      "credential_type": "secret-access-key",
+      "context": "assignment",
+      "pattern": "(?i-u)(?:aws[_-]?secret[_-]?access[_-]?key|secret[_-]?access[_-]?key|aws[_-]?secret[_-]?key)\\s{0,8}[\\\"']?\\s{0,8}[:=]\\s{0,8}(?:\\x1B\\[[0-9;]{1,8}m){0,4}[\\\"']?([A-Za-z0-9/+=]{40})(?:[^A-Za-z0-9/+=]|$)",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "AWS_SECRET_ACCESS_KEY"
+      ],
+      "confidence": "high",
+      "max_match_bytes": 512,
+      "max_candidate_bytes": 40,
+      "fixture_set": "tests/fixtures/providers/tier2",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Requires an assignment-name context; a bare 40-character base64 string is not emitted by this rule."
+      }
+    },
+    {
+      "rule_id": "aws-secret-access-key-terraform",
+      "rule_version": "2026.11.1",
+      "category": "cloud-credential",
+      "provider": "aws",
+      "family": "aws-credentials",
+      "credential_type": "secret-access-key",
+      "context": "assignment",
+      "pattern": "(?is-u)resource\\s{1,8}[\\\"']aws_iam_access_key[\\\"'].{0,512}?\\bsecret\\s{0,8}=\\s{0,8}[\\\"']?([A-Za-z0-9/+=]{40})(?:[^A-Za-z0-9/+=]|$)",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "AWS_SECRET_ACCESS_KEY"
+      ],
+      "confidence": "high",
+      "max_match_bytes": 1024,
+      "max_candidate_bytes": 40,
+      "fixture_set": "tests/fixtures/providers/tier2",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_access_key"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Associates a 40-character secret with a Terraform aws_iam_access_key resource. The generic bare-secret assignment remains unsupported."
+      }
+    },
+    {
+      "rule_id": "google-api-key",
+      "rule_version": "2026.11.1",
+      "category": "cloud-credential",
+      "provider": "google-cloud",
+      "family": "google-cloud-api-key",
+      "credential_type": "api-key",
+      "context": "standalone",
+      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}(AIza[0-9A-Za-z_-]{35})\\b",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "GOOGLE_API_KEY"
+      ],
+      "confidence": "high",
+      "max_match_bytes": 128,
+      "max_candidate_bytes": 39,
+      "fixture_set": "tests/fixtures/providers/tier2",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://cloud.google.com/docs/authentication/api-keys"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Recognizes the documented AIza API-key form. It does not prove the key is enabled or authorized."
+      }
+    },
+    {
+      "rule_id": "github-classic-pat",
+      "rule_version": "2026.11.1",
+      "category": "developer-platform-credential",
+      "provider": "github",
+      "family": "github-token",
+      "credential_type": "classic-personal-access-token",
+      "context": "standalone",
+      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}(ghp_[A-Za-z0-9]{36})\\b",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "GITHUB_CLASSIC_PAT"
+      ],
+      "confidence": "high",
+      "max_match_bytes": 128,
+      "max_candidate_bytes": 40,
+      "fixture_set": "tests/fixtures/providers/tier2",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Recognizes the documented ghp_ classic personal-access-token form. No online token check is performed."
+      }
+    },
+    {
+      "rule_id": "github-fine-grained-pat",
+      "rule_version": "2026.11.1",
+      "category": "developer-platform-credential",
+      "provider": "github",
+      "family": "github-token",
+      "credential_type": "fine-grained-personal-access-token",
+      "context": "standalone",
+      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}(github_pat_[A-Za-z0-9_]{82})\\b",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "GITHUB_FINE_GRAINED_PAT"
+      ],
+      "confidence": "high",
+      "max_match_bytes": 160,
+      "max_candidate_bytes": 93,
+      "fixture_set": "tests/fixtures/providers/tier2",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Recognizes the documented github_pat_ fine-grained form. Length variants are not silently generalized."
+      }
+    },
+    {
+      "rule_id": "github-oauth-app-token",
+      "rule_version": "2026.11.2",
+      "category": "developer-platform-credential",
+      "provider": "github",
+      "family": "github-token",
+      "credential_type": "oauth-or-app-token",
+      "context": "standalone",
+      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}(gh[our]_[A-Za-z0-9]{36,1008})\\b",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "GITHUB_OAUTH_TOKEN"
+      ],
+      "confidence": "medium",
+      "max_match_bytes": 2048,
+      "max_candidate_bytes": 1024,
+      "fixture_set": "tests/fixtures/providers/tier2",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://github.blog/changelog/2021-03-31-authentication-token-format-updates-are-generally-available/"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Covers documented gho_ OAuth, ghu_ user-to-server and ghr_ refresh token prefixes and bounded length variants. ghs_ installation tokens have a dedicated rule so legacy and stateless formats can be validated without conflating them with OAuth tokens."
+      }
+    },
+    {
+      "rule_id": "github-app-installation-token",
+      "rule_version": "2026.11.2",
+      "category": "developer-platform-credential",
+      "provider": "github",
+      "family": "github-token",
+      "credential_type": "app-installation-token",
+      "context": "standalone",
+      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}(ghs_[A-Za-z0-9]{1,32}_[A-Za-z0-9_-]{8,2048}\\.[A-Za-z0-9_-]{8,2048}\\.[A-Za-z0-9_-]{8,2048}|ghs_[A-Za-z0-9]{36})(?:[^A-Za-z0-9._-]|$)",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "GITHUB_APP_INSTALLATION_TOKEN"
+      ],
+      "confidence": "high",
+      "max_match_bytes": 8192,
+      "max_candidate_bytes": 8192,
+      "fixture_set": "tests/fixtures/providers/challenge",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://github.blog/changelog/2026-10-02-stateless-github-app-installation-tokens-rolled-out/",
+          "https://github.blog/changelog/2026-05-15-github-app-installation-tokens-per-request-override-header/",
+          "https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-an-installation-access-token-for-a-github-app"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Recognizes legacy opaque ghs_ installation tokens and stateless ghs_APPID_JWT installation tokens. The stateless token is opaque to clients: only documented segment framing and alphabet are checked. No signature, issuer, claim, fixed length or online validity is assumed."
+      }
+    },
+    {
+      "rule_id": "gitlab-personal-access-token",
+      "rule_version": "2026.11.1",
+      "category": "developer-platform-credential",
+      "provider": "gitlab",
+      "family": "gitlab-pat",
+      "credential_type": "personal-access-token",
+      "context": "standalone",
+      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}(glpat-[A-Za-z0-9_-]{20})(?:[^A-Za-z0-9_-]|$)",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "GITLAB_PAT"
+      ],
+      "confidence": "high",
+      "max_match_bytes": 128,
+      "max_candidate_bytes": 26,
+      "fixture_set": "tests/fixtures/providers/tier2",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://docs.gitlab.com/security/tokens/"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Recognizes the documented glpat- personal/project/group token prefix and bounded body."
+      }
+    },
+    {
+      "rule_id": "stripe-secret-api-key",
+      "rule_version": "2026.11.1",
+      "category": "service-api-credential",
+      "provider": "stripe",
+      "family": "stripe-secret-key",
+      "credential_type": "secret-api-key",
+      "context": "standalone",
+      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}((?:sk|rk)_(?:live|test)_[A-Za-z0-9]{24,247})\\b",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "STRIPE_SECRET_KEY"
+      ],
+      "confidence": "high",
+      "max_match_bytes": 384,
+      "max_candidate_bytes": 256,
+      "fixture_set": "tests/fixtures/providers/tier2",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://docs.stripe.com/keys"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Distinguishes secret/restricted secret prefixes from publishable pk_ keys. Test-mode keys are still credentials."
+      }
+    },
+    {
+      "rule_id": "slack-token",
+      "rule_version": "2026.11.1",
+      "category": "service-api-credential",
+      "provider": "slack",
+      "family": "slack-token",
+      "credential_type": "bot-or-user-token",
+      "context": "standalone",
+      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}((?:xox[baprs]|xapp)-[A-Za-z0-9-]{15,250})\\b",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "SLACK_TOKEN"
+      ],
+      "confidence": "medium",
+      "max_match_bytes": 384,
+      "max_candidate_bytes": 256,
+      "fixture_set": "tests/fixtures/providers/tier2",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://api.slack.com/authentication/token-types"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Covers documented xoxb/xoxp/xoxa/xoxr/xoxs prefixes. Segment semantics vary, so this family is medium confidence."
+      }
+    },
+    {
+      "rule_id": "sendgrid-api-key",
+      "rule_version": "2026.11.1",
+      "category": "service-api-credential",
+      "provider": "sendgrid",
+      "family": "sendgrid-api-key",
+      "credential_type": "api-key",
+      "context": "standalone",
+      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}(SG\\.[A-Za-z0-9_-]{22}\\.[A-Za-z0-9_-]{43})\\b",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "SENDGRID_API_KEY"
+      ],
+      "confidence": "high",
+      "max_match_bytes": 160,
+      "max_candidate_bytes": 69,
+      "fixture_set": "tests/fixtures/providers/tier2",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://www.twilio.com/docs/sendgrid/ui/account-and-settings/api-keys"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Recognizes the documented SG.<22>.<43> API-key form. No account or permission check is performed."
+      }
+    },
+    {
+      "rule_id": "npm-auth-token",
+      "rule_version": "2026.11.1",
+      "category": "service-api-credential",
+      "provider": "npm",
+      "family": "npm-token",
+      "credential_type": "auth-token",
+      "context": "standalone",
+      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}(npm_[A-Za-z0-9]{36})\\b",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "NPM_TOKEN"
+      ],
+      "confidence": "high",
+      "max_match_bytes": 128,
+      "max_candidate_bytes": 40,
+      "fixture_set": "tests/fixtures/providers/tier2",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://github.blog/security/announcing-npms-new-access-token-format/"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Recognizes the documented npm_ prefix plus 36-character body."
+      }
+    },
+    {
+      "rule_id": "pem-private-key",
+      "rule_version": "2026.11.1",
+      "category": "cryptographic-material",
+      "provider": "pem",
+      "family": "pem-private-key",
+      "credential_type": "private-key-container",
+      "context": "container",
+      "pattern": "(?m)^[ \\t]{0,8}-----BEGIN (?:RSA |EC |DSA |OPENSSH |ENCRYPTED )?PRIVATE KEY-----[ \\t]{0,8}\\r?\\n(?:[ \\t]{0,8}[A-Za-z0-9+/=]{1,76}[ \\t]{0,8}\\r?\\n){1,400}[ \\t]{0,8}-----END (?:RSA |EC |DSA |OPENSSH |ENCRYPTED )?PRIVATE KEY-----",
+      "capture_group": 0,
+      "validators": [
+        "ASCII_ONLY",
+        "PEM_PRIVATE_KEY"
+      ],
+      "confidence": "high",
+      "max_match_bytes": 65536,
+      "max_candidate_bytes": 65536,
+      "fixture_set": "tests/fixtures/providers/tier2",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://datatracker.ietf.org/doc/html/rfc7468",
+          "https://www.rfc-editor.org/rfc/rfc8017"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Matches private-key containers only; public keys and certificates are excluded by the BEGIN label. Structural DER parsing is offline and never establishes operational validity."
+      }
+    },
+    {
+      "rule_id": "jwt-bearer-token",
+      "rule_version": "2026.11.1",
+      "category": "structured-credential",
+      "provider": "jwt",
+      "family": "jwt-bearer",
+      "credential_type": "bearer-token",
+      "context": "bearer",
+      "pattern": "(?i-u)(?:authorization\\s{0,8}[:=]\\s{0,8}[\"']?bearer\\s{1,8}|bearer\\s{1,8})(eyJ[A-Za-z0-9_-]{8,2048}\\.[A-Za-z0-9_-]{8,8192}\\.[A-Za-z0-9_-]{0,4096})",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "JWT_BEARER"
+      ],
+      "confidence": "medium",
+      "max_match_bytes": 65536,
+      "max_candidate_bytes": 49152,
+      "fixture_set": "tests/fixtures/providers/tier2",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://www.rfc-editor.org/rfc/rfc7519"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Requires a Bearer authorization context. A parseable JWT is reported as plausible only: signature validity, confidentiality and active authorization are not established offline."
+      }
+    },
+    {
+      "rule_id": "database-connection-credential",
+      "rule_version": "2026.11.1",
+      "category": "structured-credential",
+      "provider": "database",
+      "family": "database-connection-string",
+      "credential_type": "connection-uri-userinfo",
+      "context": "uri",
+      "pattern": "(?i-u)\\b(?:postgres(?:ql)?|mysql|mariadb|mongodb(?:\\+srv)?|redis|rediss|amqp|amqps)://([^:\\s/@]{1,64}:[^@\\s/\"']{1,128})@[A-Za-z0-9._~%:\\-\\[\\]]{1,255}",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "DATABASE_URI"
+      ],
+      "confidence": "medium",
+      "max_match_bytes": 2048,
+      "max_candidate_bytes": 1024,
+      "fixture_set": "tests/fixtures/providers/tier2",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://www.rfc-editor.org/rfc/rfc3986"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Captures only userinfo with a password; ordinary database URLs without credentials do not match."
+      }
+    },
+    {
+      "rule_id": "generic-secret-assignment",
+      "rule_version": "2026.11.1",
+      "category": "generic-credential",
+      "provider": "generic",
+      "family": "generic-secret-assignment",
+      "credential_type": "assigned-secret",
+      "context": "assignment",
+      "pattern": "(?i-u)(?:^|[\\r\\n;,])(?:\\x1B\\[[0-9;]{1,8}m){0,4}\\s{0,16}\\+?[ \\t]{0,8}(?:\\x1B\\[[0-9;]{1,8}m){0,4}\\s{0,8}(?:-e\\s{1,8})?(?:export\\s{1,8})?[\\\"']?[A-Z0-9_.-]{0,64}(?:password|passwd|pwd|client[_-]?secret|session[_-]?secret|jwt[_-]?secret|secret[_-]?key|api[_-]?(?:key|secret)|access[_-]?token|auth[_-]?token)[A-Z0-9_.-]{0,64}[\\\"']?\\s{0,16}[:=]\\s{0,16}(?:\\x1B\\[[0-9;]{1,8}m){0,4}[\\\"']?(?:\\x1B\\[[0-9;]{1,8}m){0,4}([^\\s\\\"'#,;)\\]}\\x1B]{8,128})[\\\"']?",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "GENERIC_SECRET_ASSIGNMENT"
+      ],
+      "confidence": "low",
+      "max_match_bytes": 4096,
+      "max_candidate_bytes": 512,
+      "fixture_set": "tests/fixtures/providers/tier2",
+      "provenance": {
+        "source": "first-party-design",
+        "references": [
+          "https://owasp.org/www-community/vulnerabilities/Use_of_hard-coded_password"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Experimental low-confidence fallback. It rejects variables, placeholders and non-literal expressions, but cannot establish that an assigned value is a credential."
+      }
+    }
+  ]
+}

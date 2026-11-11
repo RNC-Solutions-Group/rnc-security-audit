@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.rncsolutionsgroup.com/security-audit/v0.2/config.schema.json",
+  "title": "Unified effective RNC configuration",
+  "description": "A single versioned configuration model. The loader merges global, repository and CLI inputs and assigns provenance; no scanner or policy module may independently reload legacy files.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "ruleset", "scan", "policy", "reporting", "ci"],
+  "properties": {
+    "schema_version": {"const": "0.2.0"},
+    "ruleset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "digest"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      }
+    },
+    "scan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_file_bytes", "max_total_bytes", "timeout_ms", "max_findings", "follow_symlinks"],
+      "properties": {
+        "max_file_bytes": {"type": "integer", "minimum": 1},
+        "max_total_bytes": {"type": "integer", "minimum": 1},
+        "timeout_ms": {"type": "integer", "minimum": 1},
+        "max_findings": {"type": "integer", "minimum": 1},
+        "follow_symlinks": {"const": false}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["effective_policies", "blocks", "exemptions"],
+      "properties": {
+        "effective_policies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["policy_id", "origin", "version", "digest", "mandatory"],
+            "properties": {
+              "policy_id": {"type": "string", "minLength": 1},
+              "origin": {"enum": ["global", "repository", "cli"]},
+              "version": {"type": "string", "minLength": 1},
+              "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+              "mandatory": {"type": "boolean"}
+            }
+          }
+        },
+        "blocks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["policy_id", "origin", "selector", "reason"],
+            "properties": {
+              "policy_id": {"type": "string", "minLength": 1},
+              "origin": {"enum": ["global", "repository", "cli"]},
+              "selector": {"type": "string", "minLength": 1},
+              "reason": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "exemptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["policy_id", "origin", "selector", "reason"],
+            "properties": {
+              "policy_id": {"type": "string", "minLength": 1},
+              "origin": {"enum": ["global", "repository", "cli"]},
+              "selector": {"type": "string", "minLength": 1},
+              "reason": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    },
+    "reporting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sanitized_only", "redaction_fail_closed"],
+      "properties": {
+        "sanitized_only": {"const": true},
+        "redaction_fail_closed": {"const": true}
+      }
+    },
+    "ci": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accepted_result_codes"],
+      "properties": {
+        "accepted_result_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "minItems": 1,
+          "items": {"enum": [1, 2, 3]}
+        }
+      }
+    }
+  }
+}

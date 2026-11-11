@@ -1,0 +1,223 @@
+name: CP3 provider detection and accuracy
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/cp3-provider.yml"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "rust-toolchain.toml"
+      - "rustfmt.toml"
+      - "crates/**"
+      - "rules/**"
+      - "tests/**"
+      - "tools/cp3/**"
+      - "tools/cp1/rules.py"
+      - "docs/contracts/rules/**"
+      - "docs/implementation/cp3-*.md"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/cp3-provider.yml"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "crates/**"
+      - "rules/**"
+      - "tests/**"
+      - "tools/cp3/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: "1"
+
+concurrency:
+  group: cp3-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-and-byte-accuracy:
+    name: "required: quality, provider rules, byte accuracy and external adapter"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --disable-pip-version-check --no-cache-dir -r requirements-cp0.txt
+      - name: Install pinned Rust
+        run: |
+          rustup toolchain uninstall 1.85.0 2>/dev/null || true
+          rustup toolchain install 1.85.0 --profile minimal --component rustfmt,clippy
+          rustup default 1.85.0
+          rustc --version
+          cargo --version
+      - name: Formatting
+        run: cargo fmt --all -- --check
+      - name: Lint with warnings denied
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+      - name: Rust tests
+        run: cargo test --workspace --all-targets --locked
+      - name: Build debug scanner for rule validation
+        run: cargo build --workspace --locked
+      - name: CP0 contracts
+        run: python -m unittest discover -s tests/cp0 -v
+      - name: CP1 synthetic rules
+        run: python -m unittest discover -s tests/cp1 -v
+      - name: CP3 scorer, schema and adapter tests
+        run: python -m unittest discover -s tests/cp3 -v
+      - name: Validate provider catalog on every strategy
+        run: |
+          for strategy in regex regexset prefilter auto; do
+            target/debug/rnc rules validate \
+              --rules rules/rnc-providers-v1.json --strategy "$strategy"
+          done
+      - name: Build release scanner
+        run: |
+          mkdir -p artifacts/cp3
+          START=$(date +%s%N)
+          cargo build --release --workspace --locked
+          END=$(date +%s%N)
+          python -c "print(round((int('$END') - int('$START')) / 1e9, 3))" > artifacts/cp3/build-seconds.txt
+          sha256sum target/release/rnc | awk '{print $1}' > artifacts/cp3/binary.sha256
+      - name: Byte-accurate provider integration on all modes and strategies
+        run: |
+          python -m tools.cp3.integration_check \
+            --binary target/release/rnc \
+            --output artifacts/cp3/integration.json \
+            --handoff-dir "$RUNNER_TEMP/cp3-handoff"
+      - name: Check out pinned independent harness
+        run: |
+          mkdir -p "$RUNNER_TEMP/scanner-harness"
+          git -C "$RUNNER_TEMP/scanner-harness" init -q
+          git -C "$RUNNER_TEMP/scanner-harness" remote add origin https://github.com/RNC-Solutions-Group/gitleaks.git
+          git -C "$RUNNER_TEMP/scanner-harness" fetch -q --depth 1 origin 86de44bf1cb13abf9a0c375a8b91d102c9b6dc9f
+          git -C "$RUNNER_TEMP/scanner-harness" checkout -q --detach FETCH_HEAD
+          git -C "$RUNNER_TEMP/scanner-harness" rev-parse HEAD
+      - name: Independent line-addressed compatibility score
+        run: |
+          python -c "from pathlib import Path; from tools.cp3.materialize import materialize; materialize('tier2', Path('$RUNNER_TEMP/cp3-fixtures'))"
+          target/release/rnc scan \
+            --root "$RUNNER_TEMP/cp3-fixtures/tier2" \
+            --rules rules/rnc-providers-v1.json \
+            --format json \
+            --output "$RUNNER_TEMP/cp3-tier2-private.json" \
+            --run-id cp3-ci-external \
+            --mode whole \
+            --strategy regex \
+            --accept-result 3
+          python -m tools.cp3.external_check \
+            --harness-root "$RUNNER_TEMP/scanner-harness" \
+            --findings "$RUNNER_TEMP/cp3-tier2-private.json" \
+            --truth tests/cp3/provider-truth-tier2.json \
+            --rules rules/rnc-providers-v1.json \
+            --output artifacts/cp3/external-line-only.json
+      - name: Privacy check on public evidence
+        run: |
+          python -m tools.cp3.privacy_check > artifacts/cp3/privacy.json
+          cat artifacts/cp3/privacy.json
+      - name: Preserve sanitized evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cp3-integration-accuracy-evidence
+          path: |
+            artifacts/cp3/integration.json
+            artifacts/cp3/external-line-only.json
+            artifacts/cp3/privacy.json
+            artifacts/cp3/build-seconds.txt
+            artifacts/cp3/binary.sha256
+          if-no-files-found: warn
+          retention-days: 90
+
+  benchmark:
+    name: "required: provider catalog benchmark"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --disable-pip-version-check --no-cache-dir -r requirements-cp0.txt
+      - name: Install pinned Rust
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+      - name: Build release scanner
+        run: |
+          mkdir -p artifacts/cp3
+          START=$(date +%s%N)
+          cargo build --release --workspace --locked
+          END=$(date +%s%N)
+          python -c "print(round((int('$END') - int('$START')) / 1e9, 3))" > artifacts/cp3/bench-build-seconds.txt
+          sha256sum target/release/rnc | awk '{print $1}' > artifacts/cp3/bench-binary.sha256
+      - name: Benchmark every strategy and mode
+        run: |
+          python -m tools.cp3.bench \
+            --binary target/release/rnc \
+            --runs 3 \
+            --build-seconds "$(cat artifacts/cp3/bench-build-seconds.txt)" \
+            --binary-sha256 "$(cat artifacts/cp3/bench-binary.sha256)" \
+            --output artifacts/cp3/bench.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cp3-benchmark-evidence
+          path: artifacts/cp3/bench.json
+          if-no-files-found: warn
+          retention-days: 90
+
+  cross-platform:
+    name: "required: ${{ matrix.os }} build and tests"
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Rust
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+          rustc --version
+      - run: cargo build --release --workspace --locked
+      - run: cargo test --workspace --locked
+
+  static-musl:
+    name: "required: static Linux musl build"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Rust and musl target
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+          rustup target add x86_64-unknown-linux-musl
+      - run: cargo build --release --locked --target x86_64-unknown-linux-musl
+      - run: file target/x86_64-unknown-linux-musl/release/rnc
+
+  dependency-audit:
+    name: "required: dependency advisory audit"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Rust
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+      - run: cargo install cargo-audit --locked --version 0.22.1
+      - run: cargo audit --deny warnings
