@@ -241,9 +241,9 @@ pathological full-pattern RegexSet implementation was reintroduced.
 See [cp3-benchmark-methodology.md](cp3-benchmark-methodology.md). The corrected
 benchmark has **88 profiles** (11 workloads x 2 modes x 4 strategies).
 
-Local Windows reference build: **39.133 s**, binary
-**2,650,624 bytes**, SHA-256 `f0bdf6b3...`. Rule compilation median
-**76.993 ms**, p95 **81.144 ms** (three runs). Local CPU/RSS fields are `null`
+Local Windows reference build: **38.150 s**, binary
+**2,650,624 bytes**, SHA-256 `183323e7...`. Rule compilation median
+**80.661 ms**, p95 **80.713 ms** (three runs). Local CPU/RSS fields are `null`
 because GNU `time` is unavailable; the isolated Linux CI benchmark supplies
 CPU/RSS.
 
@@ -251,13 +251,13 @@ CPU/RSS.
 
 | Workload | Regex ms | RegexSet ms | Prefilter ms | Auto ms |
 | --- | ---: | ---: | ---: | ---: |
-| `large-low` | 232.1 | 147.4 | 161.2 | 221.1 |
-| `large-high` | 250.9 | 174.4 | 172.1 | 195.0 |
-| `github-installation-long` | 139.7 | 181.3 | 155.8 | 135.6 |
-| `small-many` | 389.4 | 402.6 | 415.9 | 383.4 |
-| `fp-heavy` | 244.0 | 261.4 | 306.5 | 284.0 |
+| `large-low` | 170.5 | 163.4 | 132.6 | 226.3 |
+| `large-high` | 226.8 | 181.2 | 233.5 | 233.8 |
+| `github-installation-long` | 142.3 | 123.1 | 133.3 | 144.9 |
+| `small-many` | 411.3 | 324.7 | 300.8 | 400.4 |
+| `fp-heavy` | 260.5 | 235.9 | 298.9 | 253.8 |
 
-The new long installation-token workload completes at 136-181 ms across
+The new long installation-token workload completes at 123-145 ms across
 strategies. RegexSet remains faster than reference regex on large-high and
 large-low; auto deliberately stays on reference regex. The provider catalog is
 materially slower than the synthetic 10-rule CP2 baseline, as expected from 19
@@ -270,14 +270,38 @@ evidence section after the final-head CI run.
 
 ## Required CI
 
-Final-head CI evidence: `PENDING-FINAL-CI`.
+Final-head CI evidence: **blocked by GitHub Actions runner queue**. The corrective
+push created CP0/CP1/CP2/CP3 runs (including CP3 run `43096243646` and CP1 run
+`43096243637` at implementation head `396a046`), but at the time of this report
+they remained `queued` with zero jobs assigned for more than 20 minutes. No green
+conclusion is claimed for those runs. This is an external infrastructure
+condition, not a passing gate. The historical pre-correction CP3 run
+`43087012245` at `c8779e9` and docs-head run `43087717965` at `13b1d6b` passed all
+seven jobs; those runs are preserved as historical evidence and are not presented
+as validation of the corrected rules.
 
-Historical pre-correction CP3 CI run `43087012245` at `c8779e9` passed all seven
-jobs; docs-head run `43087717965` at `13b1d6b` also passed all seven. Those runs
-are preserved as historical evidence and are not presented as validation of the
-corrected rules.
+The local equivalent final matrix is green:
 
-Final sanitized artifacts: `PENDING-FINAL-ARTIFACTS`.
+- Rust `cargo fmt --check`, clippy with `-D warnings`, and `cargo test
+  --workspace --all-targets --locked`: **95 tests**;
+- CP0 **74**, CP1 **5**, CP3 **55** Python tests;
+- CP2 **20/20** differential and **23/23** policy cases;
+- **24/24** provider integration cases with backend equivalence;
+- **18/18** comparator negative controls;
+- AWS taxonomy 20 cases on all modes/strategies;
+- Gitleaks/Levain/Leaky re-runs in this report.
+
+Local sanitized evidence (not a substitute for CI):
+
+- `integration-corrected-final.json`:
+  `sha256:46bd329c...`; 24/24 correct, equivalent, three dataset groups.
+- `comparative-corrected-final.json`:
+  `sha256:4363551e...`; corrected Gitleaks scores in the table above.
+- `bench-final.json`: `sha256:d9ea000d...`; 88 profiles.
+- `external-corpora-final.json`: `sha256:645dbcf4...`; scoped Levain/Leaky results.
+
+Final sanitized CI artifacts: not produced by the queued runs. The PR and this
+report explicitly record that absence; no artifact ID or digest is fabricated.
 
 ## Historical pre-correction evidence
 
