@@ -1,6 +1,6 @@
 # Policy specification
 
-> **Design contract v0.1 — not implemented.** Policy determines what may be inspected and how evidence is disposed of; it never changes the engine's matching behavior.
+> **Design contract v0.2 — not implemented.** Policy determines what may be inspected and how evidence is disposed of; it never changes the engine's matching behavior. The v0.2 policy record is `docs/contracts/schemas/policy.schema.json`.
 
 ## Two independent policy points
 
@@ -29,12 +29,23 @@ CLI arguments cannot inject executable commands, load unapproved rules from arbi
 
 An exclusion must identify a target unambiguously and be enforced **before source content is read by the detector**. The exact enforcement method is recorded—e.g. adapter-level enumeration/filtering or a verified filtered snapshot. A tool's ignore flag that suppresses output after reading **does not qualify**. Behavior must be validated per source kind (working tree is different from Git history, archive extraction and container layers).
 
+Policy selectors are a **declared glob grammar**, not source locators. The trust boundary canonicalizes discovered source locators first, then applies selectors to those canonical values; a selector never rewrites a locator. This prevents `./`, backslash, case or Unicode variants from collapsing distinct paths or bypassing a block. See the strict locator contract in [contracts/README.md](../contracts/README.md).
+
 For each requested block, store:
 
 - policy origin, stable policy ID, reason and normalized scope;
 - count of requested targets, actually blocked targets and any unresolved targets;
 - adapter and method used to prove non-access;
 - status `APPLIED`, `UNSUPPORTED`, `INVALID` or `NOT_MATCHED` with diagnostic reason.
+
+The v0.2 record makes this executable rather than illustrative:
+
+- `effective_policies` assigns every policy ID an origin, version, digest and mandatory flag. Mandatory policies must originate globally.
+- `requests` retains the selector and outcome for both blocks and exemptions. `APPLIED` requests must carry the matched unit/finding IDs; `NOT_MATCHED`, `UNSUPPORTED` and `INVALID` requests carry none and do not affect classification.
+- `applied_blocks` links each verified blocked unit to exactly one applied block request, enforcement method and `verified_non_access: true`.
+- `dispositions` links every exempted finding to an applied exemption request. An actionable finding cannot claim an applied policy.
+- `policy_valid: false` carries an error list and forces the final result to `FAILED`; an invalid global policy is not a policy-applied result.
+- `effective_policy_digest` is the canonical digest of the effective-policy array. It is not a raw config-file hash.
 
 If a required target cannot be safely blocked or inspected, record a coverage problem (`INCOMPLETE` or `FAILED` as appropriate), **not** a verified exemption. A deliberately and verifiably blocked target can coexist with complete **policy-adjusted** coverage, but that scope reduction must remain visible in the result.
 

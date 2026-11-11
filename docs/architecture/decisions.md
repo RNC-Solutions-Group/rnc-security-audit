@@ -1,20 +1,24 @@
 # CP0 architecture decisions — ADR register
 
-Status: **Approved directions; initial Go/Rust primitive benchmark observed, language decision pending representative engine evidence** (10 November 2026).
+Status: **CP0 decisions recorded; operator review pending.** The production detector language is selected as **Rust** in [ADR-007](adr-007-detector-language.md). No production detector is implemented.
 
 | ID | Decision | Consequence / next check |
 | --- | --- | --- |
-| ADR-001 | **Benchmark Go and Rust before selecting the detector language** | Same synthetic workloads and algorithm; pin compilers, capture correctness, latency, memory where available. CP1 language remains undecided until review |
-| ADR-002 | **Unified configuration schema with migration** | One normalized effective policy and provenance model; legacy `security.config` read only through a documented, non-silent migration layer |
+| ADR-001 | **Benchmark Go and Rust before selecting the detector language** | Satisfied by the shared-rule representative benchmark. Go remains a comparator; Rust selected in ADR-007 |
+| ADR-002 | **Unified configuration schema with migration** | `.rncscanner.toml` is canonical; explicit `security.config` subset migration; no dual-loading. Reference loader tested |
 | ADR-003 | **Default CI acceptance: `CLEAN` and `POLICY_APPLIED`** | OS exit `0` for finalized codes `1` or `2`; actionable `3` fails by default; codes `4`/`5` never pass |
-| ADR-004 | **Full synthetic corpus and benchmark work in CP0** | Commit deterministic corpus source/manifest generator and hand-authored truth anchors; execute Go/Rust comparison in CI and attach artifacts before language decision |
-| ADR-005 | **Production detector never evaluates its own accuracy** | An independent harness scores normalized findings, with the manufactured synthetic stub as a controlled test adapter |
+| ADR-004 | **Full synthetic corpus and benchmark work in CP0** | Authored baseline + expanded corpus + generated 1,000-target corpus + edge corpus; representative Go/Rust comparison executed in CI |
+| ADR-005 | **Production detector never evaluates its own accuracy** | Independent harness scores normalized findings; synthetic stub is a controlled test adapter only |
+| ADR-006 | **Adopt contract revision v0.2** | Required-scope counts, canonical identities, record digests, policy requests, evidence validation and publication checks. v0.1 drafts are not silently accepted |
+| ADR-007 | **Select Rust for the production detector** | Representative evidence favors Rust; build/distribution mitigations are mandatory. See [ADR-007](adr-007-detector-language.md) |
+| ADR-008 | **External harness compatibility is line-addressed with byte metadata sidecar** | Pinned external scoring engine executed on CP0 handoffs; full external corpus integration remains deferred |
 
 ## Decision review checkpoints
 
-1. Confirm CP0 schema shape and cross-record identity/count/finalization rules.
-2. Review the [completed primitive Go/Rust benchmark](../implementation/cp0-contract-validation.md#observed-gorust-benchmark--github-actions-run-42877562151) and retained CI artifact. Rust was faster on this narrow workload, but these probes **cannot alone settle production language choice**.
-3. Record the selected language plus regex/streaming/validation prototype evidence in a follow-up ADR before CP1.
-4. Agree the unified config filename/namespace and compatibility warning/deprecation windows before adding parsers.
+1. Confirm CP0 schema v0.2 and cross-record identity/count/finalization rules.
+2. Review the representative Go/Rust benchmark artifact, including median/tail latency, memory where available, build characteristics and binary size. The preliminary literal probe is retained as a baseline, not the decision basis.
+3. Review [ADR-007](adr-007-detector-language.md) and its acceptance risks: Rust build cost, dependency pinning, and cross-platform distribution.
+4. Approve `.rncscanner.toml` as the repository filename and the legacy migration subset before parsing untrusted config.
+5. Accept the CP0 package before any CP1 production engine work. No PR merge is implied by this register.
 
-The former README recommended Python for the audit **controller**. This is independent of the detector language decision. Rejected/default choices are not silently removed from the record.
+The former README recommended Python for the audit **controller**. That is independent of the detector language decision. Rejected/default choices are not silently removed from the record.
