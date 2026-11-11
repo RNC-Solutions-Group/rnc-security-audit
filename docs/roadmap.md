@@ -10,7 +10,7 @@
 | --- | --- | --- | --- |
 | **Now** | **CP0 — operating contracts** | v0.2 schemas, validated cross-record invariants, expanded synthetic corpus, independent harness, representative Go/Rust benchmark, Rust ADR, CP1 handoff | Operator accepts the CP0 audit package; no unresolved foundational interface decision before CP1 |
 | **P1** | **CP1 — RNC detection core** | One authorized local-source adapter, versioned rules, matching/validation, stable finding events, traceable coverage | Every known in-scope synthetic credential is identified with accurate locations; clean/invalid/partial inputs accounted for; deterministic repeat runs |
-| **P2** | **CP2 — policy + reporting backbone** | Verified pre-scan blocks, post-scan exemptions, config provenance, independent execution/detection/policy records, five-state classifier, sanitized JSON, CI acceptance | Counts reconcile exactly, precedence tests pass, output leaks no test secrets, CI acceptance never rewrites results |
+| **P2** | **CP2 — adaptive engine + policy/reporting backbone** | Portable matching, verified pre-scan blocks, post-scan exemptions, config provenance, independent records, five-state classifier, sanitized/private JSON, CI acceptance | Differential equivalence, counts reconcile, precedence tests pass, no private leakage, CI acceptance never rewrites results |
 | **P3** | **CP3 — independent accuracy harness** | Reuse/harden adapter-agnostic harness; synthetic stub first, complete target-by-target truth manifest, canonical normalized findings and metrics | Stub produces **100% correct expected scoring** on constructed cases; engine scored independently for recall, precision, false positives and misses |
 | **P4** | **CP4 — accuracy and speed hardening** | Rule/category expansion, validator tuning, file edge cases, adversarial fixture suite, controlled comparison with Gitleaks/Betterleaks, measured performance | Reproducible version-pinned benchmarks, no unexplained regressions, transparent coverage/corpus limits |
 | **P5** | **CP5 — audit orchestration integration** | Bring forward Gitleaks, Trivy and other third-party adapter designs; preflight, runtime backends, required/optional check selection, raw/sanitized audit aggregation | Independent tool failures and findings stay distinct; second scanner adds without changing the five-result semantics |
@@ -47,11 +47,13 @@ CP0 and CP1 may define interfaces for downstream modules without implementing th
 
 ### CP2 — prove accountability and enforcement
 
-- [ ] Implement policy composition with origin, mandatory controls, requested/applied state and narrow exemptions.
-- [ ] Implement complete execution, detection and policy ledgers with deterministic reconciliation.
-- [ ] Implement final result classifier and **all precedence collisions**.
-- [ ] Emit safe canonical JSON; prove fail-closed sanitization and private evidence isolation.
-- [ ] Implement result-to-OS-exit policy with both accepted and rejected `POLICY_APPLIED` outcomes.
+- [x] Implement portable reference/RegexSet/Aho-Corasick matching with a conservative planner and differential equivalence.
+- [x] Implement policy composition with origin, mandatory controls, requested/applied state and narrow exemptions.
+- [x] Implement complete execution, detection and policy ledgers with deterministic reconciliation.
+- [x] Implement final result classifier and **all precedence collisions**.
+- [x] Emit safe canonical JSON; prove fail-closed sanitization and private evidence isolation.
+- [x] Implement result-to-OS-exit policy with both accepted and rejected `POLICY_APPLIED` outcomes.
+- [ ] Operator review of CP2 and merge decision.
 
 ### CP3 — grade, do not self-grade
 

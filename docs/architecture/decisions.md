@@ -1,6 +1,6 @@
 # CP0 architecture decisions — ADR register
 
-Status: **CP0 decisions recorded; operator review pending.** The production detector language is selected as **Rust** in [ADR-007](adr-007-detector-language.md). No production detector is implemented.
+Status: **CP0–CP2 decisions recorded; operator review pending.** The production detector language is selected as **Rust** in [ADR-007](adr-007-detector-language.md); CP2 implements portable strategies and policy/reporting boundaries.
 
 | ID | Decision | Consequence / next check |
 | --- | --- | --- |
@@ -12,6 +12,10 @@ Status: **CP0 decisions recorded; operator review pending.** The production dete
 | ADR-006 | **Adopt contract revision v0.2** | Required-scope counts, canonical identities, record digests, policy requests, evidence validation and publication checks. v0.1 drafts are not silently accepted |
 | ADR-007 | **Select Rust for the production detector** | Representative evidence favors Rust; build/distribution mitigations are mandatory. See [ADR-007](adr-007-detector-language.md) |
 | ADR-008 | **External harness compatibility is line-addressed with byte metadata sidecar** | Pinned external scoring engine executed on CP0 handoffs; full external corpus integration remains deferred |
+| ADR-009 | **Portable multi-strategy matching behind one candidate contract** | Regex is the reference backend; RegexSet and Aho-Corasick are interchangeable strategies. See [ADR-009](adr-009-portable-matching.md) |
+| ADR-010 | **Exact reference equivalence is a hard gate** | Optimized strategies must reproduce canonical findings, offsets, identity and coverage. See [ADR-010](adr-010-reference-regex-equivalence.md) |
+| ADR-011 | **Conservative planner and explicit fallback** | `auto` stays on reference regex for current bundles; no silent rule skipping. See [ADR-011](adr-011-planner-fallback.md) |
+| ADR-012 | **Hyperscan/VectorScan deferred** | Portable Rust-only CP2; future native backends require a separate ADR and equivalence evidence. See [ADR-012](adr-012-deferred-accelerators.md) |
 
 ## Decision review checkpoints
 

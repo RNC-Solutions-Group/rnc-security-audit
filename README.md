@@ -1,6 +1,6 @@
 # RNC Security Audit
 
-> **CP0 + CP1 development package (10 November 2026).** A working Rust detection library and development CLI exist, validated against independent synthetic truth. No production deployment, security assessment, operator acceptance or release is claimed; no PR is merged.
+> **CP0–CP2 development package (11 November 2026).** A working Rust scanner exists with portable matching strategies, verified scope policy, exemptions, reconciled ledgers, sanitized/private reporting and CI enforcement. No production deployment, security assessment, operator acceptance or release is claimed; no PR is merged.
 
 **RNC Security Audit** is the working home for RNC's security platform. Its first-party secret-detection component is **RNC Scanner**. The wider application will eventually coordinate independent security tools as well. **RNC Security Toolkit** remains the prospective name for a portable distribution, not another codebase.
 
@@ -41,7 +41,7 @@ Every finalized scan receives **exactly one immutable result**. Numeric `result_
 
 **Precedence:** `FAILED > INCOMPLETE > ACTIONABLE > POLICY_APPLIED > CLEAN`. A higher-priority state determines the final classification, but **never removes lower-priority evidence** from the report. An inaccessible required file plus three real findings means `INCOMPLETE`, with all three findings still accounted for. A policy-authorized, verifiably blocked target is different from an inaccessible required target.
 
-CI decides which *completed* results are acceptable. **The approved default is `CLEAN` and `POLICY_APPLIED` (codes `1,2`)**. For example, the proposed `rnc scan . --accept-results 1,2` yields process exit `0` for a final result of `POLICY_APPLIED`; `--accept-results 1` rejects the identical result. `INCOMPLETE` and `FAILED` remain nonzero in the initial contract. These are **proposed commands, not implemented functionality**.
+CI decides which *completed* results are acceptable. **The approved default is `CLEAN` and `POLICY_APPLIED` (codes `1,2`)**. For example, `rnc scan ... --accept-result 1 --accept-result 2` yields process exit `0` for a final result of `POLICY_APPLIED`; narrowing to `1` rejects the identical result. `INCOMPLETE` and `FAILED` exit `20`/`30` and are never accepted. CP2 implements these semantics. See the [operator guide](docs/implementation/cp2-operator-guide.md).
 
 The authoritative details are in the [execution-status specification](docs/architecture/execution-status.md).
 
@@ -71,7 +71,11 @@ Reporting reconciles three independently verifiable, append-only logical records
 | [Roadmap](docs/roadmap.md) | Capability proofs, priority, acceptance and deferred work |
 | [CP0 audit report](docs/implementation/cp0-contract-validation.md) | Deliverable dispositions, evidence, limitations and readiness |
 | [CP1 handoff](docs/implementation/cp1-detection-engine.md) | Rust module boundaries, rules, coverage and acceptance tests |
-| [CP1 validation](docs/implementation/cp1-validation.md) | Implemented engine, tests, performance, external scoring and limitations |
+| [CP1 validation](docs/implementation/cp1-validation.md) | Implemented CP1 engine, tests, performance, external scoring and limitations |
+| [CP2 validation](docs/implementation/cp2-validation.md) | Adaptive matching, policy, reporting, classification, benchmark and CI evidence |
+| [CP2 operator guide](docs/implementation/cp2-operator-guide.md) | Build, scan, strategies, config, exemptions, reports and CI acceptance |
+| [Adaptive matching](docs/architecture/adaptive-matching.md) | Backend boundaries, required literals, streaming and differential gate |
+| [Configuration](docs/architecture/configuration.md) | Global/repository/CLI precedence, mandatory caps and legacy migration |
 | [Rule authoring](docs/implementation/cp1-rule-authoring.md) | Versioned data-only rule bundles and lifecycle |
 | [Language ADR](docs/architecture/adr-007-detector-language.md) | Rust selection and recorded Go tradeoffs |
 | [Historical foundation](docs/foundation/README.md) | Preserved original orchestration concept, workflows, bypass-report sketches and first Gitleaks proof |
@@ -85,6 +89,8 @@ Reporting reconciles three independently verifiable, append-only logical records
 5. **Reuse the original audit orchestration** when integrating third-party security tools, execution backends, and passive/active modes.
 
 The current Gitleaks modernization and independent scan-harness projects are valuable **comparators and test infrastructure**, not a dependency for designing the RNC engine and not a reason to copy its limitations.
+
+**CP2 outcomes (11 November 2026):** one Rust scanner with reference regex, RegexSet and Aho-Corasick strategies; conservative `auto`; verified glob blocks; immutable exemptions; execution/detection/policy reconciliation; five-state results and CI exits; sanitized/private reports; production TOML configuration with mandatory global caps and legacy migration. All four strategies found **25/25 v1**, **13/13 v0** and **3/3 edge** expected findings and matched canonical output; the pinned external harness accepted every strategy's handoff at **25/25**. See [CP2 validation](docs/implementation/cp2-validation.md).
 
 **CP1 outcomes (10 November 2026):** a Rust workspace (`rnc-core` + `rnc-cli`) implements authorized local discovery, strict source paths, versioned synthetic rule bundles, whole-file and bounded streaming matching, deterministic findings, v0.2 execution records and a safe CLI. It detects all **25/25 v1**, **13/13 v0** and **3/3 edge** expected findings in independent truth, and the pinned external harness scoring engine accepts the actual CP1 handoff at **25/25**. See [CP1 validation](docs/implementation/cp1-validation.md) and [rule authoring](docs/implementation/cp1-rule-authoring.md).
 

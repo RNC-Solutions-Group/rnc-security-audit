@@ -67,3 +67,12 @@ Do not average or combine these into one synthetic percentage. A negative-only c
 - [ ] Record per-target execution and detection exceptions for external corpora, not only aggregate percentages.
 - [ ] Obtain a licensing disposition before any Prowlbench work.
 - [ ] Keep external corpus data, raw findings and private evidence outside public repository artifacts.
+
+
+## CP2 same-line collision note
+
+RNC findings are byte-addressed: a finding carries `start_byte`, `end_byte`, rule ID/version and an immutable ID. The pinned external harness is line-addressed. Two distinct RNC findings for the same rule on one line can therefore collide in the external adapter even when they are distinct events.
+
+CP2 keeps the RNC record unchanged and validates each strategy through the external scoring engine on the current synthetic corpora. The proposed compatibility extension is an adapter-side composite key `(locator, rule_id, line, ordinal-on-line, start_byte, end_byte)` or a byte-aware harness input. Truth must not be altered to hide the collision, and the external repository is not modified without separate authorization.
+
+No same-line collision is present in the current v0/v1 truth. This remains a documented integration limitation, not a reason to weaken byte identity or backend equivalence.

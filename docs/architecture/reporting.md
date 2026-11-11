@@ -1,6 +1,6 @@
 # Reporting and accounting specification
 
-> **Design contract v0.2 — not implemented.** Reporting consumes evidence and policy records; it does not perform detection or silently correct suspicious outputs. The CP0 reference reconciler proves interface integrity only; the production reporter belongs to CP2.
+> **Design contract v0.2 — implemented in CP2.** Reporting consumes evidence and policy records; it does not perform detection or silently correct suspicious outputs. The CP0 reference reconciler proves interface integrity only; the production reporter belongs to CP2.
 
 ## Three independently testable records
 

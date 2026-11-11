@@ -194,7 +194,7 @@ jobs:
 
       - name: Score actual CP1 findings with the external engine
         run: |
-          python -m tools.cp1.external_harness_score             --harness-root "$RUNNER_TEMP/scanner-harness"             --handoff artifacts/cp1/handoff/v1-whole.json             --expected 25             --output artifacts/cp1/external-harness-score.json
+          python -m tools.cp1.external_harness_score             --harness-root "$RUNNER_TEMP/scanner-harness"             --handoff "$RUNNER_TEMP/cp1-handoff/v1-whole.json"             --expected 25             --output artifacts/cp1/external-harness-score.json
 
       - name: Preserve external scoring evidence
         if: always()

@@ -1,6 +1,6 @@
 # Policy specification
 
-> **Design contract v0.2 — not implemented.** Policy determines what may be inspected and how evidence is disposed of; it never changes the engine's matching behavior. The v0.2 policy record is `docs/contracts/schemas/policy.schema.json`.
+> **Design contract v0.2 — implemented in CP2.** Policy determines what may be inspected and how evidence is disposed of; it never changes the engine's matching behavior. The v0.2 policy record is `docs/contracts/schemas/policy.schema.json`.
 
 ## Two independent policy points
 
