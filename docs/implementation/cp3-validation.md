@@ -1,8 +1,8 @@
 # CP3 validation — detection intelligence and accuracy
 
-> **Status:** Implementation and controlled/external evidence complete; final CI
-> and operator review pending. Provider-format recognition is not proof of an
-> active, authorized or complete credential.
+> **Status:** Implementation, controlled/external evidence and required CI
+> complete; operator review pending. Provider-format recognition is not proof of
+> an active, authorized or complete credential.
 
 ## Repository state
 
@@ -10,6 +10,8 @@
 | --- | --- |
 | Branch | `feat/cp3` |
 | Starting head | `0090ddd` (CP2 merge + CP3 seed README) |
+| Final implementation head | `c8779e9` |
+| Pull request | [#10](https://github.com/RNC-Solutions-Group/rnc-security-audit/pull/10) |
 | Target | `main` |
 | Merge | Operator-owned; no merge performed |
 | Base | `main` at `e54d5bc`; CP2 was merged into `feat/cp3`, not `main` |
@@ -61,7 +63,8 @@ Git-history input remain out of scope.
 
 | Suite | Result |
 | --- | --- |
-| Rust workspace, `--all-targets` | **89 tests** pass locally: 57 core + 15 engine + 4 provider + 5 CLI unit + 8 CLI integration |
+| Rust workspace, Linux CI `--all-targets` | **99 tests** pass: 58 core + 18 engine + 4 provider + 9 CLI unit + 10 CLI integration |
+| Rust workspace, local Windows | **89 tests** pass; platform-gated Unix tests excluded |
 | CP0 contract/corpus/harness | **74 tests** pass |
 | CP1 synthetic rules | **5 tests** pass |
 | CP3 schema/scorer/adapter/security | **31 tests** pass |
@@ -233,25 +236,26 @@ findings. This is a performance fix, not a correctness strategy change.
 
 ### CI Linux reference
 
-The isolated Linux CI benchmark (`cp3-benchmark-evidence`, artifact from run
-43085601869) had GNU `time` available. Release build **33.216 s**, binary
-**3,168,816 bytes**, SHA-256 `898f3af9…`; rule compilation median **34.1 ms**.
+The isolated Linux CI benchmark (`cp3-benchmark-evidence`, artifact ID
+`13887865802`, SHA-256 `ca9f5259…`) had GNU `time` available. Release build
+**35.158 s**, binary **3,168,816 bytes**, SHA-256 `898f3af9…`; rule compilation
+median **39.1 ms**.
 
 | Workload | Whole regex ms | Whole MiB/s | Whole CPU % | Whole RSS KiB | Stream regex ms | Stream MiB/s |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `large-low` | 128.0 | 62.5 | 91.2 | 29,892 | 162.8 | 49.1 |
-| `large-high` | 165.1 | 48.5 | 90.8 | 38,372 | 582.0 | 13.8 |
-| `small-many` | 50.5 | 3.2 | 79.2 | 22,412 | 54.6 | 2.9 |
-| `credential-configs` | 94.8 | 42.2 | 84.4 | 26,752 | 252.8 | 15.8 |
-| `fp-heavy` | 187.7 | 21.3 | 95.9 | 27,504 | 266.6 | 15.0 |
-| `high-entropy` | 73.2 | 54.6 | 82.0 | 25,712 | 88.1 | 45.4 |
-| `multi-family` | 50.8 | 2.3 | 78.7 | 28,072 | 111.3 | 1.0 |
-| `long-pem` | 38.1 | 0.8 | 78.7 | 21,592 | 38.3 | 0.8 |
-| `structured` | 39.6 | 0.8 | 75.0 | 22,820 | 46.2 | 0.7 |
-| `same-line` | 41.9 | 0.5 | 74.3 | 22,032 | 46.9 | 0.5 |
+| `large-low` | 135.5 | 59.0 | 95.9 | 29,832 | 176.7 | 45.3 |
+| `large-high` | 178.3 | 44.9 | 90.3 | 38,312 | 643.2 | 12.4 |
+| `small-many` | 60.2 | 2.6 | 81.7 | 22,220 | 64.8 | 2.5 |
+| `credential-configs` | 98.7 | 40.5 | 91.2 | 26,600 | 273.3 | 14.6 |
+| `fp-heavy` | 198.8 | 20.1 | 95.5 | 27,328 | 285.9 | 14.0 |
+| `high-entropy` | 78.0 | 51.3 | 88.5 | 25,624 | 94.2 | 42.4 |
+| `multi-family` | 56.5 | 2.0 | 88.5 | 27,804 | 128.3 | 0.9 |
+| `long-pem` | 42.2 | 0.8 | 71.0 | 21,532 | 42.3 | 0.8 |
+| `structured` | 44.2 | 0.7 | 67.9 | 22,640 | 51.1 | 0.6 |
+| `same-line` | 44.2 | 0.5 | 67.9 | 21,968 | 53.2 | 0.4 |
 
-On the CI host, whole-file large-high medians were regex **165.1 ms**,
-regexset **135.0 ms**, prefilter **145.2 ms** and auto **167.6 ms**. The local
+On the CI host, whole-file large-high medians were regex **178.3 ms**,
+regexset **149.3 ms**, prefilter **164.0 ms** and auto **181.0 ms**. The local
 Windows table and the CI table are from different hosts and are not presented as
 a controlled cross-host speedup.
 
@@ -259,6 +263,28 @@ The provider catalog is materially slower than the synthetic 10-rule CP2
 baseline, as expected from 16 rules, multiline PEM/JWT structure and validation.
 No validator was removed to recover throughput. Acquisition, matching and
 reporting are not separately instrumented; that limitation is explicit.
+
+## Required CI
+
+CP3 workflow run [43087012245](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/43087012245)
+at implementation head `c8779e9` passed all seven required jobs:
+
+- quality, provider rules, byte accuracy and external adapter;
+- provider catalog benchmark;
+- Ubuntu, Windows and macOS builds/tests;
+- static Linux musl build;
+- dependency advisory audit.
+
+Final sanitized artifacts:
+
+- `cp3-integration-accuracy-evidence` — ID `13886408382`,
+  SHA-256 `ceed50b3…`; 16/16 integration cases `all_correct`, all equivalent;
+  external line score 25 matched + 2 ambiguous; privacy check `PASS`.
+- `cp3-benchmark-evidence` — ID `13887865802`, SHA-256 `ca9f5259…`;
+  80 profiles, all correct.
+
+The CP3 PR is [#10](https://github.com/RNC-Solutions-Group/rnc-security-audit/pull/10),
+targeting `main`. No merge was performed.
 
 ## Limitations and disposition
 

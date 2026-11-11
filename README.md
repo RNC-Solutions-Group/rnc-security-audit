@@ -99,7 +99,7 @@ Reporting reconciles three independently verifiable, append-only logical records
 | Operating contracts (CP0) | Implemented | [CP0 audit report](docs/implementation/cp0-contract-validation.md) |
 | Rust detector (CP1) | Implemented; synthetic rule bundles | [CP1 validation](docs/implementation/cp1-validation.md) |
 | Adaptive matching, policies, reporting and hardening (CP2) | Implemented; CI validated | [CP2 validation](docs/implementation/cp2-validation.md) |
-| Independent accuracy assessment (CP3) | **Provider catalog and controlled/external evidence implemented; CI and operator review pending** | [CP3 validation](docs/implementation/cp3-validation.md), [detection catalog](docs/implementation/cp3-detection-catalog.md) |
+| Independent accuracy assessment (CP3) | **Provider catalog, controlled/external evidence and CI complete; operator review pending** | [CP3 validation](docs/implementation/cp3-validation.md), [detection catalog](docs/implementation/cp3-detection-catalog.md) |
 
 The portable matching system includes a reference Rust regex strategy, a RegexSet-assisted strategy and an Aho-Corasick literal prefilter. All use the same rule, validator and finding contracts. Faster strategies are not promoted at the expense of finding equivalence.
 

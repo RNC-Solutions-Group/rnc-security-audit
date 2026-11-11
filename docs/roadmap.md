@@ -66,7 +66,8 @@ CP0 and CP1 may define interfaces for downstream modules without implementing th
 - [x] Pinned external-harness handoff with explicit line-addressing limitation.
 - [x] Scoped Levain FP/TP evidence, count-based Leaky Repo scan and pinned Gitleaks comparison.
 - [x] Provider-catalog benchmark methodology and measured evidence.
-- [ ] Required CP3 CI green, PR review and operator acceptance.
+- [x] Required CP3 CI green (run 43087012245, seven required jobs).
+- [ ] PR review and operator acceptance.
 
 ### CP4–CP6 — broaden without changing the engine contract
 
