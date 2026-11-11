@@ -38,6 +38,7 @@ pub enum FileScanError {
     Changed,
     Timeout,
     FindingsLimit,
+    CandidateLimit,
     Io(&'static str),
 }
 
@@ -48,6 +49,7 @@ impl FileScanError {
             Self::Changed => "FILE_CHANGED",
             Self::Timeout => "TIMEOUT",
             Self::FindingsLimit => "MAX_FINDINGS_EXCEEDED",
+            Self::CandidateLimit => "CANDIDATE_LIMIT",
             Self::Io(_) => "READ_ERROR",
         }
     }
@@ -499,6 +501,7 @@ fn scan_window(
         .candidates(data, deadline)
         .map_err(|error| match error {
             MatchError::Timeout => FileScanError::Timeout,
+            MatchError::CandidateLimit => FileScanError::CandidateLimit,
             MatchError::Backend(_) => FileScanError::Io("backend"),
         })?;
     for candidate in candidates {
@@ -522,12 +525,20 @@ fn scan_window(
             .get(candidate.rule_index)
             .ok_or(FileScanError::Io("backend_rule"))?;
         let candidate_bytes = &data[start..end];
-        let validation =
+        let outcome =
             match crate::validate::validate_candidate(candidate_bytes, &rule.definition.validators)
             {
-                Ok(validation) => validation,
+                Ok(outcome) => outcome,
                 Err(_) => continue,
             };
+        let confidence = effective_confidence(&rule.definition.confidence, outcome.status);
+        let mut validation = outcome.applied;
+        if rule.definition.provider.is_some() {
+            validation.push(outcome.status.name().to_string());
+            validation.extend(outcome.notes);
+            validation.sort();
+            validation.dedup();
+        }
         let absolute_start = absolute_offset + start;
         let absolute_end = absolute_offset + end;
         if !seen.insert((
@@ -580,7 +591,7 @@ fn scan_window(
             end,
             line,
             line_end,
-            &rule.definition.confidence,
+            &confidence,
             validation,
             data,
         )
@@ -604,6 +615,15 @@ fn scan_window(
         }
     }
     Ok(())
+}
+
+fn effective_confidence(declared: &str, status: crate::validate::ValidationStatus) -> String {
+    use crate::validate::ValidationStatus;
+    match (declared, status) {
+        ("high", ValidationStatus::PlausibleUnverified) => "medium".to_string(),
+        ("medium", ValidationStatus::PlausibleUnverified) => "low".to_string(),
+        (value, _) => value.to_string(),
+    }
 }
 
 #[derive(Debug, Default)]

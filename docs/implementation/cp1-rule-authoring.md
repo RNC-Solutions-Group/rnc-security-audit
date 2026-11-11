@@ -1,6 +1,8 @@
 # CP1 rule authoring and versioning
 
 > CP1 production-oriented rule format. Rules are data, never executable code.
+> CP3 adds the separate provider catalog in schema `0.2.0`; the original
+> synthetic bundle contract remains `0.1.0` and its digests are unchanged.
 
 ## Bundle format
 
@@ -27,7 +29,6 @@ Schema: [`docs/contracts/rules/rule-bundle.schema.json`](../../contracts/rules/r
 ```
 
 ## Hard requirements
-
 - `rule_id` unique across the bundle; it is never reused for different semantics.
 - `rule_version` changes whenever pattern, capture group, validators, category, confidence or bounds change.
 - `pattern` compiles with Rust `regex` 1.11.1 and has a **finite maximum match length** established by `regex-syntax`. Unbounded repetition is rejected. `max_match_bytes` must be at least the computed maximum.
@@ -38,6 +39,51 @@ Schema: [`docs/contracts/rules/rule-bundle.schema.json`](../../contracts/rules/r
 - No remote rule download, proprietary rule import, executable plugin or network validation occurs.
 
 `MARKER_FORMAT` requires `RNC_SYNTH_KEY_`, ASCII uppercase/digits/underscore, and total length 16–128. `MARKER_SUFFIX` requires a final underscore-delimited segment of at least four characters and rejects `DECOY`/`FAKE`.
+
+## Provider catalog — schema 0.2.0
+
+Production provider rules live in [`rules/rnc-providers-v1.json`](../../../rules/rnc-providers-v1.json)
+and validate against
+[`provider-rule-bundle.schema.json`](../../contracts/rules/provider-rule-bundle.schema.json).
+They add:
+
+- `provider`, `family`, `credential_type` identity;
+- `context` (`standalone`, `assignment`, `bearer`, `container` or `uri`);
+- `max_candidate_bytes`, checked against the capture group's finite maximum;
+- `fixture_set` and digest-bound `provenance` references.
+
+Provider patterns must compile in the Rust linear-time byte-regex engine. A
+pattern that cannot have a finite maximum, or whose capture exceeds its declared
+candidate bound, is rejected. RegexSet may fall back explicitly to the reference
+regex; a rule is never silently skipped.
+
+Provider validators return format-valid, plausible-unverified or rejected.
+Rejected candidates are not emitted. Plausible candidates are retained with a
+`PLAUSIBLE_UNVERIFIED` validation token and a downgraded confidence. A validator
+reason is a static string and never contains the candidate.
+
+### Provider lifecycle
+
+1. Confirm the format from provider documentation; record the reference and
+   review date in `provenance`.
+2. Write a bounded pattern and declare the exact capture group and candidate
+   maximum.
+3. Select reusable offline validators; never call a provider API or redeem a
+   token.
+4. Add a harmless deterministic positive, a structural near-miss, a malformed
+   value and a documentation-placeholder negative.
+5. Add the rule to independent truth outside the scanner root and verify the
+   byte spans by hashing source bytes.
+6. Run all four strategies and both modes; reject any unexplained difference.
+7. Measure the provider catalog benchmark before accepting a material cost.
+8. Bump `rule_version`, update the ruleset digest and preserve the previous
+   bundle when a release must remain reproducible.
+9. Deprecate by rule version and documentation; never reuse a rule ID for a
+   different semantic.
+10. Keep synthetic regression rules separate from provider rules.
+
+A rule count is not a coverage metric. Unsupported, experimental and
+implemented families are distinguished in the [detection catalog](cp3-detection-catalog.md).
 
 ## Digest and lifecycle
 

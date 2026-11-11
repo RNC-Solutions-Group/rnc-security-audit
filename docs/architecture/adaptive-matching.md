@@ -1,6 +1,6 @@
 # Adaptive matching architecture
 
-> **Implemented in CP2.** One scanner, three portable strategies, one immutable evidence contract.
+> **Implemented in CP2, extended in CP3.** One scanner, three portable strategies, one immutable evidence contract.
 
 ## Boundaries
 
@@ -22,13 +22,15 @@ authorized source
 | Strategy | Mechanism | Correctness guarantee |
 | --- | --- | --- |
 | `regex` | Each rule's exact `regex::bytes::Regex` | Reference; always available |
-| `regexset` | `RegexSet` selects applicable rules, exact regex extracts candidates | Exact extraction; presence is not a finding |
+| `regexset` | A `RegexSet` of proven required literals selects eligible rules; exact regex extracts candidates | Exact extraction; presence is not a finding; no-literal rules always use exact regex |
 | `prefilter` | Sound required-literal Aho-Corasick filter; exact regex for eligible rules | No-literal rules always use exact regex; literals are proven |
-| `auto` | Reserved for conservative planning | Currently reference regex |
+| `auto` | Conservative planning | Currently reference regex |
+
+The CP3 regexset change was necessary because a full-pattern `RegexSet` over large bounded provider patterns was correct but pathologically slow. The literal-filter set preserves the same candidate contract and is differential-tested against reference regex.
 
 ## Required-literal extraction
 
-The planner accepts a literal only when every match must contain it. Extraction recursively handles literals, concatenation, captures, bounded repetition with `min >= 1`, single-byte classes and alternation common prefixes. If any branch lacks a common prefix, or a construct is not provably literal, the result is `None` and the rule remains on exact regex.
+The planner accepts a literal only when every match must contain it. Extraction recursively handles literals, concatenation, captures, bounded repetition with `min >= 1`, single-byte classes and alternation common prefixes. A required literal may occur anywhere in the match, not only at the prefix; concatenation requires every part, so a literal proven by any mandatory part is safe. If any branch lacks a common literal, or a construct is not provably literal, the result is `None` and the rule remains on exact regex.
 
 This is intentionally conservative. Missing a candidate is a hard correctness failure; evaluating an extra regex is only a performance cost.
 

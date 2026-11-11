@@ -289,6 +289,23 @@ pub fn scan(
                         )?;
                         break;
                     }
+                    Err(FileScanError::CandidateLimit) => {
+                        execution.units.push(SourceUnitRecord::uninspected(
+                            &config.run_id,
+                            &unit.locator,
+                            unit.required_scope,
+                            "CANDIDATE_LIMIT",
+                        )?);
+                        execution.add_failure("CANDIDATE_LIMIT");
+                        execution.state = ExecutionState::Interrupted;
+                        execution.evidence_valid = false;
+                        add_remaining_uninspected(
+                            &mut execution,
+                            &units[index + 1..],
+                            "CANDIDATE_LIMIT",
+                        )?;
+                        break;
+                    }
                     Err(error) => {
                         execution.units.push(SourceUnitRecord::uninspected(
                             &config.run_id,

@@ -75,9 +75,14 @@ JSON Schema validates shape and obvious relationships. The reference validator i
 
 The numeric result code is a report field, not the operating-system exit code. Default CI acceptance is `{1, 2}`; `3` requires explicit acceptance; `4` and `5` are never acceptable as successful scans under the CP0 contract.
 
-## CP1 rule-bundle contract
+## Rule-bundle contracts
 
-The Rust detector consumes a separate data-only rule bundle at `docs/contracts/rules/rule-bundle.schema.json` (schema `0.1.0`). It is not one of the seven v0.2 record schemas; see [rule authoring](../implementation/cp1-rule-authoring.md).
+The Rust detector consumes separate data-only rule bundles that are not the seven v0.2 record schemas:
+
+- `docs/contracts/rules/rule-bundle.schema.json` — synthetic schema `0.1.0`, preserved for CP0–CP2 regression truth.
+- `docs/contracts/rules/provider-rule-bundle.schema.json` — CP3 provider schema `0.2.0`, with provider/family/credential metadata, finite `max_match_bytes`, bounded `max_candidate_bytes`, provenance and fixture references.
+
+See [rule authoring](../implementation/cp1-rule-authoring.md) and the [detection catalog](../implementation/cp3-detection-catalog.md).
 
 ## Validate
 

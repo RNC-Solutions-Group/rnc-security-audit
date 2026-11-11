@@ -7,6 +7,7 @@ use std::time::Duration;
 use rnc_core::{
     scan, ExecutionState, LoadedBundle, LocalSource, PolicySpec, RunConfig, ScanLimits, ScanMode,
 };
+use serde_json::json;
 use tempfile::tempdir;
 
 fn rules_v1() -> LoadedBundle {
@@ -95,6 +96,48 @@ fn detects_marker_and_preserves_offsets_and_line() {
     assert_eq!(finding.line_end, None);
     assert!(finding.evidence_digest.starts_with("sha256:"));
     assert_eq!(report.execution.units[0].disposition, "INSPECTED");
+}
+
+#[test]
+fn candidate_budget_exhaustion_is_not_a_clean_scan() {
+    let temp = tempdir().unwrap();
+    write(&temp.path().join("flood.txt"), &vec![b'x'; 100_001]);
+    let bundle = LoadedBundle::from_bundle(
+        serde_json::from_value(json!({
+            "schema_version": "0.1.0",
+            "ruleset_id": "candidate-limit-test",
+            "ruleset_version": "1",
+            "rules": [{
+                "rule_id": "single-byte",
+                "rule_version": "1",
+                "category": "test",
+                "pattern": "x",
+                "capture_group": 0,
+                "validators": ["ASCII_ONLY"],
+                "confidence": "low",
+                "max_match_bytes": 1
+            }]
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+    let report = scan_tree(
+        temp.path(),
+        &bundle,
+        &config(ScanMode::Whole),
+        &[],
+        &[],
+        &[],
+    );
+    assert_eq!(report.execution.state, ExecutionState::Interrupted);
+    assert!(!report.execution.evidence_valid);
+    assert_eq!(report.execution.units[0].disposition, "UNINSPECTED");
+    assert_eq!(
+        report.execution.units[0].reason_codes,
+        vec!["CANDIDATE_LIMIT"]
+    );
+    assert_eq!(report.result.result_code, 5);
+    assert_eq!(report.ci.process_exit_code, 30);
 }
 
 #[test]

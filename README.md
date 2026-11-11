@@ -1,6 +1,6 @@
 # RNC Security Audit
 
-> **Development status — 11 November 2026:** CP0–CP2 provide a working, security-hardened Rust scanner; CP3 focuses on independent accuracy validation. The included rule bundles and passing detection scores are **synthetic test evidence**, not demonstrated real-world credential detection accuracy. No production deployment or public release is claimed.
+> **Development status — 11 November 2026:** CP0–CP2 provide a working, security-hardened Rust scanner; CP3 adds a first-party provider-credential catalog and independent byte-addressed accuracy assessment. The original synthetic bundles remain preserved regression evidence, not production credential accuracy. Provider-format recognition is **not** proof that a credential is active, authorized or complete. No production deployment or public release is claimed.
 
 **RNC Security Audit** is the working home for RNC's security platform. Its first-party secret-detection component is **RNC Scanner**. The wider application will eventually coordinate independent security tools as well. **RNC Security Toolkit** remains the prospective name for a portable distribution, not another codebase.
 
@@ -74,6 +74,10 @@ Reporting reconciles three independently verifiable, append-only logical records
 | [CP1 validation](docs/implementation/cp1-validation.md) | Implemented CP1 engine, tests, performance, external scoring and limitations |
 | [CP2 validation](docs/implementation/cp2-validation.md) | Adaptive matching, policy, reporting, classification, benchmark and CI evidence |
 | [CP2 operator guide](docs/implementation/cp2-operator-guide.md) | Build, scan, strategies, config, exemptions, reports and CI acceptance |
+| [CP3 detection catalog](docs/implementation/cp3-detection-catalog.md) | Implemented, experimental and unsupported provider families |
+| [CP3 accuracy methodology](docs/implementation/cp3-accuracy-methodology.md) | Byte truth, scoring, ambiguity, external corpora and comparative limits |
+| [CP3 benchmark methodology](docs/implementation/cp3-benchmark-methodology.md) | Provider workloads, timing method, resources and limitations |
+| [CP3 validation](docs/implementation/cp3-validation.md) | Final CP3 implementation, evidence, limitations and disposition |
 | [Adaptive matching](docs/architecture/adaptive-matching.md) | Backend boundaries, required literals, streaming and differential gate |
 | [Source acquisition and report publication](docs/architecture/source-acquisition.md) | Root containment, discovery budgets, atomic report writes and platform guarantees |
 | [Configuration](docs/architecture/configuration.md) | Global/repository/CLI precedence, mandatory caps and legacy migration |
@@ -85,8 +89,8 @@ Reporting reconciles three independently verifiable, append-only logical records
 1. **CP0 — establish trustworthy contracts.** Canonical input and finding identities, synthetic truth, independent grading and the detector-language decision.
 2. **CP1 — implement the first-party engine.** Rust rule evaluation, byte-accurate findings, bounded streaming and read-only acquisition.
 3. **CP2 — integrate detection with control and accountability.** Portable regex/RegexSet/Aho-Corasick strategies; policy, configuration, reporting, five-state outcomes, and security hardening.
-4. **CP3 — validate independently.** Strengthen the scanner-agnostic harness and measure detection correctness without allowing the production engine to grade itself.
-5. **Later — broaden based on evidence.** Real credential rules, additional input adapters, controlled backend experiments and optional third-party audit orchestration.
+4. **CP3 — validate independently.** Add first-party provider rules and offline validators, author independent byte truth, score exact occurrences, and record external-corpus and comparative evidence.
+5. **Later — broaden based on evidence.** Additional input adapters, controlled backend experiments and optional third-party audit orchestration.
 
 ### Current implementation
 
@@ -95,9 +99,17 @@ Reporting reconciles three independently verifiable, append-only logical records
 | Operating contracts (CP0) | Implemented | [CP0 audit report](docs/implementation/cp0-contract-validation.md) |
 | Rust detector (CP1) | Implemented; synthetic rule bundles | [CP1 validation](docs/implementation/cp1-validation.md) |
 | Adaptive matching, policies, reporting and hardening (CP2) | Implemented; CI validated | [CP2 validation](docs/implementation/cp2-validation.md) |
-| Independent real-world accuracy assessment (CP3) | Development focus; not yet claimed complete | [Roadmap](docs/roadmap.md) |
+| Independent accuracy assessment (CP3) | **Provider catalog and controlled/external evidence implemented; CI and operator review pending** | [CP3 validation](docs/implementation/cp3-validation.md), [detection catalog](docs/implementation/cp3-detection-catalog.md) |
 
 The portable matching system includes a reference Rust regex strategy, a RegexSet-assisted strategy and an Aho-Corasick literal prefilter. All use the same rule, validator and finding contracts. Faster strategies are not promoted at the expense of finding equivalence.
+
+### Provider credential catalog
+
+CP3 adds [`rules/rnc-providers-v1.json`](rules/rnc-providers-v1.json), a separately versioned schema `0.2.0` catalog covering **12 credential families** in cloud, developer-platform, service, cryptographic, structured and generic categories. It includes AWS, Google Cloud API keys, GitHub classic/fine-grained/OAuth tokens, GitLab PATs, Stripe, Slack, SendGrid, npm, PEM private-key containers, Bearer JWTs, database URI userinfo and a low-confidence generic assignment fallback.
+
+Every rule has a finite match bound and declared candidate bound. Validators are offline: no provider API is called, no token is redeemed and no discovered credential is sent over a network. Structural validity is not active-credential verification. The [detection catalog](docs/implementation/cp3-detection-catalog.md) distinguishes implemented, experimental and unsupported families.
+
+The independent scenario suite scores exact byte spans rather than lines. On the controlled Tier 2 and held-out Tier 3 authored corpora all four strategies in whole-file and streaming modes produce the same findings; the current validation report records the exact recall/precision and the deliberate limitations. External Levain, Leaky Repo and pinned Gitleaks evidence is scoped in the [accuracy methodology](docs/implementation/cp3-accuracy-methodology.md); it is not converted into a universal product score.
 
 The external scanner comparison harness is **independent test infrastructure**, not a detection dependency. Historical experiments with third-party tooling do not define the RNC Scanner engine or its results.
 
@@ -111,7 +123,8 @@ These are tracked residual hardening requirements, **not claims that CP2 lacks s
 
 ## Safety and implementation status
 
-- No real credentials, raw secret matches, private target IDs, or machine-specific paths in this repository. Store raw evidence privately outside public source trees; sanitize before publishing.
+- No real credentials, raw secret matches, private target IDs, or machine-specific paths in this repository. Provider fixtures are deterministic synthetic values; the PEM fixtures are deliberately inconsistent and not usable keys. Store raw evidence privately outside public source trees; sanitize before publishing.
+- Provider-format detection is not proof of an active, authorized, complete or non-revoked credential. JWTs are reported only with an explicit Bearer context; generic assignments are low confidence; public keys and certificates are not private keys; and RNC Scanner currently has no Git-history adapter.
 - Verified pre-scan exclusion means source content was **not read by the detector**. Post-scan exemption means detection occurred but the finding's disposition changed. Neither may masquerade as the other.
 - Target scope and active network testing require explicit authorization. Future red-team modes are separate from CI or passive source checks.
 - Disabled/optional checks and unavailable **required** checks have different coverage consequences; zero inspected required targets is never `CLEAN`.

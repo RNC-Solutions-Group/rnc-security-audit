@@ -58,10 +58,15 @@ CP0 and CP1 may define interfaces for downstream modules without implementing th
 
 ### CP3 — grade, do not self-grade
 
-- [ ] Complete independent scanner-agnostic manifest and normalized-result adapters.
-- [ ] Prove scoring with an intentionally manufactured synthetic scanner adapter; expected scoring must be exact for each known input.
-- [ ] Record per-target accountable secrets, false positives, misses, ambiguous cases and completeness.
-- [ ] Score RNC Scanner and external comparators using the **same** held-out fixtures and declared scope.
+- [x] Separate first-party provider catalog (`0.2.0`) preserving synthetic `0.1.0` regression truth.
+- [x] Bounded patterns, candidate caps and reusable offline validators for cloud, developer-platform, service, cryptographic, structured and generic credential families.
+- [x] Controlled provider-format positives, negatives, malformed and same-line/multiline/binary fixtures.
+- [x] Independent byte-addressed truth and scorer, including negative controls for empty, over-reporting, duplicate, shifted, wrong-source, wrong-family and incomplete scanners.
+- [x] All four matching strategies and whole/stream modes produce identical Tier 2/3 findings.
+- [x] Pinned external-harness handoff with explicit line-addressing limitation.
+- [x] Scoped Levain FP/TP evidence, count-based Leaky Repo scan and pinned Gitleaks comparison.
+- [x] Provider-catalog benchmark methodology and measured evidence.
+- [ ] Required CP3 CI green, PR review and operator acceptance.
 
 ### CP4–CP6 — broaden without changing the engine contract
 

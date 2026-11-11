@@ -84,6 +84,7 @@ pub struct MatchCandidate {
 #[derive(Debug)]
 pub enum MatchError {
     Timeout,
+    CandidateLimit,
     Backend(String),
 }
 
@@ -91,16 +92,24 @@ impl fmt::Display for MatchError {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Timeout => formatter.write_str("match deadline exceeded"),
+            Self::CandidateLimit => formatter.write_str("candidate budget exceeded"),
             Self::Backend(message) => write!(formatter, "match backend failed: {message}"),
         }
     }
 }
+
+/// Bound candidate materialization per window. Rust regex execution is linear,
+/// but a pathological file containing millions of matching spans could still
+/// consume unbounded memory when all captures are materialized. Exceeding this
+/// budget makes the source unit uninspected and the execution incomplete.
+pub const MAX_CANDIDATES_PER_WINDOW: usize = 100_000;
 
 pub struct MatchPlan<'a> {
     bundle: &'a LoadedBundle,
     effective: BackendRequest,
     provenance: PlanProvenance,
     regexset: Option<RegexSet>,
+    regexset_pattern_rule: Vec<usize>,
     prefilter: Option<AhoCorasick>,
     prefilter_pattern_rule: Vec<usize>,
     rules_without_literals: Vec<usize>,
@@ -131,23 +140,32 @@ impl<'a> MatchPlan<'a> {
         };
 
         let mut regexset = None;
+        let mut regexset_pattern_rule = Vec::new();
         let mut prefilter = None;
         let mut prefilter_pattern_rule = Vec::new();
         let mut effective = effective;
 
         if effective == BackendRequest::RegexSet {
-            let patterns: Vec<&str> = bundle
-                .compiled
-                .iter()
-                .map(|rule| rule.definition.pattern.as_str())
-                .collect();
-            match RegexSet::new(patterns) {
-                Ok(set) => regexset = Some(set),
-                Err(error) => {
-                    fallback_reason = Some(format!(
-                        "RegexSet could not compile the bundle; reference regex used: {error}"
-                    ));
-                    effective = BackendRequest::Regex;
+            let mut patterns = Vec::new();
+            for (index, rule) in bundle.compiled.iter().enumerate() {
+                if let Some(literal) = &rule.required_literal {
+                    patterns.push(literal_regex(literal));
+                    regexset_pattern_rule.push(index);
+                }
+            }
+            if patterns.is_empty() {
+                fallback_reason =
+                    Some("no rule had a proven required literal; reference regex used".to_string());
+                effective = BackendRequest::Regex;
+            } else {
+                match RegexSet::new(&patterns) {
+                    Ok(set) => regexset = Some(set),
+                    Err(error) => {
+                        fallback_reason = Some(format!(
+                            "RegexSet could not compile the literal filter; reference regex used: {error}"
+                        ));
+                        effective = BackendRequest::Regex;
+                    }
                 }
             }
         }
@@ -185,7 +203,11 @@ impl<'a> MatchPlan<'a> {
             .map(|(index, _)| index)
             .collect();
 
-        if effective == BackendRequest::Prefilter && without_literals > 0 {
+        if matches!(
+            effective,
+            BackendRequest::Prefilter | BackendRequest::RegexSet
+        ) && without_literals > 0
+        {
             fallback_reason = Some(format!(
                 "{without_literals} rule(s) have no proven literal and use exact regex fallback"
             ));
@@ -207,6 +229,7 @@ impl<'a> MatchPlan<'a> {
             effective,
             provenance,
             regexset,
+            regexset_pattern_rule,
             prefilter,
             prefilter_pattern_rule,
             rules_without_literals,
@@ -251,10 +274,23 @@ impl<'a> MatchPlan<'a> {
                     .regexset
                     .as_ref()
                     .ok_or_else(|| MatchError::Backend("RegexSet plan lost its set".to_string()))?;
-                let matched = set.matches(data);
+                let mut eligible = vec![false; self.bundle.compiled.len()];
+                for index in &self.rules_without_literals {
+                    eligible[*index] = true;
+                }
+                for index in set.matches(data).iter() {
+                    if let Some(rule) = self.regexset_pattern_rule.get(index) {
+                        eligible[*rule] = true;
+                    }
+                }
                 let mut candidates = Vec::new();
-                for index in matched.iter() {
-                    candidates.extend(self.rule_candidates(index, data, deadline)?);
+                for (index, enabled) in eligible.into_iter().enumerate() {
+                    if enabled {
+                        candidates.extend(self.rule_candidates(index, data, deadline)?);
+                        if candidates.len() > MAX_CANDIDATES_PER_WINDOW {
+                            return Err(MatchError::CandidateLimit);
+                        }
+                    }
                 }
                 Ok(candidates)
             }
@@ -276,6 +312,9 @@ impl<'a> MatchPlan<'a> {
                 for (index, enabled) in eligible.into_iter().enumerate() {
                     if enabled {
                         candidates.extend(self.rule_candidates(index, data, deadline)?);
+                        if candidates.len() > MAX_CANDIDATES_PER_WINDOW {
+                            return Err(MatchError::CandidateLimit);
+                        }
                     }
                 }
                 Ok(candidates)
@@ -334,6 +373,9 @@ impl<'a> MatchPlan<'a> {
                         start: matched.start(),
                         end: matched.end(),
                     });
+                    if candidates.len() > MAX_CANDIDATES_PER_WINDOW {
+                        return Err(MatchError::CandidateLimit);
+                    }
                 }
             }
         }
@@ -346,48 +388,57 @@ impl<'a> MatchPlan<'a> {
 /// A returned literal is present in every match. `None` means the planner could
 /// not prove a literal and must keep the rule on exact regex evaluation.
 pub fn required_literal(pattern: &str) -> Result<Option<Vec<u8>>, String> {
-    let hir = regex_syntax::Parser::new()
+    let hir = regex_syntax::ParserBuilder::new()
+        .utf8(false)
+        .build()
         .parse(pattern)
         .map_err(|error| error.to_string())?;
-    match required_prefix(&hir) {
-        Some(value) if !value.is_empty() => Ok(Some(value)),
-        _ => Ok(None),
-    }
+    Ok(required_any(&hir).filter(|value| !value.is_empty()))
 }
 
-fn required_prefix(hir: &regex_syntax::hir::Hir) -> Option<Vec<u8>> {
+/// Return a literal that must occur in every match, without requiring it to be
+/// a prefix. A concatenation requires every part, so a required literal from any
+/// part is safe; alternations still require a common prefix across branches.
+fn required_any(hir: &regex_syntax::hir::Hir) -> Option<Vec<u8>> {
     use regex_syntax::hir::{HirKind, Literal};
     match hir.kind() {
-        HirKind::Empty | HirKind::Look(_) => Some(Vec::new()),
-        HirKind::Literal(Literal(bytes)) => Some(bytes.to_vec()),
-        HirKind::Capture(capture) => required_prefix(&capture.sub),
+        HirKind::Empty | HirKind::Look(_) => None,
+        HirKind::Literal(Literal(bytes)) => {
+            if bytes.is_empty() {
+                None
+            } else {
+                Some(bytes.to_vec())
+            }
+        }
+        HirKind::Class(class) => single_byte_class(class),
+        HirKind::Capture(capture) => required_any(&capture.sub),
         HirKind::Repetition(repetition) => {
             if repetition.min >= 1 {
-                required_prefix(&repetition.sub)
+                required_any(&repetition.sub)
             } else {
                 None
             }
         }
         HirKind::Concat(parts) => {
-            let mut output = Vec::new();
+            let mut best: Option<Vec<u8>> = None;
             for part in parts {
-                match literal_piece(part) {
-                    Some(piece) => output.extend_from_slice(&piece),
-                    None => break,
+                if let Some(candidate) = required_any(part) {
+                    if best
+                        .as_ref()
+                        .is_none_or(|current| candidate.len() > current.len())
+                    {
+                        best = Some(candidate);
+                    }
                 }
             }
-            if output.is_empty() {
-                None
-            } else {
-                Some(output)
-            }
+            best
         }
         HirKind::Alternation(branches) => {
             let mut iter = branches.iter();
-            let first = required_prefix(iter.next()?)?;
+            let first = required_any(iter.next()?)?;
             let mut common = first;
             for branch in iter {
-                let candidate = required_prefix(branch)?;
+                let candidate = required_any(branch)?;
                 let length = common
                     .iter()
                     .zip(candidate.iter())
@@ -401,8 +452,15 @@ fn required_prefix(hir: &regex_syntax::hir::Hir) -> Option<Vec<u8>> {
                 Some(common)
             }
         }
-        HirKind::Class(class) => single_byte_class(class),
     }
+}
+
+fn literal_regex(literal: &[u8]) -> String {
+    let mut pattern = String::from("(?-u)");
+    for byte in literal {
+        pattern.push_str(&format!("\\x{byte:02X}"));
+    }
+    pattern
 }
 
 fn single_byte_class(class: &regex_syntax::hir::Class) -> Option<Vec<u8>> {
@@ -431,50 +489,6 @@ fn single_byte_class(class: &regex_syntax::hir::Class) -> Option<Vec<u8>> {
     }
 }
 
-/// A contiguous literal prefix that may be consumed before a variable part.
-fn literal_piece(hir: &regex_syntax::hir::Hir) -> Option<Vec<u8>> {
-    use regex_syntax::hir::{HirKind, Literal};
-    match hir.kind() {
-        HirKind::Empty | HirKind::Look(_) => Some(Vec::new()),
-        HirKind::Literal(Literal(bytes)) => Some(bytes.to_vec()),
-        HirKind::Capture(capture) => literal_piece(&capture.sub),
-        HirKind::Repetition(repetition) => {
-            if repetition.min >= 1 {
-                literal_piece(&repetition.sub)
-            } else {
-                None
-            }
-        }
-        HirKind::Concat(parts) => {
-            let mut output = Vec::new();
-            for part in parts {
-                output.extend_from_slice(&literal_piece(part)?);
-            }
-            Some(output)
-        }
-        HirKind::Alternation(branches) => {
-            let mut iter = branches.iter();
-            let first = literal_piece(iter.next()?)?;
-            let mut common = first;
-            for branch in iter {
-                let candidate = literal_piece(branch)?;
-                let length = common
-                    .iter()
-                    .zip(candidate.iter())
-                    .take_while(|(left, right)| left == right)
-                    .count();
-                common.truncate(length);
-            }
-            if common.is_empty() {
-                None
-            } else {
-                Some(common)
-            }
-        }
-        HirKind::Class(class) => single_byte_class(class),
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -487,7 +501,7 @@ mod tests {
         );
         assert_eq!(
             required_literal("(?:PREFIX|PREFIX_ALT)_[A-Z]+").unwrap(),
-            Some(b"PREFIX_".to_vec())
+            Some(b"PREFIX".to_vec())
         );
         assert_eq!(required_literal("(?:A|B)[A-Z]+").unwrap(), None);
         assert_eq!(required_literal("[A-Z]{1,4}").unwrap(), None);
