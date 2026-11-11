@@ -10,7 +10,8 @@
 | --- | --- |
 | Branch | `feat/cp3` |
 | Reviewed starting head | `13b1d6b40cc56b7389bbd2eeef7d70794c15a68c` |
-| Final head | `PENDING-FINAL-HEAD` |
+| Final implementation head | `396a046839e78192dcb68b6686781f4011eeb4a0` |
+| Documentation evidence | branch head at report time; see PR [#10](https://github.com/RNC-Solutions-Group/rnc-security-audit/pull/10) |
 | Pull request | [#10](https://github.com/RNC-Solutions-Group/rnc-security-audit/pull/10) |
 | Target | `main` |
 | Merge | Operator-owned; no merge performed |
