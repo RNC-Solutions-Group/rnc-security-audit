@@ -82,6 +82,20 @@ reason is a static string and never contains the candidate.
    different semantic.
 10. Keep synthetic regression rules separate from provider rules.
 
+### Provider classification decisions
+
+An identifier is not automatically a credential. AWS `AKIA`/`ASIA` are the only
+prefixes accepted by `aws-access-key-id`; `AIDA`, `AGPA`, `AIPA`, `ANPA`,
+`ANVA`, `APKA`, `AROA` and `ASCA` are ordinary IAM resource identifiers and do
+not get credential findings. `ABIA` and `ACCA` are sensitive identifiers with
+their own rules and `service-bearer-token-id` / `context-specific-credential-id`
+classifications; they are not alternate access-key prefixes.
+
+GitHub `ghs_` installation tokens are separate from `gho_`/`ghu_`/`ghr_` OAuth
+tokens. Legacy opaque and stateless `ghs_APPID_JWT` forms share a dedicated
+rule; the modern form is structurally validated only, never signature-verified
+or sent to GitHub.
+
 A rule count is not a coverage metric. Unsupported, experimental and
 implemented families are distinguished in the [detection catalog](cp3-detection-catalog.md).
 

@@ -1166,11 +1166,19 @@ fn is_variable_reference(text: &str) -> bool {
 }
 
 fn looks_like_provider_token(candidate: &[u8]) -> bool {
-    const PREFIXES: [&[u8]; 24] = [
+    const PREFIXES: [&[u8]; 32] = [
         b"AKIA",
         b"ASIA",
         b"ABIA",
         b"ACCA",
+        b"AIDA",
+        b"AGPA",
+        b"AIPA",
+        b"ANPA",
+        b"ANVA",
+        b"APKA",
+        b"AROA",
+        b"ASCA",
         b"AIza",
         b"ghp_",
         b"github_pat_",
@@ -1564,6 +1572,13 @@ mod tests {
             concat!("ghp_", "0123456789abcdefghijklmnopqrstuvwxyz").as_bytes(),
             &[Validator::GenericSecretAssignment],
         );
+        for resource_prefix in [
+            b"AIDA", b"AGPA", b"AIPA", b"ANPA", b"ANVA", b"APKA", b"AROA", b"ASCA",
+        ] {
+            let mut value = resource_prefix.to_vec();
+            value.extend_from_slice(b"Q7Z3K5M2N4P6R8T0");
+            assert_invalid(&value, &[Validator::GenericSecretAssignment]);
+        }
     }
 
     #[test]
