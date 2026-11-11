@@ -423,3 +423,17 @@ fn aborted_discovery_cannot_produce_a_trustworthy_result() {
     assert_eq!(report.result.result_code, 5);
     assert_eq!(report.ci.process_exit_code, 30);
 }
+
+#[test]
+fn removed_file_is_not_inspected() {
+    let temp = tempdir().unwrap();
+    let path = temp.path().join("removed.txt");
+    write(&path, b"RNC_SYNTH_KEY_GENERIC_ALPHA\n");
+    let source = LocalSource::new(temp.path().to_path_buf(), &[], &[], &[]).unwrap();
+    let discovery = source.discover();
+    fs::remove_file(&path).unwrap();
+    let report = scan(discovery, &rules_v1(), &config(ScanMode::Whole)).unwrap();
+    assert!(report.findings.is_empty());
+    assert_eq!(report.execution.units[0].disposition, "UNINSPECTED");
+    assert_eq!(report.result.result_code, 4);
+}

@@ -241,6 +241,39 @@ impl LocalSource {
         discovery
     }
 
+    fn directory_within_root(&self, directory: &Path) -> bool {
+        match fs::canonicalize(directory) {
+            Ok(canonical) => {
+                #[cfg(windows)]
+                {
+                    let root = self
+                        .root
+                        .to_string_lossy()
+                        .replace("\\\\?\\", "")
+                        .replace('/', "\\")
+                        .to_ascii_lowercase();
+                    let canonical = canonical
+                        .to_string_lossy()
+                        .replace("\\\\?\\", "")
+                        .replace('/', "\\")
+                        .to_ascii_lowercase();
+                    let base = root.clone();
+                    let prefix = if root.ends_with('\\') {
+                        root
+                    } else {
+                        format!("{root}\\")
+                    };
+                    canonical == base || canonical.starts_with(&prefix)
+                }
+                #[cfg(not(windows))]
+                {
+                    canonical.starts_with(&self.root)
+                }
+            }
+            Err(_) => false,
+        }
+    }
+
     #[allow(clippy::too_many_arguments)]
     fn walk(
         &self,
@@ -273,6 +306,32 @@ impl LocalSource {
         } else {
             self.root.join(prefix)
         };
+        if !self.directory_within_root(&directory) {
+            discovery.aborted = true;
+            discovery.fatal_errors.push("DIRECTORY_ESCAPE".to_string());
+            return;
+        }
+        if fs::symlink_metadata(&directory)
+            .map(|metadata| metadata.file_type().is_symlink())
+            .unwrap_or(false)
+        {
+            discovery.aborted = true;
+            discovery
+                .fatal_errors
+                .push("DIRECTORY_SYMLINK_ESCAPE".to_string());
+            return;
+        }
+        #[cfg(windows)]
+        if fs::symlink_metadata(&directory).is_ok_and(|metadata| {
+            use std::os::windows::fs::MetadataExt;
+            metadata.file_attributes() & 0x0400 != 0
+        }) {
+            discovery.aborted = true;
+            discovery
+                .fatal_errors
+                .push("DIRECTORY_REPARSE_ESCAPE".to_string());
+            return;
+        }
         let entries = match fs::read_dir(&directory) {
             Ok(entries) => entries,
             Err(_) => {
@@ -662,5 +721,31 @@ mod tests {
         assert!(discovery
             .fatal_errors
             .contains(&"POLICY_BUDGET_EXCEEDED".to_string()));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn directory_symlink_escape_is_not_enumerated() {
+        use std::os::unix::fs::symlink;
+        let temp = tempfile::tempdir().unwrap();
+        let outside = tempfile::tempdir().unwrap();
+        File::create(outside.path().join("outside.txt"))
+            .unwrap()
+            .write_all(b"RNC_SYNTH_KEY_AWS_OUTSIDE")
+            .unwrap();
+        symlink(outside.path(), temp.path().join("escape")).unwrap();
+        let source = LocalSource::new(temp.path().to_path_buf(), &[], &[], &[]).unwrap();
+        let discovery = source.discover();
+        assert!(!discovery.aborted);
+        assert!(discovery
+            .units
+            .iter()
+            .all(|unit| unit.locator != "escape/outside.txt"));
+        let link = discovery
+            .units
+            .iter()
+            .find(|unit| unit.locator == "escape")
+            .expect("symlink entry recorded");
+        assert_eq!(link.scope, PreScanScope::Skipped("SYMLINK_NOT_FOLLOWED"));
     }
 }
