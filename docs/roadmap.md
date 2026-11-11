@@ -53,6 +53,7 @@ CP0 and CP1 may define interfaces for downstream modules without implementing th
 - [x] Implement final result classifier and **all precedence collisions**.
 - [x] Emit safe canonical JSON; prove fail-closed sanitization and private evidence isolation.
 - [x] Implement result-to-OS-exit policy with both accepted and rejected `POLICY_APPLIED` outcomes.
+- [x] Final security hardening: atomic report publication, root-contained source acquisition, trusted CI acceptance authority, bounded policy/discovery work and content policy digests.
 - [ ] Operator review of CP2 and merge decision.
 
 ### CP3 — grade, do not self-grade

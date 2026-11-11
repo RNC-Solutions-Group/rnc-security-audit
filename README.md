@@ -1,6 +1,6 @@
 # RNC Security Audit
 
-> **CP0–CP2 development package (11 November 2026).** A working Rust scanner exists with portable matching strategies, verified scope policy, exemptions, reconciled ledgers, sanitized/private reporting and CI enforcement. No production deployment, security assessment, operator acceptance or release is claimed; no PR is merged.
+> **CP0–CP2 development package with final security hardening (11 November 2026).** A working Rust scanner exists with portable matching strategies, root-contained source acquisition, verified scope policy, exemptions, reconciled ledgers, atomic sanitized/private reporting and CI enforcement. No production deployment, security assessment, operator acceptance or release is claimed; no PR is merged.
 
 **RNC Security Audit** is the working home for RNC's security platform. Its first-party secret-detection component is **RNC Scanner**. The wider application will eventually coordinate independent security tools as well. **RNC Security Toolkit** remains the prospective name for a portable distribution, not another codebase.
 
@@ -75,6 +75,7 @@ Reporting reconciles three independently verifiable, append-only logical records
 | [CP2 validation](docs/implementation/cp2-validation.md) | Adaptive matching, policy, reporting, classification, benchmark and CI evidence |
 | [CP2 operator guide](docs/implementation/cp2-operator-guide.md) | Build, scan, strategies, config, exemptions, reports and CI acceptance |
 | [Adaptive matching](docs/architecture/adaptive-matching.md) | Backend boundaries, required literals, streaming and differential gate |
+| [Source acquisition and report publication](docs/architecture/source-acquisition.md) | Root containment, discovery budgets, atomic report writes and platform guarantees |
 | [Configuration](docs/architecture/configuration.md) | Global/repository/CLI precedence, mandatory caps and legacy migration |
 | [Rule authoring](docs/implementation/cp1-rule-authoring.md) | Versioned data-only rule bundles and lifecycle |
 | [Language ADR](docs/architecture/adr-007-detector-language.md) | Rust selection and recorded Go tradeoffs |
@@ -89,6 +90,8 @@ Reporting reconciles three independently verifiable, append-only logical records
 5. **Reuse the original audit orchestration** when integrating third-party security tools, execution backends, and passive/active modes.
 
 The current Gitleaks modernization and independent scan-harness projects are valuable **comparators and test infrastructure**, not a dependency for designing the RNC engine and not a reason to copy its limitations.
+
+**CP2 hardening outcomes (11 November 2026):** atomic report publication with root containment; Unix `openat`/`renameat` and Windows handle-verified source/report operations; trusted-only CI broadening of `ACTIONABLE`; dynamically bounded glob matching and discovery budgets; content-bound policy digests; 78 Unix / 67 Windows Rust tests and all-strategy external scoring. See [CP2 validation](docs/implementation/cp2-validation.md).
 
 **CP2 outcomes (11 November 2026):** one Rust scanner with reference regex, RegexSet and Aho-Corasick strategies; conservative `auto`; verified glob blocks; immutable exemptions; execution/detection/policy reconciliation; five-state results and CI exits; sanitized/private reports; production TOML configuration with mandatory global caps and legacy migration. All four strategies found **25/25 v1**, **13/13 v0** and **3/3 edge** expected findings and matched canonical output; the pinned external harness accepted every strategy's handoff at **25/25**. See [CP2 validation](docs/implementation/cp2-validation.md).
 
