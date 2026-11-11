@@ -17,7 +17,7 @@ on:
       - "docs/implementation/cp3-*.md"
   push:
     branches:
-      - feat/cp3
+      - main
     paths:
       - ".github/workflows/cp3-provider.yml"
       - "Cargo.toml"
