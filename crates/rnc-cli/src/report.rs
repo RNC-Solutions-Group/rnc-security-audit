@@ -56,6 +56,8 @@ fn path_within_root(root: &Path, candidate: &Path) -> bool {
 pub struct ReportDestination {
     #[allow(dead_code)]
     path: PathBuf,
+    #[allow(dead_code)]
+    root: PathBuf,
     parent: PathBuf,
     #[allow(dead_code)]
     name: OsString,
@@ -120,6 +122,7 @@ impl ReportDestination {
         }
         Ok(Self {
             path: resolved,
+            root,
             parent,
             name,
             private,
@@ -334,19 +337,125 @@ impl ReportDestination {
 
     #[cfg(windows)]
     fn write_windows(&self, payload: &[u8]) -> Result<(), ReportError> {
+        use std::ffi::c_void;
         use std::io::Write;
         use std::os::windows::ffi::OsStrExt;
-        let temp = self.parent.join(format!(
+        use std::os::windows::io::{AsRawHandle, FromRawHandle};
+
+        type Handle = *mut c_void;
+        const INVALID_HANDLE_VALUE: Handle = usize::MAX as Handle;
+        const GENERIC_READ: u32 = 0x8000_0000;
+        const GENERIC_WRITE: u32 = 0x4000_0000;
+        const DELETE: u32 = 0x0001_0000;
+        const FILE_SHARE_READ: u32 = 0x1;
+        const FILE_SHARE_WRITE: u32 = 0x2;
+        const FILE_SHARE_DELETE: u32 = 0x4;
+        const OPEN_EXISTING: u32 = 3;
+        const CREATE_NEW: u32 = 1;
+        const FILE_ATTRIBUTE_NORMAL: u32 = 0x80;
+        const FILE_FLAG_BACKUP_SEMANTICS: u32 = 0x0200_0000;
+        const FILE_FLAG_OPEN_REPARSE_POINT: u32 = 0x0020_0000;
+
+        #[repr(C)]
+        struct FileRenameInfo {
+            replace_if_exists: u8,
+            root_directory: Handle,
+            file_name_length: u32,
+            file_name: [u16; 1],
+        }
+
+        struct OwnedHandle(Handle);
+        impl Drop for OwnedHandle {
+            fn drop(&mut self) {
+                if self.0 != INVALID_HANDLE_VALUE {
+                    unsafe { CloseHandle(self.0) };
+                }
+            }
+        }
+
+        fn wide(path: &Path) -> Vec<u16> {
+            path.as_os_str().encode_wide().chain(Some(0)).collect()
+        }
+        fn final_path(handle: Handle) -> Result<PathBuf, ReportError> {
+            let length = unsafe { GetFinalPathNameByHandleW(handle, std::ptr::null_mut(), 0, 0) };
+            if length == 0 {
+                return Err(ReportError(format!(
+                    "cannot resolve report handle: {}",
+                    std::io::Error::last_os_error()
+                )));
+            }
+            let mut buffer = vec![0u16; length as usize + 1];
+            let written = unsafe {
+                GetFinalPathNameByHandleW(handle, buffer.as_mut_ptr(), buffer.len() as u32, 0)
+            };
+            if written == 0 {
+                return Err(ReportError(format!(
+                    "cannot resolve report handle: {}",
+                    std::io::Error::last_os_error()
+                )));
+            }
+            buffer.truncate(written as usize);
+            let value: std::ffi::OsString = std::os::windows::ffi::OsStringExt::from_wide(&buffer);
+            Ok(value.into())
+        }
+
+        let parent_name = wide(&self.parent);
+        let parent = unsafe {
+            CreateFileW(
+                parent_name.as_ptr(),
+                GENERIC_READ | GENERIC_WRITE | 0x20 | 0x40,
+                FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                std::ptr::null_mut(),
+                OPEN_EXISTING,
+                FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT,
+                std::ptr::null_mut(),
+            )
+        };
+        if parent == INVALID_HANDLE_VALUE {
+            return Err(ReportError(format!(
+                "cannot open report parent handle: {}",
+                std::io::Error::last_os_error()
+            )));
+        }
+        let parent = OwnedHandle(parent);
+        let parent_final = final_path(parent.0)?;
+        if path_within_root(&self.root, &parent_final) {
+            return Err(ReportError(
+                "report parent handle is inside the scan root".to_string(),
+            ));
+        }
+
+        let temp_path = self.parent.join(format!(
             ".rnc-report-{}-{}.tmp",
             std::process::id(),
             TEMP_COUNTER.fetch_add(1, Ordering::Relaxed)
         ));
-        let mut options = fs::OpenOptions::new();
-        options.write(true).create_new(true);
-        let mut file = options
-            .open(&temp)
-            .map_err(|error| ReportError(format!("cannot create temporary report: {error}")))?;
+        let temp_name = wide(&temp_path);
+        let temp_handle = unsafe {
+            CreateFileW(
+                temp_name.as_ptr(),
+                GENERIC_WRITE | DELETE,
+                FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                std::ptr::null_mut(),
+                CREATE_NEW,
+                FILE_ATTRIBUTE_NORMAL,
+                std::ptr::null_mut(),
+            )
+        };
+        if temp_handle == INVALID_HANDLE_VALUE {
+            return Err(ReportError(format!(
+                "cannot create temporary report: {}",
+                std::io::Error::last_os_error()
+            )));
+        }
+        let mut file = unsafe { std::fs::File::from_raw_handle(temp_handle) };
         let result = (|| -> Result<(), ReportError> {
+            let temp_final = final_path(file.as_raw_handle())?;
+            if !path_within_root(&parent_final, &temp_final) {
+                return Err(ReportError(
+                    "temporary report escaped the validated parent".to_string(),
+                ));
+            }
             file.write_all(payload)
                 .and_then(|_| file.write_all(b"\n"))
                 .map_err(|error| ReportError(format!("cannot write report: {error}")))?;
@@ -354,33 +463,47 @@ impl ReportDestination {
                 .map_err(|error| ReportError(format!("cannot flush report: {error}")))?;
             file.sync_all()
                 .map_err(|error| ReportError(format!("cannot sync report: {error}")))?;
-            drop(file);
-            if let Ok(metadata) = fs::symlink_metadata(&self.path) {
-                if is_link_or_reparse(&metadata) || metadata.is_dir() {
-                    return Err(ReportError(
-                        "report destination is not a safe regular file".to_string(),
-                    ));
+            let base: Vec<u16> = self.name.encode_wide().collect();
+            let name_offset = std::mem::offset_of!(FileRenameInfo, file_name);
+            let size = name_offset + base.len() * 2;
+            let words = size.div_ceil(std::mem::size_of::<u64>());
+            let mut buffer = vec![0u64; words];
+            let info = buffer.as_mut_ptr() as *mut FileRenameInfo;
+            unsafe {
+                (*info).replace_if_exists = 1;
+                (*info).root_directory = parent.0;
+                (*info).file_name_length = (base.len() * 2) as u32;
+                std::ptr::copy_nonoverlapping(
+                    base.as_ptr(),
+                    (*info).file_name.as_mut_ptr(),
+                    base.len(),
+                );
+                #[repr(C)]
+                struct IoStatusBlock {
+                    status_or_pointer: *mut c_void,
+                    information: usize,
                 }
-            }
-            let from: Vec<u16> = temp.as_os_str().encode_wide().chain(Some(0)).collect();
-            let to: Vec<u16> = self.path.as_os_str().encode_wide().chain(Some(0)).collect();
-            let replaced = unsafe {
-                MoveFileExW(
-                    from.as_ptr(),
-                    to.as_ptr(),
-                    MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH,
-                )
-            };
-            if replaced == 0 {
-                return Err(ReportError(format!(
-                    "cannot publish report atomically: {}",
-                    std::io::Error::last_os_error()
-                )));
+                let mut io_status = IoStatusBlock {
+                    status_or_pointer: std::ptr::null_mut(),
+                    information: 0,
+                };
+                let status = NtSetInformationFile(
+                    file.as_raw_handle(),
+                    &mut io_status as *mut IoStatusBlock as *mut c_void,
+                    info as *mut c_void,
+                    size as u32,
+                    10,
+                );
+                if status < 0 {
+                    return Err(ReportError(format!(
+                        "cannot publish report atomically (NTSTATUS {status:#x})"
+                    )));
+                }
             }
             Ok(())
         })();
         if result.is_err() {
-            let _ = fs::remove_file(&temp);
+            let _ = fs::remove_file(&temp_path);
         }
         result
     }
@@ -413,14 +536,36 @@ fn is_link_or_reparse(metadata: &fs::Metadata) -> bool {
 }
 
 #[cfg(windows)]
-const MOVEFILE_REPLACE_EXISTING: u32 = 0x1;
-#[cfg(windows)]
-const MOVEFILE_WRITE_THROUGH: u32 = 0x8;
-
-#[cfg(windows)]
 #[link(name = "kernel32")]
 extern "system" {
-    fn MoveFileExW(from: *const u16, to: *const u16, flags: u32) -> i32;
+    fn GetFinalPathNameByHandleW(
+        handle: *mut std::ffi::c_void,
+        path: *mut u16,
+        length: u32,
+        flags: u32,
+    ) -> u32;
+    fn CreateFileW(
+        file_name: *const u16,
+        desired_access: u32,
+        share_mode: u32,
+        security_attributes: *mut std::ffi::c_void,
+        creation_disposition: u32,
+        flags_and_attributes: u32,
+        template_file: *mut std::ffi::c_void,
+    ) -> *mut std::ffi::c_void;
+    fn CloseHandle(handle: *mut std::ffi::c_void) -> i32;
+}
+
+#[cfg(windows)]
+#[link(name = "ntdll")]
+extern "system" {
+    fn NtSetInformationFile(
+        file: *mut std::ffi::c_void,
+        io_status: *mut std::ffi::c_void,
+        info: *mut std::ffi::c_void,
+        length: u32,
+        class: u32,
+    ) -> i32;
 }
 
 #[cfg(test)]

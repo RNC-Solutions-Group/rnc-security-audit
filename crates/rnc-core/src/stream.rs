@@ -138,11 +138,60 @@ fn open_contained(root: &Path, locator: &str) -> std::io::Result<File> {
     Ok(unsafe { File::from_raw_fd(file_fd) })
 }
 
-/// Windows cannot express a stable directory-relative read chain through the
-/// standard library. Reject reparse-point ancestors and verify the canonical
-/// target remains beneath the canonical root, then open the final component
-/// without following a substituted reparse point. This is documented as a
-/// narrower guarantee than the Unix openat chain.
+#[cfg(windows)]
+fn path_within_root(root: &Path, candidate: &Path) -> bool {
+    let normalize = |path: &Path| {
+        path.to_string_lossy()
+            .replace("\\\\?\\", "")
+            .replace('/', "\\")
+            .to_ascii_lowercase()
+    };
+    let root = normalize(root);
+    let candidate = normalize(candidate);
+    if candidate == root {
+        return true;
+    }
+    let prefix = if root.ends_with('\\') {
+        root
+    } else {
+        format!("{root}\\")
+    };
+    candidate.starts_with(&prefix)
+}
+
+#[cfg(windows)]
+fn final_handle_path(file: &File) -> std::io::Result<std::path::PathBuf> {
+    use std::os::windows::ffi::OsStringExt;
+    use std::os::windows::io::AsRawHandle;
+    let handle = file.as_raw_handle();
+    let length = unsafe { GetFinalPathNameByHandleW(handle, std::ptr::null_mut(), 0, 0) };
+    if length == 0 {
+        return Err(std::io::Error::last_os_error());
+    }
+    let mut buffer = vec![0u16; length as usize + 1];
+    let written =
+        unsafe { GetFinalPathNameByHandleW(handle, buffer.as_mut_ptr(), buffer.len() as u32, 0) };
+    if written == 0 {
+        return Err(std::io::Error::last_os_error());
+    }
+    buffer.truncate(written as usize);
+    Ok(std::ffi::OsString::from_wide(&buffer).into())
+}
+
+#[cfg(windows)]
+#[link(name = "kernel32")]
+extern "system" {
+    fn GetFinalPathNameByHandleW(
+        handle: std::os::windows::raw::HANDLE,
+        path: *mut u16,
+        length: u32,
+        flags: u32,
+    ) -> u32;
+}
+
+/// Windows verifies the opened handle's final normalized path remains beneath
+/// the canonical root. This closes ancestor substitution for the content read;
+/// reparse-point attributes are also rejected before opening.
 #[cfg(windows)]
 fn open_contained(root: &Path, locator: &str) -> std::io::Result<File> {
     use std::os::windows::fs::MetadataExt;
@@ -178,7 +227,15 @@ fn open_contained(root: &Path, locator: &str) -> std::io::Result<File> {
     use std::os::windows::fs::OpenOptionsExt;
     // FILE_FLAG_OPEN_REPARSE_POINT: do not follow a substituted final link.
     options.custom_flags(0x0020_0000);
-    options.open(ancestor)
+    let file = options.open(ancestor)?;
+    let final_path = final_handle_path(&file)?;
+    if !path_within_root(root, &final_path) {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::PermissionDenied,
+            "source handle escaped the authorized root",
+        ));
+    }
+    Ok(file)
 }
 
 #[cfg(not(any(unix, windows)))]
