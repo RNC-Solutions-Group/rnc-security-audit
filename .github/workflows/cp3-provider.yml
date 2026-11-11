@@ -105,8 +105,9 @@ jobs:
           git -C "$RUNNER_TEMP/scanner-harness" rev-parse HEAD
       - name: Independent line-addressed compatibility score
         run: |
+          python -c "from pathlib import Path; from tools.cp3.materialize import materialize; materialize('tier2', Path('$RUNNER_TEMP/cp3-fixtures'))"
           target/release/rnc scan \
-            --root tests/fixtures/providers/tier2 \
+            --root "$RUNNER_TEMP/cp3-fixtures/tier2" \
             --rules rules/rnc-providers-v1.json \
             --format json \
             --output "$RUNNER_TEMP/cp3-tier2-private.json" \
