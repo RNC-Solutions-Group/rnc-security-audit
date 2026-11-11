@@ -55,3 +55,8 @@ CP1 tests must prove:
 - private JSON output contains no raw matched marker bytes;
 - public/result-safe documents reject secret-shaped values and private keys;
 - findings and digests are not emitted to CI logs or public artifacts by the CP1 workflow.
+
+
+## CP2 publication hardening
+
+Private evidence is written outside the canonical scan root and never to stdout. Publication uses a secure temporary file and atomic replacement; Unix uses `openat`/`O_NOFOLLOW`/`renameat` with `0600`, while Windows uses reparse checks and `MoveFileExW` with ACL inheritance. A failed or interrupted publication leaves the prior file untouched and exits `30`. Sanitized output never includes finding IDs, evidence digests, locators, policy selectors or matched bytes.

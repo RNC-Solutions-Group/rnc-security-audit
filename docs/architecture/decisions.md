@@ -16,6 +16,8 @@ Status: **CP0–CP2 decisions recorded; operator review pending.** The productio
 | ADR-010 | **Exact reference equivalence is a hard gate** | Optimized strategies must reproduce canonical findings, offsets, identity and coverage. See [ADR-010](adr-010-reference-regex-equivalence.md) |
 | ADR-011 | **Conservative planner and explicit fallback** | `auto` stays on reference regex for current bundles; no silent rule skipping. See [ADR-011](adr-011-planner-fallback.md) |
 | ADR-012 | **Hyperscan/VectorScan deferred** | Portable Rust-only CP2; future native backends require a separate ADR and equivalence evidence. See [ADR-012](adr-012-deferred-accelerators.md) |
+| ADR-013 | **CI acceptance has a trusted authority** | Repository config may narrow only; global or explicit CLI may authorize `ACTIONABLE`. See [ADR-013](adr-013-ci-acceptance-authority.md) |
+| ADR-014 | **Root-contained acquisition and atomic reports** | Unix openat/no-follow chains; Windows reparse checks with documented residual race; atomic publication. See [ADR-014](adr-014-root-contained-acquisition.md) |
 
 ## Decision review checkpoints
 

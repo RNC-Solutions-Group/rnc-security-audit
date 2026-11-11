@@ -1,6 +1,6 @@
 # Execution status and CI acceptance specification
 
-> **Contract v0.2.0 — reference implementation validated in CP0; production scanner/reporter not implemented.** This is the canonical five-result model for a finalized RNC Scanner run. The wider audit orchestrator may aggregate required scanner outcomes under the same precedence after coverage reconciliation.
+> **Contract v0.2.0 — implemented in CP2.** This is the canonical five-result model for a finalized RNC Scanner run. The wider audit orchestrator may aggregate required scanner outcomes under the same precedence after coverage reconciliation.
 
 ## Final classification
 
@@ -95,11 +95,11 @@ The CI event is outside this immutable envelope and references its `result_diges
 The scan always reports its real `result_code` and name. A CLI invocation may explicitly accept completed outcomes:
 
 ```text
-rnc scan . --accept-results 1,2  # result 2: process exit 0
-rnc scan . --accept-results 1    # same result 2: process exit 10
+rnc scan . --accept-result 1 --accept-result 2  # result 2: process exit 0
+rnc scan . --accept-result 1                     # same result 2: process exit 10
 ```
 
-**Approved CP0 default:** `--accept-results 1,2` (`CLEAN` and `POLICY_APPLIED`). Code `3` may be explicitly opted into for a nonblocking workflow, with that choice logged. Organizations may tighten acceptance to `1` only. Under the initial contract, `INCOMPLETE` and `FAILED` **cannot** be accepted; a change would require a separate explicit design review, not a generic CLI override.
+**Approved default:** `CLEAN` and `POLICY_APPLIED` (`1,2`). A global configuration may explicitly add `3 ACTIONABLE`; an explicit CLI `--accept-result 3` may add it when no global cap exists. Repository configuration is lower-trust and may only narrow acceptance to a subset of the default/global cap; a repository-only attempt to authorize `3` fails closed. A CLI list cannot exceed a global cap. Effective provenance records the authority for each accepted code. `INCOMPLETE` and `FAILED` can never be accepted.
 
 | Situation | OS process exit | Meaning |
 | --- | --- | --- |
@@ -110,7 +110,7 @@ rnc scan . --accept-results 1    # same result 2: process exit 10
 | Invalid CLI invocation before a run starts | `64` | Usage/config error; no finalized result unless a run record exists |
 | Operator interrupt (`SIGINT`) | `130` | Conventional shell interruption; finalized run is `FAILED` if a run exists |
 
-These process codes are **proposed contract values**, not the report's result codes. `64` and `130` are not CI acceptance events and are not valid in `ci-decision.schema.json`.
+These process codes are not the report's result codes. `64` and `130` are not CI acceptance events and are not valid in `ci-decision.schema.json`. CP2 implements `0`, `10`, `20`, `30` and `64`; OS-signal interruption handling remains deferred.
 
 ## Evidence boundaries
 

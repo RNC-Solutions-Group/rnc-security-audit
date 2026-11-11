@@ -34,3 +34,12 @@
 No real credentials in fixtures; no credential validity checks against providers; no exploitation, unsolicited web scanning, automatic secret remediation, broad network access or cloud storage. CP0 produces design proofs and generated **synthetic** evidence only.
 
 Any security controls not implemented in CP0 remain requirements rather than claimed protections. Vulnerability research and red-team adapters are later, separately authorized work.
+
+
+## CP2 hardening addendum
+
+- **Ancestor substitution:** Unix uses `openat`/`O_NOFOLLOW` chains for root-relative reads; Windows canonicalizes, rejects reparse points and documents its narrower ancestor-race guarantee.
+- **Report redirection:** destinations resolve against the working directory, must be outside the canonical root, reject symlinks/reparse points/directories/non-regular files, and publish through a same-directory temporary file plus atomic replacement.
+- **Repository CI authority:** a repository cannot authorize `ACTIONABLE`; only a global cap or explicit trusted CLI invocation can broaden default acceptance.
+- **Policy work:** recursive `**` matching is dynamic-programming bounded; selector count, segment count, path depth, discovery entries, discovery time and policy work are finite. Exhaustion is a failed discovery.
+- **Policy identity:** policy declaration digests bind content (selectors, expiration, origin, mandatory status, version), not declaration order or ID/version alone.

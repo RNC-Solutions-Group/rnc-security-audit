@@ -364,36 +364,89 @@ fn load_legacy(path: PathBuf) -> Result<Source, CoreError> {
     })
 }
 
-fn intersect_acceptance(sources: &[&Source], cli: &[u8]) -> Result<Vec<u8>, CoreError> {
-    let mut lists: Vec<Vec<u8>> = Vec::new();
-    for source in sources {
-        if let Some(codes) = source
+fn intersect_acceptance(
+    global: Option<&Source>,
+    repository: Option<&Source>,
+    cli: &[u8],
+) -> Result<(Vec<u8>, BTreeMap<u8, String>), CoreError> {
+    let default = vec![1u8, 2u8];
+    let global_codes = global.and_then(|source| {
+        source
             .config
             .ci
             .as_ref()
             .and_then(|ci| ci.accepted_result_codes.clone())
-        {
-            lists.push(codes);
+    });
+    let repository_codes = repository.and_then(|source| {
+        source
+            .config
+            .ci
+            .as_ref()
+            .and_then(|ci| ci.accepted_result_codes.clone())
+    });
+    let mut effective = global_codes.clone().unwrap_or_else(|| default.clone());
+    let mut authority: BTreeMap<u8, String> = effective
+        .iter()
+        .map(|code| {
+            (
+                *code,
+                if global_codes.is_some() {
+                    "global"
+                } else {
+                    "default"
+                }
+                .to_string(),
+            )
+        })
+        .collect();
+
+    if let Some(codes) = &repository_codes {
+        if codes.is_empty() || codes.iter().any(|code| !matches!(code, 1..=3)) {
+            return Err(CoreError::Input(
+                "repository accepted_result_codes must be a non-empty subset of 1,2,3".to_string(),
+            ));
         }
+        let trusted_cap = global_codes.as_ref().unwrap_or(&default);
+        if let Some(code) = codes.iter().find(|code| !trusted_cap.contains(code)) {
+            return Err(CoreError::Input(format!(
+                "repository configuration may not authorize result code {code}"
+            )));
+        }
+        effective = codes.clone();
+        authority = effective
+            .iter()
+            .map(|code| (*code, "repository".to_string()))
+            .collect();
     }
+
     if !cli.is_empty() {
-        lists.push(cli.to_vec());
+        if let Some(code) = cli.iter().find(|code| !matches!(code, 1..=3)) {
+            return Err(CoreError::Input(format!(
+                "CLI requested an invalid result code {code}"
+            )));
+        }
+        if let Some(global_codes) = &global_codes {
+            if let Some(code) = cli.iter().find(|code| !global_codes.contains(code)) {
+                return Err(CoreError::Input(format!(
+                    "CLI acceptance of result code {code} is prohibited by mandatory global policy"
+                )));
+            }
+        }
+        effective = cli.to_vec();
+        authority = effective
+            .iter()
+            .map(|code| (*code, "cli".to_string()))
+            .collect();
     }
-    if lists.is_empty() {
-        return Ok(vec![1, 2]);
-    }
-    let mut effective = lists[0].clone();
-    for list in lists.iter().skip(1) {
-        effective.retain(|code| list.contains(code));
-    }
+
     effective.sort_unstable();
     effective.dedup();
     if effective.is_empty() {
         return Err(CoreError::Input(
-            "configuration sources leave no mutually acceptable result code".to_string(),
+            "configuration sources leave no accepted result code".to_string(),
         ));
     }
-    Ok(effective)
+    Ok((effective, authority))
 }
 
 /// Load the immutable effective configuration.
@@ -574,7 +627,14 @@ pub fn load_effective(
             .unwrap_or(defaults.max_findings),
     };
 
-    let accepted = intersect_acceptance(&sources, &cli.accepted_result_codes)?;
+    let (accepted, accepted_authority) = intersect_acceptance(
+        global.as_ref(),
+        repository.as_ref(),
+        &cli.accepted_result_codes,
+    )?;
+    for (code, origin) in accepted_authority {
+        provenance.insert(format!("ci.accepted_result_codes.{code}"), origin);
+    }
     let mut policy = PolicySpec::empty();
     for source in &sources {
         if let Some(file_policy) = &source.config.policy {
@@ -730,7 +790,7 @@ mod tests {
         );
         write(
             &temp.path().join(UNIFIED_NAME),
-            "schema_version = \"0.2.0\"\n[ci]\naccepted_result_codes = [1, 2, 3]\n[scan]\nfollow_symlinks = false\n",
+            "schema_version = \"0.2.0\"\n[ci]\naccepted_result_codes = [1, 2]\n[scan]\nfollow_symlinks = false\n",
         );
         assert!(load_effective(
             temp.path(),
@@ -753,8 +813,66 @@ mod tests {
         )
         .unwrap();
         assert_eq!(config.accepted_result_codes, vec![1]);
+        assert_eq!(
+            config
+                .provenance
+                .get("ci.accepted_result_codes.1")
+                .map(String::as_str),
+            Some("cli")
+        );
         assert_eq!(config.policy.blocks.len(), 1);
         assert!(config.policy.blocks[0].matcher.matches("secrets/a.txt"));
+    }
+
+    #[test]
+    fn repository_alone_cannot_authorize_actionable() {
+        let temp = tempdir().unwrap();
+        write(
+            &temp.path().join(UNIFIED_NAME),
+            "schema_version = \"0.2.0\"\n[ci]\naccepted_result_codes = [1, 2, 3]\n",
+        );
+        assert!(load_effective(temp.path(), None, None, &CliOverrides::default()).is_err());
+    }
+
+    #[test]
+    fn cli_or_global_can_authorize_actionable() {
+        let temp = tempdir().unwrap();
+        let cli = load_effective(
+            temp.path(),
+            None,
+            None,
+            &CliOverrides {
+                accepted_result_codes: vec![3],
+                ..CliOverrides::default()
+            },
+        )
+        .unwrap();
+        assert_eq!(cli.accepted_result_codes, vec![3]);
+        assert_eq!(
+            cli.provenance
+                .get("ci.accepted_result_codes.3")
+                .map(String::as_str),
+            Some("cli")
+        );
+        write(
+            &temp.path().join("global.toml"),
+            "schema_version = \"0.2.0\"\n[ci]\naccepted_result_codes = [1, 2, 3]\n",
+        );
+        let global = load_effective(
+            temp.path(),
+            None,
+            Some(&temp.path().join("global.toml")),
+            &CliOverrides::default(),
+        )
+        .unwrap();
+        assert_eq!(global.accepted_result_codes, vec![1, 2, 3]);
+        assert_eq!(
+            global
+                .provenance
+                .get("ci.accepted_result_codes.3")
+                .map(String::as_str),
+            Some("global")
+        );
     }
 
     #[test]

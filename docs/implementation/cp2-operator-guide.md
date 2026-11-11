@@ -48,7 +48,7 @@ rnc scan ... --format private --output /approved/private/evidence.json
 rnc scan ... --format json --output /approved/private/evidence.json
 ```
 
-Private evidence is written outside the scan root with mode `0600` on Unix. It contains execution, finding and policy ledgers plus execution-plan and configuration provenance. Sanitized output contains only engine/ruleset metadata, aggregate counts, result, coverage, reason codes and CI acceptance.
+Private evidence is written outside the scan root through an atomic temporary-file publication with mode `0600` on Unix. It contains execution, finding and policy ledgers plus execution-plan and configuration provenance. Sanitized output contains only engine/ruleset metadata, aggregate counts, result, coverage, reason codes and CI acceptance. Unix report paths use an `openat`/`renameat` parent chain; Windows uses canonical containment, reparse checks and `MoveFileExW`, with the platform limits documented in [source-acquisition.md](../architecture/source-acquisition.md).
 
 ### Configuration
 
@@ -58,6 +58,10 @@ rnc scan ... --global-config /etc/rnc/global.toml \
 ```
 
 Without `--config`, the loader looks for `.rncscanner.toml` or `security.config` under the scan root. Both present is a hard failure. The global file is optional but its mandatory blocks and acceptance caps prevail. Unknown fields, unsafe reporting, symlink following and malformed selectors fail before scanning.
+
+### Policy digests and budgets
+
+Policy declaration digests bind the policy ID/version, origin, mandatory flag, every selector, reason, expiration and declaration content. Declaration order does not affect the digest. Discovery has finite entry/depth/time/policy-work budgets; exhaustion is a failed discovery, never a clean result.
 
 ### Policy
 
@@ -76,7 +80,7 @@ A block is enforced during discovery, before the adapter opens content. A skip i
 rnc scan ... --accept-result 1 --accept-result 2
 ```
 
-Effective acceptance is the intersection of global, repository and CLI lists. `CLEAN` and `POLICY_APPLIED` default to accepted; `ACTIONABLE` only when explicitly authorized. `INCOMPLETE` and `FAILED` always exit `20`/`30`. Process exits are `0` accepted, `10` rejected completed result, `20` incomplete, `30` failed, `64` invalid invocation/configuration/publication before or outside the scan result.
+Default acceptance is `CLEAN` and `POLICY_APPLIED`. Repository configuration may narrow but cannot add `ACTIONABLE`; only a global configuration or an explicit trusted CLI invocation can broaden to `3` (and a CLI list cannot exceed a global cap). `INCOMPLETE` and `FAILED` always exit `20`/`30`. Process exits are `0` accepted, `10` rejected completed result, `20` incomplete, `30` failed, `64` invalid invocation/configuration/publication before or outside the scan result.
 
 ### Benchmarks
 

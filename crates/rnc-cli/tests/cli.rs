@@ -194,7 +194,7 @@ fn publication_failure_is_not_a_successful_scan() {
         ])
         .output()
         .unwrap();
-    assert_eq!(completed.status.code(), Some(30));
+    assert_eq!(completed.status.code(), Some(64));
     assert!(!output.exists());
 }
 
@@ -227,6 +227,95 @@ fn private_report_symlink_is_rejected() {
         ])
         .output()
         .unwrap();
-    assert_eq!(completed.status.code(), Some(30));
+    assert_eq!(completed.status.code(), Some(64));
     assert_eq!(fs::read(&target).unwrap(), b"unchanged");
+}
+
+#[cfg(unix)]
+#[test]
+fn report_write_failure_is_not_success() {
+    use std::os::unix::fs::PermissionsExt;
+    if unsafe { libc::geteuid() } == 0 {
+        return;
+    }
+    let temp = tempfile::tempdir().unwrap();
+    fs::write(
+        temp.path().join("env.txt"),
+        b"KEY=RNC_SYNTH_KEY_GENERIC_CLI_ALPHA\n",
+    )
+    .unwrap();
+    let reports = tempfile::tempdir().unwrap();
+    let output = reports.path().join("locked.json");
+    fs::set_permissions(reports.path(), fs::Permissions::from_mode(0o555)).unwrap();
+    let completed = Command::new(binary())
+        .args([
+            "scan",
+            "--root",
+            temp.path().to_str().unwrap(),
+            "--rules",
+            rules().to_str().unwrap(),
+            "--format",
+            "private",
+            "--output",
+            output.to_str().unwrap(),
+        ])
+        .output()
+        .unwrap();
+    fs::set_permissions(reports.path(), fs::Permissions::from_mode(0o755)).unwrap();
+    assert_eq!(completed.status.code(), Some(30));
+    assert!(!output.exists());
+}
+#[test]
+fn bare_relative_output_inside_scan_root_is_rejected() {
+    let temp = tempfile::tempdir().unwrap();
+    fs::write(
+        temp.path().join("env.txt"),
+        b"KEY=RNC_SYNTH_KEY_GENERIC_CLI_ALPHA\n",
+    )
+    .unwrap();
+    let completed = Command::new(binary())
+        .current_dir(temp.path())
+        .args([
+            "scan",
+            "--root",
+            ".",
+            "--rules",
+            rules().to_str().unwrap(),
+            "--format",
+            "private",
+            "--output",
+            "report.json",
+        ])
+        .output()
+        .unwrap();
+    assert_eq!(completed.status.code(), Some(64));
+    assert!(!temp.path().join("report.json").exists());
+}
+
+#[test]
+fn dot_dot_output_inside_scan_root_is_rejected() {
+    let temp = tempfile::tempdir().unwrap();
+    fs::create_dir_all(temp.path().join("sub")).unwrap();
+    fs::write(
+        temp.path().join("env.txt"),
+        b"KEY=RNC_SYNTH_KEY_GENERIC_CLI_ALPHA\n",
+    )
+    .unwrap();
+    let completed = Command::new(binary())
+        .current_dir(temp.path().join("sub"))
+        .args([
+            "scan",
+            "--root",
+            "..",
+            "--rules",
+            rules().to_str().unwrap(),
+            "--format",
+            "private",
+            "--output",
+            "../report.json",
+        ])
+        .output()
+        .unwrap();
+    assert_eq!(completed.status.code(), Some(64));
+    assert!(!temp.path().join("report.json").exists());
 }

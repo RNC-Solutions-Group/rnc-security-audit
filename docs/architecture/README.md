@@ -4,16 +4,16 @@ The documents below are the **current design specifications** for RNC Scanner an
 
 1. [Detection engine](detection-engine.md) â€” implemented CP2 input adapter boundary, rules, normalized detection events, deterministic behavior and resource controls.
 2. [Adaptive matching](adaptive-matching.md) â€” implemented portable multi-strategy architecture and provenance.
-3. [Configuration](configuration.md) â€” implemented global/repository/CLI precedence, mandatory caps and legacy migration.
-4. [Policy](policy.md) â€” implemented no-read blocks, post-scan exemptions, origin and collision precedence.
-5. [Reporting](reporting.md) â€” implemented reconciliation, sanitized/private boundaries and exports.
-6. [Execution status](execution-status.md) â€” implemented immutable five-way classification, required/optional coverage, precedence, CI acceptance and exit codes.
+4. [Configuration](configuration.md) â€” implemented global/repository/CLI precedence, mandatory caps and legacy migration.
+5. [Policy](policy.md) â€” implemented no-read blocks, post-scan exemptions, origin and collision precedence.
+6. [Reporting](reporting.md) â€” implemented reconciliation, sanitized/private boundaries and exports.
+7. [Execution status](execution-status.md) â€” implemented immutable five-way classification, required/optional coverage, precedence, CI acceptance and exit codes.
 
 Supporting contracts and decisions:
 
 - [Architecture decisions](decisions.md) â€” approved decisions and the register.
 - [ADR-007: production detector language](adr-007-detector-language.md) â€” Rust selection and tradeoffs.
-- [ADR-009: portable matching](adr-009-portable-matching.md), [ADR-010: reference equivalence](adr-010-reference-regex-equivalence.md), [ADR-011: planner/fallback](adr-011-planner-fallback.md), [ADR-012: deferred accelerators](adr-012-deferred-accelerators.md).
+- [ADR-009: portable matching](adr-009-portable-matching.md), [ADR-010: reference equivalence](adr-010-reference-regex-equivalence.md), [ADR-011: planner/fallback](adr-011-planner-fallback.md), [ADR-012: deferred accelerators](adr-012-deferred-accelerators.md), [ADR-013: CI acceptance authority](adr-013-ci-acceptance-authority.md), [ADR-014: root-contained acquisition](adr-014-root-contained-acquisition.md).
 - [Configuration](configuration.md) and [migration](config-migration.md) â€” `.rncscanner.toml`, global mandatory caps, explicit legacy `security.config` mapping and fail-closed conflicts.
 - [Evidence privacy](evidence-privacy.md) â€” content/evidence/finding digest distinctions, public boundary and keyed-HMAC evaluation.
 - [Threat model](threat-model.md) â€” confidential evidence, authorization and fail-closed boundaries.

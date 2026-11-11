@@ -2,7 +2,9 @@
 
 use std::collections::HashSet;
 use std::fmt;
-use std::fs::{self, File, OpenOptions};
+#[cfg(windows)]
+use std::fs::OpenOptions;
+use std::fs::{self, File};
 use std::io::{Read, Take};
 use std::path::Path;
 use std::time::{Instant, SystemTime};
@@ -60,21 +62,135 @@ impl fmt::Display for FileScanError {
     }
 }
 
-fn open_readonly(path: &Path) -> std::io::Result<File> {
+/// Open an authorized source file while preserving root containment on Unix.
+///
+/// The root and every intermediate directory are opened with `O_NOFOLLOW`, so
+/// replacing an ancestor with a symlink after discovery cannot redirect the
+/// read. The final component is also opened with `O_NOFOLLOW`.
+#[cfg(unix)]
+fn open_contained(root: &Path, locator: &str) -> std::io::Result<File> {
+    use std::ffi::CString;
+    use std::os::fd::{FromRawFd, RawFd};
+    use std::os::unix::ffi::OsStrExt;
+
+    fn cstring(value: &std::ffi::OsStr) -> std::io::Result<CString> {
+        CString::new(value.as_bytes())
+            .map_err(|_| std::io::Error::new(std::io::ErrorKind::InvalidInput, "NUL in path"))
+    }
+    fn open_dir(fd: RawFd, component: &std::ffi::OsStr) -> std::io::Result<RawFd> {
+        let name = cstring(component)?;
+        let flags = libc::O_RDONLY | libc::O_DIRECTORY | libc::O_NOFOLLOW | libc::O_CLOEXEC;
+        let opened = unsafe { libc::openat(fd, name.as_ptr(), flags) };
+        if opened < 0 {
+            return Err(std::io::Error::last_os_error());
+        }
+        Ok(opened)
+    }
+    let root_name = cstring(root.as_os_str())?;
+    let root_fd = unsafe {
+        libc::open(
+            root_name.as_ptr(),
+            libc::O_RDONLY | libc::O_DIRECTORY | libc::O_NOFOLLOW | libc::O_CLOEXEC,
+        )
+    };
+    if root_fd < 0 {
+        return Err(std::io::Error::last_os_error());
+    }
+    let mut current = root_fd;
+    let components: Vec<&std::ffi::OsStr> = std::path::Path::new(locator)
+        .components()
+        .filter_map(|component| match component {
+            std::path::Component::Normal(value) => Some(value),
+            _ => None,
+        })
+        .collect();
+    if components.is_empty() {
+        unsafe { libc::close(current) };
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::InvalidInput,
+            "source locator has no file component",
+        ));
+    }
+    for component in &components[..components.len() - 1] {
+        match open_dir(current, component) {
+            Ok(next) => {
+                unsafe { libc::close(current) };
+                current = next;
+            }
+            Err(error) => {
+                unsafe { libc::close(current) };
+                return Err(error);
+            }
+        }
+    }
+    let final_name = cstring(components[components.len() - 1])?;
+    let file_fd = unsafe {
+        libc::openat(
+            current,
+            final_name.as_ptr(),
+            libc::O_RDONLY | libc::O_NOFOLLOW | libc::O_CLOEXEC,
+        )
+    };
+    unsafe { libc::close(current) };
+    if file_fd < 0 {
+        return Err(std::io::Error::last_os_error());
+    }
+    Ok(unsafe { File::from_raw_fd(file_fd) })
+}
+
+/// Windows cannot express a stable directory-relative read chain through the
+/// standard library. Reject reparse-point ancestors and verify the canonical
+/// target remains beneath the canonical root, then open the final component
+/// without following a substituted reparse point. This is documented as a
+/// narrower guarantee than the Unix openat chain.
+#[cfg(windows)]
+fn open_contained(root: &Path, locator: &str) -> std::io::Result<File> {
+    use std::os::windows::fs::MetadataExt;
+    const FILE_ATTRIBUTE_REPARSE_POINT: u32 = 0x0400;
+    // The locator is canonical and relative, so root.join(locator) is
+    // lexically contained. Check every component for a reparse point before
+    // opening the final component without following a substituted link.
+    let mut ancestor = root.to_path_buf();
+    let mut components = std::path::Path::new(locator).components().peekable();
+    while let Some(component) = components.next() {
+        let std::path::Component::Normal(value) = component else {
+            continue;
+        };
+        ancestor.push(value);
+        let metadata = fs::symlink_metadata(&ancestor)?;
+        if metadata.file_type().is_symlink()
+            || metadata.file_attributes() & FILE_ATTRIBUTE_REPARSE_POINT != 0
+        {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::PermissionDenied,
+                "source path contains a reparse point",
+            ));
+        }
+        if components.peek().is_some() && !metadata.is_dir() {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::NotADirectory,
+                "source ancestor is not a directory",
+            ));
+        }
+    }
     let mut options = OpenOptions::new();
     options.read(true);
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::OpenOptionsExt;
-        options.custom_flags(libc::O_NOFOLLOW);
+    use std::os::windows::fs::OpenOptionsExt;
+    // FILE_FLAG_OPEN_REPARSE_POINT: do not follow a substituted final link.
+    options.custom_flags(0x0020_0000);
+    options.open(ancestor)
+}
+
+#[cfg(not(any(unix, windows)))]
+fn open_contained(root: &Path, locator: &str) -> std::io::Result<File> {
+    let candidate = fs::canonicalize(root.join(locator))?;
+    if !path_within_root(root, &candidate) {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::PermissionDenied,
+            "source target escaped the authorized root",
+        ));
     }
-    #[cfg(windows)]
-    {
-        use std::os::windows::fs::OpenOptionsExt;
-        // FILE_FLAG_OPEN_REPARSE_POINT: do not follow a substituted symlink.
-        options.custom_flags(0x0020_0000);
-    }
-    options.open(path)
+    OpenOptions::new().read(true).open(candidate)
 }
 
 #[derive(Debug)]
@@ -85,8 +201,10 @@ pub struct ScanFileResult {
     pub bytes_read: u64,
 }
 
+#[allow(clippy::too_many_arguments)]
 pub fn scan_file(
-    path: &Path,
+    root: &Path,
+    locator: &str,
     unit_id: &str,
     run_id: &str,
     plan: &MatchPlan,
@@ -99,7 +217,8 @@ pub fn scan_file(
     }
     match config.mode {
         ScanMode::Whole | ScanMode::Auto => scan_whole(
-            path,
+            root,
+            locator,
             unit_id,
             run_id,
             plan,
@@ -108,7 +227,8 @@ pub fn scan_file(
             expected_modified,
         ),
         ScanMode::Stream => scan_stream(
-            path,
+            root,
+            locator,
             unit_id,
             run_id,
             plan,
@@ -120,25 +240,22 @@ pub fn scan_file(
 }
 
 fn metadata_changed(
-    path: &Path,
+    metadata: &fs::Metadata,
     expected_size: u64,
     expected_modified: Option<SystemTime>,
 ) -> bool {
-    match fs::metadata(path) {
-        Ok(metadata) => {
-            let size_changed = metadata.len() != expected_size;
-            let modified_changed = match (metadata.modified().ok(), expected_modified) {
-                (Some(actual), Some(expected)) => actual != expected,
-                _ => false,
-            };
-            size_changed || modified_changed
-        }
-        Err(_) => true,
-    }
+    let size_changed = metadata.len() != expected_size;
+    let modified_changed = match (metadata.modified().ok(), expected_modified) {
+        (Some(actual), Some(expected)) => actual != expected,
+        _ => false,
+    };
+    size_changed || modified_changed
 }
 
+#[allow(clippy::too_many_arguments)]
 fn scan_whole(
-    path: &Path,
+    root: &Path,
+    locator: &str,
     unit_id: &str,
     run_id: &str,
     plan: &MatchPlan,
@@ -149,7 +266,7 @@ fn scan_whole(
     if Instant::now() >= config.deadline {
         return Err(FileScanError::Timeout);
     }
-    let file = open_readonly(path).map_err(|_| FileScanError::Io("open"))?;
+    let file = open_contained(root, locator).map_err(|_| FileScanError::Io("open"))?;
     let mut reader: Take<File> = file.take(config.max_file_bytes.saturating_add(1));
     let mut data = Vec::with_capacity(expected_size.min(config.max_file_bytes) as usize);
     reader
@@ -159,7 +276,14 @@ fn scan_whole(
         return Err(FileScanError::TooLarge);
     }
     if data.len() as u64 != expected_size
-        || metadata_changed(path, expected_size, expected_modified)
+        || metadata_changed(
+            &reader
+                .get_ref()
+                .metadata()
+                .map_err(|_| FileScanError::Io("metadata"))?,
+            expected_size,
+            expected_modified,
+        )
     {
         return Err(FileScanError::Changed);
     }
@@ -191,8 +315,10 @@ fn scan_whole(
     })
 }
 
+#[allow(clippy::too_many_arguments)]
 fn scan_stream(
-    path: &Path,
+    root: &Path,
+    locator: &str,
     unit_id: &str,
     run_id: &str,
     plan: &MatchPlan,
@@ -204,7 +330,7 @@ fn scan_stream(
         return Err(FileScanError::Io("stream_config"));
     }
     let overlap = plan.bundle().max_match_bytes.max(1);
-    let mut file = open_readonly(path).map_err(|_| FileScanError::Io("open"))?;
+    let mut file = open_contained(root, locator).map_err(|_| FileScanError::Io("open"))?;
     let mut chunk = vec![0u8; config.stream_chunk_bytes];
     let mut carry: Vec<u8> = Vec::with_capacity(overlap);
     let mut carry_offset = 0usize;
@@ -275,7 +401,13 @@ fn scan_stream(
             config.deadline,
         )?;
     }
-    if metadata_changed(path, expected_size, expected_modified) || bytes_read != expected_size {
+    if bytes_read != expected_size
+        || metadata_changed(
+            &file.metadata().map_err(|_| FileScanError::Io("metadata"))?,
+            expected_size,
+            expected_modified,
+        )
+    {
         return Err(FileScanError::Changed);
     }
     if Instant::now() >= config.deadline {
@@ -497,7 +629,8 @@ mod tests {
         let plan = MatchPlan::new(&rules, crate::backend::BackendRequest::Regex).unwrap();
         let deadline = Instant::now() + std::time::Duration::from_secs(5);
         let whole = scan_file(
-            &path,
+            temp.path(),
+            "fixture.txt",
             "u-test",
             "r",
             &plan,
@@ -513,7 +646,8 @@ mod tests {
         )
         .unwrap();
         let stream = scan_file(
-            &path,
+            temp.path(),
+            "fixture.txt",
             "u-test",
             "r",
             &plan,
