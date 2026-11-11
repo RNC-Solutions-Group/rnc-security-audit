@@ -1,6 +1,6 @@
 # Detection engine specification
 
-> **Design contract v0.2 — not implemented.** Initial domain: credentials and secrets in explicitly authorized local source content. The engine is RNC-owned; Gitleaks/Betterleaks remain external comparators and possible audit-tool adapters.
+> **Design contract v0.2 — CP1 implemented in Rust.** Initial domain: credentials and secrets in explicitly authorized local source content. See [CP1 validation](../implementation/cp1-validation.md). The engine is RNC-owned; Gitleaks/Betterleaks remain external comparators and possible audit-tool adapters.
 
 ## Responsibility
 

@@ -127,6 +127,7 @@ def export_findings(bundle: dict, loaded: dict) -> list[dict]:
     target_by_unit = {
         target_unit_id(target, version): target for target in loaded["targets"]
     }
+    target_by_locator = {target["path"]: target for target in loaded["targets"]}
     unit_by_id = {unit["unit_id"]: unit for unit in bundle["execution"]["units"]}
     result = []
     for finding in bundle["findings"]:
@@ -135,7 +136,7 @@ def export_findings(bundle: dict, loaded: dict) -> list[dict]:
             raise ContractViolation("HANDOFF_UNIT_UNKNOWN", "finding has no execution unit")
         if unit["disposition"] != "INSPECTED":
             raise ContractViolation("HANDOFF_SCOPE_LEAK", "finding is attached to a non-inspected unit")
-        target = target_by_unit.get(unit["unit_id"])
+        target = target_by_unit.get(unit["unit_id"]) or target_by_locator.get(unit["locator"])
         if target is None:
             raise ContractViolation("HANDOFF_TARGET_UNKNOWN", "unit does not map to a manifest target")
         result.append({

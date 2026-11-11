@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.rncsolutionsgroup.com/security-audit/v0.1/rule-bundle.schema.json",
+  "title": "RNC Scanner rule bundle",
+  "description": "Data-only, versioned rule bundle for the Rust detection core. Patterns must compile in the linear-time regex crate and have a finite maximum match length.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "ruleset_id", "ruleset_version", "rules"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "ruleset_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "ruleset_version": {"type": "string", "minLength": 1, "maxLength": 128},
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rule_id",
+          "rule_version",
+          "category",
+          "pattern",
+          "capture_group",
+          "validators",
+          "confidence",
+          "max_match_bytes"
+        ],
+        "properties": {
+          "rule_id": {"type": "string", "minLength": 1, "maxLength": 128},
+          "rule_version": {"type": "string", "minLength": 1, "maxLength": 128},
+          "category": {"type": "string", "minLength": 1, "maxLength": 128},
+          "pattern": {"type": "string", "minLength": 1, "maxLength": 16384},
+          "capture_group": {"type": "integer", "minimum": 0, "maximum": 255},
+          "validators": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"enum": ["MARKER_FORMAT", "MARKER_SUFFIX", "ASCII_ONLY"]}
+          },
+          "confidence": {"enum": ["low", "medium", "high", "unknown"]},
+          "max_match_bytes": {"type": "integer", "minimum": 1, "maximum": 1048576}
+        }
+      }
+    }
+  }
+}

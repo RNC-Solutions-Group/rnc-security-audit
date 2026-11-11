@@ -5,7 +5,7 @@ This folder holds capability-proof briefs, test commands and verified outcomes. 
 | Checkpoint | Current state | First acceptance evidence |
 | --- | --- | --- |
 | CP0 — contracts | **Corrected audit package: v0.2 contracts, expanded corpus, independent harness, representative Go/Rust benchmark, Rust ADR, strict paths and CI propagation. Operator acceptance pending** | [CP0 audit report](cp0-contract-validation.md), schema/corpus/harness tests, benchmark artifact, external handoff check |
-| CP1 — RNC detector | Not started; gated on CP0 acceptance | Rust detector finds all in-scope synthetic markers, accounts for every unit, deterministic repeat runs |
+| CP1 — RNC detector | **Implementation complete; awaiting operator acceptance** | Rust detector finds all in-scope synthetic markers, accounts for every unit, deterministic repeat runs |
 | CP2 — policy/reporting | Not started | Exact reconciliation, redaction, five outcomes and CI acceptance |
 | CP3 — harness | External harness exists; CP0 scoring-engine handoff executed, external corpora not run | Independent adapter and per-target external corpus results |
 | CP4 — hardening | Not started | Pinned comparative benchmark and adversarial corpus |
@@ -14,7 +14,7 @@ This folder holds capability-proof briefs, test commands and verified outcomes. 
 
 The original [Gitleaks Proof 1](../foundation/orchestration-v0/proof-1.md) was scoped to a **third-party audit-orchestration vertical slice**. It is preserved for future integration, **not** silently renamed as the new RNC detection CP1.
 
-The first-party detector's implementation-ready handoff is [cp1-detection-engine.md](cp1-detection-engine.md). The CP0 recovery record for the already-merged PR #3 is [cp0-audit-recovery.md](cp0-audit-recovery.md).
+The first-party detector implementation and evidence are in [cp1-validation.md](cp1-validation.md); [cp1-detection-engine.md](cp1-detection-engine.md) is the technical brief and [cp1-rule-authoring.md](cp1-rule-authoring.md) covers rule bundles. The CP0 recovery record for the already-merged PR #3 is [cp0-audit-recovery.md](cp0-audit-recovery.md).
 
 CP0 also tracks the independently pinned [external corpus compatibility inventory](corpus-compatibility.md), retaining organic Leaky Repo and richer normalized score semantics side by side.
 

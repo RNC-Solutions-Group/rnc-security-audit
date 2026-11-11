@@ -2,7 +2,7 @@
 
 The four documents below are the **current design specifications** for RNC Scanner and the reporting/CI boundary of RNC Security Audit. They are normative design targets; CP0 validates their executable contracts but does not claim a production scanner.
 
-1. [Detection engine](detection-engine.md) — input adapter boundary, rules, normalized detection events, deterministic behavior and resource controls.
+1. [Detection engine](detection-engine.md) — implemented CP1 input adapter boundary, rules, normalized detection events, deterministic behavior and resource controls.
 2. [Policy](policy.md) — global/repository/CLI configuration, no-read blocks, post-scan exemptions, origin and precedence.
 3. [Reporting](reporting.md) — independent records, reconciliation, redaction, finding scoring versus harness grading, exports.
 4. [Execution status](execution-status.md) — immutable five-way classification, required/optional coverage, precedence, CI acceptance and exit codes.
