@@ -173,6 +173,8 @@ fn timeout_produces_interrupted_execution_with_coverage_gap() {
     assert_eq!(report.execution.state, ExecutionState::Interrupted);
     assert!(!report.execution.evidence_valid);
     assert_eq!(report.execution.required_uninspected_count(), 1);
+    assert_eq!(report.result.result_code, 5);
+    assert_eq!(report.ci.process_exit_code, 30);
 }
 
 #[test]

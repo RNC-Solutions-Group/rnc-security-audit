@@ -199,6 +199,11 @@ fn output_is_safe(root: &Path, output: &Path) -> bool {
 }
 
 fn write_file(path: &Path, value: &[u8], private: bool) -> Result<(), String> {
+    if let Ok(metadata) = std::fs::symlink_metadata(path) {
+        if metadata.file_type().is_symlink() {
+            return Err("report output must not be a symbolic link".to_string());
+        }
+    }
     #[cfg(windows)]
     let _ = private;
     let mut options = OpenOptions::new();
@@ -208,6 +213,12 @@ fn write_file(path: &Path, value: &[u8], private: bool) -> Result<(), String> {
     let mut file = options
         .open(path)
         .map_err(|error| format!("cannot create report: {error}"))?;
+    #[cfg(unix)]
+    if private {
+        use std::os::unix::fs::PermissionsExt;
+        file.set_permissions(std::fs::Permissions::from_mode(0o600))
+            .map_err(|error| format!("cannot restrict report permissions: {error}"))?;
+    }
     file.write_all(value)
         .and_then(|_| file.write_all(b"\n"))
         .map_err(|error| format!("cannot write report: {error}"))

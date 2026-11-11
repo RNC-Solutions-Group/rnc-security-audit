@@ -197,3 +197,36 @@ fn publication_failure_is_not_a_successful_scan() {
     assert_eq!(completed.status.code(), Some(30));
     assert!(!output.exists());
 }
+
+#[cfg(unix)]
+#[test]
+fn private_report_symlink_is_rejected() {
+    use std::os::unix::fs::symlink;
+    let temp = tempfile::tempdir().unwrap();
+    fs::write(
+        temp.path().join("env.txt"),
+        b"KEY=RNC_SYNTH_KEY_GENERIC_CLI_ALPHA\n",
+    )
+    .unwrap();
+    let output_dir = tempfile::tempdir().unwrap();
+    let target = output_dir.path().join("target.json");
+    fs::write(&target, b"unchanged").unwrap();
+    let link = output_dir.path().join("link.json");
+    symlink(&target, &link).unwrap();
+    let completed = Command::new(binary())
+        .args([
+            "scan",
+            "--root",
+            temp.path().to_str().unwrap(),
+            "--rules",
+            rules().to_str().unwrap(),
+            "--format",
+            "private",
+            "--output",
+            link.to_str().unwrap(),
+        ])
+        .output()
+        .unwrap();
+    assert_eq!(completed.status.code(), Some(30));
+    assert_eq!(fs::read(&target).unwrap(), b"unchanged");
+}

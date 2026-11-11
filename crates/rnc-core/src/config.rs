@@ -416,7 +416,11 @@ pub fn load_effective(
     }
 
     let repository = if let Some(path) = explicit_repository_path {
-        Some(load_source(path.to_path_buf(), PolicyOrigin::Repository)?)
+        if path.file_name().and_then(|name| name.to_str()) == Some(LEGACY_NAME) {
+            Some(load_legacy(path.to_path_buf())?)
+        } else {
+            Some(load_source(path.to_path_buf(), PolicyOrigin::Repository)?)
+        }
     } else {
         let unified = root.join(UNIFIED_NAME);
         let legacy = root.join(LEGACY_NAME);
