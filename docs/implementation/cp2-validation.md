@@ -8,7 +8,7 @@
 | --- | --- |
 | Branch | `feat/cp2` |
 | Starting commit | `e20ac29` (operator merge of CP1 into `feat/cp2`) |
-| Implementation commit | `b684593` |
+| Final implementation commit | `5a97de5` (plus this documentation commit) |
 | PR | https://github.com/RNC-Solutions-Group/rnc-security-audit/pull/6 |
 | Target | `main` |
 | Merge status | Open / unmerged |
@@ -86,25 +86,25 @@ The incomplete-with-findings case proves lower-priority actionable evidence rema
 
 ## Performance
 
-CI run [42945867899](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/42945867899), Linux x86_64, 4 vCPU, 3 repetitions per profile, release build:
+CI run [42947298472](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/42947298472), Linux x86_64, 4 vCPU, 3 repetitions per profile, release build:
 
-- Build: 29.927 s; binary: 3,021,360 bytes; binary digest `sha256:6089169f…`.
+- Build: 21.473 s; binary: 3,021,360 bytes; binary digest `sha256:ea678524…`.
 - Host: `Linux-7.0.0-1017-azure-x86_64-with-glibc2.39`.
-- CP1 reference build from the previous checkpoint: 18.46 s, 2.39 MB binary.
+- CP1 reference build from the previous checkpoint: 18.46 s, 2.39 MB binary. Runner load varies; compare correctness and relative strategy behavior, not absolute milliseconds across runs.
 
 Representative medians:
 
 | Workload | Mode | Regex ms / MiB/s | RegexSet ms / MiB/s | Prefilter ms / MiB/s | Auto |
 | --- | --- | --- | --- | --- | --- |
-| large-low 32 MiB | whole | 106.6 / 300.2 | 102.1 / 313.4 | 99.2 / 322.6 | regex 103.1 / 310.2 |
-| large-high 32 MiB | whole | 150.0 / 213.3 | 144.1 / 222.1 | 143.9 / 222.3 | regex 148.3 / 215.7 |
-| large-low 32 MiB | stream | 96.1 / 333.0 | 90.0 / 355.4 | 86.6 / 369.4 | regex 96.4 / 331.8 |
-| large-high 32 MiB | stream | 334.6 / 95.6 | 334.4 / 95.7 | 331.2 / 96.6 | regex 335.4 / 95.4 |
-| 2,000 × 4 KiB | whole | 84.8 / 92.2 | 83.9 / 93.1 | 82.3 / 95.0 | regex 85.3 / 91.6 |
-| FP-heavy 8 MiB | whole | 70.7 / 113.1 | 77.5 / 103.3 | 106.9 / 74.9 | regex 71.8 / 111.4 |
-| Unicode 8 MiB | whole | 29.6 / 270.4 | 29.3 / 273.4 | 27.7 / 289.1 | regex 29.5 / 270.9 |
+| large-low 32 MiB | whole | 64.6 / 495.7 | 60.1 / 532.0 | 58.6 / 546.1 | regex 63.2 / 506.7 |
+| large-high 32 MiB | whole | 92.8 / 344.8 | 91.1 / 351.1 | 94.8 / 337.6 | regex 94.7 / 337.9 |
+| large-low 32 MiB | stream | 64.7 / 494.3 | 60.1 / 532.7 | 57.6 / 555.4 | regex 63.3 / 505.7 |
+| large-high 32 MiB | stream | 201.9 / 158.5 | 197.1 / 162.4 | 196.1 / 163.2 | regex 196.1 / 163.2 |
+| 2,000 × 4 KiB | whole | 55.4 / 141.0 | 53.2 / 146.8 | 52.6 / 148.5 | regex 54.4 / 143.7 |
+| FP-heavy 8 MiB | whole | 42.4 / 188.7 | 46.7 / 171.2 | 64.9 / 123.3 | regex 42.9 / 186.6 |
+| Unicode 8 MiB | whole | 19.0 / 420.2 | 17.9 / 447.0 | 16.8 / 476.4 | regex 18.3 / 436.1 |
 
-Peak RSS was approximately 41–46 MB for whole large-file scans and 4.8–25 MB for streaming; CPU was approximately 67–97% of one core. Full samples, p95, files/s and per-profile CPU/RSS are in the artifact.
+Peak RSS was approximately 42–46 MB for whole large-file scans and 4.8–25 MB for streaming; CPU was approximately 52–96% of one core. Full samples, p95, files/s and per-profile CPU/RSS are in the artifact. Because this run was materially faster than the preceding CP2 run on the same runner class, absolute values are reported as observed rather than as a stable production prediction.
 
 ### Interpretation
 
@@ -149,7 +149,7 @@ None identified.
 
 ## CI
 
-CP2 workflow [42945867899](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/42945867899) at `b684593` passed all required jobs:
+CP2 workflow [42947298472](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/42947298472) at `5a97de5` passed all required jobs; CP0 and CP1 regression workflows also passed:
 
 - quality, integration, policy and classification;
 - multi-strategy benchmark;
@@ -160,9 +160,9 @@ CP2 workflow [42945867899](https://github.com/RNC-Solutions-Group/rnc-security-a
 
 Artifacts:
 
-- `cp2-integration-policy-evidence` — ID `13823136444`, digest `sha256:b9003e3b56f3a6f9c5b839cb6e0a34d497a42deb30883b54a0d8ec70916f9aea`.
-- `cp2-benchmark-evidence` — ID `13823071683`, digest `sha256:c1478250b3b59e9ed42e2be08f138a5a63613537a79b41c62c54c192a1e0c96f`.
-- `cp2-external-harness-score` — ID `13822174509`, digest `sha256:5a287244ef7b71bfcd90b567cb7fc06dd43111dc7febe09a09995c58ce2f5b3d`.
+- `cp2-integration-policy-evidence` — ID `13822479059`, digest `sha256:d1642e7a8fccd82cef9a2057154a6d158c638906ced04130db5375c1239ab9a9`.
+- `cp2-benchmark-evidence` — ID `13822714653`, digest `sha256:25a4fcb911da8967fa5925cef4cb5ca0711b0caf90c19178ac58f4257eb8a1e6`.
+- `cp2-external-harness-score` — ID `13823177341`, digest `sha256:371feebf9ad7d0b599e926565101e8dc798075d1781124f5af3e8d7f6422e1c9`.
 
 Sanitized CI artifacts contain no private findings, locators or evidence digests. Private handoffs are generated in runner temp and scored without upload.
 
