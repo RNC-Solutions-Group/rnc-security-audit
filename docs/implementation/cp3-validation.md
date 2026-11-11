@@ -231,6 +231,30 @@ replaced it with a **required-literal RegexSet filter** plus exact regex for
 eligible rules; the same profile is now 257 ms with identical canonical
 findings. This is a performance fix, not a correctness strategy change.
 
+### CI Linux reference
+
+The isolated Linux CI benchmark (`cp3-benchmark-evidence`, artifact from run
+43085601869) had GNU `time` available. Release build **33.216 s**, binary
+**3,168,816 bytes**, SHA-256 `898f3af9…`; rule compilation median **34.1 ms**.
+
+| Workload | Whole regex ms | Whole MiB/s | Whole CPU % | Whole RSS KiB | Stream regex ms | Stream MiB/s |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `large-low` | 128.0 | 62.5 | 91.2 | 29,892 | 162.8 | 49.1 |
+| `large-high` | 165.1 | 48.5 | 90.8 | 38,372 | 582.0 | 13.8 |
+| `small-many` | 50.5 | 3.2 | 79.2 | 22,412 | 54.6 | 2.9 |
+| `credential-configs` | 94.8 | 42.2 | 84.4 | 26,752 | 252.8 | 15.8 |
+| `fp-heavy` | 187.7 | 21.3 | 95.9 | 27,504 | 266.6 | 15.0 |
+| `high-entropy` | 73.2 | 54.6 | 82.0 | 25,712 | 88.1 | 45.4 |
+| `multi-family` | 50.8 | 2.3 | 78.7 | 28,072 | 111.3 | 1.0 |
+| `long-pem` | 38.1 | 0.8 | 78.7 | 21,592 | 38.3 | 0.8 |
+| `structured` | 39.6 | 0.8 | 75.0 | 22,820 | 46.2 | 0.7 |
+| `same-line` | 41.9 | 0.5 | 74.3 | 22,032 | 46.9 | 0.5 |
+
+On the CI host, whole-file large-high medians were regex **165.1 ms**,
+regexset **135.0 ms**, prefilter **145.2 ms** and auto **167.6 ms**. The local
+Windows table and the CI table are from different hosts and are not presented as
+a controlled cross-host speedup.
+
 The provider catalog is materially slower than the synthetic 10-rule CP2
 baseline, as expected from 16 rules, multiline PEM/JWT structure and validation.
 No validator was removed to recover throughput. Acquisition, matching and

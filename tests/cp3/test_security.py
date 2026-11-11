@@ -15,7 +15,7 @@ class CP3SecurityTests(unittest.TestCase):
     def test_public_artifacts_contain_no_raw_fixture_values_or_host_paths(self):
         result = check()
         self.assertIn(result["status"], {"PASS", "SKIPPED"})
-        self.assertEqual(result.get("findings"), [])
+        self.assertEqual(result.get("findings", []), [])
 
     def test_fixture_truth_never_contains_raw_credential_text(self):
         for name in ("provider-truth-tier2.json", "provider-truth-tier3-heldout.json"):

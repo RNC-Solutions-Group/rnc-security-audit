@@ -37,7 +37,7 @@ def raw_tokens() -> set[bytes]:
 
 def check(artifacts: Path = ARTIFACTS) -> dict:
     if not artifacts.is_dir():
-        return {"status": "SKIPPED", "reason": "no artifacts/cp3 directory"}
+        return {"status": "SKIPPED", "reason": "no artifacts/cp3 directory", "findings": []}
     tokens = raw_tokens()
     findings = []
     files = sorted(path for path in artifacts.rglob("*.json") if path.is_file())
