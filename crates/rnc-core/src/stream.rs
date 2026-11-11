@@ -140,14 +140,16 @@ fn open_contained(root: &Path, locator: &str) -> std::io::Result<File> {
 
 #[cfg(windows)]
 fn path_within_root(root: &Path, candidate: &Path) -> bool {
+    let root = fs::canonicalize(root).unwrap_or_else(|_| root.to_path_buf());
+    let candidate = fs::canonicalize(candidate).unwrap_or_else(|_| candidate.to_path_buf());
     let normalize = |path: &Path| {
         path.to_string_lossy()
             .replace("\\\\?\\", "")
             .replace('/', "\\")
             .to_ascii_lowercase()
     };
-    let root = normalize(root);
-    let candidate = normalize(candidate);
+    let root = normalize(&root);
+    let candidate = normalize(&candidate);
     if candidate == root {
         return true;
     }
