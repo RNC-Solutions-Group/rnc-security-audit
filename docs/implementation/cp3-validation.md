@@ -1,110 +1,142 @@
-# CP3 validation — detection intelligence and accuracy
+# CP3 validation - detection intelligence and accuracy
 
-> **Status:** Implementation, controlled/external evidence and required CI
-> complete; operator review pending. Provider-format recognition is not proof of
-> an active, authorized or complete credential.
+> **Status:** CP3 corrective review complete; operator review pending. Provider
+> format recognition is not proof of an active, authorized, complete or
+> non-revoked credential.
 
 ## Repository state
 
 | Field | Value |
 | --- | --- |
 | Branch | `feat/cp3` |
-| Starting head | `0090ddd` (CP2 merge + CP3 seed README) |
-| Final implementation head | `c8779e9` |
+| Reviewed starting head | `13b1d6b40cc56b7389bbd2eeef7d70794c15a68c` |
+| Final head | `PENDING-FINAL-HEAD` |
 | Pull request | [#10](https://github.com/RNC-Solutions-Group/rnc-security-audit/pull/10) |
 | Target | `main` |
 | Merge | Operator-owned; no merge performed |
 | Base | `main` at `e54d5bc`; CP2 was merged into `feat/cp3`, not `main` |
 
-The CP2 implementation and its hardened contracts are preserved. CP3 adds a
-separate catalog and does not change the synthetic bundles' schema or established
-digests.
+The CP2 implementation, CP0-CP2 contracts and all synthetic v0/v1 truth are
+preserved. CP3 still uses a separate provider catalog; it does not change the
+synthetic bundles' schema or established digests.
+
+## Corrective findings and dispositions
+
+| Finding | Root cause | Correction | Tests | Disposition |
+| --- | --- | --- | --- | --- |
+| AWS resource identifiers classified as access keys | One rule/validator accepted all 12 IAM unique-ID prefixes and called them access-key IDs | `aws-access-key-id` limited to `AKIA`/`ASIA`; `ABIA` and `ACCA` moved to distinct identifier rules; eight resource prefixes no longer emitted | AWS taxonomy 20 cases x 2 modes x 4 strategies; Rust validator tests | Corrected |
+| Gitleaks observation reuse | Matcher used path plus substring and did not enforce one-to-one assignment; positions and duplicates were insufficiently verified | Deterministic maximum-cardinality one-to-one byte reconciliation with family, position, duplicate, ambiguity and unscored handling | 18 comparator negative controls; Tier 2/Tier 3 re-run | Corrected |
+| Modern GitHub installation tokens missed | `ghs_` was folded into the OAuth rule with an alphanumeric, fixed-ish body assumption | Dedicated `github-app-installation-token` rule/validator for legacy opaque and stateless `ghs_APPID_JWT`; OAuth rule no longer claims `ghs_` | Legacy, modern, variable length, malformed, punctuation, same-line, boundary, oversize, all strategies | Corrected |
+| Tier 2/3 independence overstated | Both corpora use the same fixture generator, templates and seed conventions | Shared dependency documented; hand-authored Tier 4 challenge added with its own templates/seeds, explicit oracle and separate reporting | Challenge manifest reproducibility, 14/14 exact findings, 24-case integration | Improved, with stated limits |
 
 ## Delivered
 
-- Provider schema `0.2.0` with 16 rules across 12 families.
-- Reusable offline validators for prefixes, lengths, charsets, base64/base64url,
-  hex, placeholders, entropy downgrade, PEM labels/decoding/DER shape, JWT
-  structure, database userinfo and generic assignments.
-- Tier 2 controlled corpus: 24 files, 27 expected occurrences, four dedicated
-  negative files.
-- Tier 3 separately authored held-out corpus: 10 files, 15 expected occurrences.
-  Fixture bytes are committed as a review-safe hex bundle and materialized into a
-  temporary scan root by tests; raw provider-shaped text is not committed.
-- Independent byte-addressed truth, scorer, negative controls and coverage gate.
+- Provider schema `0.2.0`, ruleset `2026.11.2`, **19 rules across 12 families**.
+- Dedicated AWS access-key and sensitive-identifier taxonomy.
+- Legacy and stateless GitHub App installation-token coverage.
+- Tier 2 controlled corpus: 24 files, 27 expected occurrences, four negative
+  files.
+- Tier 3 separately specified held-out corpus: 10 files, 15 expected occurrences.
+- Tier 4 hand-authored challenge: 9 files, 14 expected occurrences, one negative
+  file. It does not reuse the Tier 2/3 generator.
+- Independent byte-addressed truth, scorer, one-to-one comparator, negative
+  controls and coverage gate.
 - External harness adapter with explicit line-addressing limitation.
-- Scoped Levain, Leaky Repo and Gitleaks evidence.
-- Provider-catalog benchmark harness and methodology.
-- CP3 CI workflow with quality, accuracy, external-harness, benchmark,
-  cross-platform, musl and dependency-audit lanes.
+- Scoped Levain, Leaky Repo and corrected Gitleaks evidence.
+- Corrected provider benchmark with a long installation-token workload.
+- CP3 CI with quality, accuracy, external-harness, benchmark, cross-platform,
+  musl and dependency-audit lanes.
 
-## Detection catalog
-
-See [cp3-detection-catalog.md](cp3-detection-catalog.md) for the complete table.
-Implemented families:
-
-1. AWS access key IDs and assignment/Terraform-context secret keys.
-2. Google Cloud API keys.
-3. GitHub classic, fine-grained and OAuth/app tokens.
-4. GitLab personal/project/group access tokens.
-5. Stripe secret/restricted keys.
-6. Slack bot/user/app tokens.
-7. SendGrid API keys.
-8. npm auth tokens.
-9. PEM/OpenSSH private-key containers.
-10. Bearer JWTs.
-11. Database URI userinfo credentials.
-12. Low-confidence generic assignments.
-
-Public keys, certificates, provider-specific families not listed, bare JWTs and
-Git-history input remain out of scope.
+Catalog: [`rules/rnc-providers-v1.json`](../../rules/rnc-providers-v1.json),
+digest `sha256:3ddd1e0aee36ecadb67ee8a2032fbe3a6047803bb56c0d45d65f85851c9b2142`.
+See [cp3-detection-catalog.md](cp3-detection-catalog.md).
 
 ## Verification suites
 
 | Suite | Result |
 | --- | --- |
-| Rust workspace, Linux CI `--all-targets` | **99 tests** pass: 58 core + 18 engine + 4 provider + 9 CLI unit + 10 CLI integration |
-| Rust workspace, local Windows | **89 tests** pass; platform-gated Unix tests excluded |
+| Rust workspace, `--all-targets` | **95 tests** pass: 59 core + 8 CLI integration + 5 CLI unit + 15 engine + 4 provider + 2 AWS taxonomy + 2 GitHub installation |
 | CP0 contract/corpus/harness | **74 tests** pass |
 | CP1 synthetic rules | **5 tests** pass |
-| CP3 schema/scorer/adapter/security | **31 tests** pass |
+| CP3 Python schema/scorer/adapter/security | **55 tests** pass |
 | CP2 differential integration | **20 cases**, `all_correct`, `all_equivalent` |
 | CP2 policy/classification | **23 cases**, `all_passed` |
 | CP1 synthetic integration | v1/v0/edge pass |
-| Provider catalog validation | 16 rules valid under all four strategies |
+| Provider catalog validation | 19 rules valid under all four strategies |
+| Provider integration | **24 cases** (Tier 2, Tier 3, challenge x 2 modes x 4 strategies), all correct and equivalent |
+| Gitleaks comparator negative controls | **18** deterministic controls pass |
 
 ## Controlled accuracy
 
-All results use exact byte ranges and exact expected rule identity. The table
-aggregates the 16 integration cases (two datasets × two modes × four strategies):
+All results use exact byte ranges and exact expected rule identity.
 
-| Dataset | Expected | TP | FP | FN | Precision | Recall | Duplicates | Ambiguous |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Tier 2 provider fixture | 27 | 27 | 0 | 0 | 100% | 100% | 0 | 0 |
-| Tier 3 held-out | 15 | 15 | 0 | 0 | 100% | 100% | 0 | 0 |
+| Dataset | Expected | TP | FP | FN | Precision | Recall | Duplicates | Ambiguous | Coverage |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Tier 2 provider fixture | 27 | 27 | 0 | 0 | 100% | 100% | 0 | 0 | 100% |
+| Tier 3 held-out | 15 | 15 | 0 | 0 | 100% | 100% | 0 | 0 | 100% |
+| Tier 4 hand-authored challenge | 14 | 14 | 0 | 0 | 100% | 100% | 0 | 0 | 100% |
 
 The result is identical for `whole` and `stream` under `regex`, `regexset`,
-`prefilter` and `auto`. The Tier 3 set was not used to tune individual rules.
+`prefilter` and `auto`. Tier 3 was not used to tune individual rules. Tier 4 is
+not an externally sourced corpus; its provenance is explicit in the manifest.
+
+The 24-case integration run also validates CP0 records, exact offsets, finding
+identities, validation status, coverage, private-report non-disclosure and CI
+acceptance for every case. All 24 cases produce the same canonical findings across
+modes and strategies.
+
+## AWS classification evidence
+
+The taxonomy has 20 cases, including all 12 AWS prefixes, invalid prefix/length/
+characters, the AWS docs placeholder, multiple identifiers on one line, an IAM
+JSON policy containing only resource identifiers, a policy containing a real
+`AKIA`, and punctuation boundaries.
+
+Result under both modes and all strategies:
+
+- `AKIA`/`ASIA` only -> `aws-access-key-id`;
+- `ABIA` only -> `aws-sts-service-bearer-token-id`;
+- `ACCA` only -> `aws-context-specific-credential-id`;
+- `AIDA`/`AGPA`/`AIPA`/`ANPA`/`ANVA`/`APKA`/`AROA`/`ASCA` -> no credential finding;
+- 10 expected findings total in the generated taxonomy fixture; no resource
+  identifier was reported.
+
+`ABIA`/`ACCA` findings are `PLAUSIBLE_UNVERIFIED` with identifier-only notes and
+medium confidence. A bare identifier is not proof of a complete usable
+credential.
+
+## GitHub installation-token evidence
+
+The dedicated suite covers:
+
+- legacy 40-character opaque `ghs_` tokens;
+- stateless `ghs_APPID_JWT` tokens at variable segment lengths;
+- modern tokens adjacent to punctuation and multiple tokens on one line;
+- incomplete tokens, missing app separator, one-dot/two-dot malformed variants,
+  placeholders and oversize values;
+- whole/stream boundary crossings and all four strategies;
+- parser/candidate bounds: oversized modern segments are not emitted and the scan
+  still completes.
+
+Legacy tokens are `FORMAT_VALID`; modern stateless tokens are
+`PLAUSIBLE_UNVERIFIED`. No signature, issuer, claim or online validity is
+trusted.
 
 ## External evidence
 
 ### Pinned independent harness (line-addressed)
 
-Actual RNC output was normalized and scored at revision
-`86de44bf1cb13abf9a0c375a8b91d102c9b6dc9f`. The harness is line-addressed:
+At revision `86de44bf1cb13abf9a0c375a8b91d102c9b6dc9f`:
 
 - matched: **25/27**
 - ambiguous: **2** (two distinct same-line GitHub occurrences)
 - false positives: **0**
 - missed: **2** (the same-line items the line model cannot disambiguate)
 
-The local byte scorer correctly classifies both same-line items. This is
-compatibility evidence, not the authoritative accuracy score. The external
-repository was not modified.
+The byte scorer classifies both same-line items correctly. This remains
+compatibility evidence, not the authoritative accuracy score.
 
 ### Levain (MIT)
-
-Scoped to families declared by the RNC catalog:
 
 | Metric | Value |
 | --- | ---: |
@@ -114,13 +146,14 @@ Scoped to families declared by the RNC catalog:
 | FN | 1 |
 | Precision | 100% |
 | Recall | 96.77% |
+| F1 | 98.36% |
 | Negative-corpus findings | 0 |
 | Out-of-scope unsupported-family observations | 5 |
 
-The one miss is a deliberately malformed PEM whose base64 body is not
-decodable. RNC rejects it by structural validation rather than emitting a
-malformed private key. Unsupported Levain kinds are excluded from the
-denominator, not counted as RNC failures.
+The one miss is a deliberately malformed PEM whose base64 body is not decodable.
+RNC rejects it structurally. Unsupported Levain kinds are excluded from the
+denominator, not counted as RNC failures. Re-running after the AWS correction did
+not change this scoped score.
 
 ### Leaky Repo (MIT)
 
@@ -132,23 +165,36 @@ Count-based inventory, not credential-level truth:
 - excess findings: **0**
 - unlisted findings: **0**
 
-No TP/FP/precision/recall is claimed. Count coverage is not a quality score.
+No TP/FP/precision/recall is claimed.
 
 ### Gitleaks
 
-A pinned local Gitleaks build (`sha256:c8bf14bc…`) was run with its native
-default configuration on the same filesystem fixtures. Findings were matched by
-source path and exact fixture bytes, not rule-name identity.
+Pinned build `sha256:c8bf14bc271caf34692dc76ea008f7932b4916fcf27254440e178775177ffc98`,
+native default configuration, same filesystem fixtures.
 
-| Dataset | Gitleaks TP | FP | FN | Precision | Recall | RNC |
-| --- | ---: | ---: | ---: | ---: | ---: | --- |
-| Tier 2 | 22/27 | 2 | 5 | 91.67% | 81.48% | 27/27 |
-| Tier 3 | 11/15 | 0 | 4 | 100% | 73.33% | 15/15 |
+Original (pre-correction) measurement:
 
-This is a controlled-corpus comparison, not a general product ranking. Gitleaks
-supports families outside the RNC catalog and has Git-history capability that
-RNC does not implement. Betterleaks was not executed because no pinned binary or
-image was available; no Betterleaks result is claimed.
+| Dataset | TP | FP | FN | Precision | Recall | F1 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Tier 2 | 22/27 | 2 | 5 | 91.67% | 81.48% | 86.28% |
+| Tier 3 | 11/15 | 0 | 4 | 100% | 73.33% | 84.61% |
+
+Corrected one-to-one measurement:
+
+| Dataset | TP | FP | FN | Duplicates | Ambiguous | Unscored | Precision | Recall | F1 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Tier 2 | 22/27 | 0 | 5 | 2 | 0 | 0 | 100% | 81.48% | 89.80% |
+| Tier 3 | 11/15 | 0 | 4 | 0 | 0 | 0 | 100% | 73.33% | 84.61% |
+
+The two original Tier 2 false positives were duplicate decoded private-key
+observations at the same source span. The corrected reconciler counts them as
+duplicates, not TP or FP. Tier 3 was unaffected. The original result is preserved
+above and in the prior CI artifact; it has not been silently rewritten.
+
+This is a controlled-corpus coverage comparison, not a general product ranking.
+Gitleaks supports families outside the RNC catalog and has Git-history capability
+that RNC does not implement. Betterleaks was not executed because no pinned
+binary or image was available.
 
 ## Backend correctness
 
@@ -162,12 +208,13 @@ image was available; no Betterleaks result is claimed.
 | Equivalent finding identity | Yes |
 | Equivalent coverage/result | Yes |
 | Fallback behavior | Explicit; no silent rule skip |
-| Unresolved mismatch | None on the controlled corpus |
+| Unresolved mismatch | None on the controlled corpora (24 cases) |
 
 `regex` remains the reference. `auto` selects reference regex. `prefilter` uses
 Aho-Corasick required literals with exact-regex fallback for rules without a
-proven literal; `regexset` is used when the set compiles. Any fallback is
-reported in plan provenance.
+proven literal; `regexset` uses the required-literal filter plus exact regex.
+17 of 19 rules have proven literals; two use explicit exact-regex fallback. No
+pathological full-pattern RegexSet implementation was reintroduced.
 
 ## Security
 
@@ -178,158 +225,115 @@ reported in plan provenance.
   label mismatches and placeholder bodies. Validation errors carry static
   reasons, never candidate bytes.
 - Public artifacts contain no raw fixture values, private locators or absolute
-  host paths; `tools/cp3/privacy_check.py` passes on generated evidence.
+  host paths; `tools/cp3/privacy_check.py` passes and now also checks the Tier 4
+  challenge values.
 - No network validation, credential redemption, provider authentication or
   external build-script execution occurred.
 - Existing CP2 source containment, report publication, policy authority and CI
-  safeguards are unchanged. Issues #7–#9 remain open platform residuals; CP3
-  did not absorb or silently close them.
+  safeguards are unchanged. Issues #7-#9 remain open platform residuals; this
+  correction did not absorb or silently close them.
+- Raw provider-shaped fixture bytes remain outside Git where necessary; the
+  provider bundle is hex-encoded and materialized only in temporary roots. The
+  independently authored challenge is generated at test time.
 
 ## Performance
 
-See [cp3-benchmark-methodology.md](cp3-benchmark-methodology.md) and the
-machine-readable `artifacts/cp3/bench.json` generated on the final local run.
-Local Windows runs do not have GNU `time`, so CPU/peak RSS are `null`; the
-isolated Linux CI benchmark provides those fields. Wall times are not compared
-across different runners as a controlled speedup.
+See [cp3-benchmark-methodology.md](cp3-benchmark-methodology.md). The corrected
+benchmark has **88 profiles** (11 workloads x 2 modes x 4 strategies).
 
-Release build: **52.65 s**, binary **2,647,040 bytes**, SHA-256
-`1def3f63…`. Rule compilation: median **149.5 ms**, p95 **181.8 ms**. Three
-runs per profile.
+Local Windows reference build: **39.133 s**, binary
+**2,650,624 bytes**, SHA-256 `f0bdf6b3...`. Rule compilation median
+**76.993 ms**, p95 **81.144 ms** (three runs). Local CPU/RSS fields are `null`
+because GNU `time` is unavailable; the isolated Linux CI benchmark supplies
+CPU/RSS.
 
-### Whole-file reference (`regex`)
+### Local whole-file medians
 
-| Workload | Median ms | p95 ms | Throughput MiB/s | RegexSet ms | Prefilter ms | Auto ms |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `large-low` | 291.9 | 376.1 | 27.4 | 257.3 | 269.6 | 380.0 |
-| `large-high` | 448.2 | 535.8 | 17.9 | 401.8 | 393.7 | 455.7 |
-| `small-many` | 780.0 | 4108.1 | 0.2 | 861.6 | 781.0 | 2652.9 |
-| `credential-configs` | 265.3 | 369.7 | 15.1 | 233.3 | 239.8 | 244.0 |
-| `fp-heavy` | 406.2 | 423.4 | 9.8 | 453.1 | 374.9 | 420.2 |
-| `high-entropy` | 204.8 | 297.0 | 19.5 | 159.9 | 179.6 | 178.3 |
-| `multi-family` | 85.8 | 100.6 | 1.4 | 129.3 | 117.6 | 168.3 |
-| `long-pem` | 122.6 | 374.7 | 0.3 | 127.3 | 150.6 | 192.6 |
-| `structured` | 257.0 | 257.8 | 0.1 | 202.4 | 128.5 | 133.5 |
-| `same-line` | 106.6 | 121.7 | 0.2 | 139.8 | 116.7 | 121.6 |
+| Workload | Regex ms | RegexSet ms | Prefilter ms | Auto ms |
+| --- | ---: | ---: | ---: | ---: |
+| `large-low` | 232.1 | 147.4 | 161.2 | 221.1 |
+| `large-high` | 250.9 | 174.4 | 172.1 | 195.0 |
+| `github-installation-long` | 139.7 | 181.3 | 155.8 | 135.6 |
+| `small-many` | 389.4 | 402.6 | 415.9 | 383.4 |
+| `fp-heavy` | 244.0 | 261.4 | 306.5 | 284.0 |
 
-### Streaming reference (`regex`)
+The new long installation-token workload completes at 136-181 ms across
+strategies. RegexSet remains faster than reference regex on large-high and
+large-low; auto deliberately stays on reference regex. The provider catalog is
+materially slower than the synthetic 10-rule CP2 baseline, as expected from 19
+rules, multiline PEM/JWT structure and validation. No validator was removed to
+recover throughput. Cross-version numbers are workload-plus-engine changes, not
+pure speedups.
 
-| Workload | Median ms | p95 ms | Throughput MiB/s | RegexSet ms | Prefilter ms | Auto ms |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `large-low` | 425.0 | 521.9 | 18.8 | 338.8 | 335.5 | 458.5 |
-| `large-high` | 1145.4 | 1162.7 | 7.0 | 994.8 | 797.8 | 1156.0 |
-| `small-many` | 793.3 | 2174.4 | 0.2 | 746.3 | 620.1 | 667.4 |
-| `credential-configs` | 575.8 | 712.8 | 7.0 | 560.6 | 525.1 | 500.2 |
-| `fp-heavy` | 559.0 | 713.5 | 7.2 | 630.5 | 566.9 | 552.0 |
-| `high-entropy` | 172.5 | 204.0 | 23.2 | 143.4 | 164.0 | 164.7 |
-| `multi-family` | 268.4 | 302.4 | 0.4 | 248.4 | 261.1 | 331.1 |
-| `long-pem` | 146.9 | 178.9 | 0.2 | 119.5 | 131.2 | 122.5 |
-| `structured` | 188.4 | 220.1 | 0.2 | 157.7 | 123.0 | 114.8 |
-| `same-line` | 129.7 | 176.4 | 0.2 | 153.1 | 140.9 | 164.5 |
-
-`small-many` p95 is dominated by a single host outlier; its median is stable.
-The initial RegexSet implementation over full provider patterns was correct but
-pathologically slow (6.5 s for the 8 MiB low-density whole-file profile). CP3
-replaced it with a **required-literal RegexSet filter** plus exact regex for
-eligible rules; the same profile is now 257 ms with identical canonical
-findings. This is a performance fix, not a correctness strategy change.
-
-### CI Linux reference
-
-The isolated Linux CI benchmark (`cp3-benchmark-evidence`, artifact ID
-`13887865802`, SHA-256 `ca9f5259…`) had GNU `time` available. Release build
-**35.158 s**, binary **3,168,816 bytes**, SHA-256 `898f3af9…`; rule compilation
-median **39.1 ms**.
-
-| Workload | Whole regex ms | Whole MiB/s | Whole CPU % | Whole RSS KiB | Stream regex ms | Stream MiB/s |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `large-low` | 135.5 | 59.0 | 95.9 | 29,832 | 176.7 | 45.3 |
-| `large-high` | 178.3 | 44.9 | 90.3 | 38,312 | 643.2 | 12.4 |
-| `small-many` | 60.2 | 2.6 | 81.7 | 22,220 | 64.8 | 2.5 |
-| `credential-configs` | 98.7 | 40.5 | 91.2 | 26,600 | 273.3 | 14.6 |
-| `fp-heavy` | 198.8 | 20.1 | 95.5 | 27,328 | 285.9 | 14.0 |
-| `high-entropy` | 78.0 | 51.3 | 88.5 | 25,624 | 94.2 | 42.4 |
-| `multi-family` | 56.5 | 2.0 | 88.5 | 27,804 | 128.3 | 0.9 |
-| `long-pem` | 42.2 | 0.8 | 71.0 | 21,532 | 42.3 | 0.8 |
-| `structured` | 44.2 | 0.7 | 67.9 | 22,640 | 51.1 | 0.6 |
-| `same-line` | 44.2 | 0.5 | 67.9 | 21,968 | 53.2 | 0.4 |
-
-On the CI host, whole-file large-high medians were regex **178.3 ms**,
-regexset **149.3 ms**, prefilter **164.0 ms** and auto **181.0 ms**. The local
-Windows table and the CI table are from different hosts and are not presented as
-a controlled cross-host speedup.
-
-The provider catalog is materially slower than the synthetic 10-rule CP2
-baseline, as expected from 16 rules, multiline PEM/JWT structure and validation.
-No validator was removed to recover throughput. Acquisition, matching and
-reporting are not separately instrumented; that limitation is explicit.
+Final CI Linux benchmark values and artifact IDs are recorded in the final
+evidence section after the final-head CI run.
 
 ## Required CI
 
-CP3 workflow run [43087012245](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/43087012245)
-at implementation head `c8779e9` passed all seven required jobs:
+Final-head CI evidence: `PENDING-FINAL-CI`.
 
-- quality, provider rules, byte accuracy and external adapter;
-- provider catalog benchmark;
-- Ubuntu, Windows and macOS builds/tests;
-- static Linux musl build;
-- dependency advisory audit.
+Historical pre-correction CP3 CI run `43087012245` at `c8779e9` passed all seven
+jobs; docs-head run `43087717965` at `13b1d6b` also passed all seven. Those runs
+are preserved as historical evidence and are not presented as validation of the
+corrected rules.
 
-Final sanitized artifacts:
+Final sanitized artifacts: `PENDING-FINAL-ARTIFACTS`.
 
-- `cp3-integration-accuracy-evidence` — ID `13886408382`,
-  SHA-256 `ceed50b3…`; 16/16 integration cases `all_correct`, all equivalent;
-  external line score 25 matched + 2 ambiguous; privacy check `PASS`.
-- `cp3-benchmark-evidence` — ID `13887865802`, SHA-256 `ca9f5259…`;
-  80 profiles, all correct.
+## Historical pre-correction evidence
 
-The CP3 PR is [#10](https://github.com/RNC-Solutions-Group/rnc-security-audit/pull/10),
-targeting `main`. No merge was performed.
+The reviewed `13b1d6b` state had:
+
+- 16 provider rules across 12 families, digest `sha256:e2900d90...`;
+- Tier 2 27/27 and Tier 3 15/15, 16 integration cases;
+- Gitleaks Tier 2 22 TP / 2 FP / 5 FN (precision 91.67%, recall 81.48%,
+  F1 86.28%) and Tier 3 11 TP / 0 FP / 4 FN;
+- the first CI artifact set `cp3-integration-accuracy-evidence` ID
+  `13886408382` and `cp3-benchmark-evidence` ID `13887865802`.
+
+Those values are retained so the correction can be audited. They are not the
+corrected implementation's score.
 
 ## Limitations and disposition
 
 ### Known limitations
 
-**P0 — none identified.** No source-containment, report-publication, evidence
-integrity or CI-authority defect was found or introduced by CP3.
+**P0 - none identified.** No source-containment, report-publication, evidence
+integrity or CI-authority defect was found or introduced by the corrective work.
 
-**P1 — explicit conditions:**
+**P1 - explicit conditions:**
 
 - RNC Scanner has no Git-history input adapter. All external comparisons are
   filesystem-to-filesystem; Git-history capability is `NOT_APPLICABLE`.
 - Windows path-based directory enumeration (#7), inherited private-evidence ACLs
-  (#8) and OS-signal cancellation (#9) remain open CP2 platform residuals. CP3
-  did not weaken or close them.
+  (#8) and OS-signal cancellation (#9) remain open CP2 platform residuals.
 - Betterleaks was not executed because no pinned binary or image was available.
-  The Gitleaks comparison is the only executed external-scanner comparison.
-- The Levain result is scoped to declared families (**30/31**, one deliberately
-  malformed PEM rejected by structural validation). It is not a universal
-  real-world recall claim.
-- Leaky Repo provides count coverage, not credential-level truth. Its 33/175
-  count coverage is not a precision or recall measurement.
+- The Levain result is scoped to declared families (**30/31**); the miss is a
+  deliberately malformed PEM. It is not a universal real-world recall claim.
+- Leaky Repo provides count coverage, not credential-level truth.
 - The external harness is line-addressed; its **2 ambiguous** same-line results
-  are preserved as a limitation and are not hidden inside a headline score.
-- Provider-format recognition is not active-credential verification. JWT,
-  OAuth/app-token, database-URI and generic-assignment families are experimental
-  or lower confidence.
+  are preserved as a limitation.
+- `ABIA`/`ACCA` identify sensitive credentials but are not complete credential
+  proofs. Modern `ghs_APPID_JWT` tokens are opaque and structurally validated
+  only. Provider-format recognition is not active-credential verification.
+- Tier 4 is hand-authored by the same project, not externally sourced. It
+  reduces shared-generator dependence but does not prove broad generalization.
 
-**P2 — future work:**
+**P2 - future work:**
 
-- Add checksum/structural checks where providers publish them, without
+- Add checksum/structural checks where providers publish them without
   introducing false negatives.
 - Expand provider families and rule lifecycle evidence.
-- Add separate acquisition/detection/report phase instrumentation and a clean
-  controlled benchmark lane.
-- Evaluate Git-history and additional source adapters.
+- Add Git-history and additional source adapters.
 - Evaluate Betterleaks and additional pinned comparators when binaries and
   licenses are available.
+- Add phase-level acquisition/matching/report timing.
 
 ### Disposition
 
-**CONDITIONAL GO for operator review.** The code, controlled accuracy,
-strategy-equivalence gate, independent scorer, external adapter, security
-checks, benchmark and documentation are implemented. The conditions are the
-documented platform residuals, the scoped external-corpus results, the absent
-Betterleaks/Git-history adapters, and the deliberate malformed-PEM rejection.
-No condition is hidden as a passing accuracy claim. Final CI evidence at the
-delivered head is recorded in the pull request.
+**CONDITIONAL GO for operator review.** The AWS misclassification, one-to-one
+comparator defect and modern GitHub installation-token gap are corrected and
+tested. Controlled accuracy is 27/27, 15/15 and 14/14 with strategy equivalence.
+The conditions are the documented platform residuals, scoped external evidence,
+unavailable Betterleaks/Git-history comparisons, identifier-only AWS semantics
+and the hand-authored (not externally sourced) Tier 4 corpus. No condition is
+hidden as a passing accuracy claim. No merge was performed.

@@ -1,6 +1,6 @@
 # RNC Security Audit
 
-> **Development status — 11 November 2026:** CP0–CP2 provide a working, security-hardened Rust scanner; CP3 adds a first-party provider-credential catalog and independent byte-addressed accuracy assessment. The original synthetic bundles remain preserved regression evidence, not production credential accuracy. Provider-format recognition is **not** proof that a credential is active, authorized or complete. No production deployment or public release is claimed.
+> **Development status - 11 November 2026:** CP0-CP2 provide a working, security-hardened Rust scanner; CP3 adds a first-party provider-credential catalog and independent byte-addressed accuracy assessment. The original synthetic bundles remain preserved regression evidence, not production credential accuracy. Provider-format recognition is **not** proof that a credential is active, authorized or complete. No production deployment or public release is claimed.
 
 **RNC Security Audit** is the working home for RNC's security platform. Its first-party secret-detection component is **RNC Scanner**. The wider application will eventually coordinate independent security tools as well. **RNC Security Toolkit** remains the prospective name for a portable distribution, not another codebase.
 
@@ -99,17 +99,17 @@ Reporting reconciles three independently verifiable, append-only logical records
 | Operating contracts (CP0) | Implemented | [CP0 audit report](docs/implementation/cp0-contract-validation.md) |
 | Rust detector (CP1) | Implemented; synthetic rule bundles | [CP1 validation](docs/implementation/cp1-validation.md) |
 | Adaptive matching, policies, reporting and hardening (CP2) | Implemented; CI validated | [CP2 validation](docs/implementation/cp2-validation.md) |
-| Independent accuracy assessment (CP3) | **Provider catalog, controlled/external evidence and CI complete; operator review pending** | [CP3 validation](docs/implementation/cp3-validation.md), [detection catalog](docs/implementation/cp3-detection-catalog.md) |
+| Independent accuracy assessment (CP3) | **Corrective review complete; operator review pending** | [CP3 validation](docs/implementation/cp3-validation.md), [detection catalog](docs/implementation/cp3-detection-catalog.md) |
 
 The portable matching system includes a reference Rust regex strategy, a RegexSet-assisted strategy and an Aho-Corasick literal prefilter. All use the same rule, validator and finding contracts. Faster strategies are not promoted at the expense of finding equivalence.
 
 ### Provider credential catalog
 
-CP3 adds [`rules/rnc-providers-v1.json`](rules/rnc-providers-v1.json), a separately versioned schema `0.2.0` catalog covering **12 credential families** in cloud, developer-platform, service, cryptographic, structured and generic categories. It includes AWS, Google Cloud API keys, GitHub classic/fine-grained/OAuth tokens, GitLab PATs, Stripe, Slack, SendGrid, npm, PEM private-key containers, Bearer JWTs, database URI userinfo and a low-confidence generic assignment fallback.
+CP3 adds [`rules/rnc-providers-v1.json`](rules/rnc-providers-v1.json), a separately versioned schema `0.2.0` catalog with **19 rules across 12 credential families** in cloud, developer-platform, service, cryptographic, structured and generic categories. It includes AWS access-key and sensitive-identifier classification, Google Cloud API keys, GitHub classic/fine-grained/OAuth and App installation tokens, GitLab PATs, Stripe, Slack, SendGrid, npm, PEM private-key containers, Bearer JWTs, database URI userinfo and a low-confidence generic assignment fallback. Ordinary IAM resource identifiers such as `AIDA` and `AROA` are not treated as access keys.
 
 Every rule has a finite match bound and declared candidate bound. Validators are offline: no provider API is called, no token is redeemed and no discovered credential is sent over a network. Structural validity is not active-credential verification. The [detection catalog](docs/implementation/cp3-detection-catalog.md) distinguishes implemented, experimental and unsupported families.
 
-The independent scenario suite scores exact byte spans rather than lines. On the controlled Tier 2 and held-out Tier 3 authored corpora all four strategies in whole-file and streaming modes produce the same findings; the current validation report records the exact recall/precision and the deliberate limitations. External Levain, Leaky Repo and pinned Gitleaks evidence is scoped in the [accuracy methodology](docs/implementation/cp3-accuracy-methodology.md); it is not converted into a universal product score.
+The independent scenario suite scores exact byte spans rather than lines. On the controlled Tier 2, held-out Tier 3 and hand-authored Tier 4 challenge corpora all four strategies in whole-file and streaming modes produce the same findings: **27/27**, **15/15** and **14/14**. The validation report records the exact recall/precision, the corrected one-to-one Gitleaks reconciliation and the deliberate limitations. Tier 2/3 share a generator; Tier 4 is independently authored but still first-party, not an externally sourced corpus. External Levain, Leaky Repo and pinned Gitleaks evidence is scoped in the [accuracy methodology](docs/implementation/cp3-accuracy-methodology.md); it is not converted into a universal product score.
 
 The external scanner comparison harness is **independent test infrastructure**, not a detection dependency. Historical experiments with third-party tooling do not define the RNC Scanner engine or its results.
 

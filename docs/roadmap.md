@@ -58,15 +58,15 @@ CP0 and CP1 may define interfaces for downstream modules without implementing th
 
 ### CP3 — grade, do not self-grade
 
-- [x] Separate first-party provider catalog (`0.2.0`) preserving synthetic `0.1.0` regression truth.
+- [x] Separate first-party provider catalog (`0.2.0`, ruleset `2026.11.2`) preserving synthetic `0.1.0` regression truth.
 - [x] Bounded patterns, candidate caps and reusable offline validators for cloud, developer-platform, service, cryptographic, structured and generic credential families.
-- [x] Controlled provider-format positives, negatives, malformed and same-line/multiline/binary fixtures.
-- [x] Independent byte-addressed truth and scorer, including negative controls for empty, over-reporting, duplicate, shifted, wrong-source, wrong-family and incomplete scanners.
-- [x] All four matching strategies and whole/stream modes produce identical Tier 2/3 findings.
+- [x] Controlled provider-format positives, negatives, malformed and same-line/multiline/binary fixtures, plus a hand-authored Tier 4 challenge that does not reuse the Tier 2/3 generator.
+- [x] Independent byte-addressed truth, conservative scorer and one-to-one Gitleaks reconciler, including negative controls for empty, over-reporting, duplicate, shifted, wrong-source, wrong-family, wrong-position, unknown-rule and incomplete scanners.
+- [x] All four matching strategies and whole/stream modes produce identical Tier 2/3/challenge findings (27/27, 15/15, 14/14).
 - [x] Pinned external-harness handoff with explicit line-addressing limitation.
 - [x] Scoped Levain FP/TP evidence, count-based Leaky Repo scan and pinned Gitleaks comparison.
 - [x] Provider-catalog benchmark methodology and measured evidence.
-- [x] Required CP3 CI green (run 43087012245, seven required jobs).
+- [x] Required pre-correction CP3 CI preserved (run 43087012245, seven required jobs); corrected final-head CI is recorded in the CP3 validation report.
 - [ ] PR review and operator acceptance.
 
 ### CP4–CP6 — broaden without changing the engine contract

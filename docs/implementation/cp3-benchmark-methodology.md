@@ -14,6 +14,7 @@ count. It records the effective backend from the same run.
 - Runs: **3** per profile; median, p95, min and max are reported.
 - Modes: `whole` and `stream` (`--stream-chunk-bytes 65536`).
 - Strategies: `regex`, `regexset`, `prefilter`, `auto`.
+- Profiles: **11 workloads x 2 modes x 4 strategies = 88**.
 - Caps: 64 MiB per file, 128 MiB total, 20,000 findings.
 - Wall time: measured around the process.
 - CPU and peak RSS: measured only when a GNU `time` wrapper is available. On
@@ -35,12 +36,20 @@ count. It records the effective backend from the same run.
 | `high-entropy` | 4 MiB random base64/hex, no assignment | Benign high-entropy content |
 | `multi-family` | 16 findings per block, 64 blocks, all catalog rules | Mixed provider matching and validator cost |
 | `long-pem` | 32 multiline RSA-shaped containers | Long multiline container matching |
+| `github-installation-long` | 4 MiB, 256 modern `ghs_APPID_JWT` tokens | Long installation-token candidates and bounded segment matching |
 | `structured` | 128 JWT Bearer + database URI pairs | Structured-token parsing cost |
 | `same-line` | 256 lines with two GitHub tokens each | Same-line occurrence correctness |
 
 The reduced local matrix keeps the full mode/strategy comparison while fitting a
 developer workstation. The isolated CI benchmark uses the same workload
 definitions; run-to-run comparisons must use the same host and build.
+
+The corrected catalog has 19 rules and 12 families. The pre-correction benchmark
+used 16 rules. Workload composition therefore changed, and a cross-version
+number is reported as a workload-plus-engine change, never as a pure speedup.
+The RegexSet strategy continues to use the required-literal filter, not the
+pathological full-pattern set. `github-installation-long` was added specifically
+to exercise the new bounded modern token path.
 
 ## What is and is not measured
 

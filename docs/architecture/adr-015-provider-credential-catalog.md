@@ -1,6 +1,6 @@
 # ADR-015: Separately versioned provider credential catalog
 
-**Status:** Implemented for CP3; operator review pending
+**Status:** Implemented for CP3; corrective update `2026.11.2`; operator review pending
 **Date:** 11 November 2026
 **Supersedes:** none. Extends ADR-009/010/011 without changing the reference regex backend.
 
@@ -60,3 +60,36 @@ therefore needs explicit candidate bounds, not just a regex.
   `regex`/`regexset`/`prefilter`/`auto`.
 - The pinned external harness receives a separate line-addressed handoff; its
   same-line ambiguity is recorded rather than used for the authoritative score.
+
+## Amendment: CP3 corrective review (11 November 2026)
+
+The initial catalog conflated all documented AWS IAM unique-ID prefixes with
+access-key credentials. It also did not recognize the stateless GitHub App
+installation-token `ghs_APPID_JWT` format, and its Gitleaks comparison matcher
+did not enforce one-to-one occurrence assignment.
+
+The amendment is deliberately narrow:
+
+1. `aws-access-key-id` now recognizes only `AKIA` and `ASIA`. The eight ordinary
+   IAM resource prefixes (`AIDA`, `AGPA`, `AIPA`, `ANPA`, `ANVA`, `APKA`, `AROA`,
+   `ASCA`) are not credential findings.
+2. `ABIA` and `ACCA` have distinct rule identities and credential types because
+   they are sensitive identifiers, but neither is presented as an ordinary
+   access key or as proof of a complete usable credential.
+3. `github-app-installation-token` recognizes legacy opaque and stateless
+   installation tokens. The stateless JWT is treated as opaque; only documented
+   framing and alphabet are checked. `github-oauth-app-token` no longer claims
+   `ghs_`.
+4. The Gitleaks comparator uses deterministic one-to-one byte reconciliation.
+   Path and position must match; duplicates, wrong position/file/family,
+   ambiguity and unknown rules do not become TP.
+5. The rule bundle/schema validators were extended additively for the new
+   validator names. Existing CP0-CP2 synthetic bundles and provider truth
+   manifests remain unchanged.
+
+Consequences: the catalog moves to ruleset version `2026.11.2`, 19 rules and 12
+families. Ten additional AWS taxonomy cases, legacy/modern GitHub installation
+tests, an independently authored Tier 4 challenge and comparator negative
+controls were added. Historical Tier 2/Tier 3 scores remain recorded; corrected
+comparator scores are reported separately. No finding is promoted to
+active-credential verification.
