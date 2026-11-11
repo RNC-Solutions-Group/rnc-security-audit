@@ -23,6 +23,8 @@ pub enum Validator {
     Base64Url,
     Hex,
     AwsAccessKeyId,
+    AwsServiceBearerTokenId,
+    AwsContextSpecificCredentialId,
     AwsSecretAccessKey,
     GoogleApiKey,
     #[serde(rename = "GITHUB_CLASSIC_PAT")]
@@ -31,6 +33,8 @@ pub enum Validator {
     GitHubFineGrainedPat,
     #[serde(rename = "GITHUB_OAUTH_TOKEN")]
     GitHubOAuthToken,
+    #[serde(rename = "GITHUB_APP_INSTALLATION_TOKEN")]
+    GitHubAppInstallationToken,
     #[serde(rename = "GITLAB_PAT")]
     GitLabPat,
     StripeSecretKey,
@@ -55,11 +59,14 @@ impl Validator {
             Self::Base64Url => "BASE64URL",
             Self::Hex => "HEX",
             Self::AwsAccessKeyId => "AWS_ACCESS_KEY_ID",
+            Self::AwsServiceBearerTokenId => "AWS_SERVICE_BEARER_TOKEN_ID",
+            Self::AwsContextSpecificCredentialId => "AWS_CONTEXT_SPECIFIC_CREDENTIAL_ID",
             Self::AwsSecretAccessKey => "AWS_SECRET_ACCESS_KEY",
             Self::GoogleApiKey => "GOOGLE_API_KEY",
             Self::GitHubClassicPat => "GITHUB_CLASSIC_PAT",
             Self::GitHubFineGrainedPat => "GITHUB_FINE_GRAINED_PAT",
             Self::GitHubOAuthToken => "GITHUB_OAUTH_TOKEN",
+            Self::GitHubAppInstallationToken => "GITHUB_APP_INSTALLATION_TOKEN",
             Self::GitLabPat => "GITLAB_PAT",
             Self::StripeSecretKey => "STRIPE_SECRET_KEY",
             Self::SlackToken => "SLACK_TOKEN",
@@ -128,11 +135,16 @@ impl Validator {
                 }
             }
             Self::AwsAccessKeyId => validate_aws_access_key_id(candidate),
+            Self::AwsServiceBearerTokenId => validate_aws_service_bearer_token_id(candidate),
+            Self::AwsContextSpecificCredentialId => {
+                validate_aws_context_specific_credential_id(candidate)
+            }
             Self::AwsSecretAccessKey => validate_aws_secret(candidate),
             Self::GoogleApiKey => validate_google_api_key(candidate),
             Self::GitHubClassicPat => validate_github_classic(candidate),
             Self::GitHubFineGrainedPat => validate_github_fine_grained(candidate),
             Self::GitHubOAuthToken => validate_github_oauth(candidate),
+            Self::GitHubAppInstallationToken => validate_github_app_installation(candidate),
             Self::GitLabPat => validate_gitlab_pat(candidate),
             Self::StripeSecretKey => validate_stripe(candidate),
             Self::SlackToken => validate_slack(candidate),
@@ -289,32 +301,70 @@ fn validate_marker_suffix(candidate: &[u8]) -> Result<(), ValidationError> {
     Ok(())
 }
 
-fn validate_aws_access_key_id(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
-    const PREFIXES: [&[u8; 4]; 12] = [
-        b"ABIA", b"ACCA", b"AGPA", b"AIDA", b"AIPA", b"AKIA", b"ANPA", b"ANVA", b"APKA", b"AROA",
-        b"ASCA", b"ASIA",
-    ];
+fn validate_aws_identifier(
+    candidate: &[u8],
+    prefixes: &[&[u8; 4]],
+    validator: Validator,
+    label: &'static str,
+) -> Result<ValidatorVerdict, ValidationError> {
     if candidate.len() != 20
-        || !PREFIXES.iter().any(|prefix| candidate.starts_with(*prefix))
+        || !prefixes.iter().any(|prefix| candidate.starts_with(*prefix))
         || !candidate[4..]
             .iter()
             .all(|byte| byte.is_ascii_uppercase() || byte.is_ascii_digit())
     {
         return Err(ValidationError::invalid(
-            Validator::AwsAccessKeyId,
-            "AWS access key ID has an unrecognized prefix, length or character set",
+            validator,
+            "AWS credential identifier has an unrecognized prefix, length or character set",
         ));
     }
     if is_known_placeholder(candidate) {
         return Err(ValidationError::benign(
-            Validator::AwsAccessKeyId,
-            "AWS access key ID is a known documentation example",
+            validator,
+            "AWS credential identifier is a known documentation example",
         ));
     }
     if shannon_entropy(&candidate[4..]) < 3.0 {
         return Ok(ValidatorVerdict::plausible("LOW_ENTROPY"));
     }
+    if validator != Validator::AwsAccessKeyId {
+        return Ok(ValidatorVerdict::plausible(label));
+    }
     Ok(ValidatorVerdict::valid())
+}
+
+fn validate_aws_access_key_id(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+    const PREFIXES: [&[u8; 4]; 2] = [b"AKIA", b"ASIA"];
+    validate_aws_identifier(
+        candidate,
+        &PREFIXES,
+        Validator::AwsAccessKeyId,
+        "AWS access key ID",
+    )
+}
+
+fn validate_aws_service_bearer_token_id(
+    candidate: &[u8],
+) -> Result<ValidatorVerdict, ValidationError> {
+    const PREFIXES: [&[u8; 4]; 1] = [b"ABIA"];
+    validate_aws_identifier(
+        candidate,
+        &PREFIXES,
+        Validator::AwsServiceBearerTokenId,
+        "SERVICE_BEARER_TOKEN_IDENTIFIER_ONLY",
+    )
+}
+
+fn validate_aws_context_specific_credential_id(
+    candidate: &[u8],
+) -> Result<ValidatorVerdict, ValidationError> {
+    const PREFIXES: [&[u8; 4]; 1] = [b"ACCA"];
+    validate_aws_identifier(
+        candidate,
+        &PREFIXES,
+        Validator::AwsContextSpecificCredentialId,
+        "CONTEXT_SPECIFIC_CREDENTIAL_IDENTIFIER_ONLY",
+    )
 }
 
 fn validate_aws_secret(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
@@ -408,19 +458,19 @@ fn validate_github_fine_grained(candidate: &[u8]) -> Result<ValidatorVerdict, Va
 
 fn validate_github_oauth(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
     let prefix = candidate.get(..4).unwrap_or_default();
-    if !(prefix == b"gho_" || prefix == b"ghu_" || prefix == b"ghs_" || prefix == b"ghr_")
+    if !(prefix == b"gho_" || prefix == b"ghu_" || prefix == b"ghr_")
         || !(40..=512).contains(&candidate.len())
         || !candidate[4..].iter().all(u8::is_ascii_alphanumeric)
     {
         return Err(ValidationError::invalid(
             Validator::GitHubOAuthToken,
-            "GitHub OAuth/app token has an invalid prefix, length or character set",
+            "GitHub OAuth/user/refresh token has an invalid prefix, length or character set",
         ));
     }
     if is_known_placeholder(candidate) {
         return Err(ValidationError::benign(
             Validator::GitHubOAuthToken,
-            "GitHub OAuth/app token is a known documentation example",
+            "GitHub OAuth/user/refresh token is a known documentation example",
         ));
     }
     if candidate.len() > 40 {
@@ -428,6 +478,66 @@ fn validate_github_oauth(candidate: &[u8]) -> Result<ValidatorVerdict, Validatio
     }
     if shannon_entropy(&candidate[4..]) < 3.0 {
         return Ok(ValidatorVerdict::plausible("LOW_ENTROPY"));
+    }
+    Ok(ValidatorVerdict::valid())
+}
+
+fn github_base64url(value: &[u8]) -> bool {
+    !value.is_empty()
+        && value
+            .iter()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(*byte, b'-' | b'_'))
+}
+
+fn validate_github_app_installation(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+    if !candidate.starts_with(b"ghs_") {
+        return Err(ValidationError::invalid(
+            Validator::GitHubAppInstallationToken,
+            "GitHub App installation token lacks the ghs_ prefix",
+        ));
+    }
+    let body = &candidate[4..];
+    let legacy = candidate.len() == 40 && body.iter().all(u8::is_ascii_alphanumeric);
+    let modern = if legacy {
+        false
+    } else {
+        // Modern stateless installation tokens are documented as ghs_APPID_JWT.
+        // The JWT is treated as opaque: only segment framing and the documented
+        // base64url alphabet are checked. No signature, issuer or claim is trusted.
+        (100..=6144).contains(&candidate.len())
+            && body
+                .iter()
+                .position(|byte| *byte == b'_')
+                .is_some_and(|separator| {
+                    let app_id = &body[..separator];
+                    let jwt = &body[separator + 1..];
+                    (1..=32).contains(&app_id.len())
+                        && app_id.iter().all(u8::is_ascii_alphanumeric)
+                        && jwt.split(|byte| *byte == b'.').count() == 3
+                        && jwt.split(|byte| *byte == b'.').all(|segment| {
+                            (8..=2048).contains(&segment.len()) && github_base64url(segment)
+                        })
+                })
+    };
+    if !legacy && !modern {
+        return Err(ValidationError::invalid(
+            Validator::GitHubAppInstallationToken,
+            "GitHub App installation token has an invalid legacy or stateless structure",
+        ));
+    }
+    if is_known_placeholder(candidate) {
+        return Err(ValidationError::benign(
+            Validator::GitHubAppInstallationToken,
+            "GitHub App installation token is a known documentation example",
+        ));
+    }
+    if shannon_entropy(body) < 3.0 {
+        return Ok(ValidatorVerdict::plausible("LOW_ENTROPY"));
+    }
+    if modern {
+        return Ok(ValidatorVerdict::plausible(
+            "GITHUB_STATELESS_INSTALLATION_TOKEN_STRUCTURE_ONLY",
+        ));
     }
     Ok(ValidatorVerdict::valid())
 }
@@ -1056,9 +1166,11 @@ fn is_variable_reference(text: &str) -> bool {
 }
 
 fn looks_like_provider_token(candidate: &[u8]) -> bool {
-    const PREFIXES: [&[u8]; 22] = [
+    const PREFIXES: [&[u8]; 24] = [
         b"AKIA",
         b"ASIA",
+        b"ABIA",
+        b"ACCA",
         b"AIza",
         b"ghp_",
         b"github_pat_",
@@ -1207,6 +1319,10 @@ mod tests {
             concat!("AKIA", "Q7Z3K5M2N4P6R8T0").as_bytes(),
             &[Validator::AwsAccessKeyId],
         );
+        assert_valid(
+            concat!("ASIA", "Q7Z3K5M2N4P6R8T0").as_bytes(),
+            &[Validator::AwsAccessKeyId],
+        );
         assert_invalid(
             concat!("AKIA", "IOSFODNN7EXAMPLE").as_bytes(),
             &[Validator::AwsAccessKeyId],
@@ -1219,6 +1335,115 @@ mod tests {
             concat!("ZZZA", "Q7Z3K5M2N4P6R8T0").as_bytes(),
             &[Validator::AwsAccessKeyId],
         );
+        for resource_prefix in [
+            b"AIDA", b"AGPA", b"AIPA", b"ANPA", b"ANVA", b"APKA", b"AROA", b"ASCA",
+        ] {
+            let mut value = resource_prefix.to_vec();
+            value.extend_from_slice(b"Q7Z3K5M2N4P6R8T0");
+            assert_invalid(&value, &[Validator::AwsAccessKeyId]);
+        }
+    }
+
+    #[test]
+    fn aws_sensitive_identifiers_have_distinct_validators() {
+        assert_valid(
+            concat!("ABIA", "Q7Z3K5M2N4P6R8T0").as_bytes(),
+            &[Validator::AwsServiceBearerTokenId],
+        );
+        assert_valid(
+            concat!("ACCA", "Q7Z3K5M2N4P6R8T0").as_bytes(),
+            &[Validator::AwsContextSpecificCredentialId],
+        );
+        assert_invalid(
+            concat!("ABIA", "Q7Z3K5M2N4P6R8T0").as_bytes(),
+            &[Validator::AwsAccessKeyId],
+        );
+        assert_invalid(
+            concat!("ACCA", "Q7Z3K5M2N4P6R8T0").as_bytes(),
+            &[Validator::AwsAccessKeyId],
+        );
+        assert_invalid(
+            concat!("AKIA", "Q7Z3K5M2N4P6R8T0").as_bytes(),
+            &[Validator::AwsServiceBearerTokenId],
+        );
+        let bearer = validate_candidate(
+            concat!("ABIA", "Q7Z3K5M2N4P6R8T0").as_bytes(),
+            &[Validator::AwsServiceBearerTokenId],
+        )
+        .expect("bearer identifier");
+        assert_eq!(bearer.status, ValidationStatus::PlausibleUnverified);
+        assert!(bearer
+            .notes
+            .iter()
+            .any(|note| note == "SERVICE_BEARER_TOKEN_IDENTIFIER_ONLY"));
+    }
+
+    #[test]
+    fn github_oauth_prefix_does_not_claim_installation_tokens() {
+        assert_invalid(
+            concat!("ghs_", "0123456789abcdefghijklmnopqrstuvwxyz").as_bytes(),
+            &[Validator::GitHubOAuthToken],
+        );
+        assert_valid(
+            concat!("gho_", "0123456789abcdefghijklmnopqrstuvwxyz").as_bytes(),
+            &[Validator::GitHubOAuthToken],
+        );
+    }
+
+    #[test]
+    fn github_installation_tokens_cover_legacy_and_stateless_formats() {
+        let legacy = concat!("ghs_", "0123456789abcdefghijklmnopqrstuvwxyz");
+        let legacy_outcome =
+            validate_candidate(legacy.as_bytes(), &[Validator::GitHubAppInstallationToken])
+                .expect("legacy installation token");
+        assert_eq!(legacy_outcome.status, ValidationStatus::FormatValid);
+        assert_invalid(
+            concat!("ghs_", "0123456789abcdefghijklmnopqrstuvwxy").as_bytes(),
+            &[Validator::GitHubAppInstallationToken],
+        );
+
+        let modern = format!(
+            "ghs_1234567890_{}.{}.{}",
+            "A1b2C3d4".repeat(15),
+            "e5F6g7H8".repeat(15),
+            "C9d0E1f2".repeat(6)
+        );
+        let modern_outcome =
+            validate_candidate(modern.as_bytes(), &[Validator::GitHubAppInstallationToken])
+                .expect("stateless installation token");
+        assert_eq!(modern_outcome.status, ValidationStatus::PlausibleUnverified);
+        assert!(modern_outcome
+            .notes
+            .iter()
+            .any(|note| note == "GITHUB_STATELESS_INSTALLATION_TOKEN_STRUCTURE_ONLY"));
+
+        for malformed in [
+            "ghs_1234567890_".to_string() + &"A".repeat(120) + "." + &"b".repeat(120),
+            format!(
+                "ghs_1234567890_{}.{}.{}",
+                "A".repeat(120),
+                "b".repeat(120),
+                ""
+            ),
+            format!(
+                "ghs_{}.{}.{}",
+                "A".repeat(120),
+                "b".repeat(120),
+                "C".repeat(43)
+            ),
+            format!(
+                "ghs_1234567890_{}.{}.{}",
+                "A".repeat(2049),
+                "b".repeat(120),
+                "C".repeat(43)
+            ),
+            "ghs_short".to_string(),
+        ] {
+            assert_invalid(
+                malformed.as_bytes(),
+                &[Validator::GitHubAppInstallationToken],
+            );
+        }
     }
 
     #[test]

@@ -415,8 +415,12 @@ def score(
         "UNMAPPED",
     }
     fp = sum(counts[name] for name in false_positive_classes)
-    fn = counts["MISSED_EXPECTATION"]
     ambiguous = counts["AMBIGUOUS_MATCH"]
+    # An expectation whose byte span cannot be distinguished from another
+    # expectation is not scoreable. Counting it as missed is the conservative
+    # choice: it cannot inflate recall, and the ambiguity remains visible.
+    unscored_truth = len(ambiguous_truth - claimed)
+    fn = counts["MISSED_EXPECTATION"] + unscored_truth
     precision = _ratio(tp, tp + fp)
     recall = _ratio(tp, tp + fn)
     f1 = _f1(precision, recall)
@@ -536,6 +540,8 @@ def score(
             "recall_denominator": tp + fn,
             "duplicates": counts["DUPLICATE"],
             "ambiguous": ambiguous,
+            "unscored_truth": unscored_truth,
+            "scored_expected_count": len(truths) - unscored_truth,
             "wrong_rule": counts["WRONG_RULE"],
             "wrong_family": counts["WRONG_FAMILY"],
             "misaligned": counts["MISALIGNED_MATCH"],
@@ -554,6 +560,7 @@ def score(
         "by_rule": metrics_for_rule(rule_values),
         "warnings": [
             "Ambiguous and unmapped observations are reported separately and are not silently folded into TP/FP.",
+            "Ambiguous truth spans are counted as missed for conservative recall; they are not quietly removed from the denominator.",
             "A parseable provider-format value is a detection of format, not proof that a credential is active.",
         ],
     }

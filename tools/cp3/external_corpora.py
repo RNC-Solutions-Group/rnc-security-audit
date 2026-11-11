@@ -21,7 +21,10 @@ RULES = ROOT / "rules/rnc-providers-v1.json"
 
 LEVAIN_KIND_RULES = {
     "aws_access_key_id": "aws-access-key-id",
+    "aws_sts_service_bearer_token": "aws-sts-service-bearer-token-id",
+    "aws_context_specific_credential": "aws-context-specific-credential-id",
     "aws_secret_access_key": "aws-secret-access-key",
+    "github_app_installation_token": "github-app-installation-token",
     "stripe_secret_key": "stripe-secret-api-key",
     "github_pat_classic": "github-classic-pat",
     "github_pat_fine_grained": "github-fine-grained-pat",

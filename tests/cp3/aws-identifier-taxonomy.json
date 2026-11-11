@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "dataset_id": "cp3-aws-identifier-taxonomy",
+  "dataset_version": "2026.11.2-corrective",
+  "reviewed": "2026-11-11",
+  "references": [
+    "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html",
+    "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_bearer.html"
+  ],
+  "credential_classes": {
+    "access-key-id": {
+      "prefixes": ["AKIA", "ASIA"],
+      "description": "Documented access-key identifiers; AKIA is long-term and ASIA is temporary STS. Presence is not proof of an active or usable credential.",
+      "expected_rule_id": "aws-access-key-id",
+      "confidence": "high"
+    },
+    "service-bearer-token-id": {
+      "prefixes": ["ABIA"],
+      "description": "Access key ID component of an AWS STS service bearer token. The bare identifier is not the complete bearer token and does not establish service or Region scope.",
+      "expected_rule_id": "aws-sts-service-bearer-token-id",
+      "confidence": "medium"
+    },
+    "context-specific-credential-id": {
+      "prefixes": ["ACCA"],
+      "description": "AWS documents ACCA as a context-specific credential prefix. Public documentation does not define the complete credential or usable scope.",
+      "expected_rule_id": "aws-context-specific-credential-id",
+      "confidence": "medium"
+    },
+    "resource-identifier": {
+      "prefixes": ["AIDA", "AGPA", "AIPA", "ANPA", "ANVA", "APKA", "AROA", "ASCA"],
+      "description": "Ordinary IAM resource identifiers. These must not be reported as access-key credentials.",
+      "expected_rule_id": null,
+      "confidence": null
+    }
+  },
+  "cases": [
+    {
+      "case_id": "01-akia-access-key",
+      "prefix": "AKIA",
+      "resource_type": "Access key",
+      "credential_class": "access-key-id",
+      "expected_rule_id": "aws-access-key-id"
+    },
+    {
+      "case_id": "02-asia-temporary-access-key",
+      "prefix": "ASIA",
+      "resource_type": "Temporary AWS STS access key ID",
+      "credential_class": "access-key-id",
+      "expected_rule_id": "aws-access-key-id"
+    },
+    {
+      "case_id": "03-aida-user",
+      "prefix": "AIDA",
+      "resource_type": "IAM user",
+      "credential_class": "resource-identifier",
+      "expected_rule_id": null
+    },
+    {
+      "case_id": "04-agpa-group",
+      "prefix": "AGPA",
+      "resource_type": "IAM group",
+      "credential_class": "resource-identifier",
+      "expected_rule_id": null
+    },
+    {
+      "case_id": "05-aroa-role",
+      "prefix": "AROA",
+      "resource_type": "IAM role",
+      "credential_class": "resource-identifier",
+      "expected_rule_id": null
+    },
+    {
+      "case_id": "06-anpa-policy",
+      "prefix": "ANPA",
+      "resource_type": "Managed policy",
+      "credential_class": "resource-identifier",
+      "expected_rule_id": null
+    },
+    {
+      "case_id": "07-anva-policy-version",
+      "prefix": "ANVA",
+      "resource_type": "Managed policy version",
+      "credential_class": "resource-identifier",
+      "expected_rule_id": null
+    },
+    {
+      "case_id": "08-aipa-instance-profile",
+      "prefix": "AIPA",
+      "resource_type": "EC2 instance profile",
+      "credential_class": "resource-identifier",
+      "expected_rule_id": null
+    },
+    {
+      "case_id": "09-apka-public-key",
+      "prefix": "APKA",
+      "resource_type": "Public key",
+      "credential_class": "resource-identifier",
+      "expected_rule_id": null
+    },
+    {
+      "case_id": "10-asca-certificate",
+      "prefix": "ASCA",
+      "resource_type": "Certificate",
+      "credential_class": "resource-identifier",
+      "expected_rule_id": null
+    },
+    {
+      "case_id": "11-abia-service-bearer",
+      "prefix": "ABIA",
+      "resource_type": "AWS STS service bearer token access key ID",
+      "credential_class": "service-bearer-token-id",
+      "expected_rule_id": "aws-sts-service-bearer-token-id"
+    },
+    {
+      "case_id": "12-acca-context-specific",
+      "prefix": "ACCA",
+      "resource_type": "Context-specific credential",
+      "credential_class": "context-specific-credential-id",
+      "expected_rule_id": "aws-context-specific-credential-id"
+    },
+    {
+      "case_id": "13-invalid-prefix",
+      "prefix": "ZZZZ",
+      "resource_type": "Unrecognized identifier",
+      "credential_class": null,
+      "expected_rule_id": null
+    },
+    {
+      "case_id": "14-incorrect-length",
+      "prefix": "AKIA",
+      "body_length": 15,
+      "resource_type": "Truncated access-key identifier",
+      "credential_class": null,
+      "expected_rule_id": null
+    },
+    {
+      "case_id": "15-invalid-characters",
+      "prefix": "AKIA",
+      "body_suffix": "Q7Z3K5M2N4P6R8T-",
+      "resource_type": "Malformed access-key identifier",
+      "credential_class": null,
+      "expected_rule_id": null
+    },
+    {
+      "case_id": "16-documentation-placeholder",
+      "prefix": "AKIA",
+      "body_suffix": "IOSFODNN7EXAMPLE",
+      "resource_type": "AWS documentation example",
+      "credential_class": null,
+      "expected_rule_id": null
+    },
+    {
+      "case_id": "17-multiple-identifiers-one-line",
+      "prefixes": ["AKIA", "AIDA", "ASIA", "ABIA", "AGPA", "ACCA"],
+      "resource_type": "Mixed credential and resource identifiers on one line",
+      "credential_class": null,
+      "expected_rule_ids": [
+        "aws-access-key-id",
+        "aws-access-key-id",
+        "aws-sts-service-bearer-token-id",
+        "aws-context-specific-credential-id"
+      ]
+    },
+    {
+      "case_id": "18-resource-identifiers-iam-json",
+      "prefixes": ["AIDA", "AGPA", "AIPA", "ANPA", "ANVA", "APKA", "AROA", "ASCA"],
+      "format": "iam-json",
+      "resource_type": "IAM policy using ordinary resource identifiers",
+      "credential_class": "resource-identifier",
+      "expected_rule_ids": []
+    },
+    {
+      "case_id": "19-credential-in-iam-json",
+      "prefix": "AKIA",
+      "format": "iam-json",
+      "resource_type": "IAM policy containing an access-key identifier",
+      "credential_class": "access-key-id",
+      "expected_rule_id": "aws-access-key-id"
+    },
+    {
+      "case_id": "20-boundary-punctuation",
+      "prefix": "AKIA",
+      "format": "boundary",
+      "resource_type": "Access-key identifier adjacent to punctuation",
+      "credential_class": "access-key-id",
+      "expected_rule_id": "aws-access-key-id"
+    }
+  ],
+  "test_dimensions": {
+    "modes": ["whole", "stream"],
+    "strategies": ["regex", "regexset", "prefilter", "auto"],
+    "required_invariants": [
+      "resource identifiers produce no credential finding",
+      "AKIA and ASIA map only to aws-access-key-id",
+      "ABIA and ACCA map only to their distinct rules",
+      "invalid prefix, length, character set and documentation placeholder produce no finding",
+      "multiple identifiers on one line remain distinct occurrences",
+      "whole and streaming results are identical",
+      "all four strategy selections are equivalent"
+    ]
+  }
+}

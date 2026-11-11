@@ -218,8 +218,9 @@ class ScorerNegativeControlTests(unittest.TestCase):
             ],
         )
         self.assertEqual(report["metrics"]["ambiguous"], 1)
+        self.assertEqual(report["metrics"]["unscored_truth"], 2)
         self.assertEqual(report["metrics"]["tp"], 0)
-        self.assertEqual(report["metrics"]["fn"], 0)
+        self.assertEqual(report["metrics"]["fn"], 2)
 
     def test_missing_required_inspection_blocks_accuracy_claim(self):
         report = self.run_score(

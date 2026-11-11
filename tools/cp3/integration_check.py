@@ -17,6 +17,7 @@ from jsonschema import Draft202012Validator
 
 from tools.cp0.contracts import schema_registry, validate_records
 from tools.cp3.adapter import build_handoff
+from tools.cp3.challenge import build as build_challenge
 from tools.cp3.materialize import materialize
 from tools.cp3.score import score_files
 
@@ -207,23 +208,30 @@ def run_case(
 
 def run(binary: Path, handoff_dir: Path | None = None) -> dict:
     cases = []
+    dataset_groups = []
     with tempfile.TemporaryDirectory(prefix="rnc-cp3-fixtures-") as fixture_temp:
         tier2 = materialize("tier2", Path(fixture_temp))
         tier3 = materialize("tier3", Path(fixture_temp))
+        challenge_root = Path(fixture_temp) / "challenge"
+        build_challenge(challenge_root)
         for dataset_root, truth_path in (
             (tier2, ROOT / "tests/cp3/provider-truth-tier2.json"),
             (tier3, ROOT / "tests/cp3/provider-truth-tier3-heldout.json"),
+            (challenge_root, ROOT / "tests/cp3/independent-challenge-truth.json"),
         ):
+            group = []
             for mode in ("whole", "stream"):
                 for strategy in ("regex", "regexset", "prefilter", "auto"):
-                    cases.append(
+                    group.append(
                         run_case(binary, dataset_root, truth_path, mode, strategy, handoff_dir)
                     )
-    baseline = cases[0]["summary"]
-    equivalent = all(case["summary"] == baseline for case in cases[:8])
-    tier3_equivalent = all(case["summary"] == cases[8]["summary"] for case in cases[8:])
-    if not equivalent or not tier3_equivalent:
-        raise AssertionError("provider findings differ across modes or matching strategies")
+            baseline = group[0]["summary"]
+            if not all(case["summary"] == baseline for case in group):
+                raise AssertionError(
+                    f"provider findings differ across modes or strategies for {dataset_root.name}"
+                )
+            cases.extend(group)
+            dataset_groups.append(group)
     return {
         "integration": "CP3 provider catalog, byte truth and matching strategies",
         "cases": [
@@ -240,7 +248,11 @@ def run(binary: Path, handoff_dir: Path | None = None) -> dict:
             and case["metrics"]["fn"] == 0
             for case in cases
         ),
-        "backend_equivalent": equivalent and tier3_equivalent,
+        "backend_equivalent": all(
+            all(case["summary"] == group[0]["summary"] for case in group)
+            for group in dataset_groups
+        ),
+        "dataset_groups": len(dataset_groups),
         "external_corpora_executed": False,
         "scanner_accuracy_claim": (
             "Independent controlled provider-format fixtures only; not a real-world corpus claim."

@@ -18,7 +18,11 @@ class CP3SecurityTests(unittest.TestCase):
         self.assertEqual(result.get("findings", []), [])
 
     def test_fixture_truth_never_contains_raw_credential_text(self):
-        for name in ("provider-truth-tier2.json", "provider-truth-tier3-heldout.json"):
+        for name in (
+            "provider-truth-tier2.json",
+            "provider-truth-tier3-heldout.json",
+            "independent-challenge-truth.json",
+        ):
             document = json.loads((ROOT / "tests/cp3" / name).read_text(encoding="utf-8"))
             for item in document["items"]:
                 self.assertNotIn("text", item)

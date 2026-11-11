@@ -80,13 +80,13 @@ class ProviderCatalogTests(unittest.TestCase):
 
     def test_catalog_shape_and_digest(self):
         self.assertEqual(self.document["schema_version"], "0.2.0")
-        self.assertEqual(len(self.document["rules"]), 16)
+        self.assertEqual(len(self.document["rules"]), 19)
         self.assertEqual(
             len({rule["family"] for rule in self.document["rules"]}), 12
         )
         self.assertEqual(
             canonical_digest(self.document),
-            "sha256:e2900d9095a6f32240ea7a3e2e25e138fb5f57e35decc426efbd1e3d8f24a658",
+            "sha256:3ddd1e0aee36ecadb67ee8a2032fbe3a6047803bb56c0d45d65f85851c9b2142",
         )
 
     def test_every_rule_has_bounded_candidate_and_provenance(self):

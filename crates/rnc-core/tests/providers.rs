@@ -187,8 +187,8 @@ fn malformed_public_and_certificate_containers_are_not_private_key_findings() {
 #[test]
 fn provider_catalog_has_documented_bounds() {
     let rules = provider_rules();
-    assert_eq!(rules.rule_count(), 16);
-    assert_eq!(rules.provider_rule_count(), 16);
+    assert_eq!(rules.rule_count(), 19);
+    assert_eq!(rules.provider_rule_count(), 19);
     assert_eq!(rules.family_count(), 12);
     assert!(rules.max_match_bytes >= 31_000);
     assert!(rules.max_match_bytes <= 65_536);

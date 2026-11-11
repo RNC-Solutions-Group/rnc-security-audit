@@ -10,8 +10,10 @@ from __future__ import annotations
 
 import json
 import sys
+import tempfile
 from pathlib import Path
 
+from tools.cp3.challenge import build as build_challenge
 from tools.cp3.materialize import bundle_files
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -31,6 +33,11 @@ def raw_tokens() -> set[bytes]:
         tier = Path(document["source_root"]).name
         for item in document["items"]:
             data = contents[(tier, item["path"])]
+            tokens.add(data[item["start_byte"] : item["end_byte"]])
+    with tempfile.TemporaryDirectory(prefix="rnc-cp3-privacy-challenge-") as temporary:
+        root, document = build_challenge(Path(temporary))
+        for item in document["items"]:
+            data = (root / item["path"]).read_bytes()
             tokens.add(data[item["start_byte"] : item["end_byte"]])
     return tokens
 

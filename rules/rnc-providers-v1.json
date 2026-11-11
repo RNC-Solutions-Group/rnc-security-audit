@@ -1,17 +1,17 @@
 {
   "schema_version": "0.2.0",
   "ruleset_id": "rnc-providers-v1",
-  "ruleset_version": "2026.11.1",
+  "ruleset_version": "2026.11.2",
   "rules": [
     {
       "rule_id": "aws-access-key-id",
-      "rule_version": "2026.11.1",
+      "rule_version": "2026.11.2",
       "category": "cloud-credential",
       "provider": "aws",
       "family": "aws-credentials",
       "credential_type": "access-key-id",
       "context": "standalone",
-      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}((?:ABIA|ACCA|AGPA|AIDA|AIPA|AKIA|ANPA|ANVA|APKA|AROA|ASCA|ASIA)[A-Z0-9]{16})\\b",
+      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}((?:AKIA|ASIA)[A-Z0-9]{16})\\b",
       "capture_group": 1,
       "validators": [
         "ASCII_ONLY",
@@ -27,7 +27,62 @@
           "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html"
         ],
         "reviewed": "2026-11-11",
-        "notes": "Recognizes documented IAM unique-ID prefixes. Presence is not proof of an active credential."
+        "notes": "Recognizes only the documented AKIA access-key and ASIA temporary STS access-key identifier prefixes. Other IAM unique-ID prefixes are ordinary resource identifiers and are not access-key findings. Presence of an identifier is not proof of an active or usable credential."
+      }
+    },
+    {
+      "rule_id": "aws-sts-service-bearer-token-id",
+      "rule_version": "2026.11.2",
+      "category": "cloud-credential",
+      "provider": "aws",
+      "family": "aws-credentials",
+      "credential_type": "service-bearer-token-id",
+      "context": "standalone",
+      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}(ABIA[A-Z0-9]{16})\\b",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "AWS_SERVICE_BEARER_TOKEN_ID"
+      ],
+      "confidence": "medium",
+      "max_match_bytes": 128,
+      "max_candidate_bytes": 20,
+      "fixture_set": "tests/cp3/aws-identifier-taxonomy.json",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html",
+          "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_bearer.html"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "ABIA identifies the access key ID component of an AWS STS service bearer token. A bare identifier is not a complete usable bearer token; validity and scope are not established."
+      }
+    },
+    {
+      "rule_id": "aws-context-specific-credential-id",
+      "rule_version": "2026.11.2",
+      "category": "cloud-credential",
+      "provider": "aws",
+      "family": "aws-credentials",
+      "credential_type": "context-specific-credential-id",
+      "context": "standalone",
+      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}(ACCA[A-Z0-9]{16})\\b",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "AWS_CONTEXT_SPECIFIC_CREDENTIAL_ID"
+      ],
+      "confidence": "medium",
+      "max_match_bytes": 128,
+      "max_candidate_bytes": 20,
+      "fixture_set": "tests/cp3/aws-identifier-taxonomy.json",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "AWS documents ACCA only as a context-specific credential prefix. Public documentation does not define the complete credential or its usable scope, so this rule reports a sensitive identifier rather than an access key or proof of an active credential."
       }
     },
     {
@@ -167,13 +222,13 @@
     },
     {
       "rule_id": "github-oauth-app-token",
-      "rule_version": "2026.11.1",
+      "rule_version": "2026.11.2",
       "category": "developer-platform-credential",
       "provider": "github",
       "family": "github-token",
       "credential_type": "oauth-or-app-token",
       "context": "standalone",
-      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}(gh[ousr]_[A-Za-z0-9]{36,1008})\\b",
+      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}(gh[our]_[A-Za-z0-9]{36,1008})\\b",
       "capture_group": 1,
       "validators": [
         "ASCII_ONLY",
@@ -189,7 +244,36 @@
           "https://github.blog/changelog/2021-03-31-authentication-token-format-updates-are-generally-available/"
         ],
         "reviewed": "2026-11-11",
-        "notes": "Experimental family: covers documented gho_/ghu_/ghs_/ghr_ prefixes and bounded future length variants. Long variants are marked plausible, not verified."
+        "notes": "Covers documented gho_ OAuth, ghu_ user-to-server and ghr_ refresh token prefixes and bounded length variants. ghs_ installation tokens have a dedicated rule so legacy and stateless formats can be validated without conflating them with OAuth tokens."
+      }
+    },
+    {
+      "rule_id": "github-app-installation-token",
+      "rule_version": "2026.11.2",
+      "category": "developer-platform-credential",
+      "provider": "github",
+      "family": "github-token",
+      "credential_type": "app-installation-token",
+      "context": "standalone",
+      "pattern": "(?-u)(?:^|[^A-Za-z0-9_])(?:\\x1B\\[[0-9;]{1,8}m){0,4}(ghs_[A-Za-z0-9]{1,32}_[A-Za-z0-9_-]{8,2048}\\.[A-Za-z0-9_-]{8,2048}\\.[A-Za-z0-9_-]{8,2048}|ghs_[A-Za-z0-9]{36})(?:[^A-Za-z0-9._-]|$)",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "GITHUB_APP_INSTALLATION_TOKEN"
+      ],
+      "confidence": "high",
+      "max_match_bytes": 8192,
+      "max_candidate_bytes": 8192,
+      "fixture_set": "tests/fixtures/providers/challenge",
+      "provenance": {
+        "source": "provider-documentation",
+        "references": [
+          "https://github.blog/changelog/2026-10-02-stateless-github-app-installation-tokens-rolled-out/",
+          "https://github.blog/changelog/2026-05-15-github-app-installation-tokens-per-request-override-header/",
+          "https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-an-installation-access-token-for-a-github-app"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Recognizes legacy opaque ghs_ installation tokens and stateless ghs_APPID_JWT installation tokens. The stateless token is opaque to clients: only documented segment framing and alphabet are checked. No signature, issuer, claim, fixed length or online validity is assumed."
       }
     },
     {

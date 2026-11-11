@@ -158,8 +158,27 @@ def _same_line(root: Path, values: dict[str, bytes], count: int) -> dict:
     return _write(root, "same-line", data, count * 2)
 
 
+def _github_installation_token(seed: str) -> bytes:
+    def segment(tag: str) -> str:
+        return deterministic(
+            f"{seed}-{tag}",
+            "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789_-",
+            170,
+        )
+
+    return (
+        "ghs_24681357_"
+        + segment("header")
+        + "."
+        + segment("payload")
+        + "."
+        + segment("signature")
+    ).encode()
+
+
 def build_workloads(root: Path) -> list[dict]:
     values = _values_map()
+    installation = _github_installation_token("bench-installation")
     workloads = [
         _large(
             root,
@@ -194,6 +213,13 @@ def build_workloads(root: Path) -> list[dict]:
         _high_entropy(root, 4 * MIB),
         _multi_family(root, values, 64),
         _pem_heavy(root, values, 32),
+        _large(
+            root,
+            "github-installation-long",
+            4 * MIB,
+            b"token=" + installation + b"\n",
+            256,
+        ),
         _structured(root, values, 128),
         _same_line(root, values, 256),
     ]
