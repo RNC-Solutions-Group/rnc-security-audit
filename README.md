@@ -1,6 +1,6 @@
 # RNC Security Audit
 
-> **CP0–CP2 development package with final security hardening (11 November 2026).** A working Rust scanner exists with portable matching strategies, root-contained source acquisition, verified scope policy, exemptions, reconciled ledgers, atomic sanitized/private reporting and CI enforcement. No production deployment, security assessment, operator acceptance or release is claimed; no PR is merged.
+> **Development status — 11 November 2026:** CP0–CP2 provide a working, security-hardened Rust scanner; CP3 focuses on independent accuracy validation. The included rule bundles and passing detection scores are **synthetic test evidence**, not demonstrated real-world credential detection accuracy. No production deployment or public release is claimed.
 
 **RNC Security Audit** is the working home for RNC's security platform. Its first-party secret-detection component is **RNC Scanner**. The wider application will eventually coordinate independent security tools as well. **RNC Security Toolkit** remains the prospective name for a portable distribution, not another codebase.
 
@@ -23,7 +23,7 @@ A scan that correctly finds a secret **succeeded at detection**; the security as
 | **Reporting and status** | Reconciliation, redaction, one immutable final result classification, exports | Deciding which findings are real by changing detector output |
 | **CI acceptance** | Translating final classification into process exit status | Reclassifying a scan or deleting actionable findings |
 | **Independent harness** | Corpus truth, recall, precision, false positives, missed fixtures and execution correctness | Self-scoring by the production scanner |
-| **Security Audit orchestration** | Other scanners (Gitleaks, Trivy, Semgrep, ZAP, etc.), per-scanner readiness, runtime backends and authorized modes | Claiming that third-party adapter output came from RNC's own detector |
+| **Future audit orchestration** | Optional third-party security-tool adapters, readiness, authorized scanning modes and runtime selection | Claiming external findings came from RNC Scanner's first-party detector |
 
 The first-party engine is **secret/credential detection** initially. This is not a claim to implement all of the vulnerability, dependency, container, and active-web techniques of the future toolkit inside one detector. The orchestration designs already developed remain relevant to that broader product.
 
@@ -79,25 +79,35 @@ Reporting reconciles three independently verifiable, append-only logical records
 | [Configuration](docs/architecture/configuration.md) | Global/repository/CLI precedence, mandatory caps and legacy migration |
 | [Rule authoring](docs/implementation/cp1-rule-authoring.md) | Versioned data-only rule bundles and lifecycle |
 | [Language ADR](docs/architecture/adr-007-detector-language.md) | Rust selection and recorded Go tradeoffs |
-| [Historical foundation](docs/foundation/README.md) | Preserved original orchestration concept, workflows, bypass-report sketches and first Gitleaks proof |
 
 ## Development approach
 
-1. **Freeze interfaces and synthetic truth cases** before production detector work. *(CP0)*
-2. **Build the RNC Scanner engine first**: deterministic input, rule evaluation, normalized immutable detection events, baseline performance and provenance.
-3. **Build accountable reporting second** with policy, reconciliation, five results, redaction and CI acceptance wired through explicit contracts.
-4. **Validate independently** using a scanner-agnostic harness and known fixtures, then broaden rules and input adapters.
-5. **Reuse the original audit orchestration** when integrating third-party security tools, execution backends, and passive/active modes.
+1. **CP0 — establish trustworthy contracts.** Canonical input and finding identities, synthetic truth, independent grading and the detector-language decision.
+2. **CP1 — implement the first-party engine.** Rust rule evaluation, byte-accurate findings, bounded streaming and read-only acquisition.
+3. **CP2 — integrate detection with control and accountability.** Portable regex/RegexSet/Aho-Corasick strategies; policy, configuration, reporting, five-state outcomes, and security hardening.
+4. **CP3 — validate independently.** Strengthen the scanner-agnostic harness and measure detection correctness without allowing the production engine to grade itself.
+5. **Later — broaden based on evidence.** Real credential rules, additional input adapters, controlled backend experiments and optional third-party audit orchestration.
 
-The current Gitleaks modernization and independent scan-harness projects are valuable **comparators and test infrastructure**, not a dependency for designing the RNC engine and not a reason to copy its limitations.
+### Current implementation
 
-**CP2 hardening outcomes (11 November 2026):** atomic report publication with root containment; Unix `openat`/`renameat` and Windows handle-verified source/report operations; trusted-only CI broadening of `ACTIONABLE`; dynamically bounded glob matching and discovery budgets; content-bound policy digests; 78 Unix / 67 Windows Rust tests and all-strategy external scoring. See [CP2 validation](docs/implementation/cp2-validation.md).
+| Area | Status | Evidence |
+| --- | --- | --- |
+| Operating contracts (CP0) | Implemented | [CP0 audit report](docs/implementation/cp0-contract-validation.md) |
+| Rust detector (CP1) | Implemented; synthetic rule bundles | [CP1 validation](docs/implementation/cp1-validation.md) |
+| Adaptive matching, policies, reporting and hardening (CP2) | Implemented; CI validated | [CP2 validation](docs/implementation/cp2-validation.md) |
+| Independent real-world accuracy assessment (CP3) | Development focus; not yet claimed complete | [Roadmap](docs/roadmap.md) |
 
-**CP2 outcomes (11 November 2026):** one Rust scanner with reference regex, RegexSet and Aho-Corasick strategies; conservative `auto`; verified glob blocks; immutable exemptions; execution/detection/policy reconciliation; five-state results and CI exits; sanitized/private reports; production TOML configuration with mandatory global caps and legacy migration. All four strategies found **25/25 v1**, **13/13 v0** and **3/3 edge** expected findings and matched canonical output; the pinned external harness accepted every strategy's handoff at **25/25**. See [CP2 validation](docs/implementation/cp2-validation.md).
+The portable matching system includes a reference Rust regex strategy, a RegexSet-assisted strategy and an Aho-Corasick literal prefilter. All use the same rule, validator and finding contracts. Faster strategies are not promoted at the expense of finding equivalence.
 
-**CP1 outcomes (10 November 2026):** a Rust workspace (`rnc-core` + `rnc-cli`) implements authorized local discovery, strict source paths, versioned synthetic rule bundles, whole-file and bounded streaming matching, deterministic findings, v0.2 execution records and a safe CLI. It detects all **25/25 v1**, **13/13 v0** and **3/3 edge** expected findings in independent truth, and the pinned external harness scoring engine accepts the actual CP1 handoff at **25/25**. See [CP1 validation](docs/implementation/cp1-validation.md) and [rule authoring](docs/implementation/cp1-rule-authoring.md).
+The external scanner comparison harness is **independent test infrastructure**, not a detection dependency. Historical experiments with third-party tooling do not define the RNC Scanner engine or its results.
 
-**CP0 outcomes (10 November 2026):** contract revision `0.2.0` fixes impossible-result and coverage-accounting defects; the authored corpus expanded to 21 targets/26 markers/25 expected findings plus generated 1,000-target and large/oversize edge corpora; an independent synthetic harness grades controlled stub scenarios at **100%**; the pinned external harness scoring engine accepted the handoff; representative equivalent Go/Rust benchmarks selected **Rust** for the CP1 detector; and all three required CI lanes passed in [run 42905889622](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/42905889622), with Go tradeoffs preserved. Default CI acceptance remains `1,2`. [Decision register](docs/architecture/decisions.md) · [CP0 report](docs/implementation/cp0-contract-validation.md) · [ADR-007](docs/architecture/adr-007-detector-language.md).
+### Open platform-hardening work
+
+- [#7 — Windows handle-safe directory enumeration](https://github.com/RNC-Solutions-Group/rnc-security-audit/issues/7): remove the remaining path-based discovery race.
+- [#8 — Windows private-evidence ACL enforcement](https://github.com/RNC-Solutions-Group/rnc-security-audit/issues/8): apply and verify restrictive permissions rather than relying solely on inherited ACLs.
+- [#9 — OS-signal cancellation](https://github.com/RNC-Solutions-Group/rnc-security-audit/issues/9): terminate scans with trustworthy execution accounting and safe cleanup.
+
+These are tracked residual hardening requirements, **not claims that CP2 lacks source-content containment or that its CI failed**. See the [source-acquisition security design](docs/architecture/source-acquisition.md) for existing platform guarantees and limitations.
 
 ## Safety and implementation status
 
@@ -106,6 +116,8 @@ The current Gitleaks modernization and independent scan-harness projects are val
 - Target scope and active network testing require explicit authorization. Future red-team modes are separate from CI or passive source checks.
 - Disabled/optional checks and unavailable **required** checks have different coverage consequences; zero inspected required targets is never `CLEAN`.
 - No mandatory cloud service, GUI, database, AI summary, or auto-remediation is required for the first proof.
-- Development happens on feature branches and through PRs. **The operator merges**; CP0 and CP1 are stacked on separate branches, and no merge, deployment or active network test is authorized by this work.
+- Development happens on feature branches and through PRs. **The operator controls merges and deployments.** The completed development checkpoints are not, by themselves, approval for a production security release or active network testing.
 
-For historical context, the [original day-zero README](docs/foundation/orchestration-v0/project-readme.md) is preserved byte-for-byte. It described an orchestrator **without** a first-party detection engine; that is now a historical design, not the governing architecture.
+### Archived design history
+
+The [historical foundation](docs/foundation/README.md) and [original day-zero README](docs/foundation/orchestration-v0/project-readme.md) preserve the earlier third-party audit-orchestration concept. They are archives for design provenance, **not current implementation guidance or an alternate RNC Scanner product**.
