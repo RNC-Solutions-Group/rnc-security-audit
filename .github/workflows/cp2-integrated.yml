@@ -54,6 +54,7 @@ jobs:
       - run: python -m pip install --disable-pip-version-check --no-cache-dir -r requirements-cp0.txt
       - name: Install pinned Rust
         run: |
+          rustup toolchain uninstall 1.85.0 2>/dev/null || true
           rustup toolchain install 1.85.0 --profile minimal --component rustfmt,clippy
           rustup default 1.85.0
           rustc --version
