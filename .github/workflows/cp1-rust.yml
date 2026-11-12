@@ -2,6 +2,8 @@ name: CP1 Rust detection engine
 
 on:
   pull_request:
+    branches:
+      - main
     paths:
       - ".github/workflows/cp1-rust.yml"
       - "Cargo.toml"

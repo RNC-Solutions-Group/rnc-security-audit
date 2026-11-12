@@ -2,6 +2,8 @@ name: CP3 provider detection and accuracy
 
 on:
   pull_request:
+    branches:
+      - main
     paths:
       - ".github/workflows/cp3-provider.yml"
       - "Cargo.toml"
