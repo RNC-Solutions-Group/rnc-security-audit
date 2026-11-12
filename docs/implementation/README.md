@@ -10,7 +10,7 @@ This folder holds capability-proof briefs, test commands and verified outcomes. 
 | CP3 — provider intelligence and accuracy | **READY FOR OPERATOR MERGE; corrective review, controlled/external evidence and CI complete** | Provider catalog, AWS identifier taxonomy, GitHub installation tokens, byte-addressed independent truth, Tier 4 challenge, strategy equivalence, scoped external corpora and corrected one-to-one comparative Gitleaks evidence |
 | CP4 — detection expansion and Git history | **READY FOR OPERATOR REVIEW; CI complete** | Generic extraction, PEM/PGP representations, 37-rule catalog, read-only history adapter, occurrence and cross-platform tests |
 | CP4A — hardening and release preparation | **IMPLEMENTED; operator review pending** | Private password-component evidence, Windows private-report DACL, benchmark CI retirement, documentation and clean-extraction package smoke |
-| CP4B — contextual candidate validation | **IMPLEMENTED; CI and operator review pending** | Candidate context, assignment-syntax gate, `BASE` qualifiers, context-aware hex classification and exact-byte regression |
+| CP4B — contextual candidate validation | **IMPLEMENTED; CI complete; operator review pending** | Candidate context, assignment-syntax gate, `BASE` qualifiers, context-aware hex classification and exact-byte regression |
 | CP5 — orchestrator | **PARKED by operator direction** | No CP5 work authorized during CP4B |
 | CP6 — distribution | Deferred | Portable CLI without duplicated policy/detection logic |
 

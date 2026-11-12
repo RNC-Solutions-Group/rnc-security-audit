@@ -1,7 +1,7 @@
 # CP4B — contextual candidate validation
 
-> **Status:** Implementation, scanner-owned regression and local validation
-> complete; CI and operator review pending. CP4B is a focused COA 2 enhancement,
+> **Status:** Implementation, scanner-owned regression and CI validation
+> complete; operator review pending. CP4B is a focused COA 2 enhancement,
 > not a new detection framework or format parser. The independent harness owns
 > external accuracy evaluation; no scanner-side benchmark or accuracy claim is
 > made here.
@@ -202,7 +202,22 @@ Local results:
 | CP4A structured evidence | 4/4 integration + 6 unit tests |
 | Windows private-report ACL | PASS |
 
-CI and cross-platform results are recorded in the PR after the validation run.
+### CI and cross-platform evidence
+
+The code validation head `1b5fbff` passed all **32** PR checks:
+
+| Workflow | Run | Result |
+| --- | --- | --- |
+| CP0 contracts, corpus and harness | [43324852498](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/43324852498) | Success |
+| CP1 Rust detection engine | [43324852655](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/43324852655) | Success |
+| CP2 integrated scanner | [43324852636](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/43324852636) | Success |
+| CP3 provider detection and accuracy | [43324852630](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/43324852630) | Success |
+| CP4 detection expansion and history | [43324852518](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/43324852518) | Success, all 8 jobs |
+
+The matrix includes Ubuntu, Windows and macOS Rust tests, static musl builds,
+dependency audits, CP3 exact-byte integration, the retired-benchmark CI state,
+and Ubuntu/Windows development-package smoke. The documentation-only final head
+does not alter the scanner binary.
 
 ## Residual limitations
 
