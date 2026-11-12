@@ -1,0 +1,180 @@
+name: CP4 detection expansion and Git history
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/cp4-validation.yml"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "rust-toolchain.toml"
+      - "rustfmt.toml"
+      - "crates/**"
+      - "rules/**"
+      - "tests/**"
+      - "tools/cp1/**"
+      - "tools/cp3/**"
+      - "docs/contracts/rules/**"
+      - "docs/implementation/cp4-*.md"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/cp4-validation.yml"
+      - "crates/**"
+      - "rules/**"
+      - "tests/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: "1"
+
+concurrency:
+  group: cp4-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: "required: quality, detection, history and filesystem regressions"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --disable-pip-version-check --no-cache-dir -r requirements-cp0.txt
+      - name: Install pinned Rust
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal --component rustfmt,clippy
+          rustup default 1.85.0
+          rustc --version
+          cargo --version
+      - name: Formatting
+        run: cargo fmt --all -- --check
+      - name: Lint with warnings denied
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+      - name: Rust tests
+        run: cargo test --workspace --all-targets --locked
+      - name: Locked release build
+        run: cargo build --release --workspace --locked
+      - name: CP0 contracts
+        run: python -m unittest discover -s tests/cp0 -v
+      - name: CP1 synthetic rules
+        run: python -m unittest discover -s tests/cp1 -v
+      - name: CP3 provider and accuracy regressions
+        run: python -m unittest discover -s tests/cp3 -v
+      - name: Provider integration on every mode and strategy
+        run: |
+          cargo build --workspace --locked
+          python -m tools.cp3.integration_check \
+            --binary target/debug/rnc \
+            --output artifacts/cp4/integration.json
+      - name: Read-only Git history smoke test
+        run: |
+          set -euo pipefail
+          REPO="$RUNNER_TEMP/cp4-history"
+          rm -rf "$REPO"
+          mkdir -p "$REPO"
+          git -C "$REPO" init -q -b main
+          git -C "$REPO" config user.email cp4-ci@example.invalid
+          git -C "$REPO" config user.name "CP4 CI"
+          git -C "$REPO" config commit.gpgsign false
+          echo "clean" > "$REPO/README.md"
+          git -C "$REPO" add -A
+          git -C "$REPO" commit -qm clean
+          echo "KEY=RNC_SYNTH_KEY_GENERIC_CI_HISTORY" > "$REPO/app.env"
+          git -C "$REPO" add -A
+          git -C "$REPO" commit -qm introduce
+          git -C "$REPO" rm -q app.env
+          git -C "$REPO" commit -qm remove
+          BEFORE=$(git -C "$REPO" rev-parse HEAD)
+          target/debug/rnc scan \
+            --history \
+            --root "$REPO" \
+            --rules rules/rnc-synthetic-v1.json \
+            --format sanitized \
+            --output "$RUNNER_TEMP/cp4-history-sanitized.json" \
+            --run-id cp4-ci-history \
+            --mode stream \
+            --strategy prefilter \
+            --accept-result 3
+          AFTER=$(git -C "$REPO" rev-parse HEAD)
+          test "$BEFORE" = "$AFTER"
+          test -z "$(git -C "$REPO" status --porcelain)"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          document = json.loads(Path(os.environ["RUNNER_TEMP"], "cp4-history-sanitized.json").read_text())
+          assert document["result_code"] == 3, document
+          assert document["history"]["commits"] == 3, document
+          assert document["history"]["deleted_paths"] == 1, document
+          assert "history" in document
+          PY
+      - name: Privacy check on public evidence
+        run: |
+          python -m tools.cp3.privacy_check | tee artifacts/cp4/privacy.json
+      - name: Upload sanitized CP4 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cp4-validation-evidence
+          path: |
+            artifacts/cp4/integration.json
+            artifacts/cp4/privacy.json
+          if-no-files-found: warn
+          retention-days: 90
+
+  cross-platform:
+    name: "required: ${{ matrix.os }} tests"
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Rust
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+          rustc --version
+      - name: Build and test
+        run: |
+          cargo build --release --workspace --locked
+          cargo test --workspace --all-targets --locked
+
+  static-musl:
+    name: "required: static Linux musl build"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Rust and musl target
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+          rustup target add x86_64-unknown-linux-musl
+      - run: cargo build --release --locked --target x86_64-unknown-linux-musl
+      - run: file target/x86_64-unknown-linux-musl/release/rnc
+
+  dependency-audit:
+    name: "required: dependency advisory audit"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Rust
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+      - run: cargo install cargo-audit --locked --version 0.22.1
+      - run: cargo audit --deny warnings
