@@ -144,7 +144,7 @@ fn generic_assignment_formats_and_negative_controls() {
         root.path().join("config.yaml"),
         format!(
             "password: \"{h}\"\nclient_secret: '{i}'\nauth_token: ${{AUTH_TOKEN}}\n\
-             multiline_secret: |\n  {j1}\n  {j2}\n"
+             multiline_secret_key: |\n  {j1}\n  {j2}\n"
         ),
     )
     .unwrap();

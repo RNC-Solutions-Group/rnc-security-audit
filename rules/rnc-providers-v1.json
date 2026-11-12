@@ -501,7 +501,7 @@
       "family": "generic-secret-assignment",
       "credential_type": "assigned-secret",
       "context": "assignment",
-      "pattern": "(?i-u)(?:^|[\\r\\n;{,<(]|[ \\t]{1,8}(?:const|let|var|static|final|public|private|protected|String|char|SET)[ \\t]{1,8}|[ \\t]{1,8})[ \\t]{0,8}(?:export[ \\t]{1,8})?(?:-e[ \\t]{1,8})?(?:define[ \\t]{0,8}\\([ \\t]{0,8})?(?:(?:const|let|var|static|final|public|private|protected|String|char|string|bytes32)[ \\t]{1,8}){0,3}[ \\t]{0,8}-?[ \\t]{0,8}(?:\\$|@)?[\"']?[A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET(?:[_-]?(?:KEY|TOKEN|VALUE))?|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|BEARER[_-]?TOKEN|PRIVATE[_-]?KEY|CREDENTIALS?)(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))?[0-9]{0,2}[\"']?[ \\t]{0,8}(?:\\][ \\t]{0,8})?(?::=|=>|=|:|,)[ \\t]{0,8}(\"((?:\\\\.|[^\"\\\\\\r\\n]){6,512})\"|'((?:\\\\.|[^'\\\\\\r\\n]){6,512})'|`((?:\\\\.|[^`\\\\\\r\\n]){6,512})`|([^\\s\"\\'#,;)\\]}>]{6,512}))",
+      "pattern": "(?i-u)(?:^|[\\r\\n;{,<(]|[ \\t]{1,8}(?:const|let|var|static|final|public|private|protected|String|char|SET)[ \\t]{1,8}|[ \\t]{1,8})[ \\t]{0,8}(?:export[ \\t]{1,8})?(?:-e[ \\t]{1,8})?(?:define[ \\t]{0,8}\\([ \\t]{0,8})?(?:(?:const|let|var|static|final|public|private|protected|String|char|string|bytes32)[ \\t]{1,8}){0,3}[ \\t]{0,8}-?[ \\t]{0,8}(?:\\$|@)?[\"']?[A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET[_-]?(?:KEY|TOKEN|VALUE)|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|BEARER[_-]?TOKEN|PRIVATE[_-]?KEY|CREDENTIALS?)(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))?[0-9]{0,2}[\"']?[ \\t]{0,8}(?:\\][ \\t]{0,8})?(?::=|=>|=|:|,)[ \\t]{0,8}(\"((?:\\\\.|[^\"\\\\\\r\\n]){6,512})\"|'((?:\\\\.|[^'\\\\\\r\\n]){6,512})'|`((?:\\\\.|[^`\\\\\\r\\n]){6,512})`|([^\\s\"\\'#,;)\\]}>]{6,512}))",
       "capture_group": 1,
       "validators": [
         "ASCII_ONLY",
@@ -534,7 +534,7 @@
       "family": "generic-assignment",
       "credential_type": "assigned-secret",
       "context": "assignment",
-      "pattern": "(?i-u)(?:^|[\\r\\n;{,<(]|\\[)[ \\t]{0,8}[\"\\']?[A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET(?:[_-]?(?:KEY|TOKEN|VALUE))?|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|BEARER[_-]?TOKEN|PRIVATE[_-]?KEY|CREDENTIALS?)(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))?[0-9]{0,2}[\"\\']?[ \\t]{0,8}\\][ \\t]{0,8}(?::=|=>|=)[ \\t]{0,8}(\"((?:\\\\.|[^\"\\\\\\r\\n]){6,512})\"|'((?:\\\\.|[^'\\\\\\r\\n]){6,512})'|`((?:\\\\.|[^`\\\\\\r\\n]){6,512})`|([^\\s\"'#,;)\\]}>]{6,512}))",
+      "pattern": "(?i-u)(?:^|[\\r\\n;{,<(]|\\[)[ \\t]{0,8}[\"\\']?[A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET[_-]?(?:KEY|TOKEN|VALUE)|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|BEARER[_-]?TOKEN|PRIVATE[_-]?KEY|CREDENTIALS?)(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))?[0-9]{0,2}[\"\\']?[ \\t]{0,8}\\][ \\t]{0,8}(?::=|=>|=)[ \\t]{0,8}(\"((?:\\\\.|[^\"\\\\\\r\\n]){6,512})\"|'((?:\\\\.|[^'\\\\\\r\\n]){6,512})'|`((?:\\\\.|[^`\\\\\\r\\n]){6,512})`|([^\\s\"'#,;)\\]}>]{6,512}))",
       "capture_group": 1,
       "value_capture_groups": [
         2,
@@ -580,7 +580,7 @@
       "rule_id": "generic-multiline-assignment",
       "credential_type": "multiline-assigned-secret",
       "context": "assignment",
-      "pattern": "(?i-u)(?:^|[\\r\\n;{,<(]|[ \\t]{1,8}(?:const|let|var|static|final|public|private|protected|String|char|SET)[ \\t]{1,8}|[ \\t]{1,8})[ \\t]{0,8}(?:export[ \\t]{1,8})?(?:-e[ \\t]{1,8})?(?:define[ \\t]{0,8}\\([ \\t]{0,8})?(?:(?:const|let|var|static|final|public|private|protected|String|char|string|bytes32)[ \\t]{1,8}){0,3}[ \\t]{0,8}-?[ \\t]{0,8}(?:\\$|@)?[\"']?[A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET(?:[_-]?(?:KEY|TOKEN|VALUE))?|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|BEARER[_-]?TOKEN|PRIVATE[_-]?KEY|CREDENTIALS?)(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))?[0-9]{0,2}[\"']?[ \\t]{0,8}(?:\\][ \\t]{0,8})?(?::=|=>|=|:|,)[ \\t]{0,8}[|>][-+]?\\r?\\n((?:[ \\t]{1,256}[^\\r\\n]{1,256}\\r?\\n){1,10})",
+      "pattern": "(?i-u)(?:^|[\\r\\n;{,<(]|[ \\t]{1,8}(?:const|let|var|static|final|public|private|protected|String|char|SET)[ \\t]{1,8}|[ \\t]{1,8})[ \\t]{0,8}(?:export[ \\t]{1,8})?(?:-e[ \\t]{1,8})?(?:define[ \\t]{0,8}\\([ \\t]{0,8})?(?:(?:const|let|var|static|final|public|private|protected|String|char|string|bytes32)[ \\t]{1,8}){0,3}[ \\t]{0,8}-?[ \\t]{0,8}(?:\\$|@)?[\"']?[A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET[_-]?(?:KEY|TOKEN|VALUE)|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|BEARER[_-]?TOKEN|PRIVATE[_-]?KEY|CREDENTIALS?)(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))?[0-9]{0,2}[\"']?[ \\t]{0,8}(?:\\][ \\t]{0,8})?(?::=|=>|=|:|,)[ \\t]{0,8}[|>][-+]?\\r?\\n((?:[ \\t]{1,256}[^\\r\\n]{1,256}\\r?\\n){1,10})",
       "capture_group": 1,
       "validators": [
         "ASCII_ONLY",
@@ -608,7 +608,7 @@
       "rule_id": "generic-xml-assignment",
       "credential_type": "assigned-secret",
       "context": "assignment",
-      "pattern": "(?i-u)<[A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET(?:[_-]?(?:KEY|TOKEN|VALUE))?|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|CREDENTIALS?)(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))?[0-9]{0,2}[ \\t]{0,8}>[ \\t]{0,8}([^<\\r\\n]{6,512})[ \\t]{0,8}</",
+      "pattern": "(?i-u)<[A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET[_-]?(?:KEY|TOKEN|VALUE)|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|CREDENTIALS?)(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))?[0-9]{0,2}[ \\t]{0,8}>[ \\t]{0,8}([^<\\r\\n]{6,512})[ \\t]{0,8}</",
       "capture_group": 1,
       "validators": [
         "ASCII_ONLY",

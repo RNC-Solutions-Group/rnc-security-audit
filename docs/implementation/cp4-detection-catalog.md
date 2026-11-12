@@ -8,7 +8,7 @@ Ruleset: [`rules/rnc-providers-v1.json`](../../../rules/rnc-providers-v1.json)
 Schema: [`provider-rule-bundle.schema.json`](../../contracts/rules/provider-rule-bundle.schema.json)  
 Rules: **37** across **22 families**  
 Ruleset version: `2026.11.3`  
-Current digest: `sha256:3719a19d9b589ada93f7a1a9d75279dd9d275edb2d43ecc5af68c7d3f5b4573d`
+Current digest: `sha256:4956b11f44090d472aa9254ed6489cf3dcf24e01816d724a07123703e6e1dc7e`
 
 The digest binds every rule's provider/family/credential/context metadata,
 `value_capture_groups`, fixture set and provenance. Existing CP3 synthetic

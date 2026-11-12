@@ -42,7 +42,7 @@ the independent harness.
 
 - Provider schema `0.2.0`; ruleset `2026.11.3`.
 - **37 rules / 22 families**; digest
-  `sha256:3719a19d9b589ada93f7a1a9d75279dd9d275edb2d43ecc5af68c7d3f5b4573d`.
+  `sha256:4956b11f44090d472aa9254ed6489cf3dcf24e01816d724a07123703e6e1dc7e`.
 - Every rule has a finite match bound and declared candidate bound.
 - `value_capture_groups` lets one rule extract mutually exclusive quoted/unquoted
   values without including delimiters in the finding. The existing
