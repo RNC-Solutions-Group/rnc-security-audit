@@ -16,6 +16,7 @@ use crate::finding::{
     build_finding, line_count, line_end_for_range, line_for_offset, Finding, LineIndex,
 };
 use crate::path::sha256_hex;
+use crate::structured::{extract_component, StructuredComponent};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ScanMode {
@@ -257,6 +258,7 @@ fn open_contained(root: &Path, locator: &str) -> std::io::Result<File> {
 #[derive(Debug)]
 pub struct ScanFileResult {
     pub findings: Vec<Finding>,
+    pub components: Vec<StructuredComponent>,
     pub content_sha256: String,
     pub line_count: usize,
     pub bytes_read: u64,
@@ -327,6 +329,7 @@ pub fn scan_content(
     }
     let line_index = LineIndex::new(data);
     let mut findings = Vec::new();
+    let mut components = Vec::new();
     let mut seen = HashSet::new();
     match config.mode {
         ScanMode::Whole | ScanMode::Auto => {
@@ -340,6 +343,7 @@ pub fn scan_content(
                     run_id,
                     plan,
                     &mut findings,
+                    &mut components,
                     &mut seen,
                     config.max_findings,
                     true,
@@ -366,6 +370,7 @@ pub fn scan_content(
                     run_id,
                     plan,
                     &mut findings,
+                    &mut components,
                     &mut seen,
                     config.max_findings,
                     end == data.len(),
@@ -380,6 +385,7 @@ pub fn scan_content(
     }
     Ok(ScanFileResult {
         findings,
+        components,
         content_sha256: sha256_hex(data),
         line_count: line_count(data),
         bytes_read: data.len() as u64,
@@ -438,6 +444,7 @@ fn scan_whole(
         return Err(FileScanError::Timeout);
     }
     let mut findings = Vec::new();
+    let mut components = Vec::new();
     let mut seen = HashSet::new();
     let line_index = LineIndex::new(&data);
     scan_window(
@@ -449,6 +456,7 @@ fn scan_whole(
         run_id,
         plan,
         &mut findings,
+        &mut components,
         &mut seen,
         config.max_findings,
         true,
@@ -456,6 +464,7 @@ fn scan_whole(
     )?;
     Ok(ScanFileResult {
         findings,
+        components,
         content_sha256: sha256_hex(&data),
         line_count: line_count(&data),
         bytes_read: data.len() as u64,
@@ -486,6 +495,7 @@ fn scan_stream(
     let mut hasher = Sha256::new();
     let mut counter = LineCounter::default();
     let mut findings = Vec::new();
+    let mut components = Vec::new();
     let mut seen = HashSet::new();
     loop {
         if Instant::now() >= config.deadline {
@@ -516,6 +526,7 @@ fn scan_stream(
             run_id,
             plan,
             &mut findings,
+            &mut components,
             &mut seen,
             config.max_findings,
             false,
@@ -542,6 +553,7 @@ fn scan_stream(
             run_id,
             plan,
             &mut findings,
+            &mut components,
             &mut seen,
             config.max_findings,
             true,
@@ -562,6 +574,7 @@ fn scan_stream(
     }
     Ok(ScanFileResult {
         findings,
+        components,
         content_sha256: format!("sha256:{}", hex::encode(hasher.finalize())),
         line_count: counter.finish(),
         bytes_read,
@@ -578,6 +591,7 @@ fn scan_window(
     run_id: &str,
     plan: &MatchPlan,
     findings: &mut Vec<Finding>,
+    components: &mut Vec<StructuredComponent>,
     seen: &mut HashSet<(String, usize, usize)>,
     max_findings: usize,
     final_window: bool,
@@ -695,6 +709,18 @@ fn scan_window(
             absolute_end,
             &finding.evidence_digest,
         );
+        if let Some(extractor) = rule.definition.component_extractor.as_deref() {
+            if let Some(component) = extract_component(
+                extractor,
+                candidate_bytes,
+                absolute_start,
+                &finding.finding_id,
+                unit_id,
+                line,
+            ) {
+                components.push(component);
+            }
+        }
         findings.push(finding);
         if findings.len() > max_findings {
             return Err(FileScanError::FindingsLimit);

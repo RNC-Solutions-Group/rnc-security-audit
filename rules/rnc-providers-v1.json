@@ -1,7 +1,7 @@
 {
   "schema_version": "0.2.0",
   "ruleset_id": "rnc-providers-v1",
-  "ruleset_version": "2026.11.3",
+  "ruleset_version": "2026.11.4",
   "rules": [
     {
       "rule_id": "aws-access-key-id",
@@ -474,6 +474,7 @@
       "family": "database-connection-string",
       "credential_type": "connection-uri-userinfo",
       "context": "uri",
+      "component_extractor": "database-uri-password",
       "pattern": "(?i-u)\\b(?:postgres(?:ql)?|mysql|mariadb|mongodb(?:\\+srv)?|redis|rediss|amqp|amqps)://([^:\\s/@]{1,64}:[^@\\s/\"']{1,128})@[A-Za-z0-9._~%:\\-\\[\\]]{1,255}",
       "capture_group": 1,
       "validators": [
@@ -490,7 +491,7 @@
           "https://www.rfc-editor.org/rfc/rfc3986"
         ],
         "reviewed": "2026-11-11",
-        "notes": "Captures only userinfo with a password; ordinary database URLs without credentials do not match."
+        "notes": "Captures only userinfo with a password; ordinary database URLs without credentials do not match. Private reports derive a bounded password-component range and digests without changing this primary evidence span."
       }
     },
     {

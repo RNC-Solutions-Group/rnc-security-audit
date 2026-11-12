@@ -53,7 +53,7 @@ therefore needs explicit candidate bounds, not just a regex.
 ## Validation
 
 - `rules/rnc-providers-v1.json` validates against
-  [`provider-rule-bundle.schema.json`](../../contracts/rules/provider-rule-bundle.schema.json).
+  [`provider-rule-bundle.schema.json`](../contracts/rules/provider-rule-bundle.schema.json).
 - Independent truth is authored outside the scanner root and verified against
   source bytes.
 - Tier 2/3 fixtures are scored by exact byte range under `whole`/`stream` and

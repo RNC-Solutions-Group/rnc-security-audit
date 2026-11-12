@@ -139,44 +139,6 @@ jobs:
           if-no-files-found: warn
           retention-days: 90
 
-  benchmark:
-    name: "required: provider catalog benchmark"
-    runs-on: ubuntu-24.04
-    timeout-minutes: 45
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - run: python -m pip install --disable-pip-version-check --no-cache-dir -r requirements-cp0.txt
-      - name: Install pinned Rust
-        run: |
-          rustup toolchain install 1.85.0 --profile minimal
-          rustup default 1.85.0
-      - name: Build release scanner
-        run: |
-          mkdir -p artifacts/cp3
-          START=$(date +%s%N)
-          cargo build --release --workspace --locked
-          END=$(date +%s%N)
-          python -c "print(round((int('$END') - int('$START')) / 1e9, 3))" > artifacts/cp3/bench-build-seconds.txt
-          sha256sum target/release/rnc | awk '{print $1}' > artifacts/cp3/bench-binary.sha256
-      - name: Benchmark every strategy and mode
-        run: |
-          python -m tools.cp3.bench \
-            --binary target/release/rnc \
-            --runs 3 \
-            --build-seconds "$(cat artifacts/cp3/bench-build-seconds.txt)" \
-            --binary-sha256 "$(cat artifacts/cp3/bench-binary.sha256)" \
-            --output artifacts/cp3/bench.json
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: cp3-benchmark-evidence
-          path: artifacts/cp3/bench.json
-          if-no-files-found: warn
-          retention-days: 90
-
   cross-platform:
     name: "required: ${{ matrix.os }} build and tests"
     runs-on: ${{ matrix.os }}

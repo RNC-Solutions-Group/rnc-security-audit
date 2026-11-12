@@ -18,6 +18,7 @@ pub mod policy;
 pub mod result;
 pub mod rules;
 pub mod stream;
+pub mod structured;
 pub mod validate;
 
 pub use backend::{BackendRequest, PlanProvenance};
@@ -34,3 +35,4 @@ pub use policy::{PolicyRecord, PolicySpec};
 pub use result::{CiDecision, ResultRecord};
 pub use rules::{LoadedBundle, RuleBundle};
 pub use stream::ScanMode;
+pub use structured::{StructuredComponent, StructuredEvidence};

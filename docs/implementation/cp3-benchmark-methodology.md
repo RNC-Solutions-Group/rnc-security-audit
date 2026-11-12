@@ -1,7 +1,10 @@
 # CP3 benchmark methodology
 
-> Performance is accepted only after the measured run produces the expected
-> finding count. A faster scan with a missing family is a failure, not a result.
+> **Historical CP3 evidence; internal benchmark CI retired in CP4A.** Detection
+> accuracy, comparative evaluation and performance benchmarking are owned by
+> the independent RNC Scanner Harness. `tools/cp3/bench.py` and the recorded CP3
+> results are preserved for historical traceability, not routine required CI.
+> A faster scan with a missing family was never accepted as a result.
 
 ## Harness
 

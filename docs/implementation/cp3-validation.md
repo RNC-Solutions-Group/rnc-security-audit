@@ -2,8 +2,11 @@
 
 > **Historical CP3 evidence.** CP3 was merged into the authorized CP4 baseline.
 > CP4 now provides a read-only Git-history adapter and a 37-rule catalog; those
-> later capabilities do not change this CP3 evidence. See
-> [CP4 validation](cp4-validation.md).
+> later capabilities do not change this CP3 evidence. CP4A retired the internal
+> benchmark job from routine CI; this report and its measured results remain as
+> historical evidence, while the independent harness owns future benchmarking.
+> See [CP4 validation](cp4-validation.md) and
+> [CP4A hardening](cp4a-hardening.md).
 
 > **Status:** CP3 corrective review complete; **READY FOR OPERATOR MERGE**.
 > Provider format recognition is not proof of an active, authorized, complete or

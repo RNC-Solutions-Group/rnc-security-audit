@@ -25,6 +25,7 @@ def _rule_value(rule: dict, schema_version: str) -> dict:
             "family",
             "credential_type",
             "context",
+            "component_extractor",
             "max_candidate_bytes",
             "fixture_set",
             "provenance",

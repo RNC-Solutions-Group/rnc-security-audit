@@ -4,15 +4,17 @@
 > that a credential is active, complete, authorized or non-revoked. All
 > validators are offline; no provider API is called.
 
-Ruleset: [`rules/rnc-providers-v1.json`](../../../rules/rnc-providers-v1.json)  
-Schema: [`provider-rule-bundle.schema.json`](../../contracts/rules/provider-rule-bundle.schema.json)  
+Ruleset: [`rules/rnc-providers-v1.json`](../../rules/rnc-providers-v1.json)<br>
+Schema: [`provider-rule-bundle.schema.json`](../contracts/rules/provider-rule-bundle.schema.json)
 Rules: **37** across **22 families**  
-Ruleset version: `2026.11.3`  
-Current digest: `sha256:4956b11f44090d472aa9254ed6489cf3dcf24e01816d724a07123703e6e1dc7e`
+Ruleset version: `2026.11.4`<br>
+Current digest: `sha256:dc1ab16f64a5dfb91262b46f321a9f5b219a13ed3bfb49e0f79c067de40bbc0f`
 
 The digest binds every rule's provider/family/credential/context metadata,
-`value_capture_groups`, fixture set and provenance. Existing CP3 synthetic
-bundles and their historical truth are unchanged.
+`value_capture_groups`, optional `component_extractor`, fixture set and
+provenance. Existing CP3 synthetic bundles and their historical truth are
+unchanged. The database rule's primary finding span and digest are unchanged;
+the extractor only supplies private supplementary evidence.
 
 ## What CP4 added
 
@@ -78,6 +80,11 @@ regression suite or, for CP3 rules, the controlled Tier 2/3/challenge suites.
 | Generic | `generic-assignment` | `http-bearer-opaque` | opaque Bearer token | `HTTP_BEARER_OPAQUE` | low | 1 / 3 | Implemented; plausible only |
 | Generic | `generic-assignment` | `credential-url-userinfo` | URL userinfo | `URL_USERINFO` | low | 1 / 3 | Implemented; plausible only |
 | Database | `database-connection-string` | `database-connection-credential` | URI userinfo | `DATABASE_URI` | medium | 3 / 5 | Experimental |
+
+CP4A adds a private-only password component for the database row without
+changing its contextual finding or classification. ANSI SGR-normalized
+component hashes, source offsets and privacy semantics are documented in
+[CP4A hardening](cp4a-hardening.md).
 
 The generic family has two family names for historical compatibility:
 `generic-secret-assignment` is the CP3 rule identity, and `generic-assignment`

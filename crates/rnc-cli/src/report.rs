@@ -347,6 +347,7 @@ impl ReportDestination {
         const GENERIC_READ: u32 = 0x8000_0000;
         const GENERIC_WRITE: u32 = 0x4000_0000;
         const DELETE: u32 = 0x0001_0000;
+        const READ_CONTROL: u32 = 0x0002_0000;
         const FILE_SHARE_READ: u32 = 0x1;
         const FILE_SHARE_WRITE: u32 = 0x2;
         const FILE_SHARE_DELETE: u32 = 0x4;
@@ -425,6 +426,19 @@ impl ReportDestination {
             ));
         }
 
+        let mut private_acl = if self.private {
+            Some(windows_private_acl::PrivateAcl::create().map_err(ReportError)?)
+        } else {
+            None
+        };
+        let mut security_attributes = private_acl
+            .as_mut()
+            .map(windows_private_acl::PrivateAcl::attributes);
+        let security_pointer = security_attributes
+            .as_mut()
+            .map_or(std::ptr::null_mut(), |attributes| {
+                attributes as *mut windows_private_acl::SecurityAttributes as *mut c_void
+            });
         let temp_path = self.parent.join(format!(
             ".rnc-report-{}-{}.tmp",
             std::process::id(),
@@ -434,9 +448,9 @@ impl ReportDestination {
         let temp_handle = unsafe {
             CreateFileW(
                 temp_name.as_ptr(),
-                GENERIC_WRITE | DELETE,
+                GENERIC_WRITE | DELETE | READ_CONTROL,
                 FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-                std::ptr::null_mut(),
+                security_pointer,
                 CREATE_NEW,
                 FILE_ATTRIBUTE_NORMAL,
                 std::ptr::null_mut(),
@@ -455,6 +469,10 @@ impl ReportDestination {
                 return Err(ReportError(
                     "temporary report escaped the validated parent".to_string(),
                 ));
+            }
+            if let Some(acl) = &private_acl {
+                acl.verify_handle(file.as_raw_handle())
+                    .map_err(ReportError)?;
             }
             file.write_all(payload)
                 .and_then(|_| file.write_all(b"\n"))
@@ -519,6 +537,451 @@ impl ReportDestination {
             .map_err(|error| ReportError(format!("cannot write temporary report: {error}")))?;
         fs::rename(&temp, &self.path)
             .map_err(|error| ReportError(format!("cannot publish report: {error}")))
+    }
+}
+
+/// Explicit Windows DACL for private report files.
+///
+/// The private temporary file is created with this security descriptor rather
+/// than inheriting the destination directory. The protected DACL grants full
+/// control only to the current user, LocalSystem and the built-in
+/// Administrators group. It is verified on the opened handle before payload
+/// bytes are written. The same file object is then renamed into place, so the
+/// final report keeps the restrictive descriptor.
+#[cfg(windows)]
+mod windows_private_acl {
+    use std::ffi::{c_void, OsStr};
+    use std::fmt::Write as _;
+    use std::os::windows::ffi::OsStrExt;
+
+    type Handle = *mut c_void;
+
+    const TOKEN_QUERY: u32 = 0x0008;
+    const TOKEN_USER_CLASS: u32 = 1;
+    const SE_FILE_OBJECT: i32 = 1;
+    const DACL_SECURITY_INFORMATION: u32 = 0x0000_0004;
+    const SE_DACL_PRESENT: u16 = 0x0004;
+    const SE_DACL_PROTECTED: u16 = 0x1000;
+    const ACCESS_ALLOWED_ACE_TYPE: u8 = 0;
+    const INHERITED_ACE: u8 = 0x10;
+    const FILE_ALL_ACCESS: u32 = 0x001f_01ff;
+    const ERROR_SUCCESS: u32 = 0;
+    const SDDL_REVISION_1: u32 = 1;
+
+    const SYSTEM_SID: &str = "S-1-5-18";
+    const ADMINISTRATORS_SID: &str = "S-1-5-32-544";
+
+    #[repr(C)]
+    pub struct SecurityAttributes {
+        pub length: u32,
+        pub security_descriptor: *mut c_void,
+        pub inherit_handle: i32,
+    }
+
+    #[repr(C)]
+    struct SidAndAttributes {
+        sid: *mut c_void,
+        attributes: u32,
+    }
+
+    #[repr(C)]
+    struct TokenUser {
+        user: SidAndAttributes,
+    }
+
+    #[repr(C)]
+    struct AceHeader {
+        ace_type: u8,
+        ace_flags: u8,
+        ace_size: u16,
+    }
+
+    #[repr(C)]
+    struct AccessAllowedAce {
+        header: AceHeader,
+        mask: u32,
+        sid_start: u32,
+    }
+
+    struct OwnedHandle(Handle);
+
+    impl Drop for OwnedHandle {
+        fn drop(&mut self) {
+            if !self.0.is_null() {
+                unsafe { CloseHandle(self.0) };
+            }
+        }
+    }
+
+    struct LocalMemory(*mut c_void);
+
+    impl Drop for LocalMemory {
+        fn drop(&mut self) {
+            if !self.0.is_null() {
+                unsafe { LocalFree(self.0) };
+            }
+        }
+    }
+
+    pub struct PrivateAcl {
+        descriptor: *mut c_void,
+        allowed: std::collections::BTreeSet<String>,
+    }
+
+    impl PrivateAcl {
+        pub fn create() -> Result<Self, String> {
+            let user_sid = current_user_sid()?;
+            let allowed = std::collections::BTreeSet::from([
+                user_sid,
+                SYSTEM_SID.to_string(),
+                ADMINISTRATORS_SID.to_string(),
+            ]);
+            let mut aces = String::new();
+            for sid in &allowed {
+                let _ = write!(aces, "(A;;FA;;;{sid})");
+            }
+            let sddl = format!("D:P{aces}");
+            let sddl_wide = wide(OsStr::new(&sddl));
+            let mut descriptor: *mut c_void = std::ptr::null_mut();
+            let mut size = 0u32;
+            let converted = unsafe {
+                ConvertStringSecurityDescriptorToSecurityDescriptorW(
+                    sddl_wide.as_ptr(),
+                    SDDL_REVISION_1,
+                    &mut descriptor,
+                    &mut size,
+                )
+            };
+            if converted == 0 || descriptor.is_null() {
+                return Err(format!(
+                    "cannot construct private-report security descriptor: {}",
+                    std::io::Error::last_os_error()
+                ));
+            }
+            Ok(Self {
+                descriptor,
+                allowed,
+            })
+        }
+
+        pub fn attributes(&mut self) -> SecurityAttributes {
+            SecurityAttributes {
+                length: std::mem::size_of::<SecurityAttributes>() as u32,
+                security_descriptor: self.descriptor,
+                inherit_handle: 0,
+            }
+        }
+
+        pub fn verify_handle(&self, handle: Handle) -> Result<(), String> {
+            let mut descriptor: *mut c_void = std::ptr::null_mut();
+            let mut dacl: *mut c_void = std::ptr::null_mut();
+            let result = unsafe {
+                GetSecurityInfo(
+                    handle,
+                    SE_FILE_OBJECT,
+                    DACL_SECURITY_INFORMATION,
+                    std::ptr::null_mut(),
+                    std::ptr::null_mut(),
+                    &mut dacl,
+                    std::ptr::null_mut(),
+                    &mut descriptor,
+                )
+            };
+            if result != ERROR_SUCCESS || descriptor.is_null() {
+                return Err(format!(
+                    "cannot read private-report security descriptor: {}",
+                    std::io::Error::from_raw_os_error(result as i32)
+                ));
+            }
+            let descriptor_guard = LocalMemory(descriptor);
+            let mut control = 0u16;
+            let mut revision = 0u32;
+            let control_ok =
+                unsafe { GetSecurityDescriptorControl(descriptor, &mut control, &mut revision) };
+            if control_ok == 0
+                || control & (SE_DACL_PRESENT | SE_DACL_PROTECTED)
+                    != SE_DACL_PRESENT | SE_DACL_PROTECTED
+            {
+                return Err(
+                    "private-report security descriptor is not a protected DACL".to_string()
+                );
+            }
+            let mut present = 0i32;
+            let mut defaulted = 0i32;
+            let mut acl: *mut c_void = std::ptr::null_mut();
+            let dacl_ok = unsafe {
+                GetSecurityDescriptorDacl(descriptor, &mut present, &mut acl, &mut defaulted)
+            };
+            if dacl_ok == 0 || present == 0 || acl.is_null() || defaulted != 0 {
+                return Err("private-report security descriptor has no explicit DACL".to_string());
+            }
+            if !std::ptr::eq(acl, dacl) {
+                return Err("private-report DACL changed during verification".to_string());
+            }
+            let mut seen = std::collections::BTreeSet::new();
+            let mut index = 0u32;
+            loop {
+                let mut ace: *mut c_void = std::ptr::null_mut();
+                let ok = unsafe { GetAce(acl, index, &mut ace) };
+                if ok == 0 {
+                    break;
+                }
+                if ace.is_null() {
+                    return Err("private-report DACL contains a null ACE".to_string());
+                }
+                if index >= 32 {
+                    return Err("private-report DACL contains too many ACEs".to_string());
+                }
+                let header = unsafe { &*(ace as *const AceHeader) };
+                if header.ace_size < 16 || header.ace_size as usize > 4096 {
+                    return Err("private-report DACL contains a malformed ACE".to_string());
+                }
+                if header.ace_type != ACCESS_ALLOWED_ACE_TYPE
+                    || header.ace_flags & INHERITED_ACE != 0
+                {
+                    return Err(
+                        "private-report DACL contains an unexpected or inherited ACE".to_string(),
+                    );
+                }
+                let allowed = unsafe { &*(ace as *const AccessAllowedAce) };
+                if allowed.mask != FILE_ALL_ACCESS {
+                    return Err("private-report DACL grants partial file access".to_string());
+                }
+                let sid = std::ptr::addr_of!(allowed.sid_start) as *mut c_void;
+                let sid = sid_to_string(sid)?;
+                if !self.allowed.contains(&sid) {
+                    return Err(format!(
+                        "private-report DACL grants access to unexpected principal {sid}"
+                    ));
+                }
+                if !seen.insert(sid) {
+                    return Err("private-report DACL contains a duplicate ACE".to_string());
+                }
+                index += 1;
+            }
+            if seen != self.allowed {
+                return Err(
+                    "private-report DACL does not contain exactly the intended principals"
+                        .to_string(),
+                );
+            }
+            let _ = descriptor_guard;
+            Ok(())
+        }
+    }
+
+    #[cfg(test)]
+    #[repr(C)]
+    struct TrusteeW {
+        multiple_trustee: *mut c_void,
+        multiple_trustee_operation: u32,
+        trustee_form: u32,
+        trustee_type: u32,
+        name: *mut c_void,
+    }
+
+    #[cfg(test)]
+    pub fn current_user_sid_for_test() -> Result<String, String> {
+        current_user_sid()
+    }
+
+    #[cfg(test)]
+    pub fn effective_rights_for_sid(handle: Handle, sid_text: &str) -> Result<u32, String> {
+        let mut sid: *mut c_void = std::ptr::null_mut();
+        let sid_wide = wide(OsStr::new(sid_text));
+        let converted = unsafe { ConvertStringSidToSidW(sid_wide.as_ptr(), &mut sid) };
+        if converted == 0 || sid.is_null() {
+            return Err(format!(
+                "cannot construct test SID: {}",
+                std::io::Error::last_os_error()
+            ));
+        }
+        let sid_guard = LocalMemory(sid);
+        let mut descriptor: *mut c_void = std::ptr::null_mut();
+        let mut dacl: *mut c_void = std::ptr::null_mut();
+        let result = unsafe {
+            GetSecurityInfo(
+                handle,
+                SE_FILE_OBJECT,
+                DACL_SECURITY_INFORMATION,
+                std::ptr::null_mut(),
+                std::ptr::null_mut(),
+                &mut dacl,
+                std::ptr::null_mut(),
+                &mut descriptor,
+            )
+        };
+        if result != ERROR_SUCCESS || descriptor.is_null() || dacl.is_null() {
+            return Err(format!(
+                "cannot read DACL for effective-rights test: {}",
+                std::io::Error::from_raw_os_error(result as i32)
+            ));
+        }
+        let descriptor_guard = LocalMemory(descriptor);
+        let mut trustee = TrusteeW {
+            multiple_trustee: std::ptr::null_mut(),
+            multiple_trustee_operation: 0,
+            trustee_form: 0,
+            trustee_type: 0,
+            name: sid,
+        };
+        let mut access = 0u32;
+        let result = unsafe { GetEffectiveRightsFromAclW(dacl, &mut trustee, &mut access) };
+        let _ = (sid_guard, descriptor_guard);
+        if result != ERROR_SUCCESS {
+            return Err(format!(
+                "cannot compute effective rights: {}",
+                std::io::Error::from_raw_os_error(result as i32)
+            ));
+        }
+        Ok(access)
+    }
+
+    impl Drop for PrivateAcl {
+        fn drop(&mut self) {
+            if !self.descriptor.is_null() {
+                unsafe { LocalFree(self.descriptor) };
+            }
+        }
+    }
+
+    fn current_user_sid() -> Result<String, String> {
+        let mut token: Handle = std::ptr::null_mut();
+        let opened = unsafe { OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &mut token) };
+        if opened == 0 {
+            return Err(format!(
+                "cannot open current process token: {}",
+                std::io::Error::last_os_error()
+            ));
+        }
+        let token = OwnedHandle(token);
+        let mut length = 0u32;
+        unsafe {
+            GetTokenInformation(
+                token.0,
+                TOKEN_USER_CLASS,
+                std::ptr::null_mut(),
+                0,
+                &mut length,
+            );
+        }
+        if length == 0 {
+            return Err(format!(
+                "cannot size current user token: {}",
+                std::io::Error::last_os_error()
+            ));
+        }
+        let words = (length as usize).div_ceil(std::mem::size_of::<u64>());
+        let mut buffer = vec![0u64; words];
+        let ok = unsafe {
+            GetTokenInformation(
+                token.0,
+                TOKEN_USER_CLASS,
+                buffer.as_mut_ptr() as *mut c_void,
+                (buffer.len() * std::mem::size_of::<u64>()) as u32,
+                &mut length,
+            )
+        };
+        if ok == 0 {
+            return Err(format!(
+                "cannot read current user token: {}",
+                std::io::Error::last_os_error()
+            ));
+        }
+        let user = unsafe { &*(buffer.as_ptr() as *const TokenUser) };
+        sid_to_string(user.user.sid)
+    }
+
+    fn sid_to_string(sid: *mut c_void) -> Result<String, String> {
+        if sid.is_null() {
+            return Err("cannot identify a null SID".to_string());
+        }
+        let mut value: *mut u16 = std::ptr::null_mut();
+        let ok = unsafe { ConvertSidToStringSidW(sid, &mut value) };
+        if ok == 0 || value.is_null() {
+            return Err(format!(
+                "cannot format SID: {}",
+                std::io::Error::last_os_error()
+            ));
+        }
+        let result = unsafe {
+            let mut length = 0usize;
+            while *value.add(length) != 0 {
+                length += 1;
+                if length > 256 {
+                    break;
+                }
+            }
+            let mut buffer = Vec::with_capacity(length);
+            buffer.extend_from_slice(std::slice::from_raw_parts(value, length));
+            String::from_utf16_lossy(&buffer)
+        };
+        unsafe { LocalFree(value as *mut c_void) };
+        Ok(result)
+    }
+
+    fn wide(value: &OsStr) -> Vec<u16> {
+        value.encode_wide().chain(Some(0)).collect()
+    }
+
+    #[link(name = "kernel32")]
+    extern "system" {
+        fn GetCurrentProcess() -> Handle;
+        fn CloseHandle(handle: Handle) -> i32;
+    }
+
+    #[link(name = "advapi32")]
+    extern "system" {
+        fn OpenProcessToken(process: Handle, access: u32, token: *mut Handle) -> i32;
+        fn GetTokenInformation(
+            token: Handle,
+            class: u32,
+            information: *mut c_void,
+            length: u32,
+            returned: *mut u32,
+        ) -> i32;
+        fn ConvertSidToStringSidW(sid: *mut c_void, value: *mut *mut u16) -> i32;
+        #[cfg(test)]
+        fn ConvertStringSidToSidW(value: *const u16, sid: *mut *mut c_void) -> i32;
+        #[cfg(test)]
+        fn GetEffectiveRightsFromAclW(
+            dacl: *mut c_void,
+            trustee: *mut TrusteeW,
+            access: *mut u32,
+        ) -> u32;
+        fn ConvertStringSecurityDescriptorToSecurityDescriptorW(
+            sddl: *const u16,
+            revision: u32,
+            descriptor: *mut *mut c_void,
+            size: *mut u32,
+        ) -> i32;
+        fn GetSecurityInfo(
+            handle: Handle,
+            object_type: i32,
+            security_information: u32,
+            owner: *mut *mut c_void,
+            group: *mut *mut c_void,
+            dacl: *mut *mut c_void,
+            sacl: *mut *mut c_void,
+            descriptor: *mut *mut c_void,
+        ) -> u32;
+        fn GetSecurityDescriptorControl(
+            descriptor: *mut c_void,
+            control: *mut u16,
+            revision: *mut u32,
+        ) -> i32;
+        fn GetSecurityDescriptorDacl(
+            descriptor: *mut c_void,
+            present: *mut i32,
+            dacl: *mut *mut c_void,
+            defaulted: *mut i32,
+        ) -> i32;
+        fn GetAce(dacl: *mut c_void, index: u32, ace: *mut *mut c_void) -> i32;
+    }
+
+    #[link(name = "kernel32")]
+    extern "system" {
+        fn LocalFree(memory: *mut c_void) -> *mut c_void;
     }
 }
 
@@ -672,6 +1135,63 @@ mod tests {
             fs::read_to_string(temp.path().join("moved-reports/report.json")).unwrap(),
             "safe\n"
         );
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn private_report_has_explicit_restrictive_acl_on_permissive_parent() {
+        use std::os::windows::io::AsRawHandle;
+        use std::process::Command;
+
+        let temp = temp();
+        let root = temp.path().join("root");
+        let reports = temp.path().join("reports");
+        fs::create_dir_all(&root).unwrap();
+        fs::create_dir_all(&reports).unwrap();
+        let grant = Command::new("icacls")
+            .arg(&reports)
+            .args(["/grant", "*S-1-1-0:(OI)(CI)F"])
+            .output()
+            .unwrap();
+        assert!(
+            grant.status.success(),
+            "icacls grant failed: {}",
+            String::from_utf8_lossy(&grant.stderr)
+        );
+        let path = reports.join("private.json");
+        fs::write(&path, b"old-permissive-content").unwrap();
+        ReportDestination::new(&path, &root, true)
+            .unwrap()
+            .write(b"{\"private\":true}")
+            .unwrap();
+        let file = fs::File::open(&path).unwrap();
+        let expected = windows_private_acl::PrivateAcl::create().unwrap();
+        expected
+            .verify_handle(file.as_raw_handle())
+            .expect("private report DACL");
+        let user = windows_private_acl::current_user_sid_for_test().unwrap();
+        assert_ne!(
+            windows_private_acl::effective_rights_for_sid(file.as_raw_handle(), &user).unwrap(),
+            0
+        );
+        assert_ne!(
+            windows_private_acl::effective_rights_for_sid(file.as_raw_handle(), "S-1-5-18")
+                .unwrap(),
+            0
+        );
+        for unrelated in ["S-1-1-0", "S-1-5-32-545"] {
+            assert_eq!(
+                windows_private_acl::effective_rights_for_sid(file.as_raw_handle(), unrelated)
+                    .unwrap(),
+                0,
+                "unrelated principal {unrelated} received access"
+            );
+        }
+        assert!(fs::read_dir(&reports).unwrap().all(|entry| !entry
+            .unwrap()
+            .file_name()
+            .to_string_lossy()
+            .starts_with(".rnc-report-")));
     }
 
     #[cfg(unix)]

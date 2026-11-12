@@ -42,6 +42,11 @@
           "family": {"type": "string", "pattern": "^[a-z0-9-]{1,96}$"},
           "credential_type": {"type": "string", "pattern": "^[a-z0-9-]{1,96}$"},
           "context": {"enum": ["assignment", "bearer", "container", "standalone", "uri"]},
+          "component_extractor": {
+            "type": "string",
+            "enum": ["database-uri-password"],
+            "description": "Optional post-detection extractor for supplementary private component evidence. It does not alter the primary finding span or create a second detection."
+          },
           "pattern": {"type": "string", "minLength": 1, "maxLength": 16384},
           "capture_group": {"type": "integer", "minimum": 0, "maximum": 255},
           "value_capture_groups": {

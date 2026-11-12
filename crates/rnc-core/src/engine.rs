@@ -13,6 +13,7 @@ use crate::rules::LoadedBundle;
 use crate::stream::{
     scan_content, scan_file, FileScanError, ScanContentConfig, ScanFileConfig, ScanMode,
 };
+use crate::structured::StructuredEvidence;
 
 #[derive(Debug, Clone)]
 pub struct RunConfig {
@@ -51,6 +52,7 @@ impl Default for RunConfig {
 pub struct ScanReport {
     pub execution: ExecutionRecord,
     pub findings: Vec<Finding>,
+    pub structured_evidence: StructuredEvidence,
     pub policy: crate::policy::PolicyRecord,
     pub result: crate::result::ResultRecord,
     pub ci: crate::result::CiDecision,
@@ -75,6 +77,7 @@ impl ScanReport {
             "format_version": "rnc-cp2-output-v1",
             "execution": self.execution,
             "findings": self.findings,
+            "structured_evidence": self.structured_evidence,
             "policy": self.policy,
             "result": self.result,
             "ci": self.ci,
@@ -196,6 +199,7 @@ pub fn scan(
     let history = discovery.git_history.clone();
     let git_source = discovery.git_source.clone();
     let mut findings = Vec::new();
+    let mut structured_evidence = StructuredEvidence::new();
     let mut warnings = discovery.warnings.clone();
     for code in &discovery.fatal_errors {
         execution.add_fatal(code);
@@ -410,6 +414,7 @@ pub fn scan(
                                 result.line_count,
                                 result.content_sha256,
                             )?);
+                        structured_evidence.components.extend(result.components);
                         findings.extend(result.findings);
                     }
                     Err(FileScanError::Timeout) => {
@@ -489,6 +494,7 @@ pub fn scan(
     execution.failure_codes.sort();
     execution.fatal_errors.sort();
     sort_findings(&mut findings);
+    structured_evidence.sort();
     warnings.sort();
     warnings.dedup();
     let now_unix = std::time::SystemTime::now()
@@ -502,6 +508,7 @@ pub fn scan(
     Ok(ScanReport {
         execution,
         findings,
+        structured_evidence,
         policy,
         result,
         ci,

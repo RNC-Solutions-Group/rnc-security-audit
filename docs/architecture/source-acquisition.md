@@ -22,7 +22,7 @@ The canonical scan root is established once. Discovery records canonical relativ
 - The final component is opened with `FILE_FLAG_OPEN_REPARSE_POINT`.
 - After opening, the implementation resolves the file handle with `GetFinalPathNameByHandleW` and rejects it if the handle resolves outside the canonical root. This closes ancestor substitution for the content read.
 - Directory enumeration is still path-based on Windows; an ancestor substitution during discovery is a documented residual race. A swapped directory is rejected by canonical containment and reparse checks; the file read has the stronger final-handle guarantee.
-- Windows private evidence relies on the destination directory ACL; it is not claimed to be Unix-mode equivalent.
+- Windows private report files receive an explicit protected DACL (see [Private evidence on Windows](#private-evidence-on-windows)); it is not claimed to be Unix-mode equivalent.
 
 ### Other platforms
 
@@ -84,7 +84,14 @@ Report destinations are resolved relative to the process working directory. An u
 
 ## Private evidence on Windows
 
-Unix `0600` is enforced on the created file. Windows does not have an equivalent Unix mode; CP2 relies on the ACL inherited by the destination directory and does not claim that it provides Unix-equivalent protection. Operators must select an appropriately restricted private-output directory.
+Unix `0600` is enforced on the created file. CP4A also creates Windows private report temporary files with an explicit **protected DACL**, rather than relying only on inherited directory permissions. The DACL grants file-all-access to the current user, `NT AUTHORITY\SYSTEM` and `BUILTIN\Administrators`, and to no other principal.
+
+- The security descriptor is supplied to `CreateFileW` when the temporary file is created, so sensitive payload bytes are written only after restrictive access is in place.
+- The opened handle's DACL is inspected before the first payload write. Unexpected, inherited, partial or duplicate ACEs cause publication to fail; the temporary file is removed and no report is published.
+- The temporary file is renamed into the destination with `NtSetInformationFile`; the final report keeps the same restrictive DACL. Replacing an existing file does not inherit a broader parent ACL.
+- A deliberately permissive parent, an existing destination, and unrelated low-privilege principals are covered by a Windows regression test using effective-rights checks.
+
+This is a narrower guarantee than Unix mode bits: Windows ownership, backup/restore privileges, administrators and kernel-level access remain outside the scanner's control. Operators should still keep private reports outside inspected trees and in access-controlled storage.
 
 ## Verified non-access
 
@@ -92,7 +99,7 @@ A pre-scan block is recorded only when the unit is excluded during discovery and
 
 ## Residual risks
 
-- Windows directory enumeration is path-based; an ancestor swap during discovery is a residual race. Windows private-file ACL inheritance is documented above. The file-read and report-publication operations use handle-verified paths.
+- Windows directory enumeration is path-based; an ancestor swap during discovery is a residual race. Windows private report files now have an explicit verified DACL, but ownership, administrator and kernel-level access remain outside scanner control. The file-read and report-publication operations use handle-verified paths.
 - A process with write access to the authorized root can replace files with different regular files; descriptor metadata checks detect size/mtime changes but cannot prove semantic continuity for a same-size/same-timestamp replacement.
 - Filesystem I/O that blocks inside the kernel may exceed cooperative deadlines; no OS-signal cancellation is implemented in CP2.
 - Discovery still uses path-based `read_dir` after canonical checks on Windows; Unix file opens are fd-relative but directory enumeration is not a full openat handle walk.

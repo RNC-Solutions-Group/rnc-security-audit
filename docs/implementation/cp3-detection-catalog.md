@@ -9,8 +9,8 @@
 > format is **not** proof that a credential is active, complete, authorized or
 > non-revoked. All validators are offline.
 
-Ruleset: [`rules/rnc-providers-v1.json`](../../../rules/rnc-providers-v1.json)
-Schema: [`provider-rule-bundle.schema.json`](../../contracts/rules/provider-rule-bundle.schema.json)
+Ruleset: [`rules/rnc-providers-v1.json`](../../rules/rnc-providers-v1.json)
+Schema: [`provider-rule-bundle.schema.json`](../contracts/rules/provider-rule-bundle.schema.json)
 Rules: **19** across **12 families**
 Ruleset version: `2026.11.2`
 Current digest: `sha256:3ddd1e0aee36ecadb67ee8a2032fbe3a6047803bb56c0d45d65f85851c9b2142`
@@ -43,7 +43,7 @@ The `AKIA`/`ASIA` rule and validators reject the other eight prefixes. `ABIA` an
 `ACCA` have distinct rule identities, credential types, validators and
 `PLAUSIBLE_UNVERIFIED` validation notes. None of these values proves possession
 of a usable credential. The AWS taxonomy suite is
-[`tests/cp3/aws-identifier-taxonomy.json`](../../../tests/cp3/aws-identifier-taxonomy.json).
+[`tests/cp3/aws-identifier-taxonomy.json`](../../tests/cp3/aws-identifier-taxonomy.json).
 
 ## GitHub App installation tokens
 

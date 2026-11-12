@@ -1,6 +1,6 @@
 # RNC Security Audit
 
-> **Development status - 11 November 2026:** CP0-CP2 provide a working, security-hardened Rust scanner; CP3 adds a first-party provider-credential catalog and independent byte-addressed accuracy assessment; CP4 expands generic extraction, private-key representations and provider families, and adds read-only Git-history acquisition. The original synthetic bundles remain preserved regression evidence, not production credential accuracy. Provider-format recognition is **not** proof that a credential is active, authorized or complete. No production deployment or public release is claimed.
+> **Development status - 12 November 2026:** CP0-CP2 provide a working, security-hardened Rust scanner; CP3 adds a first-party provider-credential catalog and independent byte-addressed accuracy assessment; CP4 expands generic extraction, private-key representations and provider families, and adds read-only Git-history acquisition. CP4A adds private database-password component evidence, explicit Windows private-report ACLs, retirement of internal benchmark CI and a reproducible development evaluation package. The original synthetic bundles remain preserved regression evidence, not production credential accuracy. Provider-format recognition is **not** proof that a credential is active, authorized or complete. No production deployment or public release is claimed.
 
 **RNC Security Audit** is the working home for RNC's security platform. Its first-party secret-detection component is **RNC Scanner**. The wider application will eventually coordinate independent security tools as well. **RNC Security Toolkit** remains the prospective name for a portable distribution, not another codebase.
 
@@ -83,6 +83,7 @@ Reporting reconciles three independently verifiable, append-only logical records
 | [CP4 private keys](docs/implementation/cp4-private-keys.md) | PEM, escaped/base64 and PGP representations |
 | [CP4 Git history](docs/implementation/cp4-git-history.md) | Read-only history scope, source identity, commands and edge behavior |
 | [CP4 validation](docs/implementation/cp4-validation.md) | CP4 regression matrix, evidence, limitations and disposition |
+| [CP4A hardening](docs/implementation/cp4a-hardening.md) | Structured credential evidence, Windows ACLs, CI retirement and package proof |
 | [Adaptive matching](docs/architecture/adaptive-matching.md) | Backend boundaries, required literals, streaming and differential gate |
 | [Source acquisition and report publication](docs/architecture/source-acquisition.md) | Root containment, discovery budgets, Git-history controls, atomic report writes and platform guarantees |
 | [Read-only Git history ADR](docs/architecture/adr-016-read-only-git-history.md) | Process, library and security tradeoffs for the history adapter |
@@ -108,16 +109,19 @@ Reporting reconciles three independently verifiable, append-only logical records
 | Adaptive matching, policies, reporting and hardening (CP2) | Implemented; CI validated | [CP2 validation](docs/implementation/cp2-validation.md) |
 | Independent accuracy assessment (CP3) | **READY FOR OPERATOR MERGE; corrective review and CI complete** | [CP3 validation](docs/implementation/cp3-validation.md), [detection catalog](docs/implementation/cp3-detection-catalog.md) |
 | Detection expansion and Git history (CP4) | **READY FOR OPERATOR REVIEW; CI complete** | [CP4 validation](docs/implementation/cp4-validation.md), [catalog](docs/implementation/cp4-detection-catalog.md), [Git history](docs/implementation/cp4-git-history.md) |
+| CP4A corrective hardening | **IMPLEMENTED; OPERATOR REVIEW PENDING** | [CP4A hardening](docs/implementation/cp4a-hardening.md), [package builder](tools/package/README.md) |
 
 The portable matching system includes a reference Rust regex strategy, a RegexSet-assisted strategy and an Aho-Corasick literal prefilter. All use the same rule, validator and finding contracts. Faster strategies are not promoted at the expense of finding equivalence.
 
 ### Provider credential catalog
 
-CP3 established [`rules/rnc-providers-v1.json`](rules/rnc-providers-v1.json) and CP4 expands it to a schema `0.2.0` catalog with **37 rules across 22 credential families** in cloud, developer-platform, service, cryptographic, structured and generic categories. It includes AWS access-key and sensitive-identifier classification, Google Cloud API keys, GitHub classic/fine-grained/OAuth and App installation tokens, GitLab PATs, Stripe, Slack, SendGrid, npm, Azure Storage, Tailscale, Groq, xAI, Perplexity, Doppler, OpenAI, Slack webhooks, PEM/PGP private-key representations, Bearer JWTs, database URI userinfo and contextual generic extraction. Ordinary IAM resource identifiers such as `AIDA` and `AROA` are not treated as access keys.
+CP3 established [`rules/rnc-providers-v1.json`](rules/rnc-providers-v1.json) and CP4 expands it to a schema `0.2.0` catalog with **37 rules across 22 credential families** in cloud, developer-platform, service, cryptographic, structured and generic categories. Ruleset `2026.11.4` adds an optional post-detection `component_extractor` declaration for the database URI rule; it does not alter that rule's primary contextual finding. It includes AWS access-key and sensitive-identifier classification, Google Cloud API keys, GitHub classic/fine-grained/OAuth and App installation tokens, GitLab PATs, Stripe, Slack, SendGrid, npm, Azure Storage, Tailscale, Groq, xAI, Perplexity, Doppler, OpenAI, Slack webhooks, PEM/PGP private-key representations, Bearer JWTs, database URI userinfo and contextual generic extraction. Ordinary IAM resource identifiers such as `AIDA` and `AROA` are not treated as access keys.
 
 Every rule has a finite match bound and declared candidate bound. Validators are offline: no provider API is called, no token is redeemed and no discovered credential is sent over a network. Structural validity is not active-credential verification. The [CP4 detection catalog](docs/implementation/cp4-detection-catalog.md) distinguishes implemented, experimental and unsupported families; the CP3 catalog is preserved as historical evidence.
 
 Generic assignments, Basic/Bearer authorization headers, URL userinfo, escaped/base64-wrapped private keys and PGP armor are implemented with bounded context and structural validation. Generic values remain `PLAUSIBLE_UNVERIFIED`; a parseable value is not promoted to a confirmed credential.
+
+For database URI findings, the primary finding remains the contextual `username:password` userinfo. Private reports additionally carry a versioned `structured_evidence` section with the password's original byte range and SHA-256 digests. Supported ANSI SGR decoration is normalized for the normalized digest without changing source coordinates; unsupported escapes receive no component evidence. The section is omitted from sanitized output and console summaries. See [CP4A hardening](docs/implementation/cp4a-hardening.md).
 
 ### Git-history scanning
 
@@ -138,10 +142,10 @@ The external scanner comparison harness is **independent test infrastructure**, 
 ### Open platform-hardening work
 
 - [#7 — Windows handle-safe directory enumeration](https://github.com/RNC-Solutions-Group/rnc-security-audit/issues/7): remove the remaining path-based discovery race.
-- [#8 — Windows private-evidence ACL enforcement](https://github.com/RNC-Solutions-Group/rnc-security-audit/issues/8): apply and verify restrictive permissions rather than relying solely on inherited ACLs.
+- [#8 — Windows private-evidence ACL enforcement](https://github.com/RNC-Solutions-Group/rnc-security-audit/issues/8): CP4A now creates private report files with an explicit protected DACL, verifies it on the open handle before payload writes, and tests replacement on a deliberately permissive parent. Operator issue closure remains pending after review.
 - [#9 — OS-signal cancellation](https://github.com/RNC-Solutions-Group/rnc-security-audit/issues/9): terminate scans with trustworthy execution accounting and safe cleanup.
 
-These are tracked residual hardening requirements, **not claims that CP2 lacks source-content containment or that its CI failed**. See the [source-acquisition security design](docs/architecture/source-acquisition.md) for existing platform guarantees and limitations.
+Issues #7 and #9 remain tracked residual hardening requirements; #8 has an implemented CP4A mitigation pending operator closure. These are **not claims that CP2 lacks source-content containment or that its CI failed**. See the [source-acquisition security design](docs/architecture/source-acquisition.md) for existing platform guarantees and limitations.
 
 ## Safety and implementation status
 

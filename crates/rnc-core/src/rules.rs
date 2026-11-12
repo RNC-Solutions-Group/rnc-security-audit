@@ -23,6 +23,7 @@ pub const MAX_MATCH_BYTES: usize = 1024 * 1024;
 pub const MAX_RULES: usize = 512;
 pub const MAX_IDENTIFIER_BYTES: usize = 96;
 pub const CONTEXT_KINDS: &[&str] = &["assignment", "bearer", "container", "standalone", "uri"];
+pub const COMPONENT_EXTRACTORS: &[&str] = &["database-uri-password"];
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
@@ -55,6 +56,8 @@ pub struct RuleDefinition {
     pub credential_type: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub context: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub component_extractor: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub max_candidate_bytes: Option<usize>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -304,6 +307,7 @@ fn validate_definition(
         || definition.family.is_some()
         || definition.credential_type.is_some()
         || definition.context.is_some()
+        || definition.component_extractor.is_some()
         || definition.max_candidate_bytes.is_some()
         || definition.fixture_set.is_some()
         || definition.provenance.is_some();
@@ -322,6 +326,20 @@ fn validate_definition(
                 "{} has unsupported context {context}",
                 definition.rule_id
             )));
+        }
+        if let Some(extractor) = definition.component_extractor.as_deref() {
+            if context != "uri" {
+                return Err(CoreError::Rule(format!(
+                    "{} component_extractor requires uri context",
+                    definition.rule_id
+                )));
+            }
+            if !COMPONENT_EXTRACTORS.contains(&extractor) {
+                return Err(CoreError::Rule(format!(
+                    "{} has unsupported component_extractor {extractor}",
+                    definition.rule_id
+                )));
+            }
         }
         let fixture_set = definition.fixture_set.as_deref().unwrap_or_default();
         if fixture_set.is_empty()
@@ -588,6 +606,17 @@ mod tests {
     }
 
     #[test]
+    fn component_extractor_requires_uri_context_and_known_name() {
+        let mut bundle = provider_bundle();
+        bundle.rules[0].component_extractor = Some("database-uri-password".to_string());
+        assert!(LoadedBundle::from_bundle(bundle.clone()).is_err());
+        bundle.rules[0].context = Some("uri".to_string());
+        assert!(LoadedBundle::from_bundle(bundle.clone()).is_ok());
+        bundle.rules[0].component_extractor = Some("unknown-extractor".to_string());
+        assert!(LoadedBundle::from_bundle(bundle).is_err());
+    }
+
+    #[test]
     fn rejects_candidate_bound_below_capture_bound() {
         let mut bundle = provider_bundle();
         bundle.rules[0].max_candidate_bytes = Some(8);
@@ -619,6 +648,7 @@ mod tests {
             family: None,
             credential_type: None,
             context: None,
+            component_extractor: None,
             max_candidate_bytes: None,
             fixture_set: None,
             provenance: None,

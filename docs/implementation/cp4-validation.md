@@ -4,6 +4,11 @@
 > CP0-CP3 compatibility, Git-history acquisition and pushed-branch CI are
 > complete. Provider-format recognition is not proof of an active, authorized,
 > complete or non-revoked credential.
+>
+> **CP4A follow-on:** the catalog was subsequently bumped to `2026.11.4` to add
+> an optional database-password `component_extractor` and note. The CP4
+> detection findings, rule identities and historical evidence below are
+> unchanged. See [CP4A hardening](cp4a-hardening.md).
 
 ## Repository state
 

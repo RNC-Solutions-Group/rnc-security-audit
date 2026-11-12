@@ -608,3 +608,44 @@ fn empty_bounded_shallow_and_corrupt_histories_fail_or_account_explicitly() {
         .iter()
         .any(|error| error == "GIT_OBJECT_UNAVAILABLE"));
 }
+
+#[test]
+fn history_components_keep_commit_path_attribution() {
+    let temp = tempdir().unwrap();
+    let repo = temp.path().join("repo");
+    std::fs::create_dir(&repo).unwrap();
+    init_repo(&repo);
+    std::fs::write(repo.join("README.md"), "clean\n").unwrap();
+    commit(&repo, "initial");
+    let password = "GiT9pL2mN8xR4tW";
+    let data = format!("DATABASE_URL=postgresql://db_user:{password}@db.example.invalid/app\r\n");
+    std::fs::write(repo.join("db.env"), &data).unwrap();
+    let introduced = commit(&repo, "introduce database credential");
+
+    let report = scan_history(&repo, ScanMode::Whole, BackendRequest::Regex);
+    let finding = report
+        .findings
+        .iter()
+        .find(|finding| finding.rule_id == "database-connection-credential")
+        .expect("database finding");
+    let component = report
+        .structured_evidence
+        .components
+        .iter()
+        .find(|component| component.finding_id == finding.finding_id)
+        .expect("component");
+    let unit = report
+        .execution
+        .units
+        .iter()
+        .find(|unit| unit.unit_id == finding.unit_id)
+        .expect("source unit");
+    assert_eq!(unit.locator, format!("commit/{introduced}/db.env"));
+    assert_eq!(component.unit_id, finding.unit_id);
+    assert_eq!(
+        &data.as_bytes()[component.start_byte..component.end_byte],
+        password.as_bytes()
+    );
+    assert_eq!(component.line, 1);
+    assert_eq!(component.normalized_sha256, evidence(password));
+}

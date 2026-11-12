@@ -6,7 +6,7 @@
 
 ## Bundle format
 
-Schema: [`docs/contracts/rules/rule-bundle.schema.json`](../../contracts/rules/rule-bundle.schema.json)
+Schema: [`docs/contracts/rules/rule-bundle.schema.json`](../contracts/rules/rule-bundle.schema.json)
 
 ```json
 {
@@ -43,9 +43,9 @@ Schema: [`docs/contracts/rules/rule-bundle.schema.json`](../../contracts/rules/r
 
 ## Provider catalog — schema 0.2.0
 
-Production provider rules live in [`rules/rnc-providers-v1.json`](../../../rules/rnc-providers-v1.json)
+Production provider rules live in [`rules/rnc-providers-v1.json`](../../rules/rnc-providers-v1.json)
 and validate against
-[`provider-rule-bundle.schema.json`](../../contracts/rules/provider-rule-bundle.schema.json).
+[`provider-rule-bundle.schema.json`](../contracts/rules/provider-rule-bundle.schema.json).
 They add:
 
 - `provider`, `family`, `credential_type` identity;
