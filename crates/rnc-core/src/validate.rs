@@ -339,7 +339,6 @@ fn validate_candidate_with_context_bytes(
 pub(crate) fn validate_assignment_syntax(
     context: &CandidateContext<'_>,
 ) -> Result<(), ValidationError> {
-    let _ = context.identifier;
     if context.delimiter == Some(b',') && !context.define_call {
         return Err(ValidationError::benign(
             Validator::GenericAssignedSecret,
@@ -1610,8 +1609,8 @@ fn validate_generic_assigned_secret(
             "assigned value has non-literal or URI structure",
         ));
     }
-    let _ = context;
-    if looks_like_password_hash(text) || looks_like_nonsecret_setting(text) {
+    let identifier = context.and_then(|context| context.identifier);
+    if looks_like_password_hash(text, identifier) || looks_like_nonsecret_setting(text) {
         return Err(ValidationError::benign(
             Validator::GenericAssignedSecret,
             "assigned value is a hash, setting or nonsecret value",
@@ -1619,6 +1618,9 @@ fn validate_generic_assigned_secret(
     }
     if all_same_char(text) || shannon_entropy(&decoded) < 2.0 {
         return Ok(ValidatorVerdict::plausible("LOW_ENTROPY"));
+    }
+    if is_hash_length_hex(text) {
+        return Ok(ValidatorVerdict::plausible("HEX_CREDENTIAL_SHAPE"));
     }
     Ok(ValidatorVerdict::plausible(
         "ASSIGNMENT_CONTEXT_AND_VALUE_STRUCTURE_ONLY",
@@ -1838,9 +1840,16 @@ fn decode_escaped_string(input: &[u8]) -> Option<Vec<u8>> {
     Some(output)
 }
 
-fn looks_like_password_hash(text: &str) -> bool {
+fn looks_like_password_hash(text: &str, identifier: Option<&[u8]>) -> bool {
+    if has_explicit_hash_prefix(text) {
+        return true;
+    }
+    is_hash_length_hex(text) && identifier.is_some_and(identifier_has_digest_marker)
+}
+
+fn has_explicit_hash_prefix(text: &str) -> bool {
     let lower = text.to_ascii_lowercase();
-    if lower.starts_with("$2a$")
+    lower.starts_with("$2a$")
         || lower.starts_with("$2b$")
         || lower.starts_with("$2y$")
         || lower.starts_with("$argon2")
@@ -1852,11 +1861,56 @@ fn looks_like_password_hash(text: &str) -> bool {
         || lower.starts_with("md5:")
         || lower.starts_with("{sha}")
         || lower.starts_with("{ssha}")
-    {
-        return true;
+}
+
+fn is_hash_length_hex(text: &str) -> bool {
+    text.bytes().all(|byte| byte.is_ascii_hexdigit())
+        && matches!(text.len(), 32 | 40 | 64 | 96 | 128)
+}
+
+fn identifier_has_digest_marker(identifier: &[u8]) -> bool {
+    const MARKERS: [&str; 12] = [
+        "hash",
+        "digest",
+        "checksum",
+        "sha1",
+        "sha256",
+        "sha512",
+        "md5",
+        "bcrypt",
+        "argon2",
+        "pbkdf2",
+        "scrypt",
+        "fingerprint",
+    ];
+    let Ok(text) = std::str::from_utf8(identifier) else {
+        return false;
+    };
+    let mut current = String::new();
+    let mut previous_lower = false;
+    let mut tokens = Vec::new();
+    for character in text.chars() {
+        if character.is_ascii_alphanumeric() {
+            if character.is_ascii_uppercase() && previous_lower && !current.is_empty() {
+                tokens.push(std::mem::take(&mut current));
+            }
+            current.push(character.to_ascii_lowercase());
+            previous_lower = character.is_ascii_lowercase() || character.is_ascii_digit();
+        } else {
+            if !current.is_empty() {
+                tokens.push(std::mem::take(&mut current));
+            }
+            previous_lower = false;
+        }
     }
-    let hex_only = text.bytes().all(|byte| byte.is_ascii_hexdigit());
-    hex_only && matches!(text.len(), 32 | 40 | 64 | 96 | 128)
+    if !current.is_empty() {
+        tokens.push(current);
+    }
+    tokens.iter().any(|token| {
+        MARKERS
+            .iter()
+            .any(|marker| token == marker || token.ends_with(marker))
+    })
 }
 
 fn looks_like_nonsecret_setting(text: &str) -> bool {
@@ -2453,6 +2507,20 @@ mod tests {
             value.extend_from_slice(b"Q7Z3K5M2N4P6R8T0");
             assert_invalid(&value, &[Validator::GenericSecretAssignment]);
         }
+    }
+
+    #[test]
+    fn hash_length_hex_requires_explicit_digest_context() {
+        let hex64 = "0123456789abcdef".repeat(4);
+        assert!(!looks_like_password_hash(&hex64, None));
+        assert!(!looks_like_password_hash(&hex64, Some(b"api_key")));
+        assert!(looks_like_password_hash(&hex64, Some(b"sha256_password")));
+        assert!(looks_like_password_hash(&hex64, Some(b"hashPassword")));
+        assert!(looks_like_password_hash(&hex64, Some(b"password_hash")));
+        assert!(looks_like_password_hash(
+            "$2b$12$0123456789abcdef0123456789abcdef",
+            Some(b"api_key")
+        ));
     }
 
     #[test]

@@ -86,7 +86,7 @@ class ProviderCatalogTests(unittest.TestCase):
         )
         self.assertEqual(
             canonical_digest(self.document),
-            "sha256:dc1ab16f64a5dfb91262b46f321a9f5b219a13ed3bfb49e0f79c067de40bbc0f",
+            "sha256:901008d7cf64ee7387599eb13720bc3b78a2ab8868aae6e779fea1843c22dfb9",
         )
 
     def test_every_rule_has_bounded_candidate_and_provenance(self):

@@ -649,3 +649,71 @@ fn history_components_keep_commit_path_attribution() {
     assert_eq!(component.line, 1);
     assert_eq!(component.normalized_sha256, evidence(password));
 }
+
+#[test]
+fn history_applies_contextual_generic_validation() {
+    let temp = tempdir().unwrap();
+    let repo = temp.path().join("repo");
+    std::fs::create_dir(&repo).unwrap();
+    init_repo(&repo);
+    std::fs::write(repo.join("README.md"), "clean\n").unwrap();
+    commit(&repo, "initial");
+
+    let hex32 = "0123456789abcdef0123456789abcdef";
+    let hex128 = format!("{hex32}{hex32}{hex32}{hex32}");
+    let comment = "Kq7mN2xR9tW4yZ8aB3cD6eF1";
+    let data = format!(
+        "api_key = {hex32}\n\
+         # password = \"{comment}\"\n\
+         # Risk: userPassword, sshPassphrase, sshUserPassword\n\
+         secret_key_base: {hex128}\n"
+    );
+    std::fs::write(repo.join("config.env"), &data).unwrap();
+    let introduced = commit(&repo, "introduce contextual credentials");
+
+    for mode in [ScanMode::Whole, ScanMode::Stream] {
+        for strategy in [
+            BackendRequest::Regex,
+            BackendRequest::RegexSet,
+            BackendRequest::Prefilter,
+            BackendRequest::Auto,
+        ] {
+            let report = scan_history(&repo, mode, strategy);
+            assert_eq!(report.execution.required_uninspected_count(), 0);
+            assert_eq!(report.findings.len(), 3, "{mode:?}/{strategy:?}");
+            for value in [hex32, comment, hex128.as_str()] {
+                let finding = report
+                    .findings
+                    .iter()
+                    .find(|finding| {
+                        &data.as_bytes()[finding.start_byte..finding.end_byte] == value.as_bytes()
+                    })
+                    .unwrap_or_else(|| panic!("missing {value:?} in {mode:?}/{strategy:?}"));
+                let unit = report
+                    .execution
+                    .units
+                    .iter()
+                    .find(|unit| unit.unit_id == finding.unit_id)
+                    .expect("unit");
+                assert_eq!(unit.locator, format!("commit/{introduced}/config.env"));
+                assert_eq!(finding.rule_id, "generic-secret-assignment");
+                assert_eq!(finding.rule_version, "2026.11.5");
+                assert_eq!(finding.evidence_digest, evidence(value));
+                assert_eq!(
+                    finding.finding_id,
+                    rnc_core::finding::finding_id(
+                        &finding.unit_id,
+                        &finding.rule_id,
+                        &finding.rule_version,
+                        finding.start_byte,
+                        finding.end_byte,
+                        &finding.evidence_digest,
+                    )
+                );
+            }
+            assert!(!report.findings.iter().any(|finding| {
+                &data.as_bytes()[finding.start_byte..finding.end_byte] == b"sshPassphrase"
+            }));
+        }
+    }
+}

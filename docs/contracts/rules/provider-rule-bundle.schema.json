@@ -47,6 +47,12 @@
             "enum": ["database-uri-password"],
             "description": "Optional post-detection extractor for supplementary private component evidence. It does not alter the primary finding span or create a second detection."
           },
+          "identifier_capture_group": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 255,
+            "description": "Optional assignment-name capture group used for bounded candidate context. It must be distinct from value_capture_groups, must have a finite maximum length, and requires assignment context. It never changes the finding span."
+          },
           "pattern": {"type": "string", "minLength": 1, "maxLength": 16384},
           "capture_group": {"type": "integer", "minimum": 0, "maximum": 255},
           "value_capture_groups": {
