@@ -10,6 +10,8 @@
 
 use serde::{Deserialize, Serialize};
 
+use crate::context::CandidateContext;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum Validator {
@@ -115,7 +117,11 @@ impl Validator {
         }
     }
 
-    pub fn apply(self, candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+    pub(crate) fn apply(
+        self,
+        candidate: &[u8],
+        context: Option<&CandidateContext<'_>>,
+    ) -> Result<ValidatorVerdict, ValidationError> {
         match self {
             Self::MarkerFormat => {
                 validate_marker_format(candidate).map(|_| ValidatorVerdict::valid())
@@ -204,9 +210,9 @@ impl Validator {
             Self::UrlUserInfo => validate_url_userinfo(candidate),
             Self::DatabaseUri => validate_database_uri(candidate),
             Self::GenericSecretAssignment => validate_generic_assignment(candidate),
-            Self::GenericAssignedSecret => validate_generic_assigned_secret(candidate),
+            Self::GenericAssignedSecret => validate_generic_assigned_secret(candidate, context),
             Self::MultilineAssignedSecret => validate_multiline_assigned_secret(candidate),
-            Self::SqlPassword => validate_sql_password(candidate),
+            Self::SqlPassword => validate_sql_password(candidate, context),
         }
     }
 }
@@ -284,11 +290,26 @@ pub fn validate_candidate(
     candidate: &[u8],
     validators: &[Validator],
 ) -> Result<ValidationOutcome, ValidationError> {
+    validate_candidate_with_context_bytes(candidate, validators, None)
+}
+
+pub(crate) fn validate_candidate_with_context(
+    context: &CandidateContext<'_>,
+    validators: &[Validator],
+) -> Result<ValidationOutcome, ValidationError> {
+    validate_candidate_with_context_bytes(context.value, validators, Some(context))
+}
+
+fn validate_candidate_with_context_bytes(
+    candidate: &[u8],
+    validators: &[Validator],
+    context: Option<&CandidateContext<'_>>,
+) -> Result<ValidationOutcome, ValidationError> {
     let mut applied = Vec::with_capacity(validators.len());
     let mut notes = Vec::new();
     let mut plausible = false;
     for validator in validators {
-        let verdict = validator.apply(candidate)?;
+        let verdict = validator.apply(candidate, context)?;
         applied.push(validator.name().to_string());
         plausible |= verdict.plausible;
         if let Some(note) = verdict.note {
@@ -306,6 +327,35 @@ pub fn validate_candidate(
         applied,
         notes,
     })
+}
+
+/// Bounded syntax gate for generic assignment rules.
+///
+/// Comma is not an assignment operator in the supported configuration syntax.
+/// The one intentional exception is the explicit `define(...)` call form.
+/// Unquoted call expressions are also rejected when the delimiter is an
+/// assignment/colon operator. XML element values use `>` and are intentionally
+/// outside this gate, so literal parentheses remain valid there.
+pub(crate) fn validate_assignment_syntax(
+    context: &CandidateContext<'_>,
+) -> Result<(), ValidationError> {
+    let _ = context.identifier;
+    if context.delimiter == Some(b',') && !context.define_call {
+        return Err(ValidationError::benign(
+            Validator::GenericAssignedSecret,
+            "comma-delimited text is not a supported assignment",
+        ));
+    }
+    if matches!(context.delimiter, Some(b'=') | Some(b':'))
+        && context.value_quote.is_none()
+        && context.value.contains(&b'(')
+    {
+        return Err(ValidationError::benign(
+            Validator::GenericAssignedSecret,
+            "unquoted call expression is not an assigned value",
+        ));
+    }
+    Ok(())
 }
 
 const MARKER_PREFIX: &[u8] = b"RNC_SYNTH_KEY_";
@@ -1494,15 +1544,21 @@ fn validate_multiline_assigned_secret(
     ))
 }
 
-fn validate_sql_password(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
-    validate_generic_assigned_secret(candidate).map_err(|error| ValidationError {
+fn validate_sql_password(
+    candidate: &[u8],
+    context: Option<&CandidateContext<'_>>,
+) -> Result<ValidatorVerdict, ValidationError> {
+    validate_generic_assigned_secret(candidate, context).map_err(|error| ValidationError {
         validator: Validator::SqlPassword,
         reason: error.reason,
         benign: error.benign,
     })
 }
 
-fn validate_generic_assigned_secret(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+fn validate_generic_assigned_secret(
+    candidate: &[u8],
+    context: Option<&CandidateContext<'_>>,
+) -> Result<ValidatorVerdict, ValidationError> {
     let decoded = decode_escaped_string(candidate).ok_or_else(|| {
         ValidationError::invalid(
             Validator::GenericAssignedSecret,
@@ -1554,6 +1610,7 @@ fn validate_generic_assigned_secret(candidate: &[u8]) -> Result<ValidatorVerdict
             "assigned value has non-literal or URI structure",
         ));
     }
+    let _ = context;
     if looks_like_password_hash(text) || looks_like_nonsecret_setting(text) {
         return Err(ValidationError::benign(
             Validator::GenericAssignedSecret,

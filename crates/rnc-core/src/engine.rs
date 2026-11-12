@@ -466,6 +466,25 @@ pub fn scan(
                         )?;
                         break;
                     }
+                    Err(FileScanError::Integrity(_)) => {
+                        execution.units.push(SourceUnitRecord::uninspected_for(
+                            &config.run_id,
+                            source_id,
+                            source_kind,
+                            &unit.locator,
+                            unit.required_scope,
+                            "EVIDENCE_INTEGRITY",
+                        )?);
+                        execution.add_failure("EVIDENCE_INTEGRITY");
+                        execution.state = ExecutionState::Interrupted;
+                        execution.evidence_valid = false;
+                        add_remaining_uninspected(
+                            &mut execution,
+                            &units[index + 1..],
+                            "EVIDENCE_INTEGRITY",
+                        )?;
+                        break;
+                    }
                     Err(error) => {
                         execution.units.push(SourceUnitRecord::uninspected_for(
                             &config.run_id,

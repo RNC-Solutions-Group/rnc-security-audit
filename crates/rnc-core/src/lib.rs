@@ -7,6 +7,7 @@
 
 pub mod backend;
 pub mod config;
+mod context;
 pub mod coverage;
 pub mod engine;
 pub mod error;

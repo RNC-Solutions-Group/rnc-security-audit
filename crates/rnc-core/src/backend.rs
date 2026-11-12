@@ -74,11 +74,20 @@ pub struct PlanProvenance {
     pub fallback_reason: Option<String>,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct CaptureSpan {
+    pub start: usize,
+    pub end: usize,
+}
+
 #[derive(Debug, Clone)]
 pub struct MatchCandidate {
     pub rule_index: usize,
     pub start: usize,
     pub end: usize,
+    pub match_start: usize,
+    pub match_end: usize,
+    pub identifier: Option<CaptureSpan>,
 }
 
 #[derive(Debug)]
@@ -370,13 +379,26 @@ impl<'a> MatchPlan<'a> {
             if std::time::Instant::now() >= deadline {
                 return Err(MatchError::Timeout);
             }
+            let Some(full_match) = captures.get(0) else {
+                continue;
+            };
             let matched = capture_groups.iter().find_map(|group| captures.get(*group));
             if let Some(matched) = matched {
                 if matched.start() < matched.end() {
+                    let identifier = definition
+                        .identifier_capture_group
+                        .and_then(|group| captures.get(group))
+                        .map(|captured| CaptureSpan {
+                            start: captured.start(),
+                            end: captured.end(),
+                        });
                     candidates.push(MatchCandidate {
                         rule_index: index,
                         start: matched.start(),
                         end: matched.end(),
+                        match_start: full_match.start(),
+                        match_end: full_match.end(),
+                        identifier,
                     });
                     if candidates.len() > MAX_CANDIDATES_PER_WINDOW {
                         return Err(MatchError::CandidateLimit);

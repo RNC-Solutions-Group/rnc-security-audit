@@ -59,6 +59,8 @@ pub struct RuleDefinition {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub component_extractor: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub identifier_capture_group: Option<usize>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub max_candidate_bytes: Option<usize>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub fixture_set: Option<String>,
@@ -198,6 +200,20 @@ impl LoadedBundle {
                     definition.rule_id, group
                 )));
             }
+            if let Some(identifier_group) = definition.identifier_capture_group {
+                if identifier_group >= regex.captures_len() {
+                    return Err(CoreError::Rule(format!(
+                        "{} identifier_capture_group {} does not exist",
+                        definition.rule_id, identifier_group
+                    )));
+                }
+                capture_max_bytes(&hir, identifier_group).ok_or_else(|| {
+                    CoreError::Rule(format!(
+                        "{} identifier_capture_group {} has no finite maximum length",
+                        definition.rule_id, identifier_group
+                    ))
+                })?;
+            }
             maximum = maximum.max(max_len);
             let required_literal = crate::backend::required_literal(&definition.pattern)
                 .map_err(|error| CoreError::Rule(format!("{}: {error}", definition.rule_id)))?;
@@ -308,6 +324,7 @@ fn validate_definition(
         || definition.credential_type.is_some()
         || definition.context.is_some()
         || definition.component_extractor.is_some()
+        || definition.identifier_capture_group.is_some()
         || definition.max_candidate_bytes.is_some()
         || definition.fixture_set.is_some()
         || definition.provenance.is_some();
@@ -337,6 +354,30 @@ fn validate_definition(
             if !COMPONENT_EXTRACTORS.contains(&extractor) {
                 return Err(CoreError::Rule(format!(
                     "{} has unsupported component_extractor {extractor}",
+                    definition.rule_id
+                )));
+            }
+        }
+        if let Some(identifier_group) = definition.identifier_capture_group {
+            if context != "assignment" {
+                return Err(CoreError::Rule(format!(
+                    "{} identifier_capture_group requires assignment context",
+                    definition.rule_id
+                )));
+            }
+            if identifier_group == 0 || identifier_group > 255 {
+                return Err(CoreError::Rule(format!(
+                    "{} identifier_capture_group must reference groups 1..=255",
+                    definition.rule_id
+                )));
+            }
+            let value_groups = definition
+                .value_capture_groups
+                .clone()
+                .unwrap_or_else(|| vec![definition.capture_group]);
+            if value_groups.contains(&identifier_group) {
+                return Err(CoreError::Rule(format!(
+                    "{} identifier_capture_group must not overlap a value capture group",
                     definition.rule_id
                 )));
             }
@@ -617,6 +658,30 @@ mod tests {
     }
 
     #[test]
+    fn identifier_capture_group_requires_assignment_and_distinct_valid_group() {
+        let mut bundle = provider_bundle();
+        bundle.rules[0].context = Some("assignment".to_string());
+        bundle.rules[0].pattern = "(AKIA|ASIA)([A-Z0-9]{16})".to_string();
+        bundle.rules[0].capture_group = 2;
+        bundle.rules[0].value_capture_groups = None;
+        bundle.rules[0].identifier_capture_group = Some(1);
+        assert!(LoadedBundle::from_bundle(bundle.clone()).is_ok());
+
+        bundle.rules[0].identifier_capture_group = Some(0);
+        assert!(LoadedBundle::from_bundle(bundle.clone()).is_err());
+        bundle.rules[0].identifier_capture_group = Some(256);
+        assert!(LoadedBundle::from_bundle(bundle.clone()).is_err());
+        bundle.rules[0].identifier_capture_group = Some(3);
+        assert!(LoadedBundle::from_bundle(bundle.clone()).is_err());
+        bundle.rules[0].identifier_capture_group = Some(2);
+        assert!(LoadedBundle::from_bundle(bundle.clone()).is_err());
+
+        bundle.rules[0].identifier_capture_group = Some(1);
+        bundle.rules[0].context = Some("standalone".to_string());
+        assert!(LoadedBundle::from_bundle(bundle).is_err());
+    }
+
+    #[test]
     fn rejects_candidate_bound_below_capture_bound() {
         let mut bundle = provider_bundle();
         bundle.rules[0].max_candidate_bytes = Some(8);
@@ -649,6 +714,7 @@ mod tests {
             credential_type: None,
             context: None,
             component_extractor: None,
+            identifier_capture_group: None,
             max_candidate_bytes: None,
             fixture_set: None,
             provenance: None,

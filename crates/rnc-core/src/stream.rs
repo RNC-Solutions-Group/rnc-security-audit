@@ -12,6 +12,7 @@ use std::time::{Instant, SystemTime};
 use sha2::{Digest, Sha256};
 
 use crate::backend::{MatchError, MatchPlan};
+use crate::context::CandidateContext;
 use crate::finding::{
     build_finding, line_count, line_end_for_range, line_for_offset, Finding, LineIndex,
 };
@@ -40,6 +41,7 @@ pub enum FileScanError {
     Timeout,
     FindingsLimit,
     CandidateLimit,
+    Integrity(&'static str),
     Io(&'static str),
 }
 
@@ -51,6 +53,7 @@ impl FileScanError {
             Self::Timeout => "TIMEOUT",
             Self::FindingsLimit => "MAX_FINDINGS_EXCEEDED",
             Self::CandidateLimit => "CANDIDATE_LIMIT",
+            Self::Integrity(_) => "EVIDENCE_INTEGRITY",
             Self::Io(_) => "READ_ERROR",
         }
     }
@@ -624,13 +627,24 @@ fn scan_window(
             .compiled
             .get(candidate.rule_index)
             .ok_or(FileScanError::Io("backend_rule"))?;
-        let candidate_bytes = &data[start..end];
-        let outcome =
-            match crate::validate::validate_candidate(candidate_bytes, &rule.definition.validators)
-            {
-                Ok(outcome) => outcome,
-                Err(_) => continue,
-            };
+        let context = CandidateContext::from_candidate(
+            data,
+            &candidate,
+            rule.definition.identifier_capture_group.is_some(),
+        )
+        .map_err(|_| FileScanError::Integrity("candidate_context"))?;
+        if rule.definition.identifier_capture_group.is_some()
+            && crate::validate::validate_assignment_syntax(&context).is_err()
+        {
+            continue;
+        }
+        let outcome = match crate::validate::validate_candidate_with_context(
+            &context,
+            &rule.definition.validators,
+        ) {
+            Ok(outcome) => outcome,
+            Err(_) => continue,
+        };
         let confidence = effective_confidence(&rule.definition.confidence, outcome.status);
         let mut validation = outcome.applied;
         if rule.definition.provider.is_some() {
@@ -712,7 +726,7 @@ fn scan_window(
         if let Some(extractor) = rule.definition.component_extractor.as_deref() {
             if let Some(component) = extract_component(
                 extractor,
-                candidate_bytes,
+                context.value,
                 absolute_start,
                 &finding.finding_id,
                 unit_id,
