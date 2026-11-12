@@ -163,6 +163,8 @@ fn hex_lengths_and_qualified_names_are_contextually_classified() {
 
     let report = scan_root(root.path(), ScanMode::Whole, BackendRequest::Regex);
     assert_eq!(report.result.result_code, 3);
+    assert!(report.ci.accepted);
+    assert_eq!(report.ci.process_exit_code, 0);
     let findings = observed(&report, root.path());
     assert_eq!(findings.len(), 7, "{findings:?}");
     for value in [
@@ -313,6 +315,26 @@ fn hex_context_applies_to_array_xml_and_sql_forms() {
             .any(|item| item == "HEX_CREDENTIAL_SHAPE"));
         assert_exact_offsets(data.as_bytes(), finding);
     }
+}
+
+#[test]
+fn prose_only_input_is_clean_and_not_actionable() {
+    let root = tempdir().unwrap();
+    let data = "# Risk: userPassword, sshPassphrase, sshUserPassword\n\
+                Risk: userPassword, sshPassphrase\n\
+                conn.login('user@example.com', 'examplepassword', function(err, res) {\n\
+                password = function(err)\n";
+    std::fs::write(root.path().join("prose.txt"), data).unwrap();
+    let source =
+        LocalSource::new_with_policy(root.path().to_path_buf(), &PolicySpec::empty()).unwrap();
+    let mut run = config(ScanMode::Whole, BackendRequest::Regex);
+    run.accepted_result_codes = vec![1];
+    let report = scan(source.discover(), &provider_rules(), &run).unwrap();
+    assert!(report.findings.is_empty(), "{:?}", report.findings);
+    assert_eq!(report.result.result_code, 1);
+    assert_eq!(report.result.counts.detected, 0);
+    assert!(report.ci.accepted);
+    assert_eq!(report.ci.process_exit_code, 0);
 }
 
 #[test]
