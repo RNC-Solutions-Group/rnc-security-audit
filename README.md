@@ -1,6 +1,6 @@
 # RNC Security Audit
 
-> **Development status - 11 November 2026:** CP0-CP2 provide a working, security-hardened Rust scanner; CP3 adds a first-party provider-credential catalog and independent byte-addressed accuracy assessment. The original synthetic bundles remain preserved regression evidence, not production credential accuracy. Provider-format recognition is **not** proof that a credential is active, authorized or complete. No production deployment or public release is claimed.
+> **Development status - 11 November 2026:** CP0-CP2 provide a working, security-hardened Rust scanner; CP3 adds a first-party provider-credential catalog and independent byte-addressed accuracy assessment; CP4 expands generic extraction, private-key representations and provider families, and adds read-only Git-history acquisition. The original synthetic bundles remain preserved regression evidence, not production credential accuracy. Provider-format recognition is **not** proof that a credential is active, authorized or complete. No production deployment or public release is claimed.
 
 **RNC Security Audit** is the working home for RNC's security platform. Its first-party secret-detection component is **RNC Scanner**. The wider application will eventually coordinate independent security tools as well. **RNC Security Toolkit** remains the prospective name for a portable distribution, not another codebase.
 
@@ -78,8 +78,14 @@ Reporting reconciles three independently verifiable, append-only logical records
 | [CP3 accuracy methodology](docs/implementation/cp3-accuracy-methodology.md) | Byte truth, scoring, ambiguity, external corpora and comparative limits |
 | [CP3 benchmark methodology](docs/implementation/cp3-benchmark-methodology.md) | Provider workloads, timing method, resources and limitations |
 | [CP3 validation](docs/implementation/cp3-validation.md) | Final CP3 implementation, evidence, limitations and disposition |
+| [CP4 detection catalog](docs/implementation/cp4-detection-catalog.md) | Expanded providers, generic extraction, private keys and unsupported families |
+| [CP4 generic credentials](docs/implementation/cp4-generic-credentials.md) | Assignment formats, authorization contexts and plausible-only validation |
+| [CP4 private keys](docs/implementation/cp4-private-keys.md) | PEM, escaped/base64 and PGP representations |
+| [CP4 Git history](docs/implementation/cp4-git-history.md) | Read-only history scope, source identity, commands and edge behavior |
+| [CP4 validation](docs/implementation/cp4-validation.md) | CP4 regression matrix, evidence, limitations and disposition |
 | [Adaptive matching](docs/architecture/adaptive-matching.md) | Backend boundaries, required literals, streaming and differential gate |
-| [Source acquisition and report publication](docs/architecture/source-acquisition.md) | Root containment, discovery budgets, atomic report writes and platform guarantees |
+| [Source acquisition and report publication](docs/architecture/source-acquisition.md) | Root containment, discovery budgets, Git-history controls, atomic report writes and platform guarantees |
+| [Read-only Git history ADR](docs/architecture/adr-016-read-only-git-history.md) | Process, library and security tradeoffs for the history adapter |
 | [Configuration](docs/architecture/configuration.md) | Global/repository/CLI precedence, mandatory caps and legacy migration |
 | [Rule authoring](docs/implementation/cp1-rule-authoring.md) | Versioned data-only rule bundles and lifecycle |
 | [Language ADR](docs/architecture/adr-007-detector-language.md) | Rust selection and recorded Go tradeoffs |
@@ -90,7 +96,8 @@ Reporting reconciles three independently verifiable, append-only logical records
 2. **CP1 — implement the first-party engine.** Rust rule evaluation, byte-accurate findings, bounded streaming and read-only acquisition.
 3. **CP2 — integrate detection with control and accountability.** Portable regex/RegexSet/Aho-Corasick strategies; policy, configuration, reporting, five-state outcomes, and security hardening.
 4. **CP3 — validate independently.** Add first-party provider rules and offline validators, author independent byte truth, score exact occurrences, and record external-corpus and comparative evidence.
-5. **Later — broaden based on evidence.** Additional input adapters, controlled backend experiments and optional third-party audit orchestration.
+5. **CP4 — expand detection and acquisition.** Add generic credential extraction, private-key representations, additional documented provider families and a read-only Git-history source adapter while preserving the same detection, policy, reporting and CI contracts.
+6. **Later — broaden based on evidence.** Additional source adapters, controlled backend experiments and optional third-party audit orchestration.
 
 ### Current implementation
 
@@ -100,14 +107,29 @@ Reporting reconciles three independently verifiable, append-only logical records
 | Rust detector (CP1) | Implemented; synthetic rule bundles | [CP1 validation](docs/implementation/cp1-validation.md) |
 | Adaptive matching, policies, reporting and hardening (CP2) | Implemented; CI validated | [CP2 validation](docs/implementation/cp2-validation.md) |
 | Independent accuracy assessment (CP3) | **READY FOR OPERATOR MERGE; corrective review and CI complete** | [CP3 validation](docs/implementation/cp3-validation.md), [detection catalog](docs/implementation/cp3-detection-catalog.md) |
+| Detection expansion and Git history (CP4) | **Implemented; final validation and operator review pending** | [CP4 validation](docs/implementation/cp4-validation.md), [catalog](docs/implementation/cp4-detection-catalog.md), [Git history](docs/implementation/cp4-git-history.md) |
 
 The portable matching system includes a reference Rust regex strategy, a RegexSet-assisted strategy and an Aho-Corasick literal prefilter. All use the same rule, validator and finding contracts. Faster strategies are not promoted at the expense of finding equivalence.
 
 ### Provider credential catalog
 
-CP3 adds [`rules/rnc-providers-v1.json`](rules/rnc-providers-v1.json), a separately versioned schema `0.2.0` catalog with **19 rules across 12 credential families** in cloud, developer-platform, service, cryptographic, structured and generic categories. It includes AWS access-key and sensitive-identifier classification, Google Cloud API keys, GitHub classic/fine-grained/OAuth and App installation tokens, GitLab PATs, Stripe, Slack, SendGrid, npm, PEM private-key containers, Bearer JWTs, database URI userinfo and a low-confidence generic assignment fallback. Ordinary IAM resource identifiers such as `AIDA` and `AROA` are not treated as access keys.
+CP3 established [`rules/rnc-providers-v1.json`](rules/rnc-providers-v1.json) and CP4 expands it to a schema `0.2.0` catalog with **37 rules across 22 credential families** in cloud, developer-platform, service, cryptographic, structured and generic categories. It includes AWS access-key and sensitive-identifier classification, Google Cloud API keys, GitHub classic/fine-grained/OAuth and App installation tokens, GitLab PATs, Stripe, Slack, SendGrid, npm, Azure Storage, Tailscale, Groq, xAI, Perplexity, Doppler, OpenAI, Slack webhooks, PEM/PGP private-key representations, Bearer JWTs, database URI userinfo and contextual generic extraction. Ordinary IAM resource identifiers such as `AIDA` and `AROA` are not treated as access keys.
 
-Every rule has a finite match bound and declared candidate bound. Validators are offline: no provider API is called, no token is redeemed and no discovered credential is sent over a network. Structural validity is not active-credential verification. The [detection catalog](docs/implementation/cp3-detection-catalog.md) distinguishes implemented, experimental and unsupported families.
+Every rule has a finite match bound and declared candidate bound. Validators are offline: no provider API is called, no token is redeemed and no discovered credential is sent over a network. Structural validity is not active-credential verification. The [CP4 detection catalog](docs/implementation/cp4-detection-catalog.md) distinguishes implemented, experimental and unsupported families; the CP3 catalog is preserved as historical evidence.
+
+Generic assignments, Basic/Bearer authorization headers, URL userinfo, escaped/base64-wrapped private keys and PGP armor are implemented with bounded context and structural validation. Generic values remain `PLAUSIBLE_UNVERIFIED`; a parseable value is not promoted to a confirmed credential.
+
+### Git-history scanning
+
+`rnc scan --history --root <repository>` performs read-only acquisition of
+reachable commits, first-parent changed content and original blob bytes. It does
+not check out revisions, modify the index, run hooks, fetch, traverse submodules,
+or scan reflogs/unreachable objects. Historical findings are attributed to
+`commit/<oid>/<path>` units and keep byte-accurate source positions. See the
+[Git-history guide](docs/implementation/cp4-git-history.md) and
+[ADR-016](docs/architecture/adr-016-read-only-git-history.md). A history scan is
+explicit; a working-tree scan does not become a history scan because `.git`
+exists.
 
 The independent scenario suite scores exact byte spans rather than lines. On the controlled Tier 2, held-out Tier 3 and hand-authored Tier 4 challenge corpora all four strategies in whole-file and streaming modes produce the same findings: **27/27**, **15/15** and **14/14**. The validation report records the exact recall/precision, the corrected one-to-one Gitleaks reconciliation and the deliberate limitations. Tier 2/3 share a generator; Tier 4 is independently authored but still first-party, not an externally sourced corpus. External Levain, Leaky Repo and pinned Gitleaks evidence is scoped in the [accuracy methodology](docs/implementation/cp3-accuracy-methodology.md); it is not converted into a universal product score.
 
@@ -124,7 +146,7 @@ These are tracked residual hardening requirements, **not claims that CP2 lacks s
 ## Safety and implementation status
 
 - No real credentials, raw secret matches, private target IDs, or machine-specific paths in this repository. Provider fixtures are deterministic synthetic values; the PEM fixtures are deliberately inconsistent and not usable keys. Store raw evidence privately outside public source trees; sanitize before publishing.
-- Provider-format detection is not proof of an active, authorized, complete or non-revoked credential. JWTs are reported only with an explicit Bearer context; generic assignments are low confidence; public keys and certificates are not private keys; and RNC Scanner currently has no Git-history adapter.
+- Provider-format detection is not proof of an active, authorized, complete or non-revoked credential. JWTs are reported only with an explicit Bearer context; generic assignments and opaque authorization values are plausible-only; public keys, certificates and PGP public armor are not private keys. Git-history acquisition is read-only and explicitly selected; shallow, partial, corrupt or alternate-object histories fail closed rather than being reported clean.
 - Verified pre-scan exclusion means source content was **not read by the detector**. Post-scan exemption means detection occurred but the finding's disposition changed. Neither may masquerade as the other.
 - Target scope and active network testing require explicit authorization. Future red-team modes are separate from CI or passive source checks.
 - Disabled/optional checks and unavailable **required** checks have different coverage consequences; zero inspected required targets is never `CLEAN`.

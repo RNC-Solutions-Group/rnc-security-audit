@@ -1,5 +1,10 @@
 # CP3 detection catalog
 
+> **Historical CP3 evidence.** This document records the 19-rule catalog and
+> ruleset `2026.11.2` as validated for CP3. The current CP4 catalog is separate:
+> [CP4 detection catalog](cp4-detection-catalog.md). The historical synthetic
+> truth and CP3 evidence remain unchanged.
+>
 > **Scope:** Implemented first-party provider-format detection. Recognition of a
 > format is **not** proof that a credential is active, complete, authorized or
 > non-revoked. All validators are offline.

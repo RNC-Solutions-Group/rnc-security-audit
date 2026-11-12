@@ -12,7 +12,7 @@
 | **P1** | **CP1 — RNC detection core** | One authorized local-source adapter, versioned rules, matching/validation, stable finding events, traceable coverage | Every known in-scope synthetic credential is identified with accurate locations; clean/invalid/partial inputs accounted for; deterministic repeat runs |
 | **P2** | **CP2 — adaptive engine + policy/reporting backbone** | Portable matching, verified pre-scan blocks, post-scan exemptions, config provenance, independent records, five-state classifier, sanitized/private JSON, CI acceptance | Differential equivalence, counts reconcile, precedence tests pass, no private leakage, CI acceptance never rewrites results |
 | **P3** | **CP3 — independent accuracy harness** | Reuse/harden adapter-agnostic harness; synthetic stub first, complete target-by-target truth manifest, canonical normalized findings and metrics | Stub produces **100% correct expected scoring** on constructed cases; engine scored independently for recall, precision, false positives and misses |
-| **P4** | **CP4 — accuracy and speed hardening** | Rule/category expansion, validator tuning, file edge cases, adversarial fixture suite, controlled comparison with Gitleaks/Betterleaks, measured performance | Reproducible version-pinned benchmarks, no unexplained regressions, transparent coverage/corpus limits |
+| **P4** | **CP4 — detection expansion and history acquisition** | Generic credential extraction, private-key representations, additional documented provider families, read-only Git-history source adapter | All CP0-CP3 regressions pass; new detection/negative suites pass; all strategies and modes remain equivalent; history acquisition is read-only, bounded and explicit about incomplete coverage |
 | **P5** | **CP5 — audit orchestration integration** | Bring forward Gitleaks, Trivy and other third-party adapter designs; preflight, runtime backends, required/optional check selection, raw/sanitized audit aggregation | Independent tool failures and findings stay distinct; second scanner adds without changing the five-result semantics |
 | **Later** | **CP6 — portability and interfaces** | Additional source/backends, richer report exports (e.g. SARIF), noninteractive CI packages, optional TUI/GUI and portable RNC Security Toolkit distribution | No duplicated detection or policy logic across interfaces/platforms |
 
@@ -69,9 +69,20 @@ CP0 and CP1 may define interfaces for downstream modules without implementing th
 - [x] Required pre-correction CP3 CI preserved (run 43087012245, seven required jobs); corrected final-head CI is recorded in the CP3 validation report.
 - [ ] PR review and operator acceptance.
 
-### CP4–CP6 — broaden without changing the engine contract
+### CP4 — expand detection and add history acquisition
 
-- Expand credential categories, validation, input adapters and safe non-read methods incrementally; benchmark every ruleset and engine change.
+- [x] Expand generic assignments across `.env`, shell, JSON, YAML, TOML, INI, XML, PHP, SQL, quoted/escaped/multiline values and authorization contexts.
+- [x] Add escaped, base64-wrapped, log-embedded and PGP private-key representations with bounded structural validators.
+- [x] Add documented provider families: Azure Storage, Tailscale, Groq, xAI, Perplexity, Doppler, Slack webhooks and OpenAI-labelled keys; mark weak formats experimental.
+- [x] Add a read-only Git-history source adapter with explicit `--history`, selected refs, occurrence-level commit/path identity, bounded traversal and fail-closed coverage.
+- [x] Add generic, private-key, provider and history regression suites across whole/stream modes and all matching strategies.
+- [x] Preserve CP0-CP3 truth, synthetic bundles and rule identities; update documentation and README.
+- [ ] Final CP4 CI on the pushed branch and operator review.
+
+### CP5–CP6 — broaden without changing the engine contract
+
+- Expand credential categories, validation and remaining input adapters incrementally; benchmark every ruleset and engine change through the independent harness.
+- Integrate third-party scanners and different runtime backends through the original orchestration seams, not inside RNC detection.
 - Integrate third-party scanners and different runtime backends through the original orchestration seams, not inside RNC detection.
 - Add report formats and CI integrations as consumers of the same records; later choose portable packaging and operator UI from evidence.
 

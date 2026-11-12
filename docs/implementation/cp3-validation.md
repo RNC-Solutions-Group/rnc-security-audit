@@ -1,5 +1,10 @@
 # CP3 validation - detection intelligence and accuracy
 
+> **Historical CP3 evidence.** CP3 was merged into the authorized CP4 baseline.
+> CP4 now provides a read-only Git-history adapter and a 37-rule catalog; those
+> later capabilities do not change this CP3 evidence. See
+> [CP4 validation](cp4-validation.md).
+
 > **Status:** CP3 corrective review complete; **READY FOR OPERATOR MERGE**.
 > Provider format recognition is not proof of an active, authorized, complete or
 > non-revoked credential.

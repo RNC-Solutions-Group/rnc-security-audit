@@ -33,7 +33,8 @@ Schema: [`docs/contracts/rules/rule-bundle.schema.json`](../../contracts/rules/r
 - `rule_version` changes whenever pattern, capture group, validators, category, confidence or bounds change.
 - `pattern` compiles with Rust `regex` 1.11.1 and has a **finite maximum match length** established by `regex-syntax`. Unbounded repetition is rejected. `max_match_bytes` must be at least the computed maximum.
 - `capture_group` must exist. Group `0` is the whole match; group `1` is used for multiline wrappers.
-- `validators` must be known: `MARKER_FORMAT`, `MARKER_SUFFIX`, `ASCII_ONLY`.
+- Provider rules may declare optional `value_capture_groups` when a pattern has mutually exclusive value alternatives (for example double-quoted, single-quoted and unquoted values). The matcher uses the first non-empty group in that list. Every listed group must exist, be a 1–255 capture group and satisfy `max_candidate_bytes`; the base schema continues to default to `capture_group`.
+- `validators` must be recognized by the Rust loader and the provider catalog schema. Synthetic rules use `MARKER_FORMAT`, `MARKER_SUFFIX` and `ASCII_ONLY`; provider rules add the offline AWS/GitHub/PEM/generic/provider validators documented in the catalog schema.
 - `max_match_bytes` is between 1 and 1 MiB.
 - Unknown fields are rejected by both the JSON Schema and the Rust loader.
 - No remote rule download, proprietary rule import, executable plugin or network validation occurs.

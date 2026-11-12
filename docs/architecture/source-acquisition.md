@@ -42,6 +42,35 @@ Canonicalize, verify prefix containment, and read. If a secure containment primi
 
 Policy matching uses dynamic programming over pattern/path positions, avoiding combinatorial recursion on repeated `**` segments. A budget exhaustion sets `DISCOVERY_TIMEOUT`, `DISCOVERY_ENTRY_LIMIT`, `DISCOVERY_DEPTH_LIMIT` or `POLICY_BUDGET_EXCEEDED` as a fatal discovery error; the final result is `FAILED`, never a completed clean scan.
 
+## Read-only Git history
+
+CP4 adds a separate `local-git-history` adapter; a .git directory is not
+implicitly scanned by working-tree mode. The adapter is selected with
+`--history` and asks a controlled local Git executable for commit topology,
+first-parent raw tree deltas and object bytes.
+
+- No checkout, index write, branch update, hook, external diff, textconv, fetch
+  or submodule traversal occurs.
+- `GIT_DIR`, `GIT_WORK_TREE`, index/object redirection, replacement objects,
+  external-diff, SSH and askpass variables are removed or disabled. Optional
+  locks, prompts and lazy fetching are disabled.
+- Shallow repositories, partial/promisor clones and non-empty object alternates
+  are rejected because required evidence may be incomplete or outside the
+  repository boundary.
+- Missing/corrupt objects, over-limit histories, invalid paths and command
+  failures are fatal; they cannot produce a clean result.
+- Stdout/stderr are capped, the process is killed on deadline or output excess,
+  and `cat-file` content is bounded by the per-file scan limit.
+- Commit/path units are assigned `source_id = local-git-history:<hash>` and
+  `locator = commit/<oid>/<path>`. Findings retain original blob offsets,
+  lines, evidence digests and occurrence identity.
+- Pre-scan blocks are evaluated against commit/path locators before any blob
+  read. The existing policy and reporting contracts remain authoritative.
+
+See [ADR-016](adr-016-read-only-git-history.md) and the
+[CP4 history guide](../implementation/cp4-git-history.md) for the full contract
+and edge behavior.
+
 ## Report publication
 
 Report destinations are resolved relative to the process working directory. An unresolved parent is an error; the loader never falls back to the original relative spelling.
