@@ -34,6 +34,7 @@ Schema: [`docs/contracts/rules/rule-bundle.schema.json`](../contracts/rules/rule
 - `pattern` compiles with Rust `regex` 1.11.1 and has a **finite maximum match length** established by `regex-syntax`. Unbounded repetition is rejected. `max_match_bytes` must be at least the computed maximum.
 - `capture_group` must exist. Group `0` is the whole match; group `1` is used for multiline wrappers.
 - Provider rules may declare optional `value_capture_groups` when a pattern has mutually exclusive value alternatives (for example double-quoted, single-quoted and unquoted values). The matcher uses the first non-empty group in that list. Every listed group must exist, be a 1–255 capture group and satisfy `max_candidate_bytes`; the base schema continues to default to `capture_group`.
+- Assignment-context provider rules may declare optional `identifier_capture_group` for bounded validation context. It must reference a distinct existing group with a finite maximum length, must not overlap a value group, and is never included in the finding span. If declared, the group is mandatory for a match; a missing identifier is an integrity error.
 - `validators` must be recognized by the Rust loader and the provider catalog schema. Synthetic rules use `MARKER_FORMAT`, `MARKER_SUFFIX` and `ASCII_ONLY`; provider rules add the offline AWS/GitHub/PEM/generic/provider validators documented in the catalog schema.
 - `max_match_bytes` is between 1 and 1 MiB.
 - Unknown fields are rejected by both the JSON Schema and the Rust loader.
@@ -50,6 +51,7 @@ They add:
 
 - `provider`, `family`, `credential_type` identity;
 - `context` (`standalone`, `assignment`, `bearer`, `container` or `uri`);
+- optional `identifier_capture_group` for assignment context;
 - `max_candidate_bytes`, checked against the capture group's finite maximum;
 - `fixture_set` and digest-bound `provenance` references.
 

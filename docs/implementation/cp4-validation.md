@@ -9,6 +9,12 @@
 > an optional database-password `component_extractor` and note. The CP4
 > detection findings, rule identities and historical evidence below are
 > unchanged. See [CP4A hardening](cp4a-hardening.md).
+>
+> **CP4B follow-on:** the five generic rule families were subsequently updated
+> to `2026.11.5` and the ruleset to `2026.11.5` for contextual assignment
+> validation. Provider, private-key and database findings remain unchanged;
+> historical CP4 evidence below is preserved. See
+> [CP4B contextual validation](cp4b-contextual-validation.md).
 
 ## Repository state
 

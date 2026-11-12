@@ -1,6 +1,6 @@
 # CP0 architecture decisions — ADR register
 
-Status: **CP0–CP4 decisions recorded; operator review pending.** The production detector language is selected as **Rust** in [ADR-007](adr-007-detector-language.md); CP2 implements portable strategies and policy/reporting boundaries. CP3 adds a separately versioned provider catalog in [ADR-015](adr-015-provider-credential-catalog.md). CP4 adds read-only Git-history acquisition through a controlled local Git process in [ADR-016](adr-016-read-only-git-history.md).
+Status: **CP0–CP4B decisions recorded; operator review pending.** The production detector language is selected as **Rust** in [ADR-007](adr-007-detector-language.md); CP2 implements portable strategies and policy/reporting boundaries. CP3 adds a separately versioned provider catalog in [ADR-015](adr-015-provider-credential-catalog.md). CP4 adds read-only Git-history acquisition through a controlled local Git process in [ADR-016](adr-016-read-only-git-history.md). CP4B extends ADR-015 with bounded assignment candidate context; it does not add a new backend or report contract.
 
 | ID | Decision | Consequence / next check |
 | --- | --- | --- |

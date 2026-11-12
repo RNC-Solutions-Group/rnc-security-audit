@@ -7,8 +7,8 @@
 Ruleset: [`rules/rnc-providers-v1.json`](../../rules/rnc-providers-v1.json)<br>
 Schema: [`provider-rule-bundle.schema.json`](../contracts/rules/provider-rule-bundle.schema.json)
 Rules: **37** across **22 families**  
-Ruleset version: `2026.11.4`<br>
-Current digest: `sha256:dc1ab16f64a5dfb91262b46f321a9f5b219a13ed3bfb49e0f79c067de40bbc0f`
+Ruleset version: `2026.11.5`<br>
+Current digest: `sha256:901008d7cf64ee7387599eb13720bc3b78a2ab8868aae6e779fea1843c22dfb9`
 
 The digest binds every rule's provider/family/credential/context metadata,
 `value_capture_groups`, optional `component_extractor`, fixture set and
@@ -86,10 +86,25 @@ changing its contextual finding or classification. ANSI SGR-normalized
 component hashes, source offsets and privacy semantics are documented in
 [CP4A hardening](cp4a-hardening.md).
 
+CP4B updates the five generic assignment rule families to `2026.11.5` and the
+ruleset to `2026.11.5`. It adds an optional assignment-identifier capture used
+only for bounded validation context, applies a comma/`define(...)` syntax gate,
+recognizes `BASE`-qualified names, and classifies hash-length hexadecimal values
+by assignment context rather than length alone. Provider, private-key and
+database rule identities and finding spans are unchanged. See
+[CP4B contextual validation](cp4b-contextual-validation.md).
+
 The generic family has two family names for historical compatibility:
 `generic-secret-assignment` is the CP3 rule identity, and `generic-assignment`
 groups the CP4 context-specific rules. Both are generic-credential categories,
 not verified provider credentials.
+
+The CP4B generic rule versions are `2026.11.5` for
+`generic-secret-assignment`, `generic-array-assignment`,
+`generic-multiline-assignment`, `generic-xml-assignment` and
+`generic-sql-password`. Their finding IDs therefore migrate as a controlled
+behavior change; unchanged accepted values retain their exact byte span and
+evidence digest. All non-generic rule versions and finding IDs are unchanged.
 
 ## Provider evidence and uncertainty
 

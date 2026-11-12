@@ -4,7 +4,7 @@ The documents below are the **current design specifications** for RNC Scanner an
 
 1. [Detection engine](detection-engine.md) — implemented input adapter boundary, rules, normalized detection events, deterministic behavior and resource controls.
 2. [Adaptive matching](adaptive-matching.md) — implemented portable multi-strategy architecture and provenance.
-3. [Provider credential catalog](adr-015-provider-credential-catalog.md) — CP3 schema `0.2.0`, offline validators and confidence semantics; CP4 extends the catalog and generic/private-key handling.
+3. [Provider credential catalog](adr-015-provider-credential-catalog.md) — CP3 schema `0.2.0`, offline validators and confidence semantics; CP4 extends the catalog and generic/private-key handling; CP4B adds bounded assignment context.
 4. [Read-only Git history](adr-016-read-only-git-history.md) — CP4 process boundary, traversal safety and history source identity.
 5. [Configuration](configuration.md) — implemented global/repository/CLI precedence, mandatory caps and legacy migration.
 6. [Policy](policy.md) — implemented no-read blocks, post-scan exemptions, origin and collision precedence.

@@ -34,8 +34,8 @@ Inputs are **read-only** from the engine's perspective. Symlink escape, oversize
 
 ## Rule and identification pipeline
 
-1. **Candidate matching.** Compile approved patterns once per rule bundle. Prefer bounded/linear regex constructs; disallow patterns with unbounded backtracking or document a hard execution budget. Rule `id` and `version` are part of every finding identity.
-2. **Validation.** Apply rule-specific deterministic checks (syntax, length, known structure/checksum, context constraints) and confidence signals. Network verification is **not** implicit.
+1. **Candidate matching.** Compile approved patterns once per rule bundle. Prefer bounded/linear regex constructs; disallow patterns with unbounded backtracking or document a hard execution budget. Rule `id` and `version` are part of every finding identity. CP4B retains the exact full-match span, captured value span and optional assignment-identifier span as bounded internal context; context is not persisted in the finding.
+2. **Validation.** Apply rule-specific deterministic checks (syntax, length, known structure/checksum, context constraints) and confidence signals. Generic assignment rules may use the bounded identifier/delimiter/quote context to reject callback or prose syntax and to distinguish hex credentials from digest-named fields. Context never upgrades a generic candidate to format-valid or verified. Network verification is **not** implicit.
 3. **Normalization.** Emit the canonical `finding_id`, rule/version, category, unit, byte offsets, line/line-end, validation reasons and evidence digest. Deduplicate only by the documented deterministic key. Overlapping rules are separate findings when both rules legitimately match.
 4. **Accounting.** Emit inspected units, matched candidates, validated findings, limits, warnings, coverage errors and failures. Failed or partially processed units remain visible.
 

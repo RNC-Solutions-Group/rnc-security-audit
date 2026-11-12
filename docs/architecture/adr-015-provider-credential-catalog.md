@@ -93,3 +93,15 @@ tests, an independently authored Tier 4 challenge and comparator negative
 controls were added. Historical Tier 2/Tier 3 scores remain recorded; corrected
 comparator scores are reported separately. No finding is promoted to
 active-credential verification.
+
+## Amendment: CP4B candidate context (12 November 2026)
+
+The generic assignment rules retain a bounded
+`MatchCandidate { value, full_match, identifier }` context between matching and
+validation. Optional `identifier_capture_group` metadata is load-time validated;
+the context is never serialized and never changes the finding span or digest.
+Generic validation uses it only for assignment-syntax gating and for deciding
+whether a hash-length hex value is a digest-named field. Provider-specific
+rules, private-key rules and the database structured component are unchanged.
+The five generic rule identities move to `2026.11.5`; all other rule identities
+and finding IDs remain stable.

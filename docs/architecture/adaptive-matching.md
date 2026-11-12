@@ -8,8 +8,8 @@
 authorized source
   -> LocalSource discovery + policy scope gate (no open for blocked units)
   -> MatchPlan (regex | regexset | prefilter)
-       -> MatchCandidate { rule_index, start_byte, end_byte }
-  -> candidate validation
+       -> MatchCandidate { rule_index, value span, full-match span, optional identifier span }
+  -> candidate context + validation
   -> deterministic finding records
   -> post-scan exemption dispositions
   -> result + CI decision
@@ -37,6 +37,16 @@ This is intentionally conservative. Missing a candidate is a hard correctness fa
 ## Streaming
 
 A match plan is applied to bounded windows. The carry overlap is the bundle's proven maximum match length. A candidate ending exactly at a non-final window edge is deferred to the next window so a truncated match is never emitted. The final carry is rescanned. Absolute offsets, evidence digests and finding IDs are computed by the common path.
+
+## Candidate context
+
+`MatchCandidate` now retains the exact full-match span and an optional
+assignment-identifier span in addition to the value span. `context.rs` derives
+a bounded delimiter/quote/`define(...)` view without allocating or changing the
+candidate coordinates. Only rules that declare `identifier_capture_group` use
+the generic syntax gate; all other rules keep their previous validation path.
+The context is never serialized; finding offsets and evidence digests continue
+to describe the captured value only.
 
 ## Provenance
 
