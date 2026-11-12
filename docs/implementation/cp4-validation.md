@@ -1,9 +1,9 @@
 # CP4 validation — detection expansion and Git history
 
-> **Status:** Implementation and local regression validation complete. Final CI
-> evidence and operator review are recorded below when the branch is pushed.
-> Provider-format recognition is not proof of an active, authorized, complete or
-> non-revoked credential.
+> **Status:** **READY FOR OPERATOR REVIEW.** Implementation, local regression,
+> CP0-CP3 compatibility, Git-history acquisition and pushed-branch CI are
+> complete. Provider-format recognition is not proof of an active, authorized,
+> complete or non-revoked credential.
 
 ## Repository state
 
@@ -11,9 +11,11 @@
 | --- | --- |
 | Branch | `feat/cp4` |
 | Starting baseline | `5391d8457ea091c45733920078a7f714ec61f678` |
-| Final implementation head | Set by the CP4 commit(s); see PR |
-| Pull request | [PR #10](https://github.com/RNC-Solutions-Group/rnc-security-audit/pull/10) once updated |
-| Target | Authorized development target; operator owns merge |
+| Final implementation head | `c442f3d5e801022b74ee0ac4c5651dc1ae9c2856` (CI-validated) |
+| Final documentation head | The `docs(cp4)` evidence commit after CI; see PR |
+| Pull request | [PR #11](https://github.com/RNC-Solutions-Group/rnc-security-audit/pull/11) |
+| Target | `main`; `feat/cp4` is based on the operator-merged CP3 baseline |
+| Merge state at evidence head | OPEN, MERGEABLE, `CLEAN`; all checks pass |
 | Merge | No merge performed by the developer |
 
 CP3's synthetic v0/v1 truth, provider truth and one-to-one comparative evidence
@@ -71,9 +73,31 @@ Environment: Windows, Rust 1.85.0, locked workspace.
 | CP4 Git history | 7/7 test functions |
 | CLI history | 2/2 test functions |
 
-The Rust suite includes 110 tests on Windows after CP4 (95 before). Linux CI is
-expected to include the platform-gated tests that do not run on Windows; the
-final CI count is recorded after the push.
+The Rust suite includes 110 tests on Windows after CP4 (95 before). Linux CI
+includes the platform-gated tests: **121 Rust tests** passed in the CP4 quality
+and cross-platform Linux jobs.
+
+### Pushed-branch CI evidence
+
+All required checks for PR #11 at `c442f3d` are green.
+
+| Workflow | Run | Result |
+| --- | --- | --- |
+| CP4 quality/detection/history/filesystem | [43125714689](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/43125714689) | Success, all 6 jobs |
+| CP0 contracts/corpus | [43125714678](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/43125714678) | Success |
+| CP1 Rust quality/integration | [43125714767](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/43125714767) | Success |
+| CP2 engine/policy/classification | [43125714853](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/43125714853) | Success |
+| CP3 provider catalog and accuracy | [43125714941](https://github.com/RNC-Solutions-Group/rnc-security-audit/actions/runs/43125714941) | Success, including 88-profile benchmark regression |
+
+CP4 sanitized evidence artifact: `cp4-validation-evidence`, ID `13902991923`,
+digest `sha256:5e431f82b8051baf07d7d1087c3b542f580d8374ab5a191999de1fcce5a038a9`.
+
+The CP3 benchmark initially exposed one over-broad generic behavior: a bare
+`secret = ...` assignment duplicated the Terraform AWS secret finding. CP4
+changed the generic name rule to require a qualified form such as
+`secret_key`, `secret_token`, `client_secret`, `jwt_secret` or
+`session_secret`; it did not change the benchmark expectation. The 88-profile
+benchmark then passed without changing expected counts.
 
 ### Differential correctness
 
@@ -150,8 +174,17 @@ The committed Rust fixtures create repositories locally and cover:
 
 ## Disposition
 
-**CONDITIONAL GO pending final pushed-branch CI.** Local implementation,
-regression, formatting, linting, release build, CP0-CP3 regressions and the
-24-case provider integration pass. The CP4 workflow is added but its result on
-the remote branch is not yet available. Operator approval and merge remain
-outstanding.
+**READY FOR OPERATOR REVIEW.**
+
+The implementation head `c442f3d` passed the full required matrix:
+
+- 121 Rust tests on Linux and 110 on local Windows;
+- formatting, warnings-denied Clippy and locked release build;
+- CP0 74, CP1 5 and CP3 55 Python tests;
+- 24/24 provider integration cases across three datasets, two modes and four
+  strategies;
+- seven Git-history tests, two CLI history tests and read-only history smoke;
+- Ubuntu, Windows, macOS, static musl and dependency-audit lanes.
+
+No merge was performed. `main` remains unchanged; the operator owns the CP4 PR
+review and merge decision.

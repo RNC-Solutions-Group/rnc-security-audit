@@ -107,7 +107,7 @@ Reporting reconciles three independently verifiable, append-only logical records
 | Rust detector (CP1) | Implemented; synthetic rule bundles | [CP1 validation](docs/implementation/cp1-validation.md) |
 | Adaptive matching, policies, reporting and hardening (CP2) | Implemented; CI validated | [CP2 validation](docs/implementation/cp2-validation.md) |
 | Independent accuracy assessment (CP3) | **READY FOR OPERATOR MERGE; corrective review and CI complete** | [CP3 validation](docs/implementation/cp3-validation.md), [detection catalog](docs/implementation/cp3-detection-catalog.md) |
-| Detection expansion and Git history (CP4) | **Implemented; final validation and operator review pending** | [CP4 validation](docs/implementation/cp4-validation.md), [catalog](docs/implementation/cp4-detection-catalog.md), [Git history](docs/implementation/cp4-git-history.md) |
+| Detection expansion and Git history (CP4) | **READY FOR OPERATOR REVIEW; CI complete** | [CP4 validation](docs/implementation/cp4-validation.md), [catalog](docs/implementation/cp4-detection-catalog.md), [Git history](docs/implementation/cp4-git-history.md) |
 
 The portable matching system includes a reference Rust regex strategy, a RegexSet-assisted strategy and an Aho-Corasick literal prefilter. All use the same rule, validator and finding contracts. Faster strategies are not promoted at the expense of finding equivalence.
 

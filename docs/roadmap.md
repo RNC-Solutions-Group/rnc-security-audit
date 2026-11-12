@@ -77,7 +77,8 @@ CP0 and CP1 may define interfaces for downstream modules without implementing th
 - [x] Add a read-only Git-history source adapter with explicit `--history`, selected refs, occurrence-level commit/path identity, bounded traversal and fail-closed coverage.
 - [x] Add generic, private-key, provider and history regression suites across whole/stream modes and all matching strategies.
 - [x] Preserve CP0-CP3 truth, synthetic bundles and rule identities; update documentation and README.
-- [ ] Final CP4 CI on the pushed branch and operator review.
+- [x] Final CP4 CI on the pushed branch is green across the required matrix.
+- [ ] Operator review and merge decision.
 
 ### CP5–CP6 — broaden without changing the engine contract
 

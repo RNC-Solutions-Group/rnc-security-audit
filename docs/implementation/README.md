@@ -8,7 +8,7 @@ This folder holds capability-proof briefs, test commands and verified outcomes. 
 | CP1 — RNC detector | **Implementation complete; awaiting operator acceptance** | Rust detector finds all in-scope synthetic markers, accounts for every unit, deterministic repeat runs |
 | CP2 — adaptive engine/policy/reporting | **Implementation, security hardening and CI complete; awaiting operator review** | Portable strategies equivalent; verified blocks/exemptions; reconciled ledgers; five results; sanitized/private reports; CI exits |
 | CP3 — provider intelligence and accuracy | **READY FOR OPERATOR MERGE; corrective review, controlled/external evidence and CI complete** | Provider catalog, AWS identifier taxonomy, GitHub installation tokens, byte-addressed independent truth, Tier 4 challenge, strategy equivalence, scoped external corpora and corrected one-to-one comparative Gitleaks evidence |
-| CP4 — detection expansion and Git history | **Implemented; local validation complete; final CI and operator review pending** | Generic extraction, PEM/PGP representations, 37-rule catalog, read-only history adapter, occurrence and cross-platform tests |
+| CP4 — detection expansion and Git history | **READY FOR OPERATOR REVIEW; CI complete** | Generic extraction, PEM/PGP representations, 37-rule catalog, read-only history adapter, occurrence and cross-platform tests |
 | CP5 — orchestrator | Historical design retained; not implemented here | Second independent scanner/backend integration and partial-coverage truthfulness |
 | CP6 — distribution | Deferred | Portable CLI without duplicated policy/detection logic |
 
