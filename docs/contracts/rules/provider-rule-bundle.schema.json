@@ -44,6 +44,13 @@
           "context": {"enum": ["assignment", "bearer", "container", "standalone", "uri"]},
           "pattern": {"type": "string", "minLength": 1, "maxLength": 16384},
           "capture_group": {"type": "integer", "minimum": 0, "maximum": 255},
+          "value_capture_groups": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 16,
+            "uniqueItems": true,
+            "items": {"type": "integer", "minimum": 1, "maximum": 255}
+          },
           "validators": {
             "type": "array",
             "minItems": 1,
@@ -72,9 +79,26 @@
                 "SENDGRID_API_KEY",
                 "NPM_TOKEN",
                 "PEM_PRIVATE_KEY",
+                "ESCAPED_PEM_PRIVATE_KEY",
+                "PGP_PRIVATE_KEY",
+                "BASE64_PEM_PRIVATE_KEY",
                 "JWT_BEARER",
+                "HTTP_BASIC_AUTH",
+                "HTTP_BEARER_OPAQUE",
+                "URL_USERINFO",
                 "DATABASE_URI",
-                "GENERIC_SECRET_ASSIGNMENT"
+                "GENERIC_SECRET_ASSIGNMENT",
+                "GENERIC_ASSIGNED_SECRET",
+                "MULTILINE_ASSIGNED_SECRET",
+                "SQL_PASSWORD",
+                "AZURE_STORAGE_ACCOUNT_KEY",
+                "TAILSCALE_KEY",
+                "GROQ_API_KEY",
+                "XAI_API_KEY",
+                "PERPLEXITY_API_KEY",
+                "DOPPLER_SERVICE_TOKEN",
+                "SLACK_WEBHOOK",
+                "OPENAI_API_KEY"
               ]
             }
           },

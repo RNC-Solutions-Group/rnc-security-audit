@@ -7,9 +7,12 @@ use crate::coverage::{
 };
 use crate::error::CoreError;
 use crate::finding::{sort_findings, Finding};
-use crate::input::{Discovery, PreScanScope, ScanLimits};
+use crate::git::GitReadError;
+use crate::input::{Discovery, GitHistoryInfo, PreScanScope, ScanLimits};
 use crate::rules::LoadedBundle;
-use crate::stream::{scan_file, FileScanError, ScanFileConfig, ScanMode};
+use crate::stream::{
+    scan_content, scan_file, FileScanError, ScanContentConfig, ScanFileConfig, ScanMode,
+};
 
 #[derive(Debug, Clone)]
 pub struct RunConfig {
@@ -53,6 +56,7 @@ pub struct ScanReport {
     pub ci: crate::result::CiDecision,
     pub plan: crate::backend::PlanProvenance,
     pub configuration: ConfigurationInfo,
+    pub history: Option<GitHistoryInfo>,
     pub warnings: Vec<String>,
 }
 
@@ -76,6 +80,7 @@ impl ScanReport {
             "ci": self.ci,
             "execution_plan": self.plan,
             "configuration": self.configuration,
+            "history": self.history,
         }))
     }
 
@@ -87,6 +92,15 @@ impl ScanReport {
     /// Sanitized machine-readable summary. It contains no locators, finding
     /// identifiers, evidence digests, policy selectors or raw matched bytes.
     pub fn sanitized_value(&self) -> serde_json::Value {
+        let history = self.history.as_ref().map(|history| {
+            serde_json::json!({
+                "scope": history.scope,
+                "commits": history.commits,
+                "changed_paths": history.changed_paths,
+                "deleted_paths": history.deleted_paths,
+                "units": history.units_seen,
+            })
+        });
         serde_json::json!({
             "format_version": "rnc-cp2-sanitized-v1",
             "engine_version": self.result.engine_version,
@@ -101,16 +115,33 @@ impl ScanReport {
             "accepted_result_codes": self.ci.accepted_result_codes,
             "accepted": self.ci.accepted,
             "process_exit_code": self.ci.process_exit_code,
+            "history": history,
         })
     }
 
     pub fn summary(&self) -> String {
         let execution = &self.execution;
+        let history = self
+            .history
+            .as_ref()
+            .map(|history| {
+                format!(
+                    "History: {} commits, {} changed paths, {} deletions, {} revisions ({})\n",
+                    history.commits,
+                    history.changed_paths,
+                    history.deleted_paths,
+                    history.units_seen,
+                    history.scope
+                )
+            })
+            .unwrap_or_default();
         format!(
             "RNC Scanner {ENGINE_VERSION}\n\
              Schema: {SCHEMA_VERSION}\n\
              Run: {}\n\
+             Source: {}\n\
              Execution: {}\n\
+             {history}\
              Ruleset: {} ({})\n\
              Backend: {} (requested {})\n\
              Inspected: {} (blocked {}, uninspected {}, required uninspected {})\n\
@@ -118,6 +149,7 @@ impl ScanReport {
              Result: {} ({}), coverage {}\n\
              CI accepted: {} (exit {})\n",
             execution.run_id,
+            execution.source_adapter.id,
             execution.state.as_str(),
             execution.ruleset_id,
             execution.ruleset_digest,
@@ -155,6 +187,14 @@ pub fn scan(
     });
     let plan = crate::backend::MatchPlan::new(rules, config.strategy)?;
     let mut execution = ExecutionRecord::new(&config.run_id, rules);
+    if !discovery.source_adapter_id.is_empty() {
+        execution.source_adapter = crate::coverage::SourceAdapter::new(
+            &discovery.source_adapter_id,
+            &discovery.source_adapter_version,
+        );
+    }
+    let history = discovery.git_history.clone();
+    let git_source = discovery.git_source.clone();
     let mut findings = Vec::new();
     let mut warnings = discovery.warnings.clone();
     for code in &discovery.fatal_errors {
@@ -170,18 +210,32 @@ pub fn scan(
             add_remaining_uninspected(&mut execution, &units[index..], "TIMEOUT")?;
             break;
         }
+        let source_id = if unit.source_id.is_empty() {
+            crate::path::SOURCE_ID
+        } else {
+            unit.source_id.as_str()
+        };
+        let source_kind = if unit.source_kind.is_empty() {
+            "working_tree_file"
+        } else {
+            unit.source_kind.as_str()
+        };
         match unit.scope {
             PreScanScope::Blocked => {
-                execution.units.push(SourceUnitRecord::blocked(
+                execution.units.push(SourceUnitRecord::blocked_for(
                     &config.run_id,
+                    source_id,
+                    source_kind,
                     &unit.locator,
                     unit.required_scope,
                     "PRE_SCAN_BLOCKED",
                 )?);
             }
             PreScanScope::Skipped(reason) => {
-                execution.units.push(SourceUnitRecord::uninspected(
+                execution.units.push(SourceUnitRecord::uninspected_for(
                     &config.run_id,
+                    source_id,
+                    source_kind,
                     &unit.locator,
                     unit.required_scope,
                     reason,
@@ -189,8 +243,10 @@ pub fn scan(
             }
             PreScanScope::Inspect => {
                 if unit.size > config.limits.max_file_bytes {
-                    execution.units.push(SourceUnitRecord::uninspected(
+                    execution.units.push(SourceUnitRecord::uninspected_for(
                         &config.run_id,
+                        source_id,
+                        source_kind,
                         &unit.locator,
                         unit.required_scope,
                         "FILE_SIZE_LIMIT",
@@ -198,54 +254,143 @@ pub fn scan(
                     continue;
                 }
                 if total_bytes.saturating_add(unit.size) > config.limits.max_total_bytes {
-                    execution.units.push(SourceUnitRecord::uninspected(
+                    execution.units.push(SourceUnitRecord::uninspected_for(
                         &config.run_id,
+                        source_id,
+                        source_kind,
                         &unit.locator,
                         unit.required_scope,
                         "TOTAL_BYTE_LIMIT",
                     )?);
                     continue;
                 }
-                let effective_mode = match config.mode {
-                    ScanMode::Auto if unit.size > config.stream_threshold_bytes => ScanMode::Stream,
-                    ScanMode::Auto => ScanMode::Whole,
-                    mode => mode,
-                };
-                let file_config = ScanFileConfig {
-                    mode: effective_mode,
-                    stream_chunk_bytes: config.stream_chunk_bytes,
-                    max_file_bytes: config.limits.max_file_bytes,
-                    max_findings: config.limits.max_findings.saturating_sub(findings.len()),
-                    deadline,
-                };
-                let unit_id = match crate::path::unit_id(crate::path::SOURCE_ID, &unit.locator) {
-                    Ok(unit_id) => unit_id,
-                    Err(_) => {
-                        execution.units.push(SourceUnitRecord::uninspected(
+                if unit.unit_id.is_empty() {
+                    execution.units.push(SourceUnitRecord::uninspected_for(
+                        &config.run_id,
+                        source_id,
+                        source_kind,
+                        &unit.locator,
+                        unit.required_scope,
+                        "NON_CANONICAL_PATH",
+                    )?);
+                    continue;
+                }
+                let result = if let Some(git_ref) = &unit.git {
+                    let Some(git_source) = git_source.as_ref() else {
+                        execution.units.push(SourceUnitRecord::uninspected_for(
                             &config.run_id,
+                            source_id,
+                            source_kind,
                             &unit.locator,
                             unit.required_scope,
-                            "NON_CANONICAL_PATH",
+                            "GIT_SOURCE_UNAVAILABLE",
+                        )?);
+                        execution.add_fatal("GIT_SOURCE_UNAVAILABLE");
+                        continue;
+                    };
+                    let data = match git_source.read_blob(
+                        &git_ref.blob_oid,
+                        config.limits.max_file_bytes,
+                        deadline,
+                    ) {
+                        Ok(data) => data,
+                        Err(GitReadError::Timeout) => {
+                            execution.units.push(SourceUnitRecord::uninspected_for(
+                                &config.run_id,
+                                source_id,
+                                source_kind,
+                                &unit.locator,
+                                unit.required_scope,
+                                "TIMEOUT",
+                            )?);
+                            timed_out = true;
+                            add_remaining_uninspected(
+                                &mut execution,
+                                &units[index + 1..],
+                                "TIMEOUT",
+                            )?;
+                            break;
+                        }
+                        Err(error) => {
+                            execution.units.push(SourceUnitRecord::uninspected_for(
+                                &config.run_id,
+                                source_id,
+                                source_kind,
+                                &unit.locator,
+                                unit.required_scope,
+                                error.reason_code(),
+                            )?);
+                            if matches!(error, GitReadError::ObjectUnavailable) {
+                                execution.add_fatal("GIT_OBJECT_UNAVAILABLE");
+                            }
+                            continue;
+                        }
+                    };
+                    if total_bytes.saturating_add(data.len() as u64) > config.limits.max_total_bytes
+                    {
+                        execution.units.push(SourceUnitRecord::uninspected_for(
+                            &config.run_id,
+                            source_id,
+                            source_kind,
+                            &unit.locator,
+                            unit.required_scope,
+                            "TOTAL_BYTE_LIMIT",
                         )?);
                         continue;
                     }
+                    let effective_mode = match config.mode {
+                        ScanMode::Auto if data.len() as u64 > config.stream_threshold_bytes => {
+                            ScanMode::Stream
+                        }
+                        ScanMode::Auto => ScanMode::Whole,
+                        mode => mode,
+                    };
+                    scan_content(
+                        &data,
+                        &unit.unit_id,
+                        &config.run_id,
+                        &plan,
+                        &ScanContentConfig {
+                            mode: effective_mode,
+                            stream_chunk_bytes: config.stream_chunk_bytes,
+                            max_findings: config.limits.max_findings.saturating_sub(findings.len()),
+                            deadline,
+                        },
+                    )
+                } else {
+                    let effective_mode = match config.mode {
+                        ScanMode::Auto if unit.size > config.stream_threshold_bytes => {
+                            ScanMode::Stream
+                        }
+                        ScanMode::Auto => ScanMode::Whole,
+                        mode => mode,
+                    };
+                    scan_file(
+                        &source_root,
+                        &unit.locator,
+                        &unit.unit_id,
+                        &config.run_id,
+                        &plan,
+                        &ScanFileConfig {
+                            mode: effective_mode,
+                            stream_chunk_bytes: config.stream_chunk_bytes,
+                            max_file_bytes: config.limits.max_file_bytes,
+                            max_findings: config.limits.max_findings.saturating_sub(findings.len()),
+                            deadline,
+                        },
+                        unit.size,
+                        unit.modified,
+                    )
                 };
-                match scan_file(
-                    &source_root,
-                    &unit.locator,
-                    &unit_id,
-                    &config.run_id,
-                    &plan,
-                    &file_config,
-                    unit.size,
-                    unit.modified,
-                ) {
+                match result {
                     Ok(result) => {
                         if total_bytes.saturating_add(result.bytes_read)
                             > config.limits.max_total_bytes
                         {
-                            execution.units.push(SourceUnitRecord::uninspected(
+                            execution.units.push(SourceUnitRecord::uninspected_for(
                                 &config.run_id,
+                                source_id,
+                                source_kind,
                                 &unit.locator,
                                 unit.required_scope,
                                 "TOTAL_BYTE_LIMIT",
@@ -253,19 +398,25 @@ pub fn scan(
                             continue;
                         }
                         total_bytes = total_bytes.saturating_add(result.bytes_read);
-                        execution.units.push(SourceUnitRecord::inspected_with_hash(
-                            &config.run_id,
-                            &unit.locator,
-                            unit.required_scope,
-                            result.bytes_read,
-                            result.line_count,
-                            result.content_sha256,
-                        )?);
+                        execution
+                            .units
+                            .push(SourceUnitRecord::inspected_with_hash_for(
+                                &config.run_id,
+                                source_id,
+                                source_kind,
+                                &unit.locator,
+                                unit.required_scope,
+                                result.bytes_read,
+                                result.line_count,
+                                result.content_sha256,
+                            )?);
                         findings.extend(result.findings);
                     }
                     Err(FileScanError::Timeout) => {
-                        execution.units.push(SourceUnitRecord::uninspected(
+                        execution.units.push(SourceUnitRecord::uninspected_for(
                             &config.run_id,
+                            source_id,
+                            source_kind,
                             &unit.locator,
                             unit.required_scope,
                             "TIMEOUT",
@@ -275,8 +426,10 @@ pub fn scan(
                         break;
                     }
                     Err(FileScanError::FindingsLimit) => {
-                        execution.units.push(SourceUnitRecord::uninspected(
+                        execution.units.push(SourceUnitRecord::uninspected_for(
                             &config.run_id,
+                            source_id,
+                            source_kind,
                             &unit.locator,
                             unit.required_scope,
                             "MAX_FINDINGS_EXCEEDED",
@@ -290,8 +443,10 @@ pub fn scan(
                         break;
                     }
                     Err(FileScanError::CandidateLimit) => {
-                        execution.units.push(SourceUnitRecord::uninspected(
+                        execution.units.push(SourceUnitRecord::uninspected_for(
                             &config.run_id,
+                            source_id,
+                            source_kind,
                             &unit.locator,
                             unit.required_scope,
                             "CANDIDATE_LIMIT",
@@ -307,8 +462,10 @@ pub fn scan(
                         break;
                     }
                     Err(error) => {
-                        execution.units.push(SourceUnitRecord::uninspected(
+                        execution.units.push(SourceUnitRecord::uninspected_for(
                             &config.run_id,
+                            source_id,
+                            source_kind,
                             &unit.locator,
                             unit.required_scope,
                             error.reason_code(),
@@ -354,6 +511,7 @@ pub fn scan(
             provenance: config.config_provenance.clone(),
             accepted_result_codes: config.accepted_result_codes.clone(),
         },
+        history,
         warnings,
     })
 }
@@ -364,8 +522,20 @@ fn add_remaining_uninspected(
     reason: &str,
 ) -> Result<(), CoreError> {
     for unit in units {
-        execution.units.push(SourceUnitRecord::uninspected(
+        let source_id = if unit.source_id.is_empty() {
+            crate::path::SOURCE_ID
+        } else {
+            unit.source_id.as_str()
+        };
+        let source_kind = if unit.source_kind.is_empty() {
+            "working_tree_file"
+        } else {
+            unit.source_kind.as_str()
+        };
+        execution.units.push(SourceUnitRecord::uninspected_for(
             &execution.run_id,
+            source_id,
+            source_kind,
             &unit.locator,
             unit.required_scope,
             reason,

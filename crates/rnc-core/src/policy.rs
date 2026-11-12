@@ -1022,6 +1022,8 @@ mod tests {
             .unwrap();
         let unit = crate::input::DiscoveredUnit {
             unit_id: crate::path::unit_id("local-working-tree", "secrets/a.txt").unwrap(),
+            source_id: "local-working-tree".to_string(),
+            source_kind: "working_tree_file".to_string(),
             locator: "secrets/a.txt".to_string(),
             path: std::path::PathBuf::from("secrets/a.txt"),
             size: 10,
@@ -1030,6 +1032,7 @@ mod tests {
             scope: crate::input::PreScanScope::Blocked,
             block_matches: vec![wide.request_id.clone(), narrow.request_id.clone()],
             block_request_id: Some(narrow.request_id.clone()),
+            git: None,
         };
         let policy = build_policy("r", &[unit], &[], &spec, 0).unwrap();
         assert_eq!(policy.applied_blocks.len(), 1);

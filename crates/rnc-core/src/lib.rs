@@ -11,6 +11,7 @@ pub mod coverage;
 pub mod engine;
 pub mod error;
 pub mod finding;
+pub mod git;
 pub mod input;
 pub mod path;
 pub mod policy;
@@ -27,7 +28,8 @@ pub use coverage::{
 pub use engine::{scan, RunConfig, ScanReport};
 pub use error::CoreError;
 pub use finding::Finding;
-pub use input::{LocalSource, ScanLimits};
+pub use git::{GitHistoryOptions, GitHistorySource, GitReadError};
+pub use input::{GitHistoryInfo, LocalSource, ScanLimits};
 pub use policy::{PolicyRecord, PolicySpec};
 pub use result::{CiDecision, ResultRecord};
 pub use rules::{LoadedBundle, RuleBundle};

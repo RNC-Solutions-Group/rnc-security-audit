@@ -1,7 +1,7 @@
 {
   "schema_version": "0.2.0",
   "ruleset_id": "rnc-providers-v1",
-  "ruleset_version": "2026.11.2",
+  "ruleset_version": "2026.11.3",
   "rules": [
     {
       "rule_id": "aws-access-key-id",
@@ -413,14 +413,14 @@
     },
     {
       "rule_id": "pem-private-key",
-      "rule_version": "2026.11.1",
+      "rule_version": "2026.11.3",
       "category": "cryptographic-material",
       "provider": "pem",
       "family": "pem-private-key",
       "credential_type": "private-key-container",
       "context": "container",
-      "pattern": "(?m)^[ \\t]{0,8}-----BEGIN (?:RSA |EC |DSA |OPENSSH |ENCRYPTED )?PRIVATE KEY-----[ \\t]{0,8}\\r?\\n(?:[ \\t]{0,8}[A-Za-z0-9+/=]{1,76}[ \\t]{0,8}\\r?\\n){1,400}[ \\t]{0,8}-----END (?:RSA |EC |DSA |OPENSSH |ENCRYPTED )?PRIVATE KEY-----",
-      "capture_group": 0,
+      "pattern": "(?m)(?:^|[\\r\\n])[^\\r\\n]{0,256}?(-----BEGIN (?:RSA |EC |DSA |OPENSSH |ENCRYPTED )?PRIVATE KEY-----[ \\t]{0,8}\\r?\\n(?:[ \\t]{0,8}[A-Za-z0-9+/=]{1,76}[ \\t]{0,8}\\r?\\n){1,400}[ \\t]{0,8}-----END (?:RSA |EC |DSA |OPENSSH |ENCRYPTED )?PRIVATE KEY-----)",
+      "capture_group": 1,
       "validators": [
         "ASCII_ONLY",
         "PEM_PRIVATE_KEY"
@@ -436,7 +436,7 @@
           "https://www.rfc-editor.org/rfc/rfc8017"
         ],
         "reviewed": "2026-11-11",
-        "notes": "Matches private-key containers only; public keys and certificates are excluded by the BEGIN label. Structural DER parsing is offline and never establishes operational validity."
+        "notes": "Matches private-key containers only; public keys, certificates and PGP public blocks are excluded by the BEGIN label. Matching may begin after a bounded log prefix, while the finding span starts at the PEM boundary. Structural DER parsing is offline and never establishes operational validity."
       }
     },
     {
@@ -495,21 +495,21 @@
     },
     {
       "rule_id": "generic-secret-assignment",
-      "rule_version": "2026.11.1",
+      "rule_version": "2026.11.3",
       "category": "generic-credential",
       "provider": "generic",
       "family": "generic-secret-assignment",
       "credential_type": "assigned-secret",
       "context": "assignment",
-      "pattern": "(?i-u)(?:^|[\\r\\n;,])(?:\\x1B\\[[0-9;]{1,8}m){0,4}\\s{0,16}\\+?[ \\t]{0,8}(?:\\x1B\\[[0-9;]{1,8}m){0,4}\\s{0,8}(?:-e\\s{1,8})?(?:export\\s{1,8})?[\\\"']?[A-Z0-9_.-]{0,64}(?:password|passwd|pwd|client[_-]?secret|session[_-]?secret|jwt[_-]?secret|secret[_-]?key|api[_-]?(?:key|secret)|access[_-]?token|auth[_-]?token)[A-Z0-9_.-]{0,64}[\\\"']?\\s{0,16}[:=]\\s{0,16}(?:\\x1B\\[[0-9;]{1,8}m){0,4}[\\\"']?(?:\\x1B\\[[0-9;]{1,8}m){0,4}([^\\s\\\"'#,;)\\]}\\x1B]{8,128})[\\\"']?",
+      "pattern": "(?i-u)(?:^|[\\r\\n;{,<(]|[ \\t]{1,8}(?:const|let|var|static|final|public|private|protected|String|char|SET)[ \\t]{1,8}|[ \\t]{1,8})[ \\t]{0,8}(?:export[ \\t]{1,8})?(?:-e[ \\t]{1,8})?(?:define[ \\t]{0,8}\\([ \\t]{0,8})?(?:(?:const|let|var|static|final|public|private|protected|String|char|string|bytes32)[ \\t]{1,8}){0,3}[ \\t]{0,8}-?[ \\t]{0,8}(?:\\$|@)?[\"']?[A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET(?:[_-]?(?:KEY|TOKEN|VALUE))?|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|BEARER[_-]?TOKEN|PRIVATE[_-]?KEY|CREDENTIALS?)(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))?[0-9]{0,2}[\"']?[ \\t]{0,8}(?:\\][ \\t]{0,8})?(?::=|=>|=|:|,)[ \\t]{0,8}(\"((?:\\\\.|[^\"\\\\\\r\\n]){6,512})\"|'((?:\\\\.|[^'\\\\\\r\\n]){6,512})'|`((?:\\\\.|[^`\\\\\\r\\n]){6,512})`|([^\\s\"\\'#,;)\\]}>]{6,512}))",
       "capture_group": 1,
       "validators": [
         "ASCII_ONLY",
-        "GENERIC_SECRET_ASSIGNMENT"
+        "GENERIC_ASSIGNED_SECRET"
       ],
       "confidence": "low",
       "max_match_bytes": 4096,
-      "max_candidate_bytes": 512,
+      "max_candidate_bytes": 1200,
       "fixture_set": "tests/fixtures/providers/tier2",
       "provenance": {
         "source": "first-party-design",
@@ -517,8 +517,514 @@
           "https://owasp.org/www-community/vulnerabilities/Use_of_hard-coded_password"
         ],
         "reviewed": "2026-11-11",
-        "notes": "Experimental low-confidence fallback. It rejects variables, placeholders and non-literal expressions, but cannot establish that an assigned value is a credential."
+        "notes": "Double-quoted assignment context only. Variables, placeholders, provider-shaped values and structural nonsecrets are rejected, but an accepted candidate remains unverified."
+      },
+      "value_capture_groups": [
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "rule_id": "generic-array-assignment",
+      "rule_version": "2026.11.3",
+      "category": "generic-credential",
+      "provider": "generic",
+      "family": "generic-assignment",
+      "credential_type": "assigned-secret",
+      "context": "assignment",
+      "pattern": "(?i-u)(?:^|[\\r\\n;{,<(]|\\[)[ \\t]{0,8}[\"\\']?[A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET(?:[_-]?(?:KEY|TOKEN|VALUE))?|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|BEARER[_-]?TOKEN|PRIVATE[_-]?KEY|CREDENTIALS?)(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))?[0-9]{0,2}[\"\\']?[ \\t]{0,8}\\][ \\t]{0,8}(?::=|=>|=)[ \\t]{0,8}(\"((?:\\\\.|[^\"\\\\\\r\\n]){6,512})\"|'((?:\\\\.|[^'\\\\\\r\\n]){6,512})'|`((?:\\\\.|[^`\\\\\\r\\n]){6,512})`|([^\\s\"'#,;)\\]}>]{6,512}))",
+      "capture_group": 1,
+      "value_capture_groups": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "validators": [
+        "ASCII_ONLY",
+        "GENERIC_ASSIGNED_SECRET"
+      ],
+      "confidence": "low",
+      "max_match_bytes": 4096,
+      "max_candidate_bytes": 1200,
+      "fixture_set": "tests/fixtures/providers/cp4-generic",
+      "provenance": {
+        "source": "first-party-design",
+        "references": [
+          "https://owasp.org/www-community/vulnerabilities/Use_of_hard-coded_password"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "PHP/JavaScript bracket assignment context only. The captured value is still subject to placeholder, variable, entropy and nonsecret-structure checks."
       }
+    },
+    {
+      "category": "generic-credential",
+      "provider": "generic",
+      "family": "generic-assignment",
+      "rule_version": "2026.11.3",
+      "confidence": "low",
+      "max_match_bytes": 8192,
+      "max_candidate_bytes": 6000,
+      "fixture_set": "tests/fixtures/providers/cp4-generic",
+      "provenance": {
+        "source": "first-party-design",
+        "references": [
+          "https://owasp.org/www-community/vulnerabilities/Use_of_hard-coded_password",
+          "https://www.rfc-editor.org/rfc/rfc8259"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Context and value-structure checks only. Assignment context is necessary but does not prove that the value is an active credential."
+      },
+      "rule_id": "generic-multiline-assignment",
+      "credential_type": "multiline-assigned-secret",
+      "context": "assignment",
+      "pattern": "(?i-u)(?:^|[\\r\\n;{,<(]|[ \\t]{1,8}(?:const|let|var|static|final|public|private|protected|String|char|SET)[ \\t]{1,8}|[ \\t]{1,8})[ \\t]{0,8}(?:export[ \\t]{1,8})?(?:-e[ \\t]{1,8})?(?:define[ \\t]{0,8}\\([ \\t]{0,8})?(?:(?:const|let|var|static|final|public|private|protected|String|char|string|bytes32)[ \\t]{1,8}){0,3}[ \\t]{0,8}-?[ \\t]{0,8}(?:\\$|@)?[\"']?[A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET(?:[_-]?(?:KEY|TOKEN|VALUE))?|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|BEARER[_-]?TOKEN|PRIVATE[_-]?KEY|CREDENTIALS?)(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))?[0-9]{0,2}[\"']?[ \\t]{0,8}(?:\\][ \\t]{0,8})?(?::=|=>|=|:|,)[ \\t]{0,8}[|>][-+]?\\r?\\n((?:[ \\t]{1,256}[^\\r\\n]{1,256}\\r?\\n){1,10})",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "MULTILINE_ASSIGNED_SECRET"
+      ]
+    },
+    {
+      "category": "generic-credential",
+      "provider": "generic",
+      "family": "generic-assignment",
+      "rule_version": "2026.11.3",
+      "confidence": "low",
+      "max_match_bytes": 4096,
+      "max_candidate_bytes": 1200,
+      "fixture_set": "tests/fixtures/providers/cp4-generic",
+      "provenance": {
+        "source": "first-party-design",
+        "references": [
+          "https://owasp.org/www-community/vulnerabilities/Use_of_hard-coded_password",
+          "https://www.rfc-editor.org/rfc/rfc8259"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Context and value-structure checks only. Assignment context is necessary but does not prove that the value is an active credential."
+      },
+      "rule_id": "generic-xml-assignment",
+      "credential_type": "assigned-secret",
+      "context": "assignment",
+      "pattern": "(?i-u)<[A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET(?:[_-]?(?:KEY|TOKEN|VALUE))?|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|CREDENTIALS?)(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))?[0-9]{0,2}[ \\t]{0,8}>[ \\t]{0,8}([^<\\r\\n]{6,512})[ \\t]{0,8}</",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "GENERIC_ASSIGNED_SECRET"
+      ]
+    },
+    {
+      "category": "generic-credential",
+      "provider": "generic",
+      "family": "generic-assignment",
+      "rule_version": "2026.11.3",
+      "confidence": "medium",
+      "max_match_bytes": 2048,
+      "max_candidate_bytes": 1200,
+      "fixture_set": "tests/fixtures/providers/cp4-generic",
+      "provenance": {
+        "source": "vendor-documentation",
+        "references": [
+          "https://www.postgresql.org/docs/current/sql-createrole.html"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "SQL statement context only; the value is not checked against a database."
+      },
+      "rule_id": "generic-sql-password",
+      "credential_type": "sql-password",
+      "context": "assignment",
+      "pattern": "(?i-u)\\b(?:IDENTIFIED[ \\t]{1,8}(?:BY|WITH)[ \\t]{1,8}(?:PASSWORD[ \\t]{1,8})?|PASSWORD[ \\t]{1,8}|ENCRYPTED[ \\t]{1,8}PASSWORD[ \\t]{1,8})['\"]((?:\\\\.|[^'\"\\\\\\r\\n]){6,512})['\"]",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "SQL_PASSWORD"
+      ]
+    },
+    {
+      "category": "generic-credential",
+      "provider": "generic",
+      "family": "generic-assignment",
+      "rule_version": "2026.11.3",
+      "confidence": "low",
+      "max_match_bytes": 8192,
+      "max_candidate_bytes": 4096,
+      "fixture_set": "tests/fixtures/providers/cp4-generic",
+      "provenance": {
+        "source": "standard-documentation",
+        "references": [
+          "https://www.rfc-editor.org/rfc/rfc7617"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Base64 decodes to user:password. The credential is structurally decoded but never authenticated."
+      },
+      "rule_id": "http-basic-authorization",
+      "credential_type": "basic-credentials",
+      "context": "container",
+      "pattern": "(?i-u)(?:proxy-)?authorization[ \\t]{0,8}[:=][ \\t]{0,8}[\"']?[ \\t]{0,8}basic[ \\t]{1,8}([A-Za-z0-9+/=]{8,4096})",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "HTTP_BASIC_AUTH"
+      ]
+    },
+    {
+      "category": "generic-credential",
+      "provider": "generic",
+      "family": "generic-assignment",
+      "rule_version": "2026.11.3",
+      "confidence": "low",
+      "max_match_bytes": 8192,
+      "max_candidate_bytes": 4096,
+      "fixture_set": "tests/fixtures/providers/cp4-generic",
+      "provenance": {
+        "source": "standard-documentation",
+        "references": [
+          "https://www.rfc-editor.org/rfc/rfc6750"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Opaque authorization values only. JWT structured handling and provider-specific rules remain separate."
+      },
+      "rule_id": "http-bearer-opaque",
+      "credential_type": "bearer-token",
+      "context": "bearer",
+      "pattern": "(?i-u)(?:proxy-)?authorization[ \\t]{0,8}[:=][ \\t]{0,8}[\"']?[ \\t]{0,8}bearer[ \\t]{1,8}[\"']?([A-Za-z0-9._~+/=-]{12,4096})",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "HTTP_BEARER_OPAQUE"
+      ]
+    },
+    {
+      "category": "generic-credential",
+      "provider": "generic",
+      "family": "generic-assignment",
+      "rule_version": "2026.11.3",
+      "confidence": "low",
+      "max_match_bytes": 2048,
+      "max_candidate_bytes": 1024,
+      "fixture_set": "tests/fixtures/providers/cp4-generic",
+      "provenance": {
+        "source": "standard-documentation",
+        "references": [
+          "https://www.rfc-editor.org/rfc/rfc3986"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Credential-bearing URL userinfo for HTTP(S) and FTP only; the URL itself is not fetched."
+      },
+      "rule_id": "credential-url-userinfo",
+      "credential_type": "url-userinfo",
+      "context": "uri",
+      "pattern": "(?i-u)\\b(?:https?|ftp)://([^/\\s:@]{1,128}:[^@\\s/]{1,512})@[A-Za-z0-9]",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "URL_USERINFO"
+      ]
+    },
+    {
+      "category": "cryptographic-material",
+      "provider": "pgp",
+      "family": "pgp-private-key",
+      "rule_version": "2026.11.3",
+      "confidence": "medium",
+      "max_match_bytes": 65536,
+      "max_candidate_bytes": 65536,
+      "fixture_set": "tests/fixtures/providers/cp4-keys",
+      "provenance": {
+        "source": "standard-documentation",
+        "references": [
+          "https://www.rfc-editor.org/rfc/rfc9580"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "OpenPGP armor and first packet only. PGP public keys, arbitrary armor and malformed checksums are rejected."
+      },
+      "rule_id": "pem-private-key-pgp",
+      "credential_type": "private-key-container",
+      "context": "container",
+      "pattern": "(?m)(?:^|[\\r\\n])[^\\r\\n]{0,256}?(-----BEGIN PGP PRIVATE KEY BLOCK-----\\r?\\n(?:(?:[^\\r\\n]{0,256})\\r?\\n){0,8}[ \\t]{0,8}\\r?\\n(?:[A-Za-z0-9+/=]{1,76}[ \\t]{0,8}\\r?\\n){1,400}(?:=[A-Za-z0-9+/=]{4}\\r?\\n)?-----END PGP PRIVATE KEY BLOCK-----)",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "PGP_PRIVATE_KEY"
+      ]
+    },
+    {
+      "category": "cryptographic-material",
+      "provider": "pem",
+      "family": "pem-private-key",
+      "rule_version": "2026.11.3",
+      "confidence": "medium",
+      "max_match_bytes": 65536,
+      "max_candidate_bytes": 65536,
+      "fixture_set": "tests/fixtures/providers/cp4-keys",
+      "provenance": {
+        "source": "standard-documentation",
+        "references": [
+          "https://datatracker.ietf.org/doc/html/rfc7468",
+          "https://www.rfc-editor.org/rfc/rfc8017"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Escaped JSON/source-string form only. Validation decodes a bounded set of escapes; the finding retains the original encoded byte span."
+      },
+      "rule_id": "pem-private-key-escaped",
+      "credential_type": "private-key-container",
+      "context": "container",
+      "pattern": "(-----BEGIN (?:RSA |EC |DSA |OPENSSH |ENCRYPTED )?PRIVATE KEY-----(?:\\\\r)?\\\\n(?:[A-Za-z0-9+/=]{1,76}(?:\\\\r)?\\\\n){1,400}-----END (?:RSA |EC |DSA |OPENSSH |ENCRYPTED )?PRIVATE KEY-----)",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "ESCAPED_PEM_PRIVATE_KEY"
+      ]
+    },
+    {
+      "category": "cryptographic-material",
+      "provider": "pem",
+      "family": "pem-private-key",
+      "rule_version": "2026.11.3",
+      "confidence": "medium",
+      "max_match_bytes": 65550,
+      "max_candidate_bytes": 65550,
+      "fixture_set": "tests/fixtures/providers/cp4-keys",
+      "provenance": {
+        "source": "standard-documentation",
+        "references": [
+          "https://datatracker.ietf.org/doc/html/rfc7468",
+          "https://www.rfc-editor.org/rfc/rfc8017"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Base64-wrapped PEM only. Decoding is bounded and validation requires a private-key label plus structural container."
+      },
+      "rule_id": "pem-private-key-base64",
+      "credential_type": "private-key-container",
+      "context": "container",
+      "pattern": "(LS0tLS1CRUdJTi[A-Za-z0-9+/=]{100,65536})",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "BASE64_PEM_PRIVATE_KEY"
+      ]
+    },
+    {
+      "category": "service-api-credential",
+      "rule_version": "2026.11.3",
+      "confidence": "high",
+      "max_match_bytes": 128,
+      "max_candidate_bytes": 88,
+      "fixture_set": "tests/fixtures/providers/cp4-providers",
+      "provenance": {
+        "source": "vendor-documentation",
+        "references": [
+          "https://learn.microsoft.com/en-us/azure/storage/common/storage-account-keys-manage",
+          "https://learn.microsoft.com/en-us/azure/storage/common/storage-configure-connection-string"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Requires AccountKey connection-string context and a 64-byte base64 decoding bound. Account names and SAS fields are out of scope."
+      },
+      "rule_id": "azure-storage-account-key",
+      "provider": "azure",
+      "family": "azure-storage",
+      "credential_type": "storage-account-key",
+      "context": "assignment",
+      "pattern": "(?i-u)\\bAccountKey[ \\t]{0,8}=[ \\t]{0,8}([A-Za-z0-9+/]{86}==)",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "AZURE_STORAGE_ACCOUNT_KEY"
+      ]
+    },
+    {
+      "category": "service-api-credential",
+      "rule_version": "2026.11.3",
+      "confidence": "medium",
+      "max_match_bytes": 430,
+      "max_candidate_bytes": 400,
+      "fixture_set": "tests/fixtures/providers/cp4-providers",
+      "provenance": {
+        "source": "vendor-documentation",
+        "references": [
+          "https://tailscale.com/docs/reference/key-prefixes",
+          "https://tailscale.com/docs/features/access-control/auth-keys"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Vendor documents the tskey- type prefix family but not a fixed body length. Candidate remains plausible-only and is bounded to 400 bytes."
+      },
+      "rule_id": "tailscale-key",
+      "provider": "tailscale",
+      "family": "tailscale-key",
+      "credential_type": "auth-or-api-key",
+      "context": "standalone",
+      "pattern": "(tskey-(?:api|auth|client|scim|webhook)-[A-Za-z0-9-]{16,384})",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "TAILSCALE_KEY"
+      ]
+    },
+    {
+      "category": "service-api-credential",
+      "rule_version": "2026.11.3",
+      "confidence": "medium",
+      "max_match_bytes": 170,
+      "max_candidate_bytes": 160,
+      "fixture_set": "tests/fixtures/providers/cp4-providers",
+      "provenance": {
+        "source": "vendor-documentation",
+        "references": [
+          "https://console.groq.com/docs/production-readiness/security-onboarding",
+          "https://console.groq.com/docs/quickstart"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Only the gsk_ prefix is documented; length is bounded by the first-party implementation and the value remains plausible-only."
+      },
+      "rule_id": "groq-api-key",
+      "provider": "groq",
+      "family": "groq-api-key",
+      "credential_type": "api-key",
+      "context": "standalone",
+      "pattern": "(gsk_[A-Za-z0-9_-]{20,156})",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "GROQ_API_KEY"
+      ]
+    },
+    {
+      "category": "service-api-credential",
+      "rule_version": "2026.11.3",
+      "confidence": "medium",
+      "max_match_bytes": 96,
+      "max_candidate_bytes": 84,
+      "fixture_set": "tests/fixtures/providers/cp4-providers",
+      "provenance": {
+        "source": "vendor-documentation",
+        "references": [
+          "https://docs.x.ai/developers/rest-api-reference/management/auth"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Vendor example shows xai- followed by 80 alphanumerics; no normative length statement was found, so this rule is example-shaped and plausible-only."
+      },
+      "rule_id": "xai-api-key",
+      "provider": "xai",
+      "family": "xai-api-key",
+      "credential_type": "api-key",
+      "context": "standalone",
+      "pattern": "(xai-[A-Za-z0-9]{80})",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "XAI_API_KEY"
+      ]
+    },
+    {
+      "category": "service-api-credential",
+      "rule_version": "2026.11.3",
+      "confidence": "low",
+      "max_match_bytes": 170,
+      "max_candidate_bytes": 160,
+      "fixture_set": "tests/fixtures/providers/cp4-providers",
+      "provenance": {
+        "source": "vendor-documentation",
+        "references": [
+          "https://docs.perplexity.ai/docs/admin/api-key-management"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Only the pplx- prefix is officially shown. Length and entropy bounds are first-party safeguards; the rule is experimental."
+      },
+      "rule_id": "perplexity-api-key",
+      "provider": "perplexity",
+      "family": "perplexity-api-key",
+      "credential_type": "api-key",
+      "context": "standalone",
+      "pattern": "(pplx-[A-Za-z0-9_-]{25,155})",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "PERPLEXITY_API_KEY"
+      ]
+    },
+    {
+      "category": "service-api-credential",
+      "rule_version": "2026.11.3",
+      "confidence": "medium",
+      "max_match_bytes": 600,
+      "max_candidate_bytes": 560,
+      "fixture_set": "tests/fixtures/providers/cp4-providers",
+      "provenance": {
+        "source": "vendor-documentation",
+        "references": [
+          "https://docs.doppler.com/docs/service-tokens"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Vendor documents dp.st. plus dot-separated segments but not fixed length. The final segment is bounded and must contain at least 16 characters."
+      },
+      "rule_id": "doppler-service-token",
+      "provider": "doppler",
+      "family": "doppler-service-token",
+      "credential_type": "service-token",
+      "context": "standalone",
+      "pattern": "(dp\\.st\\.[A-Za-z0-9_-]{1,128}(?:\\.[A-Za-z0-9_-]{1,128}){1,3})",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "DOPPLER_SERVICE_TOKEN"
+      ]
+    },
+    {
+      "category": "service-api-credential",
+      "rule_version": "2026.11.3",
+      "confidence": "medium",
+      "max_match_bytes": 160,
+      "max_candidate_bytes": 128,
+      "fixture_set": "tests/fixtures/providers/cp4-providers",
+      "provenance": {
+        "source": "vendor-documentation",
+        "references": [
+          "https://docs.slack.dev/messaging/sending-messages-using-incoming-webhooks"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "The official documentation specifies the host/path shape but calls segment lengths illustrative. Placeholder webhook paths are rejected."
+      },
+      "rule_id": "slack-incoming-webhook",
+      "provider": "slack",
+      "family": "slack-webhook",
+      "credential_type": "incoming-webhook-url",
+      "context": "uri",
+      "pattern": "(https://hooks\\.slack\\.com/services/T[A-Za-z0-9]{8,12}/B[A-Za-z0-9]{8,12}/[A-Za-z0-9]{20,64})",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "SLACK_WEBHOOK"
+      ]
+    },
+    {
+      "category": "service-api-credential",
+      "rule_version": "2026.11.3",
+      "confidence": "low",
+      "max_match_bytes": 320,
+      "max_candidate_bytes": 256,
+      "fixture_set": "tests/fixtures/providers/cp4-providers",
+      "provenance": {
+        "source": "vendor-documentation",
+        "references": [
+          "https://developers.openai.com/api/docs/guides/api-keys",
+          "https://help.openai.com/en/articles/5112595-best-practices-for-api-key-safety"
+        ],
+        "reviewed": "2026-11-11",
+        "notes": "Official documentation confirms only the sk- prefix. Detection therefore requires an OpenAI-labelled assignment and remains experimental; project/service-account prefixes are not claimed as verified."
+      },
+      "rule_id": "openai-api-key",
+      "provider": "openai",
+      "family": "openai-api-key",
+      "credential_type": "api-key",
+      "context": "assignment",
+      "pattern": "(?i-u)\\bopenai(?:[_-]?(?:api[_-]?)?key)[ \\t]{0,8}[:=][ \\t]{0,8}[\"\\']?(sk-[A-Za-z0-9_-]{20,253})",
+      "capture_group": 1,
+      "validators": [
+        "ASCII_ONLY",
+        "OPENAI_API_KEY"
+      ]
     }
   ]
 }

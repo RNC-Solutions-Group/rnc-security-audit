@@ -1,4 +1,4 @@
-//! RNC Scanner CP2 CLI: detection, policy, reporting and CI acceptance.
+//! RNC Scanner CP4 CLI: filesystem/history detection, policy, reporting and CI acceptance.
 
 use std::env;
 use std::path::PathBuf;
@@ -8,8 +8,8 @@ use std::time::{Instant, SystemTime, UNIX_EPOCH};
 mod report;
 
 use rnc_core::{
-    load_effective, scan, BackendRequest, CliOverrides, LoadedBundle, LocalSource, RunConfig,
-    ScanLimits, ScanMode, ENGINE_VERSION,
+    load_effective, scan, BackendRequest, CliOverrides, GitHistoryOptions, GitHistorySource,
+    LoadedBundle, LocalSource, RunConfig, ScanLimits, ScanMode, ENGINE_VERSION,
 };
 
 const USAGE: &str = "rnc — RNC Scanner CP2
@@ -20,6 +20,10 @@ Usage:
   rnc --version
 
 Scan options:
+  --history                     Read-only Git-history scan instead of working tree
+  --ref NAME                    Restrict history to a ref/commit (repeatable)
+  --max-history-commits N       Fail closed beyond this commit count
+  --max-history-units N         Fail closed beyond this commit/path revision count
   --output PATH                 Report output (outside the scan root)
   --format summary|sanitized|json|private
                                 summary (default), sanitized public JSON, or private evidence
@@ -55,6 +59,10 @@ struct ScanArgs {
     config: Option<PathBuf>,
     global_config: Option<PathBuf>,
     overrides: CliOverrides,
+    history: bool,
+    refs: Vec<String>,
+    max_history_commits: usize,
+    max_history_units: usize,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -93,14 +101,30 @@ fn parse_scan_args(arguments: &[String]) -> Result<ScanArgs, String> {
     let mut config = None;
     let mut global_config = None;
     let mut overrides = CliOverrides::default();
+    let mut history = false;
+    let mut refs = Vec::new();
+    let mut max_history_commits = rnc_core::git::DEFAULT_MAX_COMMITS;
+    let mut max_history_units = rnc_core::git::DEFAULT_MAX_UNITS;
     let mut index = 0;
     while index < arguments.len() {
         let name = arguments[index].as_str();
+        if name == "--history" {
+            history = true;
+            index += 1;
+            continue;
+        }
         let value = arguments
             .get(index + 1)
             .ok_or_else(|| format!("{name} requires a value"))?;
         match name {
             "--root" => root = Some(PathBuf::from(value)),
+            "--ref" => refs.push(value.clone()),
+            "--max-history-commits" => {
+                max_history_commits = parse_usize(value, name)?;
+            }
+            "--max-history-units" => {
+                max_history_units = parse_usize(value, name)?;
+            }
             "--rules" => rules = Some(PathBuf::from(value)),
             "--output" => output = Some(PathBuf::from(value)),
             "--format" => {
@@ -168,6 +192,16 @@ fn parse_scan_args(arguments: &[String]) -> Result<ScanArgs, String> {
     if overrides.stream_chunk_bytes == Some(0) || overrides.stream_threshold_bytes == Some(0) {
         return Err("stream sizes must be positive".to_string());
     }
+    if !history
+        && (!refs.is_empty()
+            || max_history_commits != rnc_core::git::DEFAULT_MAX_COMMITS
+            || max_history_units != rnc_core::git::DEFAULT_MAX_UNITS)
+    {
+        return Err("--ref and history limits require --history".to_string());
+    }
+    if max_history_commits == 0 || max_history_units == 0 {
+        return Err("history limits must be positive".to_string());
+    }
     Ok(ScanArgs {
         root,
         rules,
@@ -177,6 +211,10 @@ fn parse_scan_args(arguments: &[String]) -> Result<ScanArgs, String> {
         config,
         global_config,
         overrides,
+        history,
+        refs,
+        max_history_commits,
+        max_history_units,
     })
 }
 
@@ -244,18 +282,39 @@ fn run_scan(arguments: &[String]) -> i32 {
         }
         (None, _) => None,
     };
-    let source = match LocalSource::new_with_policy(root, &effective.policy) {
-        Ok(source) => source,
-        Err(error) => {
-            eprintln!("error: {error}");
-            return 64;
-        }
-    };
     let started = Instant::now();
     let deadline = started
         .checked_add(effective.limits.timeout)
         .unwrap_or(started);
-    let discovery = source.discover_until(deadline);
+    let mut discovery = if args.history {
+        let source = match GitHistorySource::open(
+            root.clone(),
+            &GitHistoryOptions {
+                refs: args.refs.clone(),
+                max_commits: args.max_history_commits,
+                max_units: args.max_history_units,
+            },
+        ) {
+            Ok(source) => source,
+            Err(error) => {
+                eprintln!("error: {error}");
+                return 64;
+            }
+        };
+        source.discover_until(deadline)
+    } else {
+        let source = match LocalSource::new_with_policy(root, &effective.policy) {
+            Ok(source) => source,
+            Err(error) => {
+                eprintln!("error: {error}");
+                return 64;
+            }
+        };
+        source.discover_until(deadline)
+    };
+    if args.history {
+        LocalSource::apply_policy_to_discovery(&mut discovery, &effective.policy);
+    }
     let config = RunConfig {
         run_id: args.run_id,
         limits: ScanLimits {

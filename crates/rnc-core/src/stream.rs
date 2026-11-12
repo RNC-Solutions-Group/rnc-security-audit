@@ -300,6 +300,92 @@ pub fn scan_file(
     }
 }
 
+#[derive(Debug, Clone)]
+pub struct ScanContentConfig {
+    pub mode: ScanMode,
+    pub stream_chunk_bytes: usize,
+    pub max_findings: usize,
+    pub deadline: Instant,
+}
+
+/// Scan an already-acquired bounded byte buffer. Git history blobs use this
+/// path after `cat-file` enforces the per-object limit. Stream mode still
+/// exercises overlapping fixed windows, so backend and boundary behavior remain
+/// equivalent to file streaming.
+pub fn scan_content(
+    data: &[u8],
+    unit_id: &str,
+    run_id: &str,
+    plan: &MatchPlan,
+    config: &ScanContentConfig,
+) -> Result<ScanFileResult, FileScanError> {
+    if config.stream_chunk_bytes == 0 {
+        return Err(FileScanError::Io("stream_config"));
+    }
+    if Instant::now() >= config.deadline {
+        return Err(FileScanError::Timeout);
+    }
+    let line_index = LineIndex::new(data);
+    let mut findings = Vec::new();
+    let mut seen = HashSet::new();
+    match config.mode {
+        ScanMode::Whole | ScanMode::Auto => {
+            if !data.is_empty() {
+                scan_window(
+                    data,
+                    0,
+                    1,
+                    Some(&line_index),
+                    unit_id,
+                    run_id,
+                    plan,
+                    &mut findings,
+                    &mut seen,
+                    config.max_findings,
+                    true,
+                    config.deadline,
+                )?;
+            }
+        }
+        ScanMode::Stream => {
+            let overlap = plan.bundle().max_match_bytes.max(1);
+            let step = config.stream_chunk_bytes.max(1);
+            let chunk = overlap.saturating_add(step);
+            let mut start = 0usize;
+            while start < data.len() {
+                if Instant::now() >= config.deadline {
+                    return Err(FileScanError::Timeout);
+                }
+                let end = start.saturating_add(chunk).min(data.len());
+                scan_window(
+                    &data[start..end],
+                    start,
+                    1,
+                    Some(&line_index),
+                    unit_id,
+                    run_id,
+                    plan,
+                    &mut findings,
+                    &mut seen,
+                    config.max_findings,
+                    end == data.len(),
+                    config.deadline,
+                )?;
+                if end == data.len() {
+                    break;
+                }
+                start = start.saturating_add(step);
+            }
+        }
+    }
+    Ok(ScanFileResult {
+        findings,
+        content_sha256: sha256_hex(data),
+        line_count: line_count(data),
+        bytes_read: data.len() as u64,
+    })
+}
+
 fn metadata_changed(
     metadata: &fs::Metadata,
     expected_size: u64,

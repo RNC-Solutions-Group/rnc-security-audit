@@ -32,6 +32,15 @@ pub struct SourceAdapter {
     pub version: String,
 }
 
+impl SourceAdapter {
+    pub fn new(id: &str, version: &str) -> Self {
+        Self {
+            id: id.to_string(),
+            version: version.to_string(),
+        }
+    }
+}
+
 impl Default for SourceAdapter {
     fn default() -> Self {
         Self {
@@ -62,8 +71,10 @@ pub struct SourceUnitRecord {
 
 impl SourceUnitRecord {
     #[allow(clippy::too_many_arguments)]
-    fn base(
+    fn base_for(
         run_id: &str,
+        source_id: &str,
+        source_kind: &str,
         locator: &str,
         required_scope: bool,
         disposition: &str,
@@ -72,9 +83,9 @@ impl SourceUnitRecord {
         Ok(Self {
             schema_version: SCHEMA_VERSION.to_string(),
             run_id: run_id.to_string(),
-            unit_id: unit_id(crate::path::SOURCE_ID, locator)?,
-            source_id: crate::path::SOURCE_ID.to_string(),
-            source_kind: "working_tree_file".to_string(),
+            unit_id: unit_id(source_id, locator)?,
+            source_id: source_id.to_string(),
+            source_kind: source_kind.to_string(),
             locator: locator.to_string(),
             required_scope,
             disposition: disposition.to_string(),
@@ -110,7 +121,38 @@ impl SourceUnitRecord {
         line_count: usize,
         content_sha256: String,
     ) -> Result<Self, crate::error::CoreError> {
-        let mut record = Self::base(run_id, locator, required_scope, "INSPECTED", Vec::new())?;
+        Self::inspected_with_hash_for(
+            run_id,
+            crate::path::SOURCE_ID,
+            "working_tree_file",
+            locator,
+            required_scope,
+            byte_length,
+            line_count,
+            content_sha256,
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    pub fn inspected_with_hash_for(
+        run_id: &str,
+        source_id: &str,
+        source_kind: &str,
+        locator: &str,
+        required_scope: bool,
+        byte_length: u64,
+        line_count: usize,
+        content_sha256: String,
+    ) -> Result<Self, crate::error::CoreError> {
+        let mut record = Self::base_for(
+            run_id,
+            source_id,
+            source_kind,
+            locator,
+            required_scope,
+            "INSPECTED",
+            Vec::new(),
+        )?;
         record.byte_length = Some(byte_length);
         record.line_count = Some(line_count);
         record.content_sha256 = Some(content_sha256);
@@ -123,8 +165,28 @@ impl SourceUnitRecord {
         required_scope: bool,
         reason: &str,
     ) -> Result<Self, crate::error::CoreError> {
-        Self::base(
+        Self::blocked_for(
             run_id,
+            crate::path::SOURCE_ID,
+            "working_tree_file",
+            locator,
+            required_scope,
+            reason,
+        )
+    }
+
+    pub fn blocked_for(
+        run_id: &str,
+        source_id: &str,
+        source_kind: &str,
+        locator: &str,
+        required_scope: bool,
+        reason: &str,
+    ) -> Result<Self, crate::error::CoreError> {
+        Self::base_for(
+            run_id,
+            source_id,
+            source_kind,
             locator,
             required_scope,
             "VERIFIED_BLOCKED",
@@ -138,8 +200,28 @@ impl SourceUnitRecord {
         required_scope: bool,
         reason: &str,
     ) -> Result<Self, crate::error::CoreError> {
-        Self::base(
+        Self::uninspected_for(
             run_id,
+            crate::path::SOURCE_ID,
+            "working_tree_file",
+            locator,
+            required_scope,
+            reason,
+        )
+    }
+
+    pub fn uninspected_for(
+        run_id: &str,
+        source_id: &str,
+        source_kind: &str,
+        locator: &str,
+        required_scope: bool,
+        reason: &str,
+    ) -> Result<Self, crate::error::CoreError> {
+        Self::base_for(
+            run_id,
+            source_id,
+            source_kind,
             locator,
             required_scope,
             "UNINSPECTED",

@@ -360,13 +360,18 @@ impl<'a> MatchPlan<'a> {
         data: &[u8],
         deadline: std::time::Instant,
     ) -> Result<Vec<MatchCandidate>, MatchError> {
-        let capture_group = self.bundle.compiled[index].definition.capture_group;
+        let definition = &self.bundle.compiled[index].definition;
+        let capture_groups = definition
+            .value_capture_groups
+            .clone()
+            .unwrap_or_else(|| vec![definition.capture_group]);
         let mut candidates = Vec::new();
         for captures in regex.captures_iter(data) {
             if std::time::Instant::now() >= deadline {
                 return Err(MatchError::Timeout);
             }
-            if let Some(matched) = captures.get(capture_group) {
+            let matched = capture_groups.iter().find_map(|group| captures.get(*group));
+            if let Some(matched) = matched {
                 if matched.start() < matched.end() {
                     candidates.push(MatchCandidate {
                         rule_index: index,

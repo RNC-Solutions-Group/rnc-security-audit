@@ -248,6 +248,6 @@ fn aws_catalog_does_not_reintroduce_resource_prefixes() {
             "resource prefix {prefix} appears in a credential pattern"
         );
     }
-    assert_eq!(rules.rule_count(), 19);
-    assert_eq!(rules.family_count(), 12);
+    assert_eq!(rules.rule_count(), 37);
+    assert_eq!(rules.family_count(), 22);
 }

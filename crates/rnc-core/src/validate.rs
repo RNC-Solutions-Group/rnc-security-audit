@@ -42,10 +42,29 @@ pub enum Validator {
     #[serde(rename = "SENDGRID_API_KEY")]
     SendGridApiKey,
     NpmToken,
+    AzureStorageAccountKey,
+    TailscaleKey,
+    GroqApiKey,
+    XaiApiKey,
+    PerplexityApiKey,
+    DopplerServiceToken,
+    SlackWebhook,
+    #[serde(rename = "OPENAI_API_KEY")]
+    OpenAiApiKey,
     PemPrivateKey,
+    EscapedPemPrivateKey,
+    PgpPrivateKey,
+    Base64PemPrivateKey,
     JwtBearer,
+    HttpBasicAuth,
+    HttpBearerOpaque,
+    #[serde(rename = "URL_USERINFO")]
+    UrlUserInfo,
     DatabaseUri,
     GenericSecretAssignment,
+    GenericAssignedSecret,
+    MultilineAssignedSecret,
+    SqlPassword,
 }
 
 impl Validator {
@@ -72,10 +91,27 @@ impl Validator {
             Self::SlackToken => "SLACK_TOKEN",
             Self::SendGridApiKey => "SENDGRID_API_KEY",
             Self::NpmToken => "NPM_TOKEN",
+            Self::AzureStorageAccountKey => "AZURE_STORAGE_ACCOUNT_KEY",
+            Self::TailscaleKey => "TAILSCALE_KEY",
+            Self::GroqApiKey => "GROQ_API_KEY",
+            Self::XaiApiKey => "XAI_API_KEY",
+            Self::PerplexityApiKey => "PERPLEXITY_API_KEY",
+            Self::DopplerServiceToken => "DOPPLER_SERVICE_TOKEN",
+            Self::SlackWebhook => "SLACK_WEBHOOK",
+            Self::OpenAiApiKey => "OPENAI_API_KEY",
             Self::PemPrivateKey => "PEM_PRIVATE_KEY",
+            Self::EscapedPemPrivateKey => "ESCAPED_PEM_PRIVATE_KEY",
+            Self::PgpPrivateKey => "PGP_PRIVATE_KEY",
+            Self::Base64PemPrivateKey => "BASE64_PEM_PRIVATE_KEY",
             Self::JwtBearer => "JWT_BEARER",
+            Self::HttpBasicAuth => "HTTP_BASIC_AUTH",
+            Self::HttpBearerOpaque => "HTTP_BEARER_OPAQUE",
+            Self::UrlUserInfo => "URL_USERINFO",
             Self::DatabaseUri => "DATABASE_URI",
             Self::GenericSecretAssignment => "GENERIC_SECRET_ASSIGNMENT",
+            Self::GenericAssignedSecret => "GENERIC_ASSIGNED_SECRET",
+            Self::MultilineAssignedSecret => "MULTILINE_ASSIGNED_SECRET",
+            Self::SqlPassword => "SQL_PASSWORD",
         }
     }
 
@@ -150,10 +186,27 @@ impl Validator {
             Self::SlackToken => validate_slack(candidate),
             Self::SendGridApiKey => validate_sendgrid(candidate),
             Self::NpmToken => validate_npm(candidate),
+            Self::AzureStorageAccountKey => validate_azure_storage_account_key(candidate),
+            Self::TailscaleKey => validate_tailscale_key(candidate),
+            Self::GroqApiKey => validate_groq_api_key(candidate),
+            Self::XaiApiKey => validate_xai_api_key(candidate),
+            Self::PerplexityApiKey => validate_perplexity_api_key(candidate),
+            Self::DopplerServiceToken => validate_doppler_service_token(candidate),
+            Self::SlackWebhook => validate_slack_webhook(candidate),
+            Self::OpenAiApiKey => validate_openai_api_key(candidate),
             Self::PemPrivateKey => validate_pem_private_key(candidate),
+            Self::EscapedPemPrivateKey => validate_escaped_pem_private_key(candidate),
+            Self::PgpPrivateKey => validate_pgp_private_key(candidate),
+            Self::Base64PemPrivateKey => validate_base64_pem_private_key(candidate),
             Self::JwtBearer => validate_jwt(candidate),
+            Self::HttpBasicAuth => validate_http_basic(candidate),
+            Self::HttpBearerOpaque => validate_http_bearer(candidate),
+            Self::UrlUserInfo => validate_url_userinfo(candidate),
             Self::DatabaseUri => validate_database_uri(candidate),
             Self::GenericSecretAssignment => validate_generic_assignment(candidate),
+            Self::GenericAssignedSecret => validate_generic_assigned_secret(candidate),
+            Self::MultilineAssignedSecret => validate_multiline_assigned_secret(candidate),
+            Self::SqlPassword => validate_sql_password(candidate),
         }
     }
 }
@@ -676,6 +729,224 @@ fn validate_npm(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
     Ok(ValidatorVerdict::valid())
 }
 
+fn validate_azure_storage_account_key(
+    candidate: &[u8],
+) -> Result<ValidatorVerdict, ValidationError> {
+    if candidate.len() != 88
+        || !candidate
+            .iter()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'+' | b'/' | b'='))
+    {
+        return Err(ValidationError::invalid(
+            Validator::AzureStorageAccountKey,
+            "Azure storage account key has an invalid length or base64 alphabet",
+        ));
+    }
+    let decoded = decode_base64(candidate, false).ok_or_else(|| {
+        ValidationError::invalid(
+            Validator::AzureStorageAccountKey,
+            "Azure storage account key is not valid base64",
+        )
+    })?;
+    if decoded.len() != 64
+        || decoded.iter().all(|byte| *byte == decoded[0])
+        || shannon_entropy(&decoded) < 3.0
+    {
+        return Err(ValidationError::invalid(
+            Validator::AzureStorageAccountKey,
+            "Azure storage account key does not decode to a plausible 512-bit key",
+        ));
+    }
+    if is_known_placeholder(candidate) {
+        return Err(ValidationError::benign(
+            Validator::AzureStorageAccountKey,
+            "Azure storage account key is a known placeholder",
+        ));
+    }
+    Ok(ValidatorVerdict::valid())
+}
+
+fn validate_tailscale_key(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+    let text = std::str::from_utf8(candidate).map_err(|_| {
+        ValidationError::invalid(Validator::TailscaleKey, "Tailscale key is not UTF-8")
+    })?;
+    let Some(rest) = text.strip_prefix("tskey-") else {
+        return Err(ValidationError::invalid(
+            Validator::TailscaleKey,
+            "Tailscale key lacks the documented tskey- prefix",
+        ));
+    };
+    let Some((kind, body)) = rest.split_once('-') else {
+        return Err(ValidationError::invalid(
+            Validator::TailscaleKey,
+            "Tailscale key has no documented type prefix",
+        ));
+    };
+    if !matches!(kind, "api" | "auth" | "client" | "scim" | "webhook")
+        || !(16..=384).contains(&body.len())
+        || body.starts_with('-')
+        || body.ends_with('-')
+        || body.contains("--")
+        || !body
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || byte == b'-')
+    {
+        return Err(ValidationError::invalid(
+            Validator::TailscaleKey,
+            "Tailscale key has an invalid type, body or character set",
+        ));
+    }
+    if is_known_placeholder(candidate) || shannon_entropy(body.as_bytes()) < 3.0 {
+        return Err(ValidationError::invalid(
+            Validator::TailscaleKey,
+            "Tailscale key is a placeholder or has implausible entropy",
+        ));
+    }
+    Ok(ValidatorVerdict::plausible(
+        "TAILSCALE_DOCUMENTED_PREFIX_FAMILY_ONLY",
+    ))
+}
+
+fn validate_groq_api_key(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+    if !(24..=160).contains(&candidate.len())
+        || !candidate.starts_with(b"gsk_")
+        || !candidate[4..]
+            .iter()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(*byte, b'_' | b'-'))
+        || is_known_placeholder(candidate)
+        || shannon_entropy(&candidate[4..]) < 3.5
+    {
+        return Err(ValidationError::invalid(
+            Validator::GroqApiKey,
+            "Groq API key has an invalid prefix, length, alphabet or entropy",
+        ));
+    }
+    Ok(ValidatorVerdict::plausible("GROQ_DOCUMENTED_PREFIX_ONLY"))
+}
+
+fn validate_xai_api_key(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+    if candidate.len() != 84
+        || !candidate.starts_with(b"xai-")
+        || !candidate[4..].iter().all(u8::is_ascii_alphanumeric)
+        || is_known_placeholder(candidate)
+        || shannon_entropy(&candidate[4..]) < 3.5
+    {
+        return Err(ValidationError::invalid(
+            Validator::XaiApiKey,
+            "xAI API key does not match the documented example shape",
+        ));
+    }
+    Ok(ValidatorVerdict::plausible(
+        "XAI_DOCUMENTED_EXAMPLE_SHAPE_ONLY",
+    ))
+}
+
+fn validate_perplexity_api_key(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+    if !(30..=160).contains(&candidate.len())
+        || !candidate.starts_with(b"pplx-")
+        || !candidate[5..]
+            .iter()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(*byte, b'_' | b'-'))
+        || is_known_placeholder(candidate)
+        || shannon_entropy(&candidate[5..]) < 3.5
+    {
+        return Err(ValidationError::invalid(
+            Validator::PerplexityApiKey,
+            "Perplexity API key has an invalid prefix, length, alphabet or entropy",
+        ));
+    }
+    Ok(ValidatorVerdict::plausible(
+        "PERPLEXITY_DOCUMENTED_PREFIX_ONLY",
+    ))
+}
+
+fn validate_doppler_service_token(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+    let text = std::str::from_utf8(candidate).map_err(|_| {
+        ValidationError::invalid(
+            Validator::DopplerServiceToken,
+            "Doppler service token is not UTF-8",
+        )
+    })?;
+    let Some(rest) = text.strip_prefix("dp.st.") else {
+        return Err(ValidationError::invalid(
+            Validator::DopplerServiceToken,
+            "Doppler service token lacks the documented dp.st. prefix",
+        ));
+    };
+    let segments: Vec<&str> = rest.split('.').collect();
+    if !(2..=4).contains(&segments.len())
+        || segments.iter().any(|segment| {
+            segment.is_empty()
+                || segment.len() > 128
+                || !segment
+                    .bytes()
+                    .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'_' | b'-'))
+        })
+        || segments.last().is_some_and(|segment| segment.len() < 16)
+        || is_known_placeholder(candidate)
+        || shannon_entropy(rest.as_bytes()) < 3.0
+    {
+        return Err(ValidationError::invalid(
+            Validator::DopplerServiceToken,
+            "Doppler service token has an invalid segment structure",
+        ));
+    }
+    Ok(ValidatorVerdict::plausible(
+        "DOPPLER_SERVICE_TOKEN_STRUCTURE_ONLY",
+    ))
+}
+
+fn validate_slack_webhook(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+    let text = std::str::from_utf8(candidate).map_err(|_| {
+        ValidationError::invalid(Validator::SlackWebhook, "Slack webhook is not UTF-8")
+    })?;
+    let Some(rest) = text.strip_prefix("https://hooks.slack.com/services/") else {
+        return Err(ValidationError::invalid(
+            Validator::SlackWebhook,
+            "Slack webhook lacks the documented host and path prefix",
+        ));
+    };
+    let segments: Vec<&str> = rest.split('/').collect();
+    if segments.len() != 3
+        || !segments[0].starts_with('T')
+        || !segments[1].starts_with('B')
+        || !(9..=13).contains(&segments[0].len())
+        || !(9..=13).contains(&segments[1].len())
+        || !(20..=64).contains(&segments[2].len())
+        || segments
+            .iter()
+            .any(|segment| !segment.bytes().all(|byte| byte.is_ascii_alphanumeric()))
+        || is_known_placeholder(candidate)
+        || segments[2].bytes().all(|byte| matches!(byte, b'0' | b'X'))
+        || shannon_entropy(segments[2].as_bytes()) < 3.0
+    {
+        return Err(ValidationError::invalid(
+            Validator::SlackWebhook,
+            "Slack webhook has an invalid T/B/secret structure or is a placeholder",
+        ));
+    }
+    Ok(ValidatorVerdict::plausible(
+        "SLACK_WEBHOOK_URL_STRUCTURE_ONLY",
+    ))
+}
+
+fn validate_openai_api_key(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+    if !(23..=256).contains(&candidate.len())
+        || !candidate.starts_with(b"sk-")
+        || !candidate[3..]
+            .iter()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(*byte, b'_' | b'-'))
+        || is_known_placeholder(candidate)
+        || shannon_entropy(&candidate[3..]) < 3.5
+    {
+        return Err(ValidationError::invalid(
+            Validator::OpenAiApiKey,
+            "OpenAI API key has an invalid prefix, length, alphabet or entropy",
+        ));
+    }
+    Ok(ValidatorVerdict::plausible("OPENAI_DOCUMENTED_PREFIX_ONLY"))
+}
+
 #[derive(Debug)]
 struct DerItem {
     tag: u8,
@@ -744,29 +1015,50 @@ fn pem_label<'a>(line: &'a str, marker: &str) -> Option<&'a str> {
 }
 
 fn validate_pem_private_key(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
-    let text = std::str::from_utf8(candidate).map_err(|_| {
+    validate_pem_text(candidate, Validator::PemPrivateKey)
+}
+
+fn validate_escaped_pem_private_key(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+    let decoded = decode_escaped_string(candidate).ok_or_else(|| {
         ValidationError::invalid(
-            Validator::PemPrivateKey,
-            "PEM container is not valid UTF-8 text",
+            Validator::EscapedPemPrivateKey,
+            "escaped PEM container has unsupported or truncated escaping",
         )
+    })?;
+    validate_pem_text(&decoded, Validator::EscapedPemPrivateKey)
+}
+
+fn validate_base64_pem_private_key(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+    let decoded = decode_base64(candidate, false).ok_or_else(|| {
+        ValidationError::invalid(
+            Validator::Base64PemPrivateKey,
+            "base64-wrapped PEM container is not valid base64",
+        )
+    })?;
+    validate_pem_text(&decoded, Validator::Base64PemPrivateKey)
+}
+
+fn validate_pem_text(
+    candidate: &[u8],
+    validator: Validator,
+) -> Result<ValidatorVerdict, ValidationError> {
+    let text = std::str::from_utf8(candidate).map_err(|_| {
+        ValidationError::invalid(validator, "PEM container is not valid UTF-8 text")
     })?;
     if text.contains('\0') {
         return Err(ValidationError::invalid(
-            Validator::PemPrivateKey,
+            validator,
             "PEM container contains a NUL byte",
         ));
     }
     let mut lines = text.lines();
-    let begin = lines.next().unwrap_or_default().trim_start();
+    let begin = lines.next().unwrap_or_default().trim();
     let begin_label = pem_label(begin, "-----BEGIN ").ok_or_else(|| {
-        ValidationError::invalid(
-            Validator::PemPrivateKey,
-            "PEM container has no valid BEGIN line",
-        )
+        ValidationError::invalid(validator, "PEM container has no valid BEGIN line")
     })?;
     if !begin_label.ends_with("PRIVATE KEY") {
         return Err(ValidationError::invalid(
-            Validator::PemPrivateKey,
+            validator,
             "PEM container is not a private key",
         ));
     }
@@ -786,38 +1078,35 @@ fn validate_pem_private_key(candidate: &[u8]) -> Result<ValidatorVerdict, Valida
     }
     if !saw_end {
         return Err(ValidationError::invalid(
-            Validator::PemPrivateKey,
+            validator,
             "PEM container has no END line",
         ));
     }
     let end_label = end_label.unwrap_or_default();
     if begin_label != end_label {
         return Err(ValidationError::invalid(
-            Validator::PemPrivateKey,
+            validator,
             "PEM BEGIN and END labels do not match",
         ));
     }
     if body.len() < 32 {
         return Err(ValidationError::invalid(
-            Validator::PemPrivateKey,
+            validator,
             "PEM private key body is too short",
         ));
     }
     let decoded = decode_base64(body.as_bytes(), false).ok_or_else(|| {
-        ValidationError::invalid(
-            Validator::PemPrivateKey,
-            "PEM private key body is not valid base64",
-        )
+        ValidationError::invalid(validator, "PEM private key body is not valid base64")
     })?;
     if decoded.len() < 32 {
         return Err(ValidationError::invalid(
-            Validator::PemPrivateKey,
+            validator,
             "decoded PEM private key is too short",
         ));
     }
     if decoded.iter().all(|byte| *byte == decoded[0]) {
         return Err(ValidationError::benign(
-            Validator::PemPrivateKey,
+            validator,
             "PEM private key body is a repeated placeholder",
         ));
     }
@@ -826,7 +1115,7 @@ fn validate_pem_private_key(candidate: &[u8]) -> Result<ValidatorVerdict, Valida
             return Ok(ValidatorVerdict::plausible("PEM_OPENSSH_STRUCTURE_ONLY"));
         }
         return Err(ValidationError::invalid(
-            Validator::PemPrivateKey,
+            validator,
             "OpenSSH private key has no openssh-key-v1 header",
         ));
     }
@@ -858,6 +1147,425 @@ fn validate_pem_private_key(candidate: &[u8]) -> Result<ValidatorVerdict, Valida
     } else {
         Ok(ValidatorVerdict::plausible("PEM_DER_STRUCTURE_UNVERIFIED"))
     }
+}
+
+fn validate_pgp_private_key(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+    let text = std::str::from_utf8(candidate).map_err(|_| {
+        ValidationError::invalid(
+            Validator::PgpPrivateKey,
+            "PGP armored block is not valid UTF-8 text",
+        )
+    })?;
+    if text.contains('\0') {
+        return Err(ValidationError::invalid(
+            Validator::PgpPrivateKey,
+            "PGP armored block contains a NUL byte",
+        ));
+    }
+    let mut lines = text.lines();
+    let begin = lines.next().unwrap_or_default().trim();
+    if begin != "-----BEGIN PGP PRIVATE KEY BLOCK-----" {
+        return Err(ValidationError::invalid(
+            Validator::PgpPrivateKey,
+            "PGP armored block does not begin a private key block",
+        ));
+    }
+    let mut headers = 0usize;
+    let mut body = String::new();
+    let mut checksum = None;
+    let mut saw_end = false;
+    let mut saw_body = false;
+    for line in lines {
+        let line = line.trim();
+        if line == "-----END PGP PRIVATE KEY BLOCK-----" {
+            saw_end = true;
+            break;
+        }
+        if line.is_empty() {
+            continue;
+        }
+        if !saw_body && line.contains(':') && body.is_empty() {
+            headers += 1;
+            if headers > 8 || line.len() > 256 {
+                return Err(ValidationError::invalid(
+                    Validator::PgpPrivateKey,
+                    "PGP armor header block is unbounded",
+                ));
+            }
+            continue;
+        }
+        if let Some(checksum_text) = line.strip_prefix('=') {
+            if checksum.is_some() {
+                return Err(ValidationError::invalid(
+                    Validator::PgpPrivateKey,
+                    "PGP armor contains more than one checksum line",
+                ));
+            }
+            checksum = Some(checksum_text.as_bytes().to_vec());
+            continue;
+        }
+        if checksum.is_some() {
+            return Err(ValidationError::invalid(
+                Validator::PgpPrivateKey,
+                "PGP armor contains data after the checksum",
+            ));
+        }
+        if line.len() > 76
+            || !line
+                .bytes()
+                .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'+' | b'/' | b'='))
+        {
+            return Err(ValidationError::invalid(
+                Validator::PgpPrivateKey,
+                "PGP armor body contains an invalid line",
+            ));
+        }
+        saw_body = true;
+        body.push_str(line);
+    }
+    if !saw_end || !saw_body {
+        return Err(ValidationError::invalid(
+            Validator::PgpPrivateKey,
+            "PGP armored block is incomplete",
+        ));
+    }
+    let decoded = decode_base64(body.as_bytes(), false).ok_or_else(|| {
+        ValidationError::invalid(
+            Validator::PgpPrivateKey,
+            "PGP armor body is not valid base64",
+        )
+    })?;
+    if decoded.len() < 32 {
+        return Err(ValidationError::invalid(
+            Validator::PgpPrivateKey,
+            "decoded PGP secret-key block is too short",
+        ));
+    }
+    if let Some(checksum) = checksum {
+        let expected = decode_base64(&checksum, false).ok_or_else(|| {
+            ValidationError::invalid(
+                Validator::PgpPrivateKey,
+                "PGP armor checksum is not valid base64",
+            )
+        })?;
+        if expected.len() != 3
+            || crc24(&decoded) != u32::from_be_bytes([0, expected[0], expected[1], expected[2]])
+        {
+            return Err(ValidationError::invalid(
+                Validator::PgpPrivateKey,
+                "PGP armor checksum does not match the decoded body",
+            ));
+        }
+    }
+    let first = decoded[0];
+    if first & 0x80 == 0 {
+        return Err(ValidationError::invalid(
+            Validator::PgpPrivateKey,
+            "PGP secret-key body has no valid packet header",
+        ));
+    }
+    let new_format = first & 0x40 != 0;
+    let tag = if new_format {
+        first & 0x3f
+    } else {
+        (first >> 2) & 0x0f
+    };
+    if !matches!(tag, 5 | 7) {
+        return Err(ValidationError::invalid(
+            Validator::PgpPrivateKey,
+            "PGP block does not begin with a secret-key or secret-subkey packet",
+        ));
+    }
+    Ok(ValidatorVerdict::plausible("PGP_SECRET_KEY_STRUCTURE_ONLY"))
+}
+
+fn crc24(data: &[u8]) -> u32 {
+    let mut crc = 0x00b7_04ceu32;
+    for byte in data {
+        crc ^= (*byte as u32) << 16;
+        for _ in 0..8 {
+            crc <<= 1;
+            if crc & 0x0100_0000 != 0 {
+                crc ^= 0x0186_4cfb;
+            }
+        }
+    }
+    crc & 0x00ff_ffff
+}
+
+fn validate_http_basic(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+    let decoded = decode_base64(candidate, false).ok_or_else(|| {
+        ValidationError::invalid(
+            Validator::HttpBasicAuth,
+            "HTTP Basic credentials are not base64",
+        )
+    })?;
+    if !(3..=4096).contains(&decoded.len()) {
+        return Err(ValidationError::invalid(
+            Validator::HttpBasicAuth,
+            "decoded HTTP Basic credentials are outside the supported bounds",
+        ));
+    }
+    let Some(separator) = decoded.iter().position(|byte| *byte == b':') else {
+        return Err(ValidationError::invalid(
+            Validator::HttpBasicAuth,
+            "HTTP Basic credentials have no user/password separator",
+        ));
+    };
+    let user = &decoded[..separator];
+    let password = &decoded[separator + 1..];
+    if user.is_empty()
+        || user.len() > 256
+        || password.is_empty()
+        || password.len() > 1024
+        || user.iter().any(|byte| byte.is_ascii_control())
+        || password.iter().any(|byte| byte.is_ascii_control())
+    {
+        return Err(ValidationError::invalid(
+            Validator::HttpBasicAuth,
+            "HTTP Basic user or password is empty, unbounded or contains controls",
+        ));
+    }
+    let password_text = std::str::from_utf8(password).map_err(|_| {
+        ValidationError::invalid(
+            Validator::HttpBasicAuth,
+            "HTTP Basic password is not valid UTF-8",
+        )
+    })?;
+    if is_variable_reference(password_text)
+        || is_placeholder_wrapper(password_text)
+        || is_common_benign_value(password_text)
+        || is_known_placeholder(password)
+    {
+        return Err(ValidationError::benign(
+            Validator::HttpBasicAuth,
+            "HTTP Basic password is a placeholder or unresolved reference",
+        ));
+    }
+    Ok(ValidatorVerdict::plausible(
+        "HTTP_BASIC_CREDENTIALS_STRUCTURE_ONLY",
+    ))
+}
+
+fn validate_http_bearer(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+    if !(12..=4096).contains(&candidate.len())
+        || !candidate.iter().all(|byte| {
+            byte.is_ascii_alphanumeric()
+                || matches!(*byte, b'-' | b'_' | b'.' | b'~' | b'+' | b'/' | b'=')
+        })
+    {
+        return Err(ValidationError::invalid(
+            Validator::HttpBearerOpaque,
+            "Bearer token has an invalid length or character set",
+        ));
+    }
+    if candidate.starts_with(b"eyJ") || is_known_placeholder(candidate) {
+        return Err(ValidationError::benign(
+            Validator::HttpBearerOpaque,
+            "Bearer token is covered by a structured rule or is a known placeholder",
+        ));
+    }
+    if looks_like_provider_token(candidate) {
+        return Err(ValidationError::benign(
+            Validator::HttpBearerOpaque,
+            "Bearer token is handled by a provider-specific rule",
+        ));
+    }
+    if shannon_entropy(candidate) < 3.0 {
+        return Ok(ValidatorVerdict::plausible("LOW_ENTROPY"));
+    }
+    Ok(ValidatorVerdict::plausible(
+        "HTTP_BEARER_OPAQUE_STRUCTURE_ONLY",
+    ))
+}
+
+fn validate_url_userinfo(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+    let text = std::str::from_utf8(candidate).map_err(|_| {
+        ValidationError::invalid(Validator::UrlUserInfo, "URL userinfo is not valid UTF-8")
+    })?;
+    let Some((user, password)) = text.split_once(':') else {
+        return Err(ValidationError::invalid(
+            Validator::UrlUserInfo,
+            "URL userinfo has no password separator",
+        ));
+    };
+    if user.is_empty()
+        || user.len() > 128
+        || password.is_empty()
+        || password.len() > 512
+        || user.contains('@')
+        || password.contains('@')
+        || !valid_percent_encoding(user)
+        || !valid_percent_encoding(password)
+    {
+        return Err(ValidationError::invalid(
+            Validator::UrlUserInfo,
+            "URL userinfo is empty, unbounded or malformed",
+        ));
+    }
+    if is_variable_reference(user)
+        || is_variable_reference(password)
+        || is_placeholder_wrapper(password)
+        || is_common_benign_value(password)
+        || is_known_placeholder(password.as_bytes())
+    {
+        return Err(ValidationError::benign(
+            Validator::UrlUserInfo,
+            "URL userinfo is a placeholder or unresolved reference",
+        ));
+    }
+    if shannon_entropy(password.as_bytes()) < 2.5 {
+        return Ok(ValidatorVerdict::plausible("LOW_ENTROPY"));
+    }
+    Ok(ValidatorVerdict::plausible("URL_USERINFO_STRUCTURE_ONLY"))
+}
+
+fn validate_multiline_assigned_secret(
+    candidate: &[u8],
+) -> Result<ValidatorVerdict, ValidationError> {
+    if candidate.len() > 4096 {
+        return Err(ValidationError::invalid(
+            Validator::MultilineAssignedSecret,
+            "multiline assigned value exceeds the supported bound",
+        ));
+    }
+    let text = std::str::from_utf8(candidate).map_err(|_| {
+        ValidationError::invalid(
+            Validator::MultilineAssignedSecret,
+            "multiline assigned value is not valid UTF-8",
+        )
+    })?;
+    let mut lines: Vec<&str> = text
+        .lines()
+        .map(|line| line.trim_end_matches('\r'))
+        .filter(|line| !line.trim().is_empty())
+        .collect();
+    if lines.is_empty() {
+        return Err(ValidationError::invalid(
+            Validator::MultilineAssignedSecret,
+            "multiline assigned value has no content",
+        ));
+    }
+    let indent = lines
+        .iter()
+        .filter(|line| !line.trim().is_empty())
+        .map(|line| line.len() - line.trim_start().len())
+        .min()
+        .unwrap_or(0);
+    for line in &mut lines {
+        if line.len() >= indent {
+            *line = &line[indent..];
+        }
+    }
+    let joined = lines.join("\n");
+    if !(6..=4096).contains(&joined.len())
+        || joined
+            .chars()
+            .any(|character| character != '\n' && character.is_control())
+        || joined.contains('\0')
+    {
+        return Err(ValidationError::invalid(
+            Validator::MultilineAssignedSecret,
+            "multiline assigned content is outside the literal bounds",
+        ));
+    }
+    if is_variable_reference(&joined)
+        || is_placeholder_wrapper(&joined)
+        || is_common_benign_value(&joined)
+        || is_known_placeholder(joined.as_bytes())
+        || looks_like_nonsecret_setting(&joined)
+    {
+        return Err(ValidationError::benign(
+            Validator::MultilineAssignedSecret,
+            "multiline assigned content is a placeholder or benign setting",
+        ));
+    }
+    if looks_like_provider_token(joined.as_bytes()) {
+        return Err(ValidationError::benign(
+            Validator::MultilineAssignedSecret,
+            "multiline assigned content is handled by a provider-specific rule",
+        ));
+    }
+    if shannon_entropy(joined.as_bytes()) < 2.0 {
+        return Ok(ValidatorVerdict::plausible("LOW_ENTROPY"));
+    }
+    Ok(ValidatorVerdict::plausible(
+        "MULTILINE_ASSIGNMENT_STRUCTURE_ONLY",
+    ))
+}
+
+fn validate_sql_password(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+    validate_generic_assigned_secret(candidate).map_err(|error| ValidationError {
+        validator: Validator::SqlPassword,
+        reason: error.reason,
+        benign: error.benign,
+    })
+}
+
+fn validate_generic_assigned_secret(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+    let decoded = decode_escaped_string(candidate).ok_or_else(|| {
+        ValidationError::invalid(
+            Validator::GenericAssignedSecret,
+            "assigned value has unsupported or truncated escaping",
+        )
+    })?;
+    let text = std::str::from_utf8(&decoded).map_err(|_| {
+        ValidationError::invalid(
+            Validator::GenericAssignedSecret,
+            "assigned value is not valid UTF-8",
+        )
+    })?;
+    if !(6..=512).contains(&text.len())
+        || text.trim() != text
+        || text.chars().any(char::is_control)
+        || text.contains('\r')
+        || text.contains('\n')
+    {
+        return Err(ValidationError::invalid(
+            Validator::GenericAssignedSecret,
+            "assigned value is outside the literal bounds",
+        ));
+    }
+    if is_variable_reference(text)
+        || is_placeholder_wrapper(text)
+        || is_common_benign_value(text)
+        || is_known_placeholder(&decoded)
+    {
+        return Err(ValidationError::benign(
+            Validator::GenericAssignedSecret,
+            "assigned value is a placeholder, variable or common benign value",
+        ));
+    }
+    if looks_like_provider_token(&decoded) {
+        return Err(ValidationError::benign(
+            Validator::GenericAssignedSecret,
+            "assigned value is handled by a provider-specific rule",
+        ));
+    }
+    if text.contains("://")
+        || text.contains('{')
+        || text.contains('}')
+        || text.contains('<')
+        || text.contains('>')
+        || text.ends_with('/')
+    {
+        return Err(ValidationError::invalid(
+            Validator::GenericAssignedSecret,
+            "assigned value has non-literal or URI structure",
+        ));
+    }
+    if looks_like_password_hash(text) || looks_like_nonsecret_setting(text) {
+        return Err(ValidationError::benign(
+            Validator::GenericAssignedSecret,
+            "assigned value is a hash, setting or nonsecret value",
+        ));
+    }
+    if all_same_char(text) || shannon_entropy(&decoded) < 2.0 {
+        return Ok(ValidatorVerdict::plausible("LOW_ENTROPY"));
+    }
+    Ok(ValidatorVerdict::plausible(
+        "ASSIGNMENT_CONTEXT_AND_VALUE_STRUCTURE_ONLY",
+    ))
 }
 
 fn validate_jwt(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
@@ -1025,6 +1733,108 @@ fn validate_generic_assignment(candidate: &[u8]) -> Result<ValidatorVerdict, Val
     ))
 }
 
+fn decode_escaped_string(input: &[u8]) -> Option<Vec<u8>> {
+    if input.len() > 256 * 1024 {
+        return None;
+    }
+    let mut output = Vec::with_capacity(input.len());
+    let mut index = 0usize;
+    while index < input.len() {
+        if input[index] != b'\\' {
+            output.push(input[index]);
+            index += 1;
+            continue;
+        }
+        index += 1;
+        let escaped = *input.get(index)?;
+        index += 1;
+        match escaped {
+            b'n' => output.push(b'\n'),
+            b'r' => output.push(b'\r'),
+            b't' => output.push(b'\t'),
+            b'b' => output.push(8),
+            b'f' => output.push(12),
+            b'\\' => output.push(b'\\'),
+            b'"' => output.push(b'"'),
+            b'\'' => output.push(b'\''),
+            b'/' => output.push(b'/'),
+            b'u' => {
+                if index + 4 > input.len() {
+                    return None;
+                }
+                let digits = std::str::from_utf8(&input[index..index + 4]).ok()?;
+                let value = u16::from_str_radix(digits, 16).ok()?;
+                let character = char::from_u32(value as u32)?;
+                let mut encoded = [0u8; 4];
+                output.extend_from_slice(character.encode_utf8(&mut encoded).as_bytes());
+                index += 4;
+            }
+            _ => {
+                output.push(b'\\');
+                output.push(escaped);
+            }
+        }
+        if output.len() > 512 * 1024 {
+            return None;
+        }
+    }
+    Some(output)
+}
+
+fn looks_like_password_hash(text: &str) -> bool {
+    let lower = text.to_ascii_lowercase();
+    if lower.starts_with("$2a$")
+        || lower.starts_with("$2b$")
+        || lower.starts_with("$2y$")
+        || lower.starts_with("$argon2")
+        || lower.starts_with("$pbkdf2")
+        || lower.starts_with("$scrypt")
+        || lower.starts_with("sha1:")
+        || lower.starts_with("sha256:")
+        || lower.starts_with("sha512:")
+        || lower.starts_with("md5:")
+        || lower.starts_with("{sha}")
+        || lower.starts_with("{ssha}")
+    {
+        return true;
+    }
+    let hex_only = text.bytes().all(|byte| byte.is_ascii_hexdigit());
+    hex_only && matches!(text.len(), 32 | 40 | 64 | 96 | 128)
+}
+
+fn looks_like_nonsecret_setting(text: &str) -> bool {
+    let lower = text.to_ascii_lowercase();
+    matches!(
+        lower.as_str(),
+        "localhost"
+            | "127.0.0.1"
+            | "0.0.0.0"
+            | "::1"
+            | "default"
+            | "development"
+            | "staging"
+            | "production"
+            | "debug"
+            | "info"
+            | "warning"
+            | "error"
+            | "utf-8"
+            | "utf8"
+            | "application/json"
+            | "text/plain"
+            | "read-only"
+            | "readonly"
+            | "read/write"
+            | "readwrite"
+            | "no-password"
+            | "not-set"
+            | "unset"
+    ) || lower.ends_with(".example.com")
+        || lower.ends_with(".invalid")
+        || lower.ends_with(".local")
+        || lower.ends_with(".test")
+}
+
 fn is_base64_byte(byte: u8, url: bool) -> bool {
     byte.is_ascii_alphanumeric()
         || matches!(byte, b'+' | b'/' | b'=')
@@ -1166,7 +1976,7 @@ fn is_variable_reference(text: &str) -> bool {
 }
 
 fn looks_like_provider_token(candidate: &[u8]) -> bool {
-    const PREFIXES: [&[u8]; 32] = [
+    const PREFIXES: [&[u8]; 39] = [
         b"AKIA",
         b"ASIA",
         b"ABIA",
@@ -1199,6 +2009,13 @@ fn looks_like_provider_token(candidate: &[u8]) -> bool {
         b"xapp-",
         b"SG.",
         b"npm_",
+        b"tskey-",
+        b"gsk_",
+        b"xai-",
+        b"pplx-",
+        b"dp.st.",
+        b"https://hooks.slack.com/services/",
+        b"sk-",
     ];
     if PREFIXES.iter().any(|prefix| candidate.starts_with(prefix)) {
         return true;

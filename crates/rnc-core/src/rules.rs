@@ -42,6 +42,8 @@ pub struct RuleDefinition {
     pub category: String,
     pub pattern: String,
     pub capture_group: usize,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub value_capture_groups: Option<Vec<usize>>,
     pub validators: Vec<Validator>,
     pub confidence: String,
     pub max_match_bytes: usize,
@@ -146,27 +148,51 @@ impl LoadedBundle {
                     definition.rule_id, definition.max_match_bytes
                 )));
             }
+            let capture_groups = definition
+                .value_capture_groups
+                .clone()
+                .unwrap_or_else(|| vec![definition.capture_group]);
+            if capture_groups.is_empty() || capture_groups.len() > 16 {
+                return Err(CoreError::Rule(format!(
+                    "{} value_capture_groups must contain 1..=16 groups",
+                    definition.rule_id
+                )));
+            }
+            if definition
+                .value_capture_groups
+                .as_ref()
+                .is_some_and(|groups| groups.iter().any(|group| *group == 0 || *group > 255))
+            {
+                return Err(CoreError::Rule(format!(
+                    "{} value_capture_groups must reference groups 1..=255",
+                    definition.rule_id
+                )));
+            }
             if let Some(declared) = definition.max_candidate_bytes {
-                let candidate_max =
-                    capture_max_bytes(&hir, definition.capture_group).ok_or_else(|| {
+                for group in &capture_groups {
+                    let candidate_max = capture_max_bytes(&hir, *group).ok_or_else(|| {
                         CoreError::Rule(format!(
                             "{} capture group {} has no finite maximum length",
-                            definition.rule_id, definition.capture_group
+                            definition.rule_id, group
                         ))
                     })?;
-                if candidate_max > declared {
-                    return Err(CoreError::Rule(format!(
-                        "{} capture group can match {candidate_max} bytes but declares max_candidate_bytes {declared}",
-                        definition.rule_id
-                    )));
+                    if candidate_max > declared {
+                        return Err(CoreError::Rule(format!(
+                            "{} capture group can match {candidate_max} bytes but declares max_candidate_bytes {declared}",
+                            definition.rule_id
+                        )));
+                    }
                 }
             }
             let regex = Regex::new(&definition.pattern)
                 .map_err(|error| CoreError::Rule(format!("{}: {error}", definition.rule_id)))?;
-            if definition.capture_group >= regex.captures_len() {
+            if let Some(group) = capture_groups
+                .iter()
+                .find(|group| **group >= regex.captures_len())
+            {
                 return Err(CoreError::Rule(format!(
                     "{} capture_group {} does not exist",
-                    definition.rule_id, definition.capture_group
+                    definition.rule_id, group
                 )));
             }
             maximum = maximum.max(max_len);
@@ -585,6 +611,7 @@ mod tests {
             category: "test".to_string(),
             pattern: "RNC_SYNTH_KEY_SECOND_[A-Z0-9_]{1,32}".to_string(),
             capture_group: 0,
+            value_capture_groups: None,
             validators: vec![Validator::MarkerFormat],
             confidence: "high".to_string(),
             max_match_bytes: 128,

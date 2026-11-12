@@ -103,8 +103,28 @@ pub enum PreScanScope {
 }
 
 #[derive(Debug, Clone)]
+pub struct GitBlobRef {
+    pub commit: String,
+    pub blob_oid: String,
+}
+
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
+pub struct GitHistoryInfo {
+    pub repository_path: PathBuf,
+    pub repository_id: String,
+    pub refs: Vec<String>,
+    pub commits: usize,
+    pub changed_paths: usize,
+    pub deleted_paths: usize,
+    pub units_seen: usize,
+    pub scope: String,
+}
+
+#[derive(Debug, Clone)]
 pub struct DiscoveredUnit {
     pub unit_id: String,
+    pub source_id: String,
+    pub source_kind: String,
     pub locator: String,
     pub path: PathBuf,
     pub size: u64,
@@ -113,6 +133,7 @@ pub struct DiscoveredUnit {
     pub scope: PreScanScope,
     pub block_matches: Vec<String>,
     pub block_request_id: Option<String>,
+    pub git: Option<GitBlobRef>,
 }
 
 #[derive(Debug, Default)]
@@ -125,6 +146,10 @@ pub struct Discovery {
     pub aborted: bool,
     pub entries_seen: usize,
     pub matched_scope_selectors: BTreeSet<String>,
+    pub source_adapter_id: String,
+    pub source_adapter_version: String,
+    pub git_history: Option<GitHistoryInfo>,
+    pub git_source: Option<crate::git::GitHistorySource>,
 }
 
 #[derive(Debug, Clone)]
@@ -198,6 +223,8 @@ impl LocalSource {
     pub fn discover_with_budget(&self, budget: DiscoveryBudget) -> Discovery {
         let mut discovery = Discovery {
             root: self.root.clone(),
+            source_adapter_id: "local-working-tree".to_string(),
+            source_adapter_version: env!("CARGO_PKG_VERSION").to_string(),
             ..Discovery::default()
         };
         let mut policy_budget = budget.max_policy_work;
@@ -239,6 +266,71 @@ impl LocalSource {
                 .push("UNMATCHED_SCOPE_SELECTOR".to_string());
         }
         discovery
+    }
+
+    /// Apply declared pre-scan scope to already-enumerated virtual units.
+    /// This is used by the Git adapter: selectors are evaluated against the
+    /// commit/path locator before any blob content is requested.
+    pub fn apply_policy_to_discovery(discovery: &mut Discovery, policy: &PolicySpec) {
+        let mut matched_selectors = BTreeSet::new();
+        let mut matched_blocks = BTreeSet::new();
+        for unit in &mut discovery.units {
+            let mut block_matches = Vec::new();
+            for request in &policy.blocks {
+                if request.matcher.matches(&unit.locator) {
+                    block_matches.push(request.request_id.clone());
+                    matched_blocks.insert(request.request_id.clone());
+                }
+            }
+            let mut skip = false;
+            for selector in &policy.skips {
+                if selector.matches(&unit.locator) {
+                    skip = true;
+                    matched_selectors.insert(selector.as_str().to_string());
+                }
+            }
+            let mut optional = !unit.required_scope;
+            for selector in &policy.optional {
+                if selector.matches(&unit.locator) {
+                    optional = true;
+                    matched_selectors.insert(selector.as_str().to_string());
+                }
+            }
+            if !block_matches.is_empty() {
+                unit.block_request_id = policy
+                    .blocks
+                    .iter()
+                    .filter(|request| block_matches.contains(&request.request_id))
+                    .max_by(|left, right| {
+                        left.matcher
+                            .specificity()
+                            .cmp(&right.matcher.specificity())
+                            .then_with(|| left.request_id.cmp(&right.request_id))
+                    })
+                    .map(|request| request.request_id.clone());
+                unit.scope = PreScanScope::Blocked;
+            } else if skip {
+                unit.scope = PreScanScope::Skipped("OPERATOR_SKIPPED");
+            }
+            unit.required_scope = !optional;
+            unit.block_matches = block_matches;
+        }
+        discovery.unmatched_selectors = policy
+            .blocks
+            .iter()
+            .filter(|request| !matched_blocks.contains(&request.request_id))
+            .count()
+            + policy
+                .skips
+                .iter()
+                .chain(policy.optional.iter())
+                .filter(|selector| !matched_selectors.contains(selector.as_str()))
+                .count();
+        if discovery.unmatched_selectors > 0 {
+            discovery
+                .warnings
+                .push("UNMATCHED_SCOPE_SELECTOR".to_string());
+        }
     }
 
     fn directory_within_root(&self, directory: &Path) -> bool {
@@ -543,6 +635,8 @@ impl LocalSource {
         };
         DiscoveredUnit {
             unit_id: unit_id(crate::path::SOURCE_ID, &locator).unwrap_or_default(),
+            source_id: crate::path::SOURCE_ID.to_string(),
+            source_kind: "working_tree_file".to_string(),
             required_scope: !optional,
             locator,
             path,
@@ -551,6 +645,7 @@ impl LocalSource {
             scope,
             block_matches,
             block_request_id,
+            git: None,
         }
     }
 }

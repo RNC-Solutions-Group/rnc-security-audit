@@ -20,6 +20,7 @@ def _rule_value(rule: dict, schema_version: str) -> dict:
     }
     if schema_version == "0.2.0":
         for key in (
+            "value_capture_groups",
             "provider",
             "family",
             "credential_type",
