@@ -1,0 +1,748 @@
+{
+  "counts": {
+    "expected_items": 27,
+    "files": 24,
+    "negative_files": 4,
+    "positive_files": 20
+  },
+  "dataset_id": "rnc-provider-fixtures-tier2",
+  "dataset_version": "2026.11.1",
+  "files": [
+    {
+      "byte_length": 224,
+      "expected_count": 2,
+      "path": "aws.env",
+      "sha256": "c97f577804ca1c043ea18e27d9164efe08d8752d066a49d5b41939d6a380dba1"
+    },
+    {
+      "byte_length": 150,
+      "expected_count": 1,
+      "path": "cloud.json",
+      "sha256": "8216bb91952907735a57bc39547c3c6b103c04804818c43a11c9d026e6cb2341"
+    },
+    {
+      "byte_length": 270,
+      "expected_count": 3,
+      "path": "github.yaml",
+      "sha256": "3da715056c66746ca7e51beeebe79ad0877ffd81506a6a21f7f110485b041a4d"
+    },
+    {
+      "byte_length": 85,
+      "expected_count": 1,
+      "path": "gitlab.env",
+      "sha256": "f743c85d7514f32a7e4417e81616c7110c753f8f36f69b294014531d5ccbe761"
+    },
+    {
+      "byte_length": 142,
+      "expected_count": 1,
+      "path": "stripe.js",
+      "sha256": "5ea34e4dd37bbaf0b09a4a144b90bf14512c71a43be0849ab1039ac57c13e774"
+    },
+    {
+      "byte_length": 123,
+      "expected_count": 1,
+      "path": "slack.yaml",
+      "sha256": "205c687a80783fffa334ef9b8c44558b3b26c018419fa5c42fa0bbf8cde3a56d"
+    },
+    {
+      "byte_length": 120,
+      "expected_count": 1,
+      "path": "sendgrid.py",
+      "sha256": "fe903a0d06623ac3eeadb1e5f363d55c8157fa7a4263bfeaf5a66589834b6942"
+    },
+    {
+      "byte_length": 98,
+      "expected_count": 1,
+      "path": ".npmrc",
+      "sha256": "3720266510d0d4e6ab684df1ed8fd23e25a34a3600cac7e0cac31e0e26f4c1a9"
+    },
+    {
+      "byte_length": 229,
+      "expected_count": 1,
+      "path": "database.yml",
+      "sha256": "9325fe07792694749b36154b39d159fa665a3e1ada4606bdd4f585e332a606ad"
+    },
+    {
+      "byte_length": 164,
+      "expected_count": 2,
+      "path": "generic.toml",
+      "sha256": "780cded843c64647ec41eef2a9edc384ca30d47e17d0cb67912b0c37d6b86676"
+    },
+    {
+      "byte_length": 883,
+      "expected_count": 1,
+      "path": "pem/private-rsa.pem",
+      "sha256": "baf94197c0e8adb312a9885cd65c4cd4e0dd7b48dac4be61bae5001d9c858215"
+    },
+    {
+      "byte_length": 241,
+      "expected_count": 1,
+      "path": "pem/private-pkcs8.pem",
+      "sha256": "af9f9c8cf9ec7928b988e1f8796a04acff68553bb72418a185dc4db288e10d7c"
+    },
+    {
+      "byte_length": 164,
+      "expected_count": 1,
+      "path": "pem/private-openssh.pem",
+      "sha256": "b818b87517c40cb509a7f0fc036e514c6551e9379cce40845a269c6632044dc3"
+    },
+    {
+      "byte_length": 77,
+      "expected_count": 0,
+      "path": "pem/public.pem",
+      "sha256": "2982ed34752fbf0dbba7788df0d55fa05166a853de9defc5c3835ffdab32d635"
+    },
+    {
+      "byte_length": 91,
+      "expected_count": 0,
+      "path": "pem/certificate.pem",
+      "sha256": "845fe6a0420ef7150c610f69d5bb9dc03f3ce0d7c7e7d982e1ff086a7df103b6"
+    },
+    {
+      "byte_length": 225,
+      "expected_count": 1,
+      "path": "jwt.txt",
+      "sha256": "f06decf102887d2485a0137f63e46a81f2861092fc5ed5b95d4e5574f607e6c2"
+    },
+    {
+      "byte_length": 94,
+      "expected_count": 2,
+      "path": "same-line.txt",
+      "sha256": "817d0f1b689a82ae7cddd0f299bf830bccde2303d7fb0cb97bb612e2a75f65e6"
+    },
+    {
+      "byte_length": 51,
+      "expected_count": 1,
+      "path": "crlf.txt",
+      "sha256": "5259dfd580cca529a91687d5c07cc61f0519025df10997a63af31681edfe49ef"
+    },
+    {
+      "byte_length": 56,
+      "expected_count": 1,
+      "path": "unicode.txt",
+      "sha256": "23c2bdfeee1cc00f1af5dfc8ad31c933cbc9e2b2ce4e7ce30048c5e1cb203c91"
+    },
+    {
+      "byte_length": 25,
+      "expected_count": 1,
+      "path": "binary.bin",
+      "sha256": "a6a37d3ab305b67b685de36ba397e2b2a2e4ba112e1d3309e6f9d798905d7463"
+    },
+    {
+      "byte_length": 253,
+      "expected_count": 0,
+      "path": "decoys.txt",
+      "sha256": "8ef66ed547d61a011545dae6547c77b63c9e068da1d8354b5f5dbee861362ad0"
+    },
+    {
+      "byte_length": 198,
+      "expected_count": 0,
+      "path": "high-entropy.txt",
+      "sha256": "592d382b4d7ae3c2b49e079456ec17da907cce599b6c1e56908478dcc22a5443"
+    },
+    {
+      "byte_length": 53,
+      "expected_count": 1,
+      "path": "comments.md",
+      "sha256": "26cefd590af4f00a0571a605ea7a6e173be89181b3d5cdfd7b98c085e07970d2"
+    },
+    {
+      "byte_length": 121,
+      "expected_count": 3,
+      "path": "boundaries.txt",
+      "sha256": "9d4e19004533cd0140ab8a5db491edfc886df4bef74c7e8fbe32f6de23de341e"
+    }
+  ],
+  "items": [
+    {
+      "category": "npm-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 73,
+      "expected_rule_id": "npm-auth-token",
+      "finding_id": "t-6b7990072badb86ddadefbbba8ea269fd095f7418e1168544f64410097cf2bc7",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "auth-token",
+        "detector_confidence": "high",
+        "provider_family": "npm-token"
+      },
+      "path": ".npmrc",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "27350a5e718da5f4995e45d544c102d05ac8366ae14d05910eda66211ef3a681",
+      "start_byte": 33
+    },
+    {
+      "category": "aws-credentials",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 38,
+      "expected_rule_id": "aws-access-key-id",
+      "finding_id": "t-ff46e9c03bbbc20434eb91e9d3f73fa51363c23b8cd966d5b1c034be8b8123fb",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "access-key-id",
+        "detector_confidence": "high",
+        "provider_family": "aws-credentials"
+      },
+      "path": "aws.env",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "396af0f11964f8733b18c45503e7b82e33d33b0b24bfc8de817442a3c6f8164e",
+      "start_byte": 18
+    },
+    {
+      "category": "aws-credentials",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 103,
+      "expected_rule_id": "aws-secret-access-key",
+      "finding_id": "t-e36e2f66031d3111893c8f59a8c519240492ec3bc704d39536b2a6f569ccf4dc",
+      "line_end": 2,
+      "line_start": 2,
+      "metadata": {
+        "credential_type": "secret-access-key",
+        "detector_confidence": "high",
+        "provider_family": "aws-credentials"
+      },
+      "path": "aws.env",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "9c0769d448347d8f1ca32ee5766cc9eed4092d6bb7958d959d8e304d3e0c771e",
+      "start_byte": 63
+    },
+    {
+      "category": "aws-credentials",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 23,
+      "expected_rule_id": "aws-access-key-id",
+      "finding_id": "t-04a69eab3237f221cae2b8f8f2b9a9c93f8ec6a38bea5831ed4f3ac1b309cd8e",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "access-key-id",
+        "detector_confidence": "high",
+        "provider_family": "aws-credentials"
+      },
+      "path": "binary.bin",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "396af0f11964f8733b18c45503e7b82e33d33b0b24bfc8de817442a3c6f8164e",
+      "start_byte": 3
+    },
+    {
+      "category": "github-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 40,
+      "expected_rule_id": "github-classic-pat",
+      "finding_id": "t-7864cb04c28a2060d348289c846f234ac312cbb466c423e88b2b03596bcff476",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "classic-personal-access-token",
+        "detector_confidence": "high",
+        "provider_family": "github-token"
+      },
+      "path": "boundaries.txt",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "6ce97483ce08297e0e5b390210fbe12bbd97557e9cef552c7f738a5bbe76745c",
+      "start_byte": 0
+    },
+    {
+      "category": "npm-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 81,
+      "expected_rule_id": "npm-auth-token",
+      "finding_id": "t-df39789fa7aa9d10e3279b2743d1608a959007edbb6d4000b24b7efdd5fa13a2",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "auth-token",
+        "detector_confidence": "high",
+        "provider_family": "npm-token"
+      },
+      "path": "boundaries.txt",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "27350a5e718da5f4995e45d544c102d05ac8366ae14d05910eda66211ef3a681",
+      "start_byte": 41
+    },
+    {
+      "category": "google-cloud-api-key",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 121,
+      "expected_rule_id": "google-api-key",
+      "finding_id": "t-bed5ef4f8e25f68a0b92fa92b88862524ebe3e2e295792f15d9117a93d3deabc",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "api-key",
+        "detector_confidence": "high",
+        "provider_family": "google-cloud-api-key"
+      },
+      "path": "boundaries.txt",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "565aa86e3d83e08bb3437e5272f20171f690122eeacecedbce2cadb6869ad98e",
+      "start_byte": 82
+    },
+    {
+      "category": "google-cloud-api-key",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 54,
+      "expected_rule_id": "google-api-key",
+      "finding_id": "t-8fe7072ccd2cdca8de05df147e314593b73cbbed56330b046fe59dc876851eee",
+      "line_end": 2,
+      "line_start": 2,
+      "metadata": {
+        "credential_type": "api-key",
+        "detector_confidence": "high",
+        "provider_family": "google-cloud-api-key"
+      },
+      "path": "cloud.json",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "565aa86e3d83e08bb3437e5272f20171f690122eeacecedbce2cadb6869ad98e",
+      "start_byte": 15
+    },
+    {
+      "category": "aws-credentials",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 52,
+      "expected_rule_id": "aws-access-key-id",
+      "finding_id": "t-8c0b0e6ae8c7694c16903b6f95b340bbc3a36c6a22746cbe3dc8f53604e86d52",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "access-key-id",
+        "detector_confidence": "high",
+        "provider_family": "aws-credentials"
+      },
+      "path": "comments.md",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "d01342185e813985b6230f625cd2e977c20d4bc604218c2c92338606e44a648d",
+      "start_byte": 32
+    },
+    {
+      "category": "aws-credentials",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 38,
+      "expected_rule_id": "aws-access-key-id",
+      "finding_id": "t-882f5810c4baad5336087ea91ab908abe2d2c1381d5e2f48750813c2b5c31522",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "access-key-id",
+        "detector_confidence": "high",
+        "provider_family": "aws-credentials"
+      },
+      "path": "crlf.txt",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "396af0f11964f8733b18c45503e7b82e33d33b0b24bfc8de817442a3c6f8164e",
+      "start_byte": 18
+    },
+    {
+      "category": "database-connection-string",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 73,
+      "expected_rule_id": "database-connection-credential",
+      "finding_id": "t-a53adc8a7a955413ae750785c42c18e3288d2a76d3a1087962c0a976480afe0b",
+      "line_end": 2,
+      "line_start": 2,
+      "metadata": {
+        "credential_type": "connection-uri-userinfo",
+        "detector_confidence": "medium",
+        "provider_family": "database-connection-string"
+      },
+      "path": "database.yml",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "863d0a6722ce92a6a3618c61a6e847f0dd9ed6628210eb6dfd3d5127f75f8c08",
+      "start_byte": 32
+    },
+    {
+      "category": "generic-secret-assignment",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 44,
+      "expected_rule_id": "generic-secret-assignment",
+      "finding_id": "t-0e3f7b5eeac31a37d15b5b7be527ed988d9a62168ca7398ac339bfb4dabb6616",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "assigned-secret",
+        "detector_confidence": "low",
+        "provider_family": "generic-secret-assignment"
+      },
+      "path": "generic.toml",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "f25e91d3219e591d2523082351a85368f256b78dc1492e384c8c59486705bd3f",
+      "start_byte": 12
+    },
+    {
+      "category": "generic-secret-assignment",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 95,
+      "expected_rule_id": "generic-secret-assignment",
+      "finding_id": "t-28e7c8b25b3f3f296d611e713ffc4ddfa96006972730edcf4bf694dd84d968b8",
+      "line_end": 2,
+      "line_start": 2,
+      "metadata": {
+        "credential_type": "assigned-secret",
+        "detector_confidence": "low",
+        "provider_family": "generic-secret-assignment"
+      },
+      "path": "generic.toml",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "cb20d0fca41f624a607d4c433dccf288e25ad38fd88fd478773e12d50ea8e20b",
+      "start_byte": 63
+    },
+    {
+      "category": "github-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 49,
+      "expected_rule_id": "github-classic-pat",
+      "finding_id": "t-8d6e978801e9d0cf875bc01090ae3a1f8d63e60a379331ad9a7b5687c71aa840",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "classic-personal-access-token",
+        "detector_confidence": "high",
+        "provider_family": "github-token"
+      },
+      "path": "github.yaml",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "a9650ace5bdfadf0717108ce37142900fc09b357447a0f3a2c46c79b8544ce16",
+      "start_byte": 9
+    },
+    {
+      "category": "github-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 157,
+      "expected_rule_id": "github-fine-grained-pat",
+      "finding_id": "t-b286144ed0c4defbec9ffb4511a2717bfbf57e500cec45b09e14d3a29cc4055d",
+      "line_end": 2,
+      "line_start": 2,
+      "metadata": {
+        "credential_type": "fine-grained-personal-access-token",
+        "detector_confidence": "high",
+        "provider_family": "github-token"
+      },
+      "path": "github.yaml",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "c7fa76d2e339895ca2afa1744c2e17d585025ea6e961df645192f0fb74988937",
+      "start_byte": 64
+    },
+    {
+      "category": "github-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 205,
+      "expected_rule_id": "github-oauth-app-token",
+      "finding_id": "t-010539d8a7fe1140c5bda3603cc291be8c6598acad469018e0c9121c31b9b3c3",
+      "line_end": 3,
+      "line_start": 3,
+      "metadata": {
+        "credential_type": "oauth-or-app-token",
+        "detector_confidence": "medium",
+        "provider_family": "github-token"
+      },
+      "path": "github.yaml",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "d3ad723af337dd420992726b0828373871707bfa97a9f626961ff7c785893969",
+      "start_byte": 165
+    },
+    {
+      "category": "gitlab-pat",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 39,
+      "expected_rule_id": "gitlab-personal-access-token",
+      "finding_id": "t-dbde8f770ec8aeb1cd0e48c72a69da71feb2ab23d8178de08dfecd4fff685538",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "personal-access-token",
+        "detector_confidence": "high",
+        "provider_family": "gitlab-pat"
+      },
+      "path": "gitlab.env",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "40624c380b7c0555807bbdbdff8a89be81be51866fe5d1bf436b0a0cc5d84fb4",
+      "start_byte": 13
+    },
+    {
+      "category": "jwt-bearer",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 165,
+      "expected_rule_id": "jwt-bearer-token",
+      "finding_id": "t-55cc90c61bbd6f063c3ccae1213c9ac18ea4c5ff38c3e18cf6d2119a5b7aa57a",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "bearer-token",
+        "detector_confidence": "medium",
+        "provider_family": "jwt-bearer"
+      },
+      "path": "jwt.txt",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "f05312968bedcfdbc326e6bcd2f315dda5499980a0e9f15116750e9b580667c6",
+      "start_byte": 22
+    },
+    {
+      "category": "pem-private-key",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 163,
+      "expected_rule_id": "pem-private-key",
+      "finding_id": "t-fa6b2ee714b4854d6b6afa6e1c424ff9ae2741e25b61eda94aa2b705111ed318",
+      "line_end": 4,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "private-key-container",
+        "detector_confidence": "high",
+        "provider_family": "pem-private-key"
+      },
+      "path": "pem/private-openssh.pem",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "718391d48725e7bb6e3c348432931bf1a069de7ffe8812464b5ab55be4fb1b24",
+      "start_byte": 0
+    },
+    {
+      "category": "pem-private-key",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 240,
+      "expected_rule_id": "pem-private-key",
+      "finding_id": "t-f1ddd6bbfc2953bd3b31b2652c6ac204e0340039c72944e76426ede8ab1cf5f2",
+      "line_end": 5,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "private-key-container",
+        "detector_confidence": "high",
+        "provider_family": "pem-private-key"
+      },
+      "path": "pem/private-pkcs8.pem",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "d442e8c8efba031a32577a272aca5aa9a00af9cdafab7e499266fcf1bb48123b",
+      "start_byte": 0
+    },
+    {
+      "category": "pem-private-key",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 882,
+      "expected_rule_id": "pem-private-key",
+      "finding_id": "t-8cbe83c8a78f2282a85be15e22d26672713f9b684f29e56d0806f3e0265b8ec5",
+      "line_end": 15,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "private-key-container",
+        "detector_confidence": "high",
+        "provider_family": "pem-private-key"
+      },
+      "path": "pem/private-rsa.pem",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "06eff9dd110dd7757b11ce2aac5bdc0fbec899f92c0e7a2e611f239c236ca675",
+      "start_byte": 0
+    },
+    {
+      "category": "github-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 48,
+      "expected_rule_id": "github-classic-pat",
+      "finding_id": "t-3f438cffca28b9633af00ac0cccff0d1ae31406ec38fd4919aa0828bbb9bcdf8",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "classic-personal-access-token",
+        "detector_confidence": "high",
+        "provider_family": "github-token"
+      },
+      "path": "same-line.txt",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "1b34b5e805f50573764c5f1140f5b65b33ce6aa07edf88e4bdc49d7f3545b02a",
+      "start_byte": 8
+    },
+    {
+      "category": "github-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 93,
+      "expected_rule_id": "github-classic-pat",
+      "finding_id": "t-ca9037114a0bad0ba7b3780ed4ba8d21272e281219f7b2aca1cc7c4ddf321401",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "classic-personal-access-token",
+        "detector_confidence": "high",
+        "provider_family": "github-token"
+      },
+      "path": "same-line.txt",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "5109fb9e8eef15fa0b8cbb71c5ec93e61b5ea78ab32df9044e3c3b34f5abd1a7",
+      "start_byte": 53
+    },
+    {
+      "category": "sendgrid-api-key",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 89,
+      "expected_rule_id": "sendgrid-api-key",
+      "finding_id": "t-5f31398e2b317cc07df64d4ade1c788c8a4bdc81cfb785cfdd9dafc22e671619",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "api-key",
+        "detector_confidence": "high",
+        "provider_family": "sendgrid-api-key"
+      },
+      "path": "sendgrid.py",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "c348beda62e8777b0b41ab7a6f3dcda0465f121c399a02a44b006ddac41b63a8",
+      "start_byte": 20
+    },
+    {
+      "category": "slack-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 66,
+      "expected_rule_id": "slack-token",
+      "finding_id": "t-b2c6ab3914ad9ca8c7b9c126e2871e9deac608a8e897c1aac09a8aa9a9174099",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "bot-or-user-token",
+        "detector_confidence": "medium",
+        "provider_family": "slack-token"
+      },
+      "path": "slack.yaml",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "39c6d85a2e01fefdb2980e4ef23b6e5a49322af75ba3e59faad5502a8ffbb305",
+      "start_byte": 11
+    },
+    {
+      "category": "stripe-secret-key",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 48,
+      "expected_rule_id": "stripe-secret-api-key",
+      "finding_id": "t-ac40f574629820fb58fa202685effd892afdb1d759e12579b3578e88ebdc3e5d",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "secret-api-key",
+        "detector_confidence": "high",
+        "provider_family": "stripe-secret-key"
+      },
+      "path": "stripe.js",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "9dcd7a3d6ba59deff597850d4558e429c8ed746c5924f1fe4d688bb11a3c6914",
+      "start_byte": 16
+    },
+    {
+      "category": "github-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "rnc-provider-fixtures-tier2",
+      "dataset_version": "2026.11.1",
+      "end_byte": 55,
+      "expected_rule_id": "github-classic-pat",
+      "finding_id": "t-846b2c7fe04d92c3e15b4a2b160debcadfad1497606d335165358c31b9366128",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "classic-personal-access-token",
+        "detector_confidence": "high",
+        "provider_family": "github-token"
+      },
+      "path": "unicode.txt",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "6ce97483ce08297e0e5b390210fbe12bbd97557e9cef552c7f738a5bbe76745c",
+      "start_byte": 15
+    }
+  ],
+  "manifest_id": "rnc-cp3-provider-truth-tier2",
+  "manifest_version": "2026.11.1",
+  "negative_files": [
+    "decoys.txt",
+    "high-entropy.txt",
+    "pem/certificate.pem",
+    "pem/public.pem"
+  ],
+  "provenance": {
+    "detector_output_used": false,
+    "fixture_material": "deterministic harmless synthetic values; no live credentials",
+    "generator": "tools/cp3/fixtures.py"
+  },
+  "schema_version": 1,
+  "scoring_policy": {
+    "allow_partial": false,
+    "id": "byte-range-v1",
+    "negative_oracle": true,
+    "one_to_one": true,
+    "require_line": true,
+    "version": "1"
+  },
+  "source_root": "tests/fixtures/providers/tier2"
+}

@@ -1,6 +1,6 @@
 # RNC Security Audit
 
-> **Architecture foundation — design only (10 November 2026).** No RNC detection engine, working CLI, security assessment, or release is claimed by this repository today.
+> **Development status - 13 November 2026:** CP0-CP2 provide a working, security-hardened Rust scanner; CP3 adds a first-party provider-credential catalog and independent byte-addressed accuracy assessment; CP4 expands generic extraction, private-key representations and provider families, and adds read-only Git-history acquisition. CP4A adds private database-password component evidence, explicit Windows private-report ACLs, retirement of internal benchmark CI and a reproducible development evaluation package. CP4B adds bounded candidate context, assignment-syntax checks, `BASE`-qualified names and context-aware hex classification. CP4C adds configurable scan workers, process/batch Git acquisition, whole/diff history modes and an opt-in versioned execution profile. The original synthetic bundles remain preserved regression evidence, not production credential accuracy. Provider-format recognition is **not** proof that a credential is active, authorized or complete. No production deployment or public release is claimed.
 
 **RNC Security Audit** is the working home for RNC's security platform. Its first-party secret-detection component is **RNC Scanner**. The wider application will eventually coordinate independent security tools as well. **RNC Security Toolkit** remains the prospective name for a portable distribution, not another codebase.
 
@@ -23,7 +23,7 @@ A scan that correctly finds a secret **succeeded at detection**; the security as
 | **Reporting and status** | Reconciliation, redaction, one immutable final result classification, exports | Deciding which findings are real by changing detector output |
 | **CI acceptance** | Translating final classification into process exit status | Reclassifying a scan or deleting actionable findings |
 | **Independent harness** | Corpus truth, recall, precision, false positives, missed fixtures and execution correctness | Self-scoring by the production scanner |
-| **Security Audit orchestration** | Other scanners (Gitleaks, Trivy, Semgrep, ZAP, etc.), per-scanner readiness, runtime backends and authorized modes | Claiming that third-party adapter output came from RNC's own detector |
+| **Future audit orchestration** | Optional third-party security-tool adapters, readiness, authorized scanning modes and runtime selection | Claiming external findings came from RNC Scanner's first-party detector |
 
 The first-party engine is **secret/credential detection** initially. This is not a claim to implement all of the vulnerability, dependency, container, and active-web techniques of the future toolkit inside one detector. The orchestration designs already developed remain relevant to that broader product.
 
@@ -41,7 +41,7 @@ Every finalized scan receives **exactly one immutable result**. Numeric `result_
 
 **Precedence:** `FAILED > INCOMPLETE > ACTIONABLE > POLICY_APPLIED > CLEAN`. A higher-priority state determines the final classification, but **never removes lower-priority evidence** from the report. An inaccessible required file plus three real findings means `INCOMPLETE`, with all three findings still accounted for. A policy-authorized, verifiably blocked target is different from an inaccessible required target.
 
-CI decides which *completed* results are acceptable. **The approved default is `CLEAN` and `POLICY_APPLIED` (codes `1,2`)**. For example, the proposed `rnc scan . --accept-results 1,2` yields process exit `0` for a final result of `POLICY_APPLIED`; `--accept-results 1` rejects the identical result. `INCOMPLETE` and `FAILED` remain nonzero in the initial contract. These are **proposed commands, not implemented functionality**.
+CI decides which *completed* results are acceptable. **The approved default is `CLEAN` and `POLICY_APPLIED` (codes `1,2`)**. For example, `rnc scan ... --accept-result 1 --accept-result 2` yields process exit `0` for a final result of `POLICY_APPLIED`; narrowing to `1` rejects the identical result. `INCOMPLETE` and `FAILED` exit `20`/`30` and are never accepted. CP2 implements these semantics. See the [operator guide](docs/implementation/cp2-operator-guide.md).
 
 The authoritative details are in the [execution-status specification](docs/architecture/execution-status.md).
 
@@ -65,30 +65,105 @@ Reporting reconciles three independently verifiable, append-only logical records
 | Start here | Why |
 | --- | --- |
 | [Architecture index](docs/architecture/README.md) | Four interface contracts: engine, policy, reporting, status/CI |
-| [CP0 data contracts](docs/contracts/README.md) | Versioned JSON Schemas and cross-record invariants |
+| [CP0 data contracts v0.2](docs/contracts/README.md) | Seven schemas, canonical identities and cross-record invariants |
+| [Contract compatibility](docs/contracts/compatibility.md) | v0.1 → v0.2 changes and migration policy |
+| [Harness handoff](docs/contracts/harness-handoff.md) | Tested independent-harness compatibility and outstanding integration |
 | [Roadmap](docs/roadmap.md) | Capability proofs, priority, acceptance and deferred work |
-| [Implementation proofs](docs/implementation/README.md) | What each development checkpoint must demonstrate |
-| [Historical foundation](docs/foundation/README.md) | Preserved original orchestration concept, workflows, bypass-report sketches and first Gitleaks proof |
+| [CP0 audit report](docs/implementation/cp0-contract-validation.md) | Deliverable dispositions, evidence, limitations and readiness |
+| [CP1 handoff](docs/implementation/cp1-detection-engine.md) | Rust module boundaries, rules, coverage and acceptance tests |
+| [CP1 validation](docs/implementation/cp1-validation.md) | Implemented CP1 engine, tests, performance, external scoring and limitations |
+| [CP2 validation](docs/implementation/cp2-validation.md) | Adaptive matching, policy, reporting, classification, benchmark and CI evidence |
+| [CP2 operator guide](docs/implementation/cp2-operator-guide.md) | Build, scan, strategies, config, exemptions, reports and CI acceptance |
+| [CP3 detection catalog](docs/implementation/cp3-detection-catalog.md) | Implemented, experimental and unsupported provider families |
+| [CP3 accuracy methodology](docs/implementation/cp3-accuracy-methodology.md) | Byte truth, scoring, ambiguity, external corpora and comparative limits |
+| [CP3 benchmark methodology](docs/implementation/cp3-benchmark-methodology.md) | Provider workloads, timing method, resources and limitations |
+| [CP3 validation](docs/implementation/cp3-validation.md) | Final CP3 implementation, evidence, limitations and disposition |
+| [CP4 detection catalog](docs/implementation/cp4-detection-catalog.md) | Expanded providers, generic extraction, private keys and unsupported families |
+| [CP4 generic credentials](docs/implementation/cp4-generic-credentials.md) | Assignment formats, authorization contexts and plausible-only validation |
+| [CP4 private keys](docs/implementation/cp4-private-keys.md) | PEM, escaped/base64 and PGP representations |
+| [CP4 Git history](docs/implementation/cp4-git-history.md) | Read-only history scope, source identity, commands and edge behavior |
+| [CP4 validation](docs/implementation/cp4-validation.md) | CP4 regression matrix, evidence, limitations and disposition |
+| [CP4A hardening](docs/implementation/cp4a-hardening.md) | Structured credential evidence, Windows ACLs, CI retirement and package proof |
+| [CP4B contextual validation](docs/implementation/cp4b-contextual-validation.md) | Candidate context, assignment syntax, qualified names and hex classification |
+| [CP4C execution architecture](docs/architecture/cp4c-execution-architecture.md) | Worker model, Git process/batch, diff scope and profiler boundaries |
+| [CP4C validation](docs/implementation/cp4c-validation.md) | CLI, equivalence, profiling and controlled-experiment readiness |
+| [CP4C harness handoff](docs/implementation/cp4c-harness-handoff.md) | 50-configuration matrix and profile-ingestion contract |
+| [Profiler contract](docs/contracts/profiler.md) | Versioned profile schema, phase names and privacy boundary |
+| [Adaptive matching](docs/architecture/adaptive-matching.md) | Backend boundaries, required literals, streaming and differential gate |
+| [Source acquisition and report publication](docs/architecture/source-acquisition.md) | Root containment, discovery budgets, Git-history controls, atomic report writes and platform guarantees |
+| [Read-only Git history ADR](docs/architecture/adr-016-read-only-git-history.md) | Process, library and security tradeoffs for the history adapter |
+| [Configuration](docs/architecture/configuration.md) | Global/repository/CLI precedence, mandatory caps and legacy migration |
+| [Rule authoring](docs/implementation/cp1-rule-authoring.md) | Versioned data-only rule bundles and lifecycle |
+| [Language ADR](docs/architecture/adr-007-detector-language.md) | Rust selection and recorded Go tradeoffs |
 
 ## Development approach
 
-1. **Freeze interfaces and synthetic truth cases** before production detector work.
-2. **Build the RNC Scanner engine first**: deterministic input, rule evaluation, normalized immutable detection events, baseline performance and provenance.
-3. **Build accountable reporting second** with policy, reconciliation, five results, redaction and CI acceptance wired through explicit contracts.
-4. **Validate independently** using a scanner-agnostic harness and known fixtures, then broaden rules and input adapters.
-5. **Reuse the original audit orchestration** when integrating third-party security tools, execution backends, and passive/active modes.
+1. **CP0 — establish trustworthy contracts.** Canonical input and finding identities, synthetic truth, independent grading and the detector-language decision.
+2. **CP1 — implement the first-party engine.** Rust rule evaluation, byte-accurate findings, bounded streaming and read-only acquisition.
+3. **CP2 — integrate detection with control and accountability.** Portable regex/RegexSet/Aho-Corasick strategies; policy, configuration, reporting, five-state outcomes, and security hardening.
+4. **CP3 — validate independently.** Add first-party provider rules and offline validators, author independent byte truth, score exact occurrences, and record external-corpus and comparative evidence.
+5. **CP4 — expand detection and acquisition.** Add generic credential extraction, private-key representations, additional documented provider families and a read-only Git-history source adapter while preserving the same detection, policy, reporting and CI contracts.
+6. **Later — broaden based on evidence.** Additional source adapters, controlled backend experiments and optional third-party audit orchestration.
 
-The current Gitleaks modernization and independent scan-harness projects are valuable **comparators and test infrastructure**, not a dependency for designing the RNC engine and not a reason to copy its limitations.
+### Current implementation
 
-**CP0 decisions (10 November 2026):** benchmark Go and Rust before choosing the detector language; use one versioned configuration model with explicit legacy migration; accept codes `1,2` by default in CI; and validate a full reproducible synthetic corpus plus language probes during CP0. [Decision register](docs/architecture/decisions.md) · [CP0 proof](docs/implementation/cp0-contract-validation.md).
+| Area | Status | Evidence |
+| --- | --- | --- |
+| Operating contracts (CP0) | Implemented | [CP0 audit report](docs/implementation/cp0-contract-validation.md) |
+| Rust detector (CP1) | Implemented; synthetic rule bundles | [CP1 validation](docs/implementation/cp1-validation.md) |
+| Adaptive matching, policies, reporting and hardening (CP2) | Implemented; CI validated | [CP2 validation](docs/implementation/cp2-validation.md) |
+| Independent accuracy assessment (CP3) | **READY FOR OPERATOR MERGE; corrective review and CI complete** | [CP3 validation](docs/implementation/cp3-validation.md), [detection catalog](docs/implementation/cp3-detection-catalog.md) |
+| Detection expansion and Git history (CP4) | **READY FOR OPERATOR REVIEW; CI complete** | [CP4 validation](docs/implementation/cp4-validation.md), [catalog](docs/implementation/cp4-detection-catalog.md), [Git history](docs/implementation/cp4-git-history.md) |
+| CP4A corrective hardening | **IMPLEMENTED; OPERATOR REVIEW PENDING** | [CP4A hardening](docs/implementation/cp4a-hardening.md), [package builder](tools/package/README.md) |
+| CP4B contextual validation | **IMPLEMENTED; CI COMPLETE; OPERATOR REVIEW PENDING** | [CP4B validation](docs/implementation/cp4b-contextual-validation.md), [generic credentials](docs/implementation/cp4-generic-credentials.md) |
+| CP4C performance execution | **IMPLEMENTED; LOCAL VALIDATION; CONTROLLED EXPERIMENT PENDING** | [CP4C validation](docs/implementation/cp4c-validation.md), [architecture](docs/architecture/cp4c-execution-architecture.md) |
+
+The portable matching system includes a reference Rust regex strategy, a RegexSet-assisted strategy and an Aho-Corasick literal prefilter. All use the same rule, validator and finding contracts. Faster strategies are not promoted at the expense of finding equivalence.
+
+### Provider credential catalog
+
+CP3 established [`rules/rnc-providers-v1.json`](rules/rnc-providers-v1.json) and CP4 expands it to a schema `0.2.0` catalog with **37 rules across 22 credential families** in cloud, developer-platform, service, cryptographic, structured and generic categories. Ruleset `2026.11.5` adds bounded assignment-identifier context and updates the five generic rule families for syntax-aware validation; the database URI component extractor and every non-generic rule identity remain unchanged. It includes AWS access-key and sensitive-identifier classification, Google Cloud API keys, GitHub classic/fine-grained/OAuth and App installation tokens, GitLab PATs, Stripe, Slack, SendGrid, npm, Azure Storage, Tailscale, Groq, xAI, Perplexity, Doppler, OpenAI, Slack webhooks, PEM/PGP private-key representations, Bearer JWTs, database URI userinfo and contextual generic extraction. Ordinary IAM resource identifiers such as `AIDA` and `AROA` are not treated as access keys.
+
+Every rule has a finite match bound and declared candidate bound. Validators are offline: no provider API is called, no token is redeemed and no discovered credential is sent over a network. Structural validity is not active-credential verification. The [CP4 detection catalog](docs/implementation/cp4-detection-catalog.md) distinguishes implemented, experimental and unsupported families; the CP3 catalog is preserved as historical evidence.
+
+Generic assignments, Basic/Bearer authorization headers, URL userinfo, escaped/base64-wrapped private keys and PGP armor are implemented with bounded context and structural validation. Generic assignment rules retain exact full-match/identifier context for syntax gating and context-aware hex classification; context is never serialized. Generic values remain `PLAUSIBLE_UNVERIFIED`; a parseable value is not promoted to a confirmed credential. See [CP4B contextual validation](docs/implementation/cp4b-contextual-validation.md).
+
+For database URI findings, the primary finding remains the contextual `username:password` userinfo. Private reports additionally carry a versioned `structured_evidence` section with the password's original byte range and SHA-256 digests. Supported ANSI SGR decoration is normalized for the normalized digest without changing source coordinates; unsupported escapes receive no component evidence. The section is omitted from sanitized output and console summaries. See [CP4A hardening](docs/implementation/cp4a-hardening.md).
+
+### Git-history scanning
+
+`rnc scan --history --root <repository>` performs read-only acquisition of
+reachable commits, first-parent changed content and original blob bytes. It does
+not check out revisions, modify the index, run hooks, fetch, traverse submodules,
+or scan reflogs/unreachable objects. Historical findings are attributed to
+`commit/<oid>/<path>` units and keep byte-accurate source positions. See the
+[Git-history guide](docs/implementation/cp4-git-history.md) and
+[ADR-016](docs/architecture/adr-016-read-only-git-history.md). A history scan is
+explicit; a working-tree scan does not become a history scan because `.git`
+exists.
+
+The independent scenario suite scores exact byte spans rather than lines. On the controlled Tier 2, held-out Tier 3 and hand-authored Tier 4 challenge corpora all four strategies in whole-file and streaming modes produce the same findings: **27/27**, **15/15** and **14/14**. The validation report records the exact recall/precision, the corrected one-to-one Gitleaks reconciliation and the deliberate limitations. Tier 2/3 share a generator; Tier 4 is independently authored but still first-party, not an externally sourced corpus. External Levain, Leaky Repo and pinned Gitleaks evidence is scoped in the [accuracy methodology](docs/implementation/cp3-accuracy-methodology.md); it is not converted into a universal product score.
+
+The external scanner comparison harness is **independent test infrastructure**, not a detection dependency. Historical experiments with third-party tooling do not define the RNC Scanner engine or its results.
+
+### Open platform-hardening work
+
+- [#7 — Windows handle-safe directory enumeration](https://github.com/RNC-Solutions-Group/rnc-security-audit/issues/7): remove the remaining path-based discovery race.
+- [#8 — Windows private-evidence ACL enforcement](https://github.com/RNC-Solutions-Group/rnc-security-audit/issues/8): CP4A now creates private report files with an explicit protected DACL, verifies it on the open handle before payload writes, and tests replacement on a deliberately permissive parent. Operator issue closure remains pending after review.
+- [#9 — OS-signal cancellation](https://github.com/RNC-Solutions-Group/rnc-security-audit/issues/9): terminate scans with trustworthy execution accounting and safe cleanup.
+
+Issues #7 and #9 remain tracked residual hardening requirements; #8 has an implemented CP4A mitigation pending operator closure. These are **not claims that CP2 lacks source-content containment or that its CI failed**. See the [source-acquisition security design](docs/architecture/source-acquisition.md) for existing platform guarantees and limitations.
 
 ## Safety and implementation status
 
-- No real credentials, raw secret matches, private target IDs, or machine-specific paths in this repository. Store raw evidence privately outside public source trees; sanitize before publishing.
+- No real credentials, raw secret matches, private target IDs, or machine-specific paths in this repository. Provider fixtures are deterministic synthetic values; the PEM fixtures are deliberately inconsistent and not usable keys. Store raw evidence privately outside public source trees; sanitize before publishing.
+- Provider-format detection is not proof of an active, authorized, complete or non-revoked credential. JWTs are reported only with an explicit Bearer context; generic assignments and opaque authorization values are plausible-only; public keys, certificates and PGP public armor are not private keys. Git-history acquisition is read-only and explicitly selected; shallow, partial, corrupt or alternate-object histories fail closed rather than being reported clean.
 - Verified pre-scan exclusion means source content was **not read by the detector**. Post-scan exemption means detection occurred but the finding's disposition changed. Neither may masquerade as the other.
 - Target scope and active network testing require explicit authorization. Future red-team modes are separate from CI or passive source checks.
 - Disabled/optional checks and unavailable **required** checks have different coverage consequences; zero inspected required targets is never `CLEAN`.
 - No mandatory cloud service, GUI, database, AI summary, or auto-remediation is required for the first proof.
-- Development happens on feature branches and through PRs. **The operator merges**; this documentation pass does not implement a scanner or authorize active tests.
+- Development happens on feature branches and through PRs. **The operator controls merges and deployments.** The completed development checkpoints are not, by themselves, approval for a production security release or active network testing.
 
-For historical context, the [original day-zero README](docs/foundation/orchestration-v0/project-readme.md) is preserved byte-for-byte. It described an orchestrator **without** a first-party detection engine; that is now a historical design, not the governing architecture.
+### Archived design history
+
+The [historical foundation](docs/foundation/README.md) and [original day-zero README](docs/foundation/orchestration-v0/project-readme.md) preserve the earlier third-party audit-orchestration concept. They are archives for design provenance, **not current implementation guidance or an alternate RNC Scanner product**.

@@ -1,0 +1,384 @@
+{
+  "counts": {
+    "expected_items": 14,
+    "files": 9,
+    "negative_files": 1,
+    "positive_files": 8
+  },
+  "dataset_id": "cp3-independent-authored-challenge",
+  "dataset_version": "2026.11.2",
+  "files": [
+    {
+      "byte_length": 141,
+      "expected_count": 3,
+      "path": "aws.env",
+      "sha256": "24c2bfbcf6273873fc9630c119b3a6d58a8a33440be3fe6ad367c0ac3c333f16"
+    },
+    {
+      "byte_length": 349,
+      "expected_count": 2,
+      "path": "iam-policy.json",
+      "sha256": "5e39e14f8f5467c02698ce6ca1f29ec0a75ffcc437a35669b6c1ecf49c9c3e35"
+    },
+    {
+      "byte_length": 679,
+      "expected_count": 3,
+      "path": "github.yaml",
+      "sha256": "bb9f84453e86ea37a14a4fd3e30d88ed641de0ffbf7957d223fe9fe09e74bb34"
+    },
+    {
+      "byte_length": 102,
+      "expected_count": 1,
+      "path": "repeated.txt",
+      "sha256": "c49d0ab403f26b50be0889b264e201cc4cc5aa708449553102bcabcef3836d31"
+    },
+    {
+      "byte_length": 50,
+      "expected_count": 1,
+      "path": "encoding.txt",
+      "sha256": "d4bbb1d2b0577a0f38c1200bf5906be88509c14c7c46f6984901b7882337311a"
+    },
+    {
+      "byte_length": 110,
+      "expected_count": 1,
+      "path": "database.yml",
+      "sha256": "052312d11c458671ef459067c694f5b2089af110f1112e4cf2ae8bc9b5e4ea86"
+    },
+    {
+      "byte_length": 51,
+      "expected_count": 1,
+      "path": "generic.toml",
+      "sha256": "1f9eed2990cecba364b594ab4ee2c842d8461e75dde2ff4d3650afe7f4e576ed"
+    },
+    {
+      "byte_length": 245,
+      "expected_count": 0,
+      "path": "lookalikes.md",
+      "sha256": "b41589516b0f60cbf4f959ec07329d44565a8eeee330e65d0dcc6b5180109f56"
+    },
+    {
+      "byte_length": 550,
+      "expected_count": 1,
+      "path": "multiline.txt",
+      "sha256": "4ed1fc21692400332df975b764ca117d6652aa258bd177e4ce586ee2c202a22d"
+    }
+  ],
+  "items": [
+    {
+      "category": "aws-credentials",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "cp3-independent-authored-challenge",
+      "dataset_version": "2026.11.2",
+      "end_byte": 38,
+      "expected_rule_id": "aws-access-key-id",
+      "finding_id": "challenge-ff684fc04554c24ee23d6a5ea4fd2bc53f85253495567d6d7b2c368fb5251672",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "access-key-id",
+        "detector_confidence": "high",
+        "provider_family": "aws-credentials"
+      },
+      "path": "aws.env",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "38f5ae48991e5b30feef0ef737969f1660a8d11dc96b689ff90bd4682bef766b",
+      "start_byte": 18
+    },
+    {
+      "category": "aws-credentials",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "cp3-independent-authored-challenge",
+      "dataset_version": "2026.11.2",
+      "end_byte": 101,
+      "expected_rule_id": "aws-secret-access-key",
+      "finding_id": "challenge-71d1c1c5ee93c38a32a1f4898395c9e9d50bb654bb4fd00c719469b81ee39ab9",
+      "line_end": 2,
+      "line_start": 2,
+      "metadata": {
+        "credential_type": "secret-access-key",
+        "detector_confidence": "high",
+        "provider_family": "aws-credentials"
+      },
+      "path": "aws.env",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "2e94a4916c4af515de10385399aebbbce1c43cde128583f8ccf2bfad6fa1bbc6",
+      "start_byte": 61
+    },
+    {
+      "category": "aws-credentials",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "cp3-independent-authored-challenge",
+      "dataset_version": "2026.11.2",
+      "end_byte": 140,
+      "expected_rule_id": "aws-access-key-id",
+      "finding_id": "challenge-66292c18f348ff3cc0a22bb2818329db3bf81d92702851426647c91561907d53",
+      "line_end": 3,
+      "line_start": 3,
+      "metadata": {
+        "credential_type": "access-key-id",
+        "detector_confidence": "high",
+        "provider_family": "aws-credentials"
+      },
+      "path": "aws.env",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "40df84507e352c9480dee9e43638e6df5a59cbfe6858310c6eec629b362c0af7",
+      "start_byte": 120
+    },
+    {
+      "category": "database-connection-string",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "cp3-independent-authored-challenge",
+      "dataset_version": "2026.11.2",
+      "end_byte": 79,
+      "expected_rule_id": "database-connection-credential",
+      "finding_id": "challenge-5d4bb13a707d7453daf45fb240ac1de568deb27ab8da478adab80fc84d1a727b",
+      "line_end": 2,
+      "line_start": 2,
+      "metadata": {
+        "credential_type": "connection-uri-userinfo",
+        "detector_confidence": "medium",
+        "provider_family": "database-connection-string"
+      },
+      "path": "database.yml",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "4edbbc637163b749c34a95e42ad6cc60d3109262347868cceb83d26768bf22fd",
+      "start_byte": 32
+    },
+    {
+      "category": "aws-credentials",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "cp3-independent-authored-challenge",
+      "dataset_version": "2026.11.2",
+      "end_byte": 35,
+      "expected_rule_id": "aws-access-key-id",
+      "finding_id": "challenge-a991f726a6279cceab2595e7439e640df0059685d962d9527986cf3761cfb5e3",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "access-key-id",
+        "detector_confidence": "high",
+        "provider_family": "aws-credentials"
+      },
+      "path": "encoding.txt",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "e50762a136a4673645285424c07581e7ed3bbe81a70c46cfc665cf8ead988044",
+      "start_byte": 15
+    },
+    {
+      "category": "generic-secret-assignment",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "cp3-independent-authored-challenge",
+      "dataset_version": "2026.11.2",
+      "end_byte": 49,
+      "expected_rule_id": "generic-secret-assignment",
+      "finding_id": "challenge-10a338d242b2866e98da010d7c6196fd1312e8a23a911f1f3f4b2bfd8837ed7a",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "assigned-secret",
+        "detector_confidence": "low",
+        "provider_family": "generic-secret-assignment"
+      },
+      "path": "generic.toml",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "da0b4ae90e006e0cf3c3d89f1a80ac654b4d776c391f050bcb96dba40d966551",
+      "start_byte": 17
+    },
+    {
+      "category": "github-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "cp3-independent-authored-challenge",
+      "dataset_version": "2026.11.2",
+      "end_byte": 49,
+      "expected_rule_id": "github-classic-pat",
+      "finding_id": "challenge-c3dc0765f69e62bf8422180ac36a3a7ef39358657566ebab8c8f7bfccf34b2b7",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "classic-personal-access-token",
+        "detector_confidence": "high",
+        "provider_family": "github-token"
+      },
+      "path": "github.yaml",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "c1c5d2ebe2704bc906e016a5ac7dab5e5b2ad50a6f6cee82828115bd21e19f1f",
+      "start_byte": 9
+    },
+    {
+      "category": "github-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "cp3-independent-authored-challenge",
+      "dataset_version": "2026.11.2",
+      "end_byte": 111,
+      "expected_rule_id": "github-app-installation-token",
+      "finding_id": "challenge-4188c9c9dc525b765a19879aaefcf53bd992447c875a035563bbbe228a9dcdd3",
+      "line_end": 2,
+      "line_start": 2,
+      "metadata": {
+        "credential_type": "app-installation-token",
+        "detector_confidence": "high",
+        "provider_family": "github-token"
+      },
+      "path": "github.yaml",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "90418d89c0e6ecd726bd60d5e49e0ee1495bbd20bf200c823fde5f4eabefe696",
+      "start_byte": 71
+    },
+    {
+      "category": "github-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "cp3-independent-authored-challenge",
+      "dataset_version": "2026.11.2",
+      "end_byte": 661,
+      "expected_rule_id": "github-app-installation-token",
+      "finding_id": "challenge-7b6647966d57527cf801ed906e6b0a20eeb42fd9b14821578871127449c85f83",
+      "line_end": 3,
+      "line_start": 3,
+      "metadata": {
+        "credential_type": "app-installation-token",
+        "detector_confidence": "high",
+        "provider_family": "github-token"
+      },
+      "path": "github.yaml",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "d4b8c29a95fc8af93a1cb6584818011de3575fd2fb89e91f76d28ae6ca8db295",
+      "start_byte": 136
+    },
+    {
+      "category": "aws-credentials",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "cp3-independent-authored-challenge",
+      "dataset_version": "2026.11.2",
+      "end_byte": 280,
+      "expected_rule_id": "aws-sts-service-bearer-token-id",
+      "finding_id": "challenge-74b185dbafce351d30c792db75bf6ca5535a36a1f2c45454bbbb1ed5efcabc9a",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "service-bearer-token-id",
+        "detector_confidence": "medium",
+        "provider_family": "aws-credentials"
+      },
+      "path": "iam-policy.json",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "c8c0bbbdd0e947b99e1614d60fa7a84de760fe4e43200e19b2b44556c333bb1a",
+      "start_byte": 260
+    },
+    {
+      "category": "aws-credentials",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "cp3-independent-authored-challenge",
+      "dataset_version": "2026.11.2",
+      "end_byte": 303,
+      "expected_rule_id": "aws-context-specific-credential-id",
+      "finding_id": "challenge-5f8255998d5f522d586039a12283070369f373afc8557d55189303271aa0e65e",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "context-specific-credential-id",
+        "detector_confidence": "medium",
+        "provider_family": "aws-credentials"
+      },
+      "path": "iam-policy.json",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "7f903ce3341239c299c4ab294ff0352fc50954f6fc9876536f259c8469f45b4e",
+      "start_byte": 283
+    },
+    {
+      "category": "github-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "cp3-independent-authored-challenge",
+      "dataset_version": "2026.11.2",
+      "end_byte": 537,
+      "expected_rule_id": "github-app-installation-token",
+      "finding_id": "challenge-9b09bddba18ff1c85eb23d0ca8e556083aaf73744e60dceed85ebaef10c9a26a",
+      "line_end": 2,
+      "line_start": 2,
+      "metadata": {
+        "credential_type": "app-installation-token",
+        "detector_confidence": "high",
+        "provider_family": "github-token"
+      },
+      "path": "multiline.txt",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "df3a819cab1d001abe11ed91f95d04951921649b7c6cdae5faf478402936d96a",
+      "start_byte": 12
+    },
+    {
+      "category": "npm-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "cp3-independent-authored-challenge",
+      "dataset_version": "2026.11.2",
+      "end_byte": 50,
+      "expected_rule_id": "npm-auth-token",
+      "finding_id": "challenge-244873a0b69b4cb54f13fea96ab7ae1ce0bd800f599c3e1cee8d6ac7c96d7e04",
+      "line_end": 1,
+      "line_start": 1,
+      "metadata": {
+        "credential_type": "auth-token",
+        "detector_confidence": "high",
+        "provider_family": "npm-token"
+      },
+      "path": "repeated.txt",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "f3dce1264b665fda7550656ba0dc10a65cbabd49362f07d3fc5bd4c19bc2c4b4",
+      "start_byte": 10
+    },
+    {
+      "category": "npm-token",
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "cp3-independent-authored-challenge",
+      "dataset_version": "2026.11.2",
+      "end_byte": 101,
+      "expected_rule_id": "npm-auth-token",
+      "finding_id": "challenge-3834ff728f3c9d73935b56c1183cfdd6d2a69ff08e61e522bbe77307c3198d4a",
+      "line_end": 2,
+      "line_start": 2,
+      "metadata": {
+        "credential_type": "auth-token",
+        "detector_confidence": "high",
+        "provider_family": "npm-token"
+      },
+      "path": "repeated.txt",
+      "required": true,
+      "risk_bearing": true,
+      "secret_sha256": "f3dce1264b665fda7550656ba0dc10a65cbabd49362f07d3fc5bd4c19bc2c4b4",
+      "start_byte": 61
+    }
+  ],
+  "manifest_id": "cp3-independent-authored-challenge",
+  "manifest_version": "2026.11.2",
+  "negative_files": [
+    "lookalikes.md"
+  ],
+  "provenance": {
+    "authorship": "hand-authored independently of tools/cp3/fixtures.py; no shared templates or seed conventions",
+    "detector_output_used": false,
+    "fixture_material": "harmless synthetic values; no live credentials",
+    "generator": "tools/cp3/challenge.py",
+    "source_type": "first-party synthetic challenge, not an externally sourced corpus"
+  },
+  "schema_version": 1,
+  "scoring_policy": {
+    "allow_partial": false,
+    "id": "byte-range-v1",
+    "negative_oracle": true,
+    "one_to_one": true,
+    "require_line": true,
+    "version": "1"
+  },
+  "source_root": "tests/fixtures/providers/challenge"
+}
