@@ -504,12 +504,17 @@ fn run_scan(arguments: &[String]) -> i32 {
     let reporting_started = Instant::now();
     match args.format {
         OutputFormat::Summary => {
+            let write_started = Instant::now();
             print!("{}", report.summary());
             for warning in &report.warnings {
                 println!("Warning: {warning}");
             }
+            if let Some(profiler) = &profiler {
+                profiler.record_wall("reporting.write", write_started);
+            }
         }
         OutputFormat::Sanitized => {
+            let serialize_started = Instant::now();
             let payload = match serde_json::to_string_pretty(&report.sanitized_value()) {
                 Ok(payload) => payload,
                 Err(error) => {
@@ -517,6 +522,10 @@ fn run_scan(arguments: &[String]) -> i32 {
                     return 30;
                 }
             };
+            if let Some(profiler) = &profiler {
+                profiler.record_wall("reporting.serialize", serialize_started);
+            }
+            let write_started = Instant::now();
             if let Some(destination) = &destination {
                 if let Err(error) = destination.write(payload.as_bytes()) {
                     eprintln!("error: {error}");
@@ -525,8 +534,12 @@ fn run_scan(arguments: &[String]) -> i32 {
             } else {
                 println!("{payload}");
             }
+            if let Some(profiler) = &profiler {
+                profiler.record_wall("reporting.write", write_started);
+            }
         }
         OutputFormat::Private => {
+            let serialize_started = Instant::now();
             let value = match report.private_value() {
                 Ok(value) => value,
                 Err(error) => {
@@ -541,6 +554,10 @@ fn run_scan(arguments: &[String]) -> i32 {
                     return 30;
                 }
             };
+            if let Some(profiler) = &profiler {
+                profiler.record_wall("reporting.serialize", serialize_started);
+            }
+            let write_started = Instant::now();
             if let Some(destination) = &destination {
                 if let Err(error) = destination.write(payload.as_bytes()) {
                     eprintln!("error: {error}");
@@ -551,6 +568,9 @@ fn run_scan(arguments: &[String]) -> i32 {
                 return 64;
             }
             print!("{}", report.summary());
+            if let Some(profiler) = &profiler {
+                profiler.record_wall("reporting.write", write_started);
+            }
         }
     }
 

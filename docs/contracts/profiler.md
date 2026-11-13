@@ -67,6 +67,8 @@ fallback. Requested/effective values include:
 | `git.batch.start` | worker | Batch child-process creation |
 | `scheduling.worker_busy` | worker | Accumulated worker busy time |
 | `scheduling.queue_wait` | worker | Dispatch-to-worker-start delay |
+| `reporting.serialize` | wall | Report serialization |
+| `reporting.write` | wall | Report publication or console output |
 
 Phases that do not occur in a configuration are omitted.
 

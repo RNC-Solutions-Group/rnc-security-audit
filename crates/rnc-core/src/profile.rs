@@ -55,6 +55,8 @@ const WALL_PARENTS: &[(&str, &str)] = &[
     ("git.command", "discovery.git"),
     ("scan", "execution"),
     ("reporting", "execution"),
+    ("reporting.serialize", "reporting"),
+    ("reporting.write", "reporting"),
     ("discovery", "execution"),
 ];
 
