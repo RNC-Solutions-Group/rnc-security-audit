@@ -276,13 +276,35 @@ impl<'a> MatchPlan<'a> {
         data: &[u8],
         deadline: std::time::Instant,
     ) -> Result<Vec<MatchCandidate>, MatchError> {
+        self.candidates_profiled(data, deadline, None)
+    }
+
+    pub fn candidates_profiled(
+        &self,
+        data: &[u8],
+        deadline: std::time::Instant,
+        profiler: Option<&crate::profile::Profiler>,
+    ) -> Result<Vec<MatchCandidate>, MatchError> {
         match self.effective {
-            BackendRequest::Regex => self.regex_candidates(data, None, deadline),
+            BackendRequest::Regex => {
+                let started = std::time::Instant::now();
+                let candidates = self.regex_candidates(data, None, deadline);
+                if let (Some(profiler), Ok(found)) = (profiler, &candidates) {
+                    profiler.record_worker(
+                        "matching.regex",
+                        started.elapsed(),
+                        data.len() as u64,
+                        found.len() as u64,
+                    );
+                }
+                candidates
+            }
             BackendRequest::RegexSet => {
                 let set = self
                     .regexset
                     .as_ref()
                     .ok_or_else(|| MatchError::Backend("RegexSet plan lost its set".to_string()))?;
+                let literal_started = std::time::Instant::now();
                 let mut eligible = vec![false; self.bundle.compiled.len()];
                 for index in &self.rules_without_literals {
                     eligible[*index] = true;
@@ -292,6 +314,15 @@ impl<'a> MatchPlan<'a> {
                         eligible[*rule] = true;
                     }
                 }
+                if let Some(profiler) = profiler {
+                    profiler.record_worker(
+                        "matching.literal_filter",
+                        literal_started.elapsed(),
+                        data.len() as u64,
+                        1,
+                    );
+                }
+                let regex_started = std::time::Instant::now();
                 let mut candidates = Vec::new();
                 for (index, enabled) in eligible.into_iter().enumerate() {
                     if enabled {
@@ -301,12 +332,21 @@ impl<'a> MatchPlan<'a> {
                         }
                     }
                 }
+                if let Some(profiler) = profiler {
+                    profiler.record_worker(
+                        "matching.regex",
+                        regex_started.elapsed(),
+                        data.len() as u64,
+                        candidates.len() as u64,
+                    );
+                }
                 Ok(candidates)
             }
             BackendRequest::Prefilter => {
                 let prefilter = self.prefilter.as_ref().ok_or_else(|| {
                     MatchError::Backend("prefilter plan lost its automaton".to_string())
                 })?;
+                let literal_started = std::time::Instant::now();
                 let mut eligible = vec![false; self.bundle.compiled.len()];
                 for index in &self.rules_without_literals {
                     eligible[*index] = true;
@@ -317,6 +357,15 @@ impl<'a> MatchPlan<'a> {
                         eligible[*rule] = true;
                     }
                 }
+                if let Some(profiler) = profiler {
+                    profiler.record_worker(
+                        "matching.literal_filter",
+                        literal_started.elapsed(),
+                        data.len() as u64,
+                        1,
+                    );
+                }
+                let regex_started = std::time::Instant::now();
                 let mut candidates = Vec::new();
                 for (index, enabled) in eligible.into_iter().enumerate() {
                     if enabled {
@@ -325,6 +374,14 @@ impl<'a> MatchPlan<'a> {
                             return Err(MatchError::CandidateLimit);
                         }
                     }
+                }
+                if let Some(profiler) = profiler {
+                    profiler.record_worker(
+                        "matching.regex",
+                        regex_started.elapsed(),
+                        data.len() as u64,
+                        candidates.len() as u64,
+                    );
                 }
                 Ok(candidates)
             }

@@ -129,6 +129,10 @@ impl ReportDestination {
         })
     }
 
+    pub fn resolved_path(&self) -> PathBuf {
+        self.parent.join(&self.name)
+    }
+
     /// Publish complete bytes atomically. The destination is either the old
     /// complete file or the new complete file; a failed or interrupted write
     /// leaves the destination untouched and removes the temporary file.

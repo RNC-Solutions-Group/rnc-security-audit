@@ -17,6 +17,7 @@ use crate::finding::{
     build_finding, line_count, line_end_for_range, line_for_offset, Finding, LineIndex,
 };
 use crate::path::sha256_hex;
+use crate::profile::Profiler;
 use crate::structured::{extract_component, StructuredComponent};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -42,6 +43,7 @@ pub enum FileScanError {
     FindingsLimit,
     CandidateLimit,
     Integrity(&'static str),
+    GitObjectUnavailable,
     Io(&'static str),
 }
 
@@ -54,6 +56,7 @@ impl FileScanError {
             Self::FindingsLimit => "MAX_FINDINGS_EXCEEDED",
             Self::CandidateLimit => "CANDIDATE_LIMIT",
             Self::Integrity(_) => "EVIDENCE_INTEGRITY",
+            Self::GitObjectUnavailable => "GIT_OBJECT_UNAVAILABLE",
             Self::Io(_) => "READ_ERROR",
         }
     }
@@ -278,6 +281,31 @@ pub fn scan_file(
     expected_size: u64,
     expected_modified: Option<SystemTime>,
 ) -> Result<ScanFileResult, FileScanError> {
+    scan_file_profiled(
+        root,
+        locator,
+        unit_id,
+        run_id,
+        plan,
+        config,
+        expected_size,
+        expected_modified,
+        None,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub fn scan_file_profiled(
+    root: &Path,
+    locator: &str,
+    unit_id: &str,
+    run_id: &str,
+    plan: &MatchPlan,
+    config: &ScanFileConfig,
+    expected_size: u64,
+    expected_modified: Option<SystemTime>,
+    profile: Option<&Profiler>,
+) -> Result<ScanFileResult, FileScanError> {
     if expected_size > config.max_file_bytes {
         return Err(FileScanError::TooLarge);
     }
@@ -291,6 +319,7 @@ pub fn scan_file(
             config,
             expected_size,
             expected_modified,
+            profile,
         ),
         ScanMode::Stream => scan_stream(
             root,
@@ -301,6 +330,7 @@ pub fn scan_file(
             config,
             expected_size,
             expected_modified,
+            profile,
         ),
     }
 }
@@ -323,6 +353,17 @@ pub fn scan_content(
     run_id: &str,
     plan: &MatchPlan,
     config: &ScanContentConfig,
+) -> Result<ScanFileResult, FileScanError> {
+    scan_content_profiled(data, unit_id, run_id, plan, config, None)
+}
+
+pub fn scan_content_profiled(
+    data: &[u8],
+    unit_id: &str,
+    run_id: &str,
+    plan: &MatchPlan,
+    config: &ScanContentConfig,
+    profile: Option<&Profiler>,
 ) -> Result<ScanFileResult, FileScanError> {
     if config.stream_chunk_bytes == 0 {
         return Err(FileScanError::Io("stream_config"));
@@ -351,6 +392,7 @@ pub fn scan_content(
                     config.max_findings,
                     true,
                     config.deadline,
+                    profile,
                 )?;
             }
         }
@@ -378,6 +420,7 @@ pub fn scan_content(
                     config.max_findings,
                     end == data.len(),
                     config.deadline,
+                    profile,
                 )?;
                 if end == data.len() {
                     break;
@@ -386,6 +429,113 @@ pub fn scan_content(
             }
         }
     }
+    Ok(ScanFileResult {
+        findings,
+        components,
+        content_sha256: sha256_hex(data),
+        line_count: line_count(data),
+        bytes_read: data.len() as u64,
+    })
+}
+
+/// Scan only the diff-derived line ranges of an already acquired Git blob.
+///
+/// Ranges include the requested diff context and are padded by the rule
+/// bundle's maximum match length before matching. Findings are retained only
+/// when their start line is an introduced line; context lines can support a
+/// match but cannot independently create a finding.
+pub fn scan_content_diff(
+    data: &[u8],
+    unit_id: &str,
+    run_id: &str,
+    plan: &MatchPlan,
+    config: &ScanContentConfig,
+    diff: &crate::input::GitDiffSpec,
+    profile: Option<&Profiler>,
+) -> Result<ScanFileResult, FileScanError> {
+    if config.stream_chunk_bytes == 0 {
+        return Err(FileScanError::Io("stream_config"));
+    }
+    if Instant::now() >= config.deadline {
+        return Err(FileScanError::Timeout);
+    }
+    let line_index = LineIndex::new(data);
+    let mut ranges: Vec<(usize, usize)> = diff
+        .scan_line_ranges
+        .iter()
+        .filter_map(|(start, end)| line_index.byte_range_for_lines(*start, *end))
+        .collect();
+    if ranges.is_empty() {
+        return Ok(ScanFileResult {
+            findings: Vec::new(),
+            components: Vec::new(),
+            content_sha256: sha256_hex(data),
+            line_count: line_count(data),
+            bytes_read: data.len() as u64,
+        });
+    }
+    let overlap = plan.bundle().max_match_bytes;
+    for (start, end) in &mut ranges {
+        *start = start.saturating_sub(overlap);
+        *end = end.saturating_add(overlap).min(data.len());
+    }
+    ranges.sort_unstable();
+    let mut merged: Vec<(usize, usize)> = Vec::with_capacity(ranges.len());
+    for (start, end) in ranges {
+        if let Some(last) = merged.last_mut() {
+            if start <= last.1 {
+                last.1 = last.1.max(end);
+                continue;
+            }
+        }
+        merged.push((start, end));
+    }
+
+    let mut findings = Vec::new();
+    let mut components = Vec::new();
+    let mut seen = HashSet::new();
+    if let Some(profiler) = profile {
+        profiler.add_counter("diff_scan_ranges", merged.len() as u64);
+        profiler.add_counter("diff_introduced_lines", diff.introduced_lines.len() as u64);
+    }
+    for (start, end) in merged {
+        if Instant::now() >= config.deadline {
+            return Err(FileScanError::Timeout);
+        }
+        scan_window(
+            &data[start..end],
+            start,
+            1,
+            Some(&line_index),
+            unit_id,
+            run_id,
+            plan,
+            &mut findings,
+            &mut components,
+            &mut seen,
+            usize::MAX,
+            true,
+            config.deadline,
+            profile,
+        )?;
+    }
+    let introduced: HashSet<usize> = diff.introduced_lines.iter().copied().collect();
+    let before_filter = findings.len();
+    findings.retain(|finding| introduced.contains(&finding.line));
+    if let Some(profiler) = profile {
+        profiler.add_counter(
+            "diff_context_filtered",
+            before_filter.saturating_sub(findings.len()) as u64,
+        );
+    }
+    if findings.len() > config.max_findings {
+        return Err(FileScanError::FindingsLimit);
+    }
+    let kept: HashSet<&str> = findings
+        .iter()
+        .map(|finding| finding.finding_id.as_str())
+        .collect();
+    components.retain(|component| kept.contains(component.finding_id.as_str()));
     Ok(ScanFileResult {
         findings,
         components,
@@ -418,6 +568,7 @@ fn scan_whole(
     config: &ScanFileConfig,
     expected_size: u64,
     expected_modified: Option<SystemTime>,
+    profile: Option<&Profiler>,
 ) -> Result<ScanFileResult, FileScanError> {
     if Instant::now() >= config.deadline {
         return Err(FileScanError::Timeout);
@@ -464,6 +615,7 @@ fn scan_whole(
         config.max_findings,
         true,
         config.deadline,
+        profile,
     )?;
     Ok(ScanFileResult {
         findings,
@@ -484,6 +636,7 @@ fn scan_stream(
     config: &ScanFileConfig,
     expected_size: u64,
     expected_modified: Option<SystemTime>,
+    profile: Option<&Profiler>,
 ) -> Result<ScanFileResult, FileScanError> {
     if config.stream_chunk_bytes == 0 {
         return Err(FileScanError::Io("stream_config"));
@@ -534,6 +687,7 @@ fn scan_stream(
             config.max_findings,
             false,
             config.deadline,
+            profile,
         )?;
         let next_start = window.len().saturating_sub(overlap);
         if next_start > 0 {
@@ -561,6 +715,7 @@ fn scan_stream(
             config.max_findings,
             true,
             config.deadline,
+            profile,
         )?;
     }
     if bytes_read != expected_size
@@ -599,14 +754,26 @@ fn scan_window(
     max_findings: usize,
     final_window: bool,
     deadline: Instant,
+    profile: Option<&Profiler>,
 ) -> Result<(), FileScanError> {
-    let candidates = plan
-        .candidates(data, deadline)
-        .map_err(|error| match error {
-            MatchError::Timeout => FileScanError::Timeout,
-            MatchError::CandidateLimit => FileScanError::CandidateLimit,
-            MatchError::Backend(_) => FileScanError::Io("backend"),
-        })?;
+    let candidates =
+        plan.candidates_profiled(data, deadline, profile)
+            .map_err(|error| match error {
+                MatchError::Timeout => FileScanError::Timeout,
+                MatchError::CandidateLimit => FileScanError::CandidateLimit,
+                MatchError::Backend(_) => FileScanError::Io("backend"),
+            })?;
+    if let Some(profiler) = profile {
+        profiler.add_counter("candidates", candidates.len() as u64);
+    }
+    let mut context_ns = 0u64;
+    let mut context_count = 0u64;
+    let mut validation_ns = 0u64;
+    let mut validation_count = 0u64;
+    let mut accepted = 0u64;
+    let mut rejected = 0u64;
+    let mut findings_ns = 0u64;
+    let mut findings_count = 0u64;
     for candidate in candidates {
         if Instant::now() >= deadline {
             return Err(FileScanError::Timeout);
@@ -627,24 +794,44 @@ fn scan_window(
             .compiled
             .get(candidate.rule_index)
             .ok_or(FileScanError::Io("backend_rule"))?;
+        let context_started = Instant::now();
         let context = CandidateContext::from_candidate(
             data,
             &candidate,
             rule.definition.identifier_capture_group.is_some(),
         )
         .map_err(|_| FileScanError::Integrity("candidate_context"))?;
-        if rule.definition.identifier_capture_group.is_some()
-            && crate::validate::validate_assignment_syntax(&context).is_err()
-        {
+        let context_rejected = rule.definition.identifier_capture_group.is_some()
+            && crate::validate::validate_assignment_syntax(&context).is_err();
+        context_ns = context_ns.saturating_add(
+            u64::try_from(context_started.elapsed().as_nanos()).unwrap_or(u64::MAX),
+        );
+        context_count += 1;
+        if context_rejected {
+            rejected += 1;
             continue;
         }
+        let validation_started = Instant::now();
         let outcome = match crate::validate::validate_candidate_with_context(
             &context,
             &rule.definition.validators,
         ) {
             Ok(outcome) => outcome,
-            Err(_) => continue,
+            Err(_) => {
+                validation_ns = validation_ns.saturating_add(
+                    u64::try_from(validation_started.elapsed().as_nanos()).unwrap_or(u64::MAX),
+                );
+                validation_count += 1;
+                rejected += 1;
+                continue;
+            }
         };
+        validation_ns = validation_ns.saturating_add(
+            u64::try_from(validation_started.elapsed().as_nanos()).unwrap_or(u64::MAX),
+        );
+        validation_count += 1;
+        accepted += 1;
+        let findings_started = Instant::now();
         let confidence = effective_confidence(&rule.definition.confidence, outcome.status);
         let mut validation = outcome.applied;
         if rule.definition.provider.is_some() {
@@ -735,10 +922,36 @@ fn scan_window(
                 components.push(component);
             }
         }
+        findings_ns = findings_ns.saturating_add(
+            u64::try_from(findings_started.elapsed().as_nanos()).unwrap_or(u64::MAX),
+        );
+        findings_count += 1;
         findings.push(finding);
         if findings.len() > max_findings {
             return Err(FileScanError::FindingsLimit);
         }
+    }
+    if let Some(profiler) = profile {
+        profiler.record_worker(
+            "scan.context",
+            std::time::Duration::from_nanos(context_ns),
+            0,
+            context_count,
+        );
+        profiler.record_worker(
+            "scan.validation",
+            std::time::Duration::from_nanos(validation_ns),
+            0,
+            validation_count,
+        );
+        profiler.record_worker(
+            "scan.findings",
+            std::time::Duration::from_nanos(findings_ns),
+            0,
+            findings_count,
+        );
+        profiler.add_counter("validators_accepted", accepted);
+        profiler.add_counter("validators_rejected", rejected);
     }
     Ok(())
 }

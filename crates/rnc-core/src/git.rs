@@ -9,15 +9,16 @@
 
 use std::collections::BTreeSet;
 use std::ffi::{OsStr, OsString};
-use std::io::Read;
+use std::io::{BufRead, BufReader, Read, Write};
 use std::path::{Path, PathBuf};
-use std::process::{Command, Stdio};
+use std::process::{Child, ChildStdin, ChildStdout, Command, Stdio};
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::Arc;
+use std::sync::mpsc::{sync_channel, Receiver, SyncSender};
+use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
 use crate::error::CoreError;
-use crate::input::{Discovery, GitBlobRef, GitHistoryInfo, PreScanScope};
+use crate::input::{Discovery, GitBlobRef, GitDiffSpec, GitHistoryInfo, PreScanScope};
 use crate::path::sha256_hex;
 
 pub const GIT_SOURCE_KIND: &str = "git_commit_blob";
@@ -26,12 +27,69 @@ pub const DEFAULT_MAX_COMMITS: usize = 2_000;
 pub const DEFAULT_MAX_UNITS: usize = 20_000;
 const MAX_REF_BYTES: usize = 1024;
 const MAX_STDERR_BYTES: usize = 64 * 1024;
+const MAX_BATCH_HEADER_BYTES: usize = 256;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum GitIoMode {
+    Process,
+    Batch,
+}
+
+impl GitIoMode {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Process => "process",
+            Self::Batch => "batch",
+        }
+    }
+
+    pub fn parse(value: &str) -> Result<Self, CoreError> {
+        match value {
+            "process" => Ok(Self::Process),
+            "batch" => Ok(Self::Batch),
+            _ => Err(CoreError::Input(
+                "--git-io must be process or batch".to_string(),
+            )),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum GitHistoryMode {
+    Whole,
+    Diff,
+}
+
+impl GitHistoryMode {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Whole => "whole",
+            Self::Diff => "diff",
+        }
+    }
+
+    pub fn parse(value: &str) -> Result<Self, CoreError> {
+        match value {
+            "whole" => Ok(Self::Whole),
+            "diff" => Ok(Self::Diff),
+            _ => Err(CoreError::Input(
+                "--history-mode must be whole or diff".to_string(),
+            )),
+        }
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct GitHistoryOptions {
     pub refs: Vec<String>,
     pub max_commits: usize,
     pub max_units: usize,
+    pub io: GitIoMode,
+    pub history_mode: GitHistoryMode,
+    pub context_lines: usize,
+    pub profiler: Option<Arc<crate::profile::Profiler>>,
 }
 
 impl Default for GitHistoryOptions {
@@ -40,6 +98,10 @@ impl Default for GitHistoryOptions {
             refs: Vec::new(),
             max_commits: DEFAULT_MAX_COMMITS,
             max_units: DEFAULT_MAX_UNITS,
+            io: GitIoMode::Process,
+            history_mode: GitHistoryMode::Whole,
+            context_lines: 0,
+            profiler: None,
         }
     }
 }
@@ -86,10 +148,19 @@ impl GitFailure {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum ProfileKind {
+    None,
+    Wall,
+    Worker,
+}
+
 #[derive(Debug)]
 struct GitRunner {
     repo: PathBuf,
     deadline: Instant,
+    profiler: Option<Arc<crate::profile::Profiler>>,
+    profile_kind: ProfileKind,
 }
 
 impl GitRunner {
@@ -97,6 +168,22 @@ impl GitRunner {
         Self {
             repo: repo.to_path_buf(),
             deadline,
+            profiler: None,
+            profile_kind: ProfileKind::None,
+        }
+    }
+
+    fn with_profile(
+        repo: &Path,
+        deadline: Instant,
+        profiler: Option<Arc<crate::profile::Profiler>>,
+        profile_kind: ProfileKind,
+    ) -> Self {
+        Self {
+            repo: repo.to_path_buf(),
+            deadline,
+            profiler,
+            profile_kind,
         }
     }
 
@@ -139,6 +226,35 @@ impl GitRunner {
     }
 
     fn run<I, S>(&self, args: I, max_output: usize) -> Result<Vec<u8>, GitFailure>
+    where
+        I: IntoIterator<Item = S>,
+        S: AsRef<OsStr>,
+    {
+        self.run_named("command", args, max_output)
+    }
+
+    fn run_named<I, S>(&self, name: &str, args: I, max_output: usize) -> Result<Vec<u8>, GitFailure>
+    where
+        I: IntoIterator<Item = S>,
+        S: AsRef<OsStr>,
+    {
+        let started = Instant::now();
+        let result = self.run_inner(args, max_output);
+        if let Some(profiler) = &self.profiler {
+            let phase = format!("git.{name}");
+            let bytes = result.as_ref().map(|value| value.len() as u64).unwrap_or(0);
+            match self.profile_kind {
+                ProfileKind::Wall => {
+                    profiler.record_wall_duration(&phase, started.elapsed(), bytes, 1)
+                }
+                ProfileKind::Worker => profiler.record_worker(&phase, started.elapsed(), bytes, 1),
+                ProfileKind::None => {}
+            }
+        }
+        result
+    }
+
+    fn run_inner<I, S>(&self, args: I, max_output: usize) -> Result<Vec<u8>, GitFailure>
     where
         I: IntoIterator<Item = S>,
         S: AsRef<OsStr>,
@@ -194,6 +310,191 @@ impl GitRunner {
         }
         Ok(output)
     }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum BatchError {
+    Timeout,
+    TooLarge,
+    ObjectUnavailable,
+    Protocol,
+}
+
+struct BatchRequest {
+    oid: String,
+    max_bytes: u64,
+    reply: SyncSender<Result<Vec<u8>, BatchError>>,
+}
+
+struct BatchReader {
+    request_tx: Option<SyncSender<BatchRequest>>,
+    worker: Option<std::thread::JoinHandle<()>>,
+    child: Arc<Mutex<Child>>,
+    stderr: Option<std::thread::JoinHandle<()>>,
+    stderr_exceeded: Arc<AtomicBool>,
+}
+
+impl std::fmt::Debug for BatchReader {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter.write_str("BatchReader")
+    }
+}
+
+impl BatchReader {
+    fn start(
+        repo: &Path,
+        deadline: Instant,
+        profiler: Option<Arc<crate::profile::Profiler>>,
+    ) -> Result<Self, BatchError> {
+        let runner = GitRunner::new(repo, deadline);
+        let mut command = runner.command();
+        command
+            .args(["cat-file", "--batch"])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped());
+        let start = Instant::now();
+        let mut child = command.spawn().map_err(|_| BatchError::ObjectUnavailable)?;
+        if let Some(profiler) = &profiler {
+            profiler.record_worker("git.batch.start", start.elapsed(), 0, 1);
+        }
+        let stdin = child.stdin.take().ok_or(BatchError::ObjectUnavailable)?;
+        let stdout = child.stdout.take().ok_or(BatchError::ObjectUnavailable)?;
+        let stderr = child.stderr.take().ok_or(BatchError::ObjectUnavailable)?;
+        let exceeded = Arc::new(AtomicBool::new(false));
+        let stderr_flag = Arc::clone(&exceeded);
+        let stderr_handle = std::thread::spawn(move || {
+            let _ = read_bounded(stderr, MAX_STDERR_BYTES, stderr_flag);
+        });
+        let (request_tx, request_rx) = sync_channel(4);
+        let child = Arc::new(Mutex::new(child));
+        let worker = std::thread::spawn(move || {
+            batch_worker(stdin, stdout, request_rx, profiler.as_deref());
+        });
+        Ok(Self {
+            request_tx: Some(request_tx),
+            worker: Some(worker),
+            child,
+            stderr: Some(stderr_handle),
+            stderr_exceeded: exceeded,
+        })
+    }
+
+    fn read_blob(
+        &self,
+        oid: &str,
+        max_bytes: u64,
+        deadline: Instant,
+    ) -> Result<Vec<u8>, BatchError> {
+        if self.stderr_exceeded.load(Ordering::Relaxed) {
+            return Err(BatchError::Protocol);
+        }
+        let (reply_tx, reply_rx) = sync_channel(1);
+        self.request_tx
+            .as_ref()
+            .ok_or(BatchError::ObjectUnavailable)?
+            .send(BatchRequest {
+                oid: oid.to_string(),
+                max_bytes,
+                reply: reply_tx,
+            })
+            .map_err(|_| BatchError::ObjectUnavailable)?;
+        let remaining = deadline.saturating_duration_since(Instant::now());
+        match reply_rx.recv_timeout(remaining) {
+            Ok(Ok(bytes)) => Ok(bytes),
+            Ok(Err(error)) => Err(error),
+            Err(std::sync::mpsc::RecvTimeoutError::Timeout) => {
+                self.kill();
+                Err(BatchError::Timeout)
+            }
+            Err(std::sync::mpsc::RecvTimeoutError::Disconnected) => Err(BatchError::Protocol),
+        }
+    }
+
+    fn kill(&self) {
+        if let Ok(mut child) = self.child.lock() {
+            let _ = child.kill();
+        }
+    }
+}
+
+impl Drop for BatchReader {
+    fn drop(&mut self) {
+        drop(self.request_tx.take());
+        self.kill();
+        if let Some(worker) = self.worker.take() {
+            let _ = worker.join();
+        }
+        if let Ok(mut child) = self.child.lock() {
+            let _ = child.wait();
+        }
+        if let Some(stderr) = self.stderr.take() {
+            let _ = stderr.join();
+        }
+    }
+}
+
+fn batch_worker(
+    mut stdin: ChildStdin,
+    stdout: ChildStdout,
+    requests: Receiver<BatchRequest>,
+    profiler: Option<&crate::profile::Profiler>,
+) {
+    let mut reader = BufReader::new(stdout);
+    while let Ok(request) = requests.recv() {
+        let started = Instant::now();
+        let result = batch_read(&mut stdin, &mut reader, &request);
+        if let Some(profiler) = profiler {
+            let bytes = result.as_ref().map(|value| value.len() as u64).unwrap_or(0);
+            profiler.record_worker("git.acquire.batch", started.elapsed(), bytes, 1);
+        }
+        let fatal = result.is_err();
+        let _ = request.reply.send(result);
+        if fatal {
+            break;
+        }
+    }
+}
+
+fn batch_read(
+    stdin: &mut ChildStdin,
+    reader: &mut BufReader<ChildStdout>,
+    request: &BatchRequest,
+) -> Result<Vec<u8>, BatchError> {
+    stdin
+        .write_all(format!("{}\n", request.oid).as_bytes())
+        .map_err(|_| BatchError::ObjectUnavailable)?;
+    stdin.flush().map_err(|_| BatchError::ObjectUnavailable)?;
+
+    let mut header = String::new();
+    reader
+        .read_line(&mut header)
+        .map_err(|_| BatchError::ObjectUnavailable)?;
+    if header.is_empty() || header.len() > MAX_BATCH_HEADER_BYTES {
+        return Err(BatchError::Protocol);
+    }
+    let header = header.trim_end_matches(['\r', '\n']);
+    let mut fields = header.split_whitespace();
+    let oid = fields.next().ok_or(BatchError::Protocol)?;
+    let kind = fields.next().ok_or(BatchError::Protocol)?;
+    let size = fields.next().ok_or(BatchError::Protocol)?;
+    if fields.next().is_some() || oid != request.oid || kind != "blob" {
+        return Err(BatchError::Protocol);
+    }
+    let size = size.parse::<u64>().map_err(|_| BatchError::Protocol)?;
+    if size > request.max_bytes {
+        return Err(BatchError::TooLarge);
+    }
+    let size = usize::try_from(size).map_err(|_| BatchError::TooLarge)?;
+    let mut bytes = vec![0u8; size.saturating_add(1)];
+    reader
+        .read_exact(&mut bytes)
+        .map_err(|_| BatchError::ObjectUnavailable)?;
+    if bytes.last() != Some(&b'\n') {
+        return Err(BatchError::Protocol);
+    }
+    bytes.pop();
+    Ok(bytes)
 }
 
 fn read_bounded(
@@ -257,7 +558,124 @@ fn valid_ref(value: &str) -> bool {
         && !value.contains('~')
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
+enum DiffAvailability {
+    Text(GitDiffSpec),
+    Binary,
+    NoIntroduced,
+}
+
+fn diff_for_unit(
+    runner: &GitRunner,
+    commit: &str,
+    parent: Option<&str>,
+    path: &str,
+    context_lines: usize,
+) -> Result<DiffAvailability, GitFailure> {
+    let mut args: Vec<OsString> = Vec::new();
+    if parent.is_some() {
+        args.push(OsString::from("diff"));
+        args.push(OsString::from("--no-color"));
+        args.push(OsString::from("--no-ext-diff"));
+        args.push(OsString::from("--no-textconv"));
+        args.push(OsString::from("--no-renames"));
+        args.push(OsString::from(format!("-U{context_lines}")));
+        args.push(OsString::from(parent.expect("checked parent")));
+        args.push(OsString::from(commit));
+        args.push(OsString::from("--"));
+        args.push(OsString::from(path));
+    } else {
+        args.push(OsString::from("diff-tree"));
+        args.push(OsString::from("--root"));
+        args.push(OsString::from("-p"));
+        args.push(OsString::from("--no-commit-id"));
+        args.push(OsString::from("--no-renames"));
+        args.push(OsString::from("--no-ext-diff"));
+        args.push(OsString::from("--no-textconv"));
+        args.push(OsString::from("-r"));
+        args.push(OsString::from(format!("-U{context_lines}")));
+        args.push(OsString::from(commit));
+        args.push(OsString::from("--"));
+        args.push(OsString::from(path));
+    }
+    let output = runner.run_named("diff", args, 32 * 1024 * 1024)?;
+    parse_diff(&output)
+}
+
+fn parse_diff(output: &[u8]) -> Result<DiffAvailability, GitFailure> {
+    if output
+        .split(|byte| *byte == b'\n')
+        .any(|line| line.starts_with(b"Binary files ") || line.starts_with(b"GIT binary patch"))
+    {
+        return Ok(DiffAvailability::Binary);
+    }
+    let text = std::str::from_utf8(output).map_err(|_| GitFailure::InvalidData)?;
+    let mut introduced_lines = Vec::new();
+    let mut scan_line_ranges = Vec::new();
+    let mut current: Option<(usize, usize, usize)> = None;
+    for line in text.lines() {
+        if line.starts_with("@@ ") {
+            if let Some((start, count, _)) = current.take() {
+                if count > 0 {
+                    scan_line_ranges.push((start, start + count - 1));
+                }
+            }
+            let (start, count) = parse_hunk_header(line).ok_or(GitFailure::InvalidData)?;
+            current = Some((start, count, start));
+            continue;
+        }
+        let Some((_, _, new_line)) = current.as_mut() else {
+            continue;
+        };
+        if line.starts_with('+') {
+            introduced_lines.push(*new_line);
+            *new_line += 1;
+        } else if line.starts_with(' ') {
+            *new_line += 1;
+        } else if line.starts_with('-') || line.starts_with('\\') {
+            // Deleted lines and "\ No newline" do not advance the new file.
+        } else {
+            // A new file header ends the current hunk.
+            if let Some((start, count, _)) = current.take() {
+                if count > 0 {
+                    scan_line_ranges.push((start, start + count - 1));
+                }
+            }
+        }
+    }
+    if let Some((start, count, _)) = current {
+        if count > 0 {
+            scan_line_ranges.push((start, start + count - 1));
+        }
+    }
+    if introduced_lines.is_empty() {
+        return Ok(DiffAvailability::NoIntroduced);
+    }
+    introduced_lines.sort_unstable();
+    introduced_lines.dedup();
+    scan_line_ranges.sort_unstable();
+    scan_line_ranges.dedup();
+    Ok(DiffAvailability::Text(GitDiffSpec {
+        introduced_lines,
+        scan_line_ranges,
+    }))
+}
+
+fn parse_hunk_header(line: &str) -> Option<(usize, usize)> {
+    let plus = line.find(" +")?;
+    let rest = &line[plus + 2..];
+    let end = rest.find(' ').unwrap_or(rest.len());
+    let range = &rest[..end];
+    let (start, count) = match range.split_once(',') {
+        Some((start, count)) => (start, count),
+        None => (range, "1"),
+    };
+    let start = start.parse::<usize>().ok()?;
+    let count = count.parse::<usize>().ok()?;
+    Some((start, count))
+}
+
+#[derive(Debug)]
 pub struct GitHistorySource {
     repo: PathBuf,
     source_id: String,
@@ -266,7 +684,32 @@ pub struct GitHistorySource {
     resolved_refs: Vec<String>,
     max_commits: usize,
     max_units: usize,
+    io: GitIoMode,
+    history_mode: GitHistoryMode,
+    context_lines: usize,
+    profiler: Option<Arc<crate::profile::Profiler>>,
+    batch: Arc<Mutex<Option<BatchReader>>>,
     empty: bool,
+}
+
+impl Clone for GitHistorySource {
+    fn clone(&self) -> Self {
+        Self {
+            repo: self.repo.clone(),
+            source_id: self.source_id.clone(),
+            repository_id: self.repository_id.clone(),
+            refs: self.refs.clone(),
+            resolved_refs: self.resolved_refs.clone(),
+            max_commits: self.max_commits,
+            max_units: self.max_units,
+            io: self.io,
+            history_mode: self.history_mode,
+            context_lines: self.context_lines,
+            profiler: self.profiler.clone(),
+            batch: Arc::clone(&self.batch),
+            empty: self.empty,
+        }
+    }
 }
 
 impl GitHistorySource {
@@ -276,6 +719,16 @@ impl GitHistorySource {
                 "Git history limits must be positive".to_string(),
             ));
         }
+        if options.history_mode == GitHistoryMode::Whole && options.context_lines != 0 {
+            return Err(CoreError::Input(
+                "--context-lines requires --history-mode diff".to_string(),
+            ));
+        }
+        if options.context_lines > 5 {
+            return Err(CoreError::Input(
+                "--context-lines must be 0, 1, 3 or 5".to_string(),
+            ));
+        }
         let repo = std::fs::canonicalize(repo).map_err(CoreError::Io)?;
         if !repo.is_dir() {
             return Err(CoreError::Input(
@@ -283,10 +736,11 @@ impl GitHistorySource {
             ));
         }
         let deadline = Instant::now() + Duration::from_secs(30);
-        let runner = GitRunner::new(&repo, deadline);
+        let runner =
+            GitRunner::with_profile(&repo, deadline, options.profiler.clone(), ProfileKind::Wall);
         let git_dir = text(
             &runner
-                .run(["rev-parse", "--absolute-git-dir"], 16 * 1024)
+                .run_named("open", ["rev-parse", "--absolute-git-dir"], 16 * 1024)
                 .map_err(|failure| {
                     CoreError::Input(format!("not a Git repository: {}", failure.code()))
                 })?,
@@ -419,6 +873,11 @@ impl GitHistorySource {
             resolved_refs,
             max_commits: options.max_commits,
             max_units: options.max_units,
+            io: options.io,
+            history_mode: options.history_mode,
+            context_lines: options.context_lines,
+            profiler: options.profiler.clone(),
+            batch: Arc::new(Mutex::new(None)),
             empty: empty && options.refs.is_empty(),
         })
     }
@@ -449,6 +908,9 @@ impl GitHistorySource {
                 } else {
                     "selected-refs".to_string()
                 },
+                history_mode: self.history_mode.as_str().to_string(),
+                git_io: self.io.as_str().to_string(),
+                context_lines: self.context_lines,
                 ..GitHistoryInfo::default()
             }),
             git_source: Some(self.clone()),
@@ -470,7 +932,12 @@ impl GitHistorySource {
         deadline: Instant,
         discovery: &mut Discovery,
     ) -> Result<(), GitFailure> {
-        let runner = GitRunner::new(&self.repo, deadline);
+        let runner = GitRunner::with_profile(
+            &self.repo,
+            deadline,
+            self.profiler.clone(),
+            ProfileKind::Wall,
+        );
         let mut rev_args: Vec<OsString> = vec![
             OsString::from("rev-list"),
             OsString::from("--parents"),
@@ -485,7 +952,11 @@ impl GitHistorySource {
                 rev_args.push(OsString::from(oid));
             }
         }
-        let output = runner.run(rev_args, self.max_commits.saturating_mul(128) + 4096)?;
+        let output = runner.run_named(
+            "enumerate",
+            rev_args,
+            self.max_commits.saturating_mul(128) + 4096,
+        )?;
         let output_text = std::str::from_utf8(&output).map_err(|_| GitFailure::InvalidData)?;
         let commits: Vec<Vec<&str>> = output_text
             .lines()
@@ -530,7 +1001,7 @@ impl GitHistorySource {
                 diff_args.push(OsString::from(parent));
             }
             diff_args.push(OsString::from(commit));
-            let diff = runner.run(diff_args, 32 * 1024 * 1024)?;
+            let diff = runner.run_named("deltas", diff_args, 32 * 1024 * 1024)?;
             let mut records = diff.split(|byte| *byte == 0);
             loop {
                 let Some(metadata) = records.next() else {
@@ -610,6 +1081,30 @@ impl GitHistorySource {
                 if !valid_oid(blob_oid) || old_mode.is_empty() {
                     return Err(GitFailure::InvalidData);
                 }
+                let git_diff = if self.history_mode == GitHistoryMode::Diff {
+                    match diff_for_unit(&runner, commit, parent, path, self.context_lines)? {
+                        DiffAvailability::Text(spec) => Some(spec),
+                        DiffAvailability::Binary => {
+                            push_skipped_git_unit(
+                                discovery,
+                                commit,
+                                locator,
+                                "GIT_DIFF_BINARY_UNSUPPORTED",
+                                &mut seen_units,
+                                self.max_units,
+                            )?;
+                            continue;
+                        }
+                        DiffAvailability::NoIntroduced => {
+                            // Deletion-only and mode-only changes introduce no
+                            // content revision to scan; they are not a coverage
+                            // gap in diff mode.
+                            continue;
+                        }
+                    }
+                } else {
+                    None
+                };
                 let key = (commit.to_string(), locator.to_string());
                 if !seen_units.insert(key) {
                     continue;
@@ -635,6 +1130,7 @@ impl GitHistorySource {
                         commit: commit.to_string(),
                         blob_oid: blob_oid.to_string(),
                     }),
+                    git_diff,
                 });
                 if let Some(history) = &mut discovery.git_history {
                     history.units_seen = discovery.units.len();
@@ -665,14 +1161,60 @@ impl GitHistorySource {
         let limit = usize::try_from(max_bytes)
             .unwrap_or(usize::MAX)
             .saturating_add(1);
-        let runner = GitRunner::new(&self.repo, deadline);
-        match runner.run(["cat-file", "blob", oid], limit) {
+        if self.io == GitIoMode::Batch {
+            return self.read_blob_batch(oid, max_bytes, deadline);
+        }
+        let runner = GitRunner::with_profile(
+            &self.repo,
+            deadline,
+            self.profiler.clone(),
+            ProfileKind::Worker,
+        );
+        match runner.run_named("acquire.process", ["cat-file", "blob", oid], limit) {
             Ok(bytes) if bytes.len() as u64 > max_bytes => Err(GitReadError::TooLarge),
             Ok(bytes) => Ok(bytes),
             Err(GitFailure::Timeout) => Err(GitReadError::Timeout),
             Err(GitFailure::OutputLimit) => Err(GitReadError::TooLarge),
             Err(_) => Err(GitReadError::ObjectUnavailable),
         }
+    }
+
+    fn read_blob_batch(
+        &self,
+        oid: &str,
+        max_bytes: u64,
+        deadline: Instant,
+    ) -> Result<Vec<u8>, GitReadError> {
+        if !valid_oid(oid) {
+            return Err(GitReadError::ObjectUnavailable);
+        }
+        let mut guard = self
+            .batch
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        if guard.is_none() {
+            *guard = Some(
+                BatchReader::start(&self.repo, deadline, self.profiler.clone())
+                    .map_err(map_batch_error)?,
+            );
+        }
+        let result = guard
+            .as_ref()
+            .expect("batch reader initialized")
+            .read_blob(oid, max_bytes, deadline)
+            .map_err(map_batch_error);
+        if result.is_err() {
+            *guard = None;
+        }
+        result
+    }
+}
+
+fn map_batch_error(error: BatchError) -> GitReadError {
+    match error {
+        BatchError::Timeout => GitReadError::Timeout,
+        BatchError::TooLarge => GitReadError::TooLarge,
+        BatchError::ObjectUnavailable | BatchError::Protocol => GitReadError::ObjectUnavailable,
     }
 }
 
@@ -709,6 +1251,7 @@ fn push_skipped_git_unit(
         block_matches: Vec::new(),
         block_request_id: None,
         git: None,
+        git_diff: None,
     });
     Ok(())
 }
@@ -722,4 +1265,58 @@ fn source_id_for(repository_id: &str) -> String {
         .strip_prefix("sha256:")
         .unwrap_or(repository_id);
     format!("local-git-history:{}", &digest[..digest.len().min(16)])
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn diff_parser_tracks_introduced_and_context_lines() {
+        let diff = b"\
+diff --git a/app.env b/app.env\n\
+--- a/app.env\n\
++++ b/app.env\n\
+@@ -1,2 +1,3 @@\n\
+-API_KEY=old\n\
++API_KEY=new\n\
+ \x20DB_PASSWORD=unchanged\n\
++TOKEN=added\n";
+        let parsed = parse_diff(diff).unwrap();
+        let DiffAvailability::Text(spec) = parsed else {
+            panic!("expected text diff");
+        };
+        assert_eq!(spec.introduced_lines, vec![1, 3]);
+        assert_eq!(spec.scan_line_ranges, vec![(1, 3)]);
+    }
+
+    #[test]
+    fn diff_parser_handles_added_lines_starting_with_plus() {
+        let diff = b"\
+@@ -0,0 +1,1 @@\n\
++++this is a literal added line\n";
+        let parsed = parse_diff(diff).unwrap();
+        let DiffAvailability::Text(spec) = parsed else {
+            panic!("expected text diff");
+        };
+        assert_eq!(spec.introduced_lines, vec![1]);
+    }
+
+    #[test]
+    fn diff_parser_identifies_binary_and_deletion_only_changes() {
+        let binary = b"diff --git a/x b/x\nBinary files a/x and b/x differ\n";
+        assert!(matches!(parse_diff(binary), Ok(DiffAvailability::Binary)));
+        let deletion = b"@@ -1,1 +0,0 @@\n-secret\n";
+        assert!(matches!(
+            parse_diff(deletion),
+            Ok(DiffAvailability::NoIntroduced)
+        ));
+    }
+
+    #[test]
+    fn hunk_header_parser_supports_implicit_counts() {
+        assert_eq!(parse_hunk_header("@@ -1 +1 @@"), Some((1, 1)));
+        assert_eq!(parse_hunk_header("@@ -0,0 +1,3 @@"), Some((1, 3)));
+        assert_eq!(parse_hunk_header("@@ -4,2 +8,0 @@"), Some((8, 0)));
+    }
 }

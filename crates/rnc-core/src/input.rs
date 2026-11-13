@@ -108,6 +108,17 @@ pub struct GitBlobRef {
     pub blob_oid: String,
 }
 
+/// Line-addressed diff restriction for `--history-mode diff`.
+///
+/// Line numbers are one-based in the new file. `scan_line_ranges` includes the
+/// diff context selected by `--context-lines`; `introduced_lines` contains only
+/// added lines and is used to suppress findings that begin in unchanged context.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct GitDiffSpec {
+    pub introduced_lines: Vec<usize>,
+    pub scan_line_ranges: Vec<(usize, usize)>,
+}
+
 #[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct GitHistoryInfo {
     pub repository_path: PathBuf,
@@ -118,6 +129,12 @@ pub struct GitHistoryInfo {
     pub deleted_paths: usize,
     pub units_seen: usize,
     pub scope: String,
+    #[serde(default)]
+    pub history_mode: String,
+    #[serde(default)]
+    pub git_io: String,
+    #[serde(default)]
+    pub context_lines: usize,
 }
 
 #[derive(Debug, Clone)]
@@ -134,9 +151,10 @@ pub struct DiscoveredUnit {
     pub block_matches: Vec<String>,
     pub block_request_id: Option<String>,
     pub git: Option<GitBlobRef>,
+    pub git_diff: Option<GitDiffSpec>,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Discovery {
     pub root: PathBuf,
     pub units: Vec<DiscoveredUnit>,
@@ -646,6 +664,7 @@ impl LocalSource {
             block_matches,
             block_request_id,
             git: None,
+            git_diff: None,
         }
     }
 }

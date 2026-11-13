@@ -140,6 +140,20 @@ impl LineIndex {
         let position = self.starts.partition_point(|start| *start <= offset);
         Ok(position.max(1))
     }
+
+    /// Absolute byte range for an inclusive one-based line range.
+    pub fn byte_range_for_lines(
+        &self,
+        start_line: usize,
+        end_line: usize,
+    ) -> Option<(usize, usize)> {
+        if start_line == 0 || start_line > end_line {
+            return None;
+        }
+        let start = *self.starts.get(start_line - 1)?;
+        let end = self.starts.get(end_line).copied().unwrap_or(self.len);
+        (start < end).then_some((start, end))
+    }
 }
 
 pub fn finding_id(
@@ -277,6 +291,17 @@ mod tests {
         assert_eq!(index.line_at(2).unwrap(), 2);
         assert_eq!(index.line_at(5).unwrap(), 3);
         assert_eq!(index.line_at(7).unwrap(), 4);
+    }
+
+    #[test]
+    fn line_index_maps_inclusive_line_ranges() {
+        let data = b"a\nbb\r\nccc\rdddd";
+        let index = LineIndex::new(data);
+        assert_eq!(index.byte_range_for_lines(1, 1), Some((0, 2)));
+        assert_eq!(index.byte_range_for_lines(2, 3), Some((2, 10)));
+        assert_eq!(index.byte_range_for_lines(4, 4), Some((10, 14)));
+        assert_eq!(index.byte_range_for_lines(0, 1), None);
+        assert_eq!(index.byte_range_for_lines(3, 2), None);
     }
 
     #[test]

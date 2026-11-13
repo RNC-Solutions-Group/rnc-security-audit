@@ -1033,6 +1033,7 @@ mod tests {
             block_matches: vec![wide.request_id.clone(), narrow.request_id.clone()],
             block_request_id: Some(narrow.request_id.clone()),
             git: None,
+            git_diff: None,
         };
         let policy = build_policy("r", &[unit], &[], &spec, 0).unwrap();
         assert_eq!(policy.applied_blocks.len(), 1);
