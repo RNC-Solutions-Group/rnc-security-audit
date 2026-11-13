@@ -15,6 +15,7 @@
 | **P4** | **CP4 — detection expansion and history acquisition** | Generic credential extraction, private-key representations, additional documented provider families, read-only Git-history source adapter | All CP0-CP3 regressions pass; new detection/negative suites pass; all strategies and modes remain equivalent; history acquisition is read-only, bounded and explicit about incomplete coverage |
 | **P1 corrective** | **CP4A — hardening and release preparation** | Structured password-component evidence, Windows private-report ACLs, CI benchmark retirement, documentation and a development evaluation package | Primary finding identities unchanged; component offsets/digests verified; private/sanitized isolation and Windows ACL tests pass; package smoke passes from a clean extraction |
 | **P1 corrective** | **CP4B — contextual candidate validation** | Bounded candidate context, assignment-syntax gate, `BASE` qualifiers and context-aware hex classification | Hex/name/callback/prose classes corrected; exact byte/digest/ID regressions; provider/database identities unchanged; modes/strategies/Git equivalent; CI complete |
+| **P2 performance** | **CP4C — instrumented performance and benchmark integration** | Configurable workers, Git process/batch, whole/diff history modes, diff context and opt-in profile | CP4B baseline equivalence; worker/strategy/mode equivalence; process/batch equivalence; profile schema/secrecy; controlled matrix pending |
 | **PARKED** | **CP5 — audit orchestration integration** | Third-party adapter/orchestration work | Explicitly parked by the operator; no work until the standalone scanner is accepted and independently validated |
 | **Later** | **CP6 — portability and interfaces** | Additional source/backends, richer report exports (e.g. SARIF), noninteractive CI packages, optional TUI/GUI and portable RNC Security Toolkit distribution | No duplicated detection or policy logic across interfaces/platforms |
 
@@ -103,9 +104,21 @@ CP0 and CP1 may define interfaces for downstream modules without implementing th
 - [x] Run cross-platform CI, exact-byte and package smoke validation.
 - [ ] Operator review. No merge to `main` by the developer.
 
+### CP4C — instrumented performance and benchmark integration
+
+- [x] Add configurable workers with deterministic ordered accounting.
+- [x] Add process and persistent-batch Git object acquisition with process/batch equivalence.
+- [x] Add whole and introduced-line diff history modes with bounded context.
+- [x] Add opt-in versioned wall/worker profiling with Git operation attribution.
+- [x] Preserve CP4B reference behavior and validate exact baseline equivalence.
+- [x] Add local worker, Git, diff, failure and profile secrecy regressions.
+- [x] Provide the independent-harness matrix/profile handoff.
+- [ ] Operator-controlled Windows 50-configuration experiment.
+- [ ] Operator review; no merge to `main` by the developer.
+
 ### CP5 — parked
 
-CP5 orchestration work is **explicitly parked** by operator direction. It is not authorized by CP4B and does not begin until the standalone scanner, package and private-evidence security posture are accepted and independently validated.
+CP5 orchestration work is **explicitly parked** by operator direction. It is not authorized by CP4C and does not begin until the standalone scanner, package and private-evidence security posture are accepted and independently validated.
 
 ### CP6 — later
 

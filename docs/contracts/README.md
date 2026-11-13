@@ -82,7 +82,14 @@ The Rust detector consumes separate data-only rule bundles that are not the seve
 - `docs/contracts/rules/rule-bundle.schema.json` — synthetic schema `0.1.0`, preserved for CP0–CP2 regression truth.
 - `docs/contracts/rules/provider-rule-bundle.schema.json` — CP3 provider schema `0.2.0`, with provider/family/credential metadata, finite `max_match_bytes`, bounded `max_candidate_bytes`, provenance and fixture references.
 
-See [rule authoring](../implementation/cp1-rule-authoring.md) and the [detection catalog](../implementation/cp3-detection-catalog.md).
+See [rule authoring](../implementation/cp1-rule-authoring.md) and the
+[detection catalog](../implementation/cp3-detection-catalog.md).
+
+CP4C adds a separate, opt-in execution-profile contract:
+`docs/contracts/profiler.schema.json` — profile schema version `1`, wall versus
+accumulated worker timings, counters and requested/effective settings. It is not
+a finding, execution, policy, result or CI-decision record. See
+[profiler.md](profiler.md).
 
 ## Validate
 

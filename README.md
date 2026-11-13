@@ -1,6 +1,6 @@
 # RNC Security Audit
 
-> **Development status - 12 November 2026:** CP0-CP2 provide a working, security-hardened Rust scanner; CP3 adds a first-party provider-credential catalog and independent byte-addressed accuracy assessment; CP4 expands generic extraction, private-key representations and provider families, and adds read-only Git-history acquisition. CP4A adds private database-password component evidence, explicit Windows private-report ACLs, retirement of internal benchmark CI and a reproducible development evaluation package. CP4B adds bounded candidate context, assignment-syntax checks, `BASE`-qualified names and context-aware hex classification. The original synthetic bundles remain preserved regression evidence, not production credential accuracy. Provider-format recognition is **not** proof that a credential is active, authorized or complete. No production deployment or public release is claimed.
+> **Development status - 13 November 2026:** CP0-CP2 provide a working, security-hardened Rust scanner; CP3 adds a first-party provider-credential catalog and independent byte-addressed accuracy assessment; CP4 expands generic extraction, private-key representations and provider families, and adds read-only Git-history acquisition. CP4A adds private database-password component evidence, explicit Windows private-report ACLs, retirement of internal benchmark CI and a reproducible development evaluation package. CP4B adds bounded candidate context, assignment-syntax checks, `BASE`-qualified names and context-aware hex classification. CP4C adds configurable scan workers, process/batch Git acquisition, whole/diff history modes and an opt-in versioned execution profile. The original synthetic bundles remain preserved regression evidence, not production credential accuracy. Provider-format recognition is **not** proof that a credential is active, authorized or complete. No production deployment or public release is claimed.
 
 **RNC Security Audit** is the working home for RNC's security platform. Its first-party secret-detection component is **RNC Scanner**. The wider application will eventually coordinate independent security tools as well. **RNC Security Toolkit** remains the prospective name for a portable distribution, not another codebase.
 
@@ -85,6 +85,10 @@ Reporting reconciles three independently verifiable, append-only logical records
 | [CP4 validation](docs/implementation/cp4-validation.md) | CP4 regression matrix, evidence, limitations and disposition |
 | [CP4A hardening](docs/implementation/cp4a-hardening.md) | Structured credential evidence, Windows ACLs, CI retirement and package proof |
 | [CP4B contextual validation](docs/implementation/cp4b-contextual-validation.md) | Candidate context, assignment syntax, qualified names and hex classification |
+| [CP4C execution architecture](docs/architecture/cp4c-execution-architecture.md) | Worker model, Git process/batch, diff scope and profiler boundaries |
+| [CP4C validation](docs/implementation/cp4c-validation.md) | CLI, equivalence, profiling and controlled-experiment readiness |
+| [CP4C harness handoff](docs/implementation/cp4c-harness-handoff.md) | 50-configuration matrix and profile-ingestion contract |
+| [Profiler contract](docs/contracts/profiler.md) | Versioned profile schema, phase names and privacy boundary |
 | [Adaptive matching](docs/architecture/adaptive-matching.md) | Backend boundaries, required literals, streaming and differential gate |
 | [Source acquisition and report publication](docs/architecture/source-acquisition.md) | Root containment, discovery budgets, Git-history controls, atomic report writes and platform guarantees |
 | [Read-only Git history ADR](docs/architecture/adr-016-read-only-git-history.md) | Process, library and security tradeoffs for the history adapter |
@@ -112,6 +116,7 @@ Reporting reconciles three independently verifiable, append-only logical records
 | Detection expansion and Git history (CP4) | **READY FOR OPERATOR REVIEW; CI complete** | [CP4 validation](docs/implementation/cp4-validation.md), [catalog](docs/implementation/cp4-detection-catalog.md), [Git history](docs/implementation/cp4-git-history.md) |
 | CP4A corrective hardening | **IMPLEMENTED; OPERATOR REVIEW PENDING** | [CP4A hardening](docs/implementation/cp4a-hardening.md), [package builder](tools/package/README.md) |
 | CP4B contextual validation | **IMPLEMENTED; CI COMPLETE; OPERATOR REVIEW PENDING** | [CP4B validation](docs/implementation/cp4b-contextual-validation.md), [generic credentials](docs/implementation/cp4-generic-credentials.md) |
+| CP4C performance execution | **IMPLEMENTED; LOCAL VALIDATION; CONTROLLED EXPERIMENT PENDING** | [CP4C validation](docs/implementation/cp4c-validation.md), [architecture](docs/architecture/cp4c-execution-architecture.md) |
 
 The portable matching system includes a reference Rust regex strategy, a RegexSet-assisted strategy and an Aho-Corasick literal prefilter. All use the same rule, validator and finding contracts. Faster strategies are not promoted at the expense of finding equivalence.
 

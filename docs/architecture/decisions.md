@@ -1,6 +1,6 @@
 # CP0 architecture decisions — ADR register
 
-Status: **CP0–CP4B decisions recorded; operator review pending.** The production detector language is selected as **Rust** in [ADR-007](adr-007-detector-language.md); CP2 implements portable strategies and policy/reporting boundaries. CP3 adds a separately versioned provider catalog in [ADR-015](adr-015-provider-credential-catalog.md). CP4 adds read-only Git-history acquisition through a controlled local Git process in [ADR-016](adr-016-read-only-git-history.md). CP4B extends ADR-015 with bounded assignment candidate context; it does not add a new backend or report contract.
+Status: **CP0–CP4C decisions recorded; operator review pending.** The production detector language is selected as **Rust** in [ADR-007](adr-007-detector-language.md); CP2 implements portable strategies and policy/reporting boundaries. CP3 adds a separately versioned provider catalog in [ADR-015](adr-015-provider-credential-catalog.md). CP4 adds read-only Git-history acquisition through a controlled local Git process in [ADR-016](adr-016-read-only-git-history.md). CP4B extends ADR-015 with bounded assignment candidate context; it does not add a new backend or report contract. CP4C adds bounded workers, persistent batch Git acquisition, diff history mode and opt-in profiling without changing detection rules.
 
 | ID | Decision | Consequence / next check |
 | --- | --- | --- |
@@ -20,6 +20,7 @@ Status: **CP0–CP4B decisions recorded; operator review pending.** The producti
 | ADR-014 | **Root-contained acquisition and atomic reports** | Unix openat/no-follow chains; Windows reparse checks with documented residual race; atomic publication. See [ADR-014](adr-014-root-contained-acquisition.md) |
 | ADR-015 | **Separate provider credential catalog** | Schema `0.2.0` adds provider/family/credential metadata, bounded candidate captures and offline validators. Synthetic `0.1.0` digests are unchanged. See [ADR-015](adr-015-provider-credential-catalog.md) |
 | ADR-016 | **Read-only Git history through a controlled Git process** | No checkout/index/hook/fetch/submodule operations; bounded outputs and deadline; shallow/partial/alternate histories rejected. See [ADR-016](adr-016-read-only-git-history.md) |
+| ADR-017 | **Configurable execution and opt-in profiling** | Bounded workers account in source-unit order; process/batch Git acquisition are equivalent; diff mode is explicitly scoped; profile schema is versioned and secret-free. See [CP4C architecture](cp4c-execution-architecture.md) |
 
 ## Decision review checkpoints
 
