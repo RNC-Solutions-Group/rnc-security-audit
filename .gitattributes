@@ -1,0 +1,17 @@
+# Keep source, reports, and checksummed text artifacts in canonical LF form so
+# hashes recorded in the checkpoint report are stable across operating systems.
+* text=auto eol=lf
+
+# Windows command shims are the exception: cmd.exe expects CRLF line endings.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# The legacy fixture inventory hashes are byte-exact; preserve fixture and lock bytes.
+harness/docker/fixtures/** -text
+harness/docker/cases.json -text
+harness/docker/fixture-inventory.lock.json -text
+
+# Legacy CRLF fixtures are byte-preserved; do not report their CR as diff whitespace.
+harness/docker/fixtures/** whitespace=-trailing-space
+harness/docker/cases.json whitespace=-trailing-space
+harness/docker/fixture-inventory.lock.json whitespace=-trailing-space

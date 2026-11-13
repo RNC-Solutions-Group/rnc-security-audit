@@ -1,0 +1,5020 @@
+{
+  "category_reconciliation": {
+    "conflict_rows": [
+      {
+        "path": ".esmtprc",
+        "upstream_informative": 1,
+        "upstream_risk": 2
+      },
+      {
+        "path": ".ftpconfig",
+        "upstream_informative": 2,
+        "upstream_risk": 3
+      },
+      {
+        "path": "deployment-config.json",
+        "upstream_informative": 1,
+        "upstream_risk": 3
+      },
+      {
+        "path": "filezilla/filezilla.xml",
+        "upstream_informative": 1,
+        "upstream_risk": 2
+      },
+      {
+        "path": "filezilla/recentservers.xml",
+        "upstream_informative": 3,
+        "upstream_risk": 3
+      },
+      {
+        "path": "web/var/www/.env",
+        "upstream_informative": 4,
+        "upstream_risk": 6
+      }
+    ],
+    "note": "Every count unit is line-located. Six upstream rows have aggregate risk/informative totals that conflict with the source-line review; categories were not reassigned to force upstream totals.",
+    "rnc_informative": 87,
+    "rnc_risk": 88,
+    "status": "CONFLICT",
+    "upstream_informative": 79,
+    "upstream_risk": 96
+  },
+  "counts": {
+    "files": 44,
+    "items": 175,
+    "rnc_informative": 87,
+    "rnc_risk": 88,
+    "upstream_informative": 79,
+    "upstream_risk": 96
+  },
+  "dataset_id": "leaky-repo",
+  "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+  "items": [
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.bash_profile:11:informative",
+      "fingerprint_sha256": "35ba7e6c200dfff8a85c93e8d134111a521006c5a28b71956f5b687d6c718faf",
+      "line_end": 11,
+      "line_start": 11,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "66744ebb9dc5155f8404b0f8341abd12f1816e8d09b12c5ff703b6cbbe5bec93"
+        ]
+      },
+      "notes": "",
+      "path": ".bash_profile",
+      "risk_bearing": false,
+      "source_reference": ".bash_profile:11",
+      "upstream_row": {
+        "informative": 5,
+        "risk": 6,
+        "total": 11
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.bash_profile:12:risk",
+      "fingerprint_sha256": "6bb0f7fe866e8bd245f109b260954d21526267d254206a337633768586c4f132",
+      "line_end": 12,
+      "line_start": 12,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "6c59c177eda15f83d5c5d186e0c0d853c5985dd50f2e902112aac465bccde661"
+        ]
+      },
+      "notes": "",
+      "path": ".bash_profile",
+      "risk_bearing": true,
+      "source_reference": ".bash_profile:12",
+      "upstream_row": {
+        "informative": 5,
+        "risk": 6,
+        "total": 11
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.bash_profile:13:informative",
+      "fingerprint_sha256": "e2e4e1ba9193ff901b283376f0a6a3c5e609fab4e435eee4778be71ae3ed6825",
+      "line_end": 13,
+      "line_start": 13,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "d02c1125382cba92574afa1c1a29373d6ebefaed80b4b82d970749c10f4aaa5e"
+        ]
+      },
+      "notes": "",
+      "path": ".bash_profile",
+      "risk_bearing": false,
+      "source_reference": ".bash_profile:13",
+      "upstream_row": {
+        "informative": 5,
+        "risk": 6,
+        "total": 11
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.bash_profile:18:informative",
+      "fingerprint_sha256": "b6226f19f6cc0edede55f0ba8bac8184b10277302da51ca49fc1fc4c1688c016",
+      "line_end": 18,
+      "line_start": 18,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "a065380697bebd5f0976bd5f21f0b4100b97cd9d5c94f7987077755045610e08"
+        ]
+      },
+      "notes": "",
+      "path": ".bash_profile",
+      "risk_bearing": false,
+      "source_reference": ".bash_profile:18",
+      "upstream_row": {
+        "informative": 5,
+        "risk": 6,
+        "total": 11
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.bash_profile:19:informative",
+      "fingerprint_sha256": "bfd233276e88d31da3bcb1c16189feb83430e89cabe32f35984529d37666050c",
+      "line_end": 19,
+      "line_start": 19,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "b240617b74a04de7d157f7f944a8e45be37a1e5d3ee0af40bae426de6dffc515"
+        ]
+      },
+      "notes": "",
+      "path": ".bash_profile",
+      "risk_bearing": false,
+      "source_reference": ".bash_profile:19",
+      "upstream_row": {
+        "informative": 5,
+        "risk": 6,
+        "total": 11
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.bash_profile:20:risk",
+      "fingerprint_sha256": "b34de1a608a92ef51dc36e98a55437a3e59f7289c048b387aee163d3fb7f7e88",
+      "line_end": 20,
+      "line_start": 20,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "c6e16aedd6442607d4eb508c500081555219dc51562efe5abac82dfeb4c98f3b"
+        ]
+      },
+      "notes": "",
+      "path": ".bash_profile",
+      "risk_bearing": true,
+      "source_reference": ".bash_profile:20",
+      "upstream_row": {
+        "informative": 5,
+        "risk": 6,
+        "total": 11
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.bash_profile:21:risk",
+      "fingerprint_sha256": "148df4dc4af4aabd2be53b322162b93353963cb598f4ed8435663cf3cda05d76",
+      "line_end": 21,
+      "line_start": 21,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "ce659189e185cfc65bb8643013673e1cd958ab5c6f51f43077f40cc3d20cf18c"
+        ]
+      },
+      "notes": "",
+      "path": ".bash_profile",
+      "risk_bearing": true,
+      "source_reference": ".bash_profile:21",
+      "upstream_row": {
+        "informative": 5,
+        "risk": 6,
+        "total": 11
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.bash_profile:22:risk",
+      "fingerprint_sha256": "c9bb9cf0233a2f28d8c2fb04bff73730b5c9113f5797de99bbacaca42a152487",
+      "line_end": 22,
+      "line_start": 22,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "be179744e83469b92b4e609302738ac029c79fa1e0947fbfe1e0fa1e774afda9"
+        ]
+      },
+      "notes": "",
+      "path": ".bash_profile",
+      "risk_bearing": true,
+      "source_reference": ".bash_profile:22",
+      "upstream_row": {
+        "informative": 5,
+        "risk": 6,
+        "total": 11
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.bash_profile:23:risk",
+      "fingerprint_sha256": "3fe1433ce19802d3d1c1a38a821fadaf2ecc77d3f65093dc191aa36a4f1dfa5d",
+      "line_end": 23,
+      "line_start": 23,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "49ce41719c6fa91da0b25f1d7e4747858f86c1669dfbd3e7920bd2ec6d4d50b8"
+        ]
+      },
+      "notes": "",
+      "path": ".bash_profile",
+      "risk_bearing": true,
+      "source_reference": ".bash_profile:23",
+      "upstream_row": {
+        "informative": 5,
+        "risk": 6,
+        "total": 11
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.bash_profile:24:risk",
+      "fingerprint_sha256": "4cbcd34fee4ac5d07b950b6e0cfa0333681dea7fa9d34531e50b64fa36549550",
+      "line_end": 24,
+      "line_start": 24,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f"
+        ]
+      },
+      "notes": "",
+      "path": ".bash_profile",
+      "risk_bearing": true,
+      "source_reference": ".bash_profile:24",
+      "upstream_row": {
+        "informative": 5,
+        "risk": 6,
+        "total": 11
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.bash_profile:25:informative",
+      "fingerprint_sha256": "4536baf9facc0c7c14c73f0404aeca6105fc66661420fc69dab5ca4a83fe390f",
+      "line_end": 25,
+      "line_start": 25,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "30fc36c240346d3a7eaedd91531d4452a5811d41b5a5e8ea736cade61e90e7c2",
+          "d9b3662d5131065026ce9b1007d19f5a66d357da763c0e034dc35b4a8fcd06a4"
+        ]
+      },
+      "notes": "",
+      "path": ".bash_profile",
+      "risk_bearing": false,
+      "source_reference": ".bash_profile:25",
+      "upstream_row": {
+        "informative": 5,
+        "risk": 6,
+        "total": 11
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.bashrc:104:informative",
+      "fingerprint_sha256": "fb31340462a58c4fa0de02d2f3e248d35f3e59de08be3f4c949af137ef5cb778",
+      "line_end": 104,
+      "line_start": 104,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "264e53d93759bde067fd01ef2698f98d1253c730d12f021116f02eebcfa9ace6"
+        ]
+      },
+      "notes": "",
+      "path": ".bashrc",
+      "risk_bearing": false,
+      "source_reference": ".bashrc:104",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 3,
+        "total": 6
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.bashrc:105:risk",
+      "fingerprint_sha256": "513ee930f3d26a7d70b22e523d6b92ad6d432d52e19aba6ef57e89160f105578",
+      "line_end": 105,
+      "line_start": 105,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "c9d5f1bf5eafa657611ed3e9dcc9e0f2bb222e4c30a07ccf5db7cda734dc1157"
+        ]
+      },
+      "notes": "",
+      "path": ".bashrc",
+      "risk_bearing": true,
+      "source_reference": ".bashrc:105",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 3,
+        "total": 6
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.bashrc:106:risk",
+      "fingerprint_sha256": "8b3549a148078c15a16e6173be48f5a315e4939708169c93acc2cea993db11b7",
+      "line_end": 106,
+      "line_start": 106,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "cad0ceb7e5367d36791f37a764c61f3589594ed0a41c9f930eded668c7f95b81"
+        ]
+      },
+      "notes": "",
+      "path": ".bashrc",
+      "risk_bearing": true,
+      "source_reference": ".bashrc:106",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 3,
+        "total": 6
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.bashrc:107:informative",
+      "fingerprint_sha256": "596158ae3c8bbd26bd65e567f90c207869ef089ba406cc6b5f081db50326ec59",
+      "line_end": 107,
+      "line_start": 107,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "59cd84f4ac575861601573f271dcd391c67181cf62ab99f5710c34961f3fca80"
+        ]
+      },
+      "notes": "",
+      "path": ".bashrc",
+      "risk_bearing": false,
+      "source_reference": ".bashrc:107",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 3,
+        "total": 6
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.bashrc:108:informative",
+      "fingerprint_sha256": "bd8e6162ec6decaf3848a46515d50a32b68e996caf31097badf060d5aeef019b",
+      "line_end": 108,
+      "line_start": 108,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "264e53d93759bde067fd01ef2698f98d1253c730d12f021116f02eebcfa9ace6"
+        ]
+      },
+      "notes": "",
+      "path": ".bashrc",
+      "risk_bearing": false,
+      "source_reference": ".bashrc:108",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 3,
+        "total": 6
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.bashrc:109:risk",
+      "fingerprint_sha256": "6522462d7362235b4462bdd17121ce161af7ceeb73f784819566452d4c098d14",
+      "line_end": 109,
+      "line_start": 109,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "12f71894ff1dd152e9d6c4f90512b98f03f9a3262c1ca697abc20abfe2c19e14"
+        ]
+      },
+      "notes": "",
+      "path": ".bashrc",
+      "risk_bearing": true,
+      "source_reference": ".bashrc:109",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 3,
+        "total": 6
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.docker/.dockercfg:3:informative",
+      "fingerprint_sha256": "44316805e277b74e8f11af9d18dce64770648def8ba6efa8a300b9dbda978b9f",
+      "line_end": 3,
+      "line_start": 3,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "82244417f956ac7c599f191593f7e441a4fafa20a4158fd52e154f1dc4c8ed92",
+          "a8d6627359ce1df849ef30ff11dba645b68acc369fa29e558cd094ef32dc33c5"
+        ]
+      },
+      "notes": "",
+      "path": ".docker/.dockercfg",
+      "risk_bearing": false,
+      "source_reference": ".docker/.dockercfg:3",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 2,
+        "total": 4
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.docker/.dockercfg:4:risk",
+      "fingerprint_sha256": "1ea83a728c2e73d4b8c708db91e33bcfe9fffacd621654f3c9b11d0f09e2ea8b",
+      "line_end": 4,
+      "line_start": 4,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "504fb3372455ba12999cfd042a300786cbced44fdc5aea7209838e5923f8ab7a",
+          "bdf49c3c3882102fc017ffb661108c63a836d065888a4093994398cc55c2ea2f"
+        ]
+      },
+      "notes": "",
+      "path": ".docker/.dockercfg",
+      "risk_bearing": true,
+      "source_reference": ".docker/.dockercfg:4",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 2,
+        "total": 4
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.docker/.dockercfg:7:informative",
+      "fingerprint_sha256": "ead6fda6f4a3b5d39268964352948c21d0c80471644bbf9597fc49021b32c0fb",
+      "line_end": 7,
+      "line_start": 7,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "82244417f956ac7c599f191593f7e441a4fafa20a4158fd52e154f1dc4c8ed92",
+          "a8d6627359ce1df849ef30ff11dba645b68acc369fa29e558cd094ef32dc33c5"
+        ]
+      },
+      "notes": "",
+      "path": ".docker/.dockercfg",
+      "risk_bearing": false,
+      "source_reference": ".docker/.dockercfg:7",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 2,
+        "total": 4
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.docker/.dockercfg:8:risk",
+      "fingerprint_sha256": "b01c84ea6d873ff45283c4139df59eb84606d60fe948091763f7fe90d265512f",
+      "line_end": 8,
+      "line_start": 8,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "504fb3372455ba12999cfd042a300786cbced44fdc5aea7209838e5923f8ab7a",
+          "bdf49c3c3882102fc017ffb661108c63a836d065888a4093994398cc55c2ea2f"
+        ]
+      },
+      "notes": "",
+      "path": ".docker/.dockercfg",
+      "risk_bearing": true,
+      "source_reference": ".docker/.dockercfg:8",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 2,
+        "total": 4
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.docker/config.json:4:informative",
+      "fingerprint_sha256": "15ef9b235165ef6a837f310a22ec3ae7c896a802a5a53bee0ad0f64d18f562ca",
+      "line_end": 4,
+      "line_start": 4,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "82244417f956ac7c599f191593f7e441a4fafa20a4158fd52e154f1dc4c8ed92",
+          "a8d6627359ce1df849ef30ff11dba645b68acc369fa29e558cd094ef32dc33c5"
+        ]
+      },
+      "notes": "",
+      "path": ".docker/config.json",
+      "risk_bearing": false,
+      "source_reference": ".docker/config.json:4",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 2,
+        "total": 4
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.docker/config.json:5:risk",
+      "fingerprint_sha256": "b27a6fbbca301c501c31725901c9e8600aa26ee79232f5460880e98e728ef88b",
+      "line_end": 5,
+      "line_start": 5,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "504fb3372455ba12999cfd042a300786cbced44fdc5aea7209838e5923f8ab7a",
+          "bdf49c3c3882102fc017ffb661108c63a836d065888a4093994398cc55c2ea2f"
+        ]
+      },
+      "notes": "",
+      "path": ".docker/config.json",
+      "risk_bearing": true,
+      "source_reference": ".docker/config.json:5",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 2,
+        "total": 4
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.docker/config.json:8:informative",
+      "fingerprint_sha256": "d131abc5ee569a31b1b684169c6d51dfac520cc23011b5c90ec0975671fc6ce9",
+      "line_end": 8,
+      "line_start": 8,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "82244417f956ac7c599f191593f7e441a4fafa20a4158fd52e154f1dc4c8ed92",
+          "a8d6627359ce1df849ef30ff11dba645b68acc369fa29e558cd094ef32dc33c5"
+        ]
+      },
+      "notes": "",
+      "path": ".docker/config.json",
+      "risk_bearing": false,
+      "source_reference": ".docker/config.json:8",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 2,
+        "total": 4
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.docker/config.json:9:risk",
+      "fingerprint_sha256": "0ca89f464e91ef1f0e805576a5b79146e9f6fcd859d87cd3fbc0d69fc8c2e271",
+      "line_end": 9,
+      "line_start": 9,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "504fb3372455ba12999cfd042a300786cbced44fdc5aea7209838e5923f8ab7a",
+          "bdf49c3c3882102fc017ffb661108c63a836d065888a4093994398cc55c2ea2f"
+        ]
+      },
+      "notes": "",
+      "path": ".docker/config.json",
+      "risk_bearing": true,
+      "source_reference": ".docker/config.json:9",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 2,
+        "total": 4
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.esmtprc:2:informative",
+      "fingerprint_sha256": "e3847a03d72c465d9cbfa724d66e8459ebdae19578dd8fcda5240148b096d178",
+      "line_end": 2,
+      "line_start": 2,
+      "location": "line",
+      "matching_policy": "line_range",
+      "notes": "",
+      "path": ".esmtprc",
+      "risk_bearing": false,
+      "source_reference": ".esmtprc:2",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 2,
+        "total": 3
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.esmtprc:3:informative",
+      "fingerprint_sha256": "4237c684a6d69d5a03c5f8218eb02ea5a0e7ce9752cbf9719c7004f49507136b",
+      "line_end": 3,
+      "line_start": 3,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "264e53d93759bde067fd01ef2698f98d1253c730d12f021116f02eebcfa9ace6"
+        ]
+      },
+      "notes": "",
+      "path": ".esmtprc",
+      "risk_bearing": false,
+      "source_reference": ".esmtprc:3",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 2,
+        "total": 3
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.esmtprc:4:risk",
+      "fingerprint_sha256": "5a07f4377dc8ffe4c52fadc18ff7066530344cca4ebef276572454b5542f112a",
+      "line_end": 4,
+      "line_start": 4,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
+        ]
+      },
+      "notes": "",
+      "path": ".esmtprc",
+      "risk_bearing": true,
+      "source_reference": ".esmtprc:4",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 2,
+        "total": 3
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.ftpconfig:3:informative",
+      "fingerprint_sha256": "1f361f40cf0f150685c1860adf92fa8b777347d06166fd0843ec04bbb8b2b7dd",
+      "line_end": 3,
+      "line_start": 3,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "4740ae6347b0172c01254ff55bae5aff5199f4446e7f6d643d40185b3f475145",
+          "a379a6f6eeafb9a55e378c118034e2751e682fab9f2d30ab13d2125586ce1947"
+        ]
+      },
+      "notes": "",
+      "path": ".ftpconfig",
+      "risk_bearing": false,
+      "source_reference": ".ftpconfig:3",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 3,
+        "total": 5
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.ftpconfig:5:informative",
+      "fingerprint_sha256": "5772465b736bebd7614db5ebc33b3e76d3c3f6a6c88496b5c9e1d281a9f65e05",
+      "line_end": 5,
+      "line_start": 5,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb",
+          "4813494d137e1631bba301d5acab6e7bb7aa74ce1185d456565ef51d737677b2"
+        ]
+      },
+      "notes": "",
+      "path": ".ftpconfig",
+      "risk_bearing": false,
+      "source_reference": ".ftpconfig:5",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 3,
+        "total": 5
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.ftpconfig:6:risk",
+      "fingerprint_sha256": "a082ef596e7dac3f495c26111cd7a3e23e1d33f62933beef9556a572a2638a05",
+      "line_end": 6,
+      "line_start": 6,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "20d2fe5e369db54ec7090639a9dc30ec4d608604936239d39e2de07fda09eb0b",
+          "d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1"
+        ]
+      },
+      "notes": "",
+      "path": ".ftpconfig",
+      "risk_bearing": true,
+      "source_reference": ".ftpconfig:6",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 3,
+        "total": 5
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.ftpconfig:8:informative",
+      "fingerprint_sha256": "2c5cb382629055f5ca2d43c37bf3800231832579fed48506484f9c0eaba3f7ab",
+      "line_end": 8,
+      "line_start": 8,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "a7d1f26a8218716e0dd2bd21f67933c52a1097393a36a3590c4b9831304b34d2",
+          "b71199ebd070b36beab7317920c2c2f1d777df8d05e5527d8458fda57cb17a7a"
+        ]
+      },
+      "notes": "",
+      "path": ".ftpconfig",
+      "risk_bearing": false,
+      "source_reference": ".ftpconfig:8",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 3,
+        "total": 5
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.ftpconfig:12:risk",
+      "fingerprint_sha256": "f4db98819f928e16c9a765168987781ab53a7f4f0d6adf62275345ddb1b528ef",
+      "line_end": 12,
+      "line_start": 12,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "1e089e3c5323ad80a90767bdd5907297b4138163f027097fd3bdbeab528d2d68",
+          "b9f195c5cc7ef6afadbfbc42892ad47d3b24c6bc94bb510c4564a90a14e8b799"
+        ]
+      },
+      "notes": "",
+      "path": ".ftpconfig",
+      "risk_bearing": true,
+      "source_reference": ".ftpconfig:12",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 3,
+        "total": 5
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.git-credentials:1:risk",
+      "fingerprint_sha256": "984e032d8259f87f68ed01bd2d117efd673bbf214daf7125bbfbfdd1508f9aee",
+      "line_end": 1,
+      "line_start": 1,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "efb0fcff7e4cf69e801c9a124da1c6bc596598186149dbd9f56ea58fea9c39db"
+        ]
+      },
+      "notes": "",
+      "path": ".git-credentials",
+      "risk_bearing": true,
+      "source_reference": ".git-credentials:1",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 1,
+        "total": 1
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.idea/WebServers.xml:5:informative",
+      "fingerprint_sha256": "3d816f97546cfcf79e934a583ca0a9593bc5a968b96970555e230f40b2389a0c",
+      "line_end": 5,
+      "line_start": 5,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "100680ad546ce6a577f42f52df33b4cfdca756859e664b8d7de329b150d09ce9",
+          "4813494d137e1631bba301d5acab6e7bb7aa74ce1185d456565ef51d737677b2",
+          "6bf2bc9f59089caa15402babdb27f7534ff8263b4c6a4c19b24ad5cb0fc519ea",
+          "ba7290f41e1890b8c2743ae53158e9fc7ec10d63de496518d507f7bf0553731e",
+          "eaa98ec2cb5c2c6b2fdc3562d67fa4db9fb1cef07e4d43e0dbe8243bbd4fef3a"
+        ]
+      },
+      "notes": "",
+      "path": ".idea/WebServers.xml",
+      "risk_bearing": false,
+      "source_reference": ".idea/WebServers.xml:5",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 1,
+        "total": 2
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.idea/WebServers.xml:6:risk",
+      "fingerprint_sha256": "b714fb7f2798b4e960ed44d5ff52502b831b3d5ccd19ed72f1c02f084c676ec8",
+      "line_end": 6,
+      "line_start": 6,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "373e2eb716e1cc36ad7c4e6911f0f0c3e79fd8cf070649cb4fdeb73c8f8d4799",
+          "4813494d137e1631bba301d5acab6e7bb7aa74ce1185d456565ef51d737677b2",
+          "4924714927f6b8012f87bc57a6b24a31f5b5937fe3e754b029faad0ac47551ca",
+          "a184fed6cfdd97ed2f26ab97ac6d70e76ba6c6fdab5a1df9a557aca8cb971645",
+          "a379a6f6eeafb9a55e378c118034e2751e682fab9f2d30ab13d2125586ce1947",
+          "e533f8cecbcb440bf1b46d07078d9afa111829e90e1110cd2caaafaf7fb83497"
+        ]
+      },
+      "notes": "",
+      "path": ".idea/WebServers.xml",
+      "risk_bearing": true,
+      "source_reference": ".idea/WebServers.xml:6",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 1,
+        "total": 2
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:6:informative",
+      "fingerprint_sha256": "4dc464c2e784d829111c625612048b30d3e99a7370e50e1a5e8155996b3157c9",
+      "line_end": 6,
+      "line_start": 6,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "7063dece7cccf374d9fa1ee30ff23300fa42477e064e69be7bb6d01c0cfff682",
+          "996e1f714b08e971ec79e3bea686287e66441f043177999a13dbc546d8fe402a"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:6",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:11:risk",
+      "fingerprint_sha256": "cebedcc369ce886e892db6c17ac55ad75cc19e5c96a0ac1ff5e40c3a9b4bdc8d",
+      "line_end": 11,
+      "line_start": 11,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "7b3c7505bc6e7417d917ee66f5ff6b96c254cec94022781bbd186e1c857c7f44",
+          "a9ef40f5c269c6038f3cb957af504c10fe4fa09f568c49cfbc85ecc8f972e1ff"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": true,
+      "source_reference": ".mozilla/firefox/logins.json:11",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:12:risk",
+      "fingerprint_sha256": "85d7de386d2c1dbf4d0fe68784d51c2125034fe3ad7310ece369795393e6bedf",
+      "line_end": 12,
+      "line_start": 12,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "1220b57e3ab5083c0558ef8279071cb04c20fa10c6fe605959938d7190faad0c",
+          "8da6e5bc2eeb535f711fc2cfd481c641fb4f8702691a120ff0f88fc4f567d58a"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": true,
+      "source_reference": ".mozilla/firefox/logins.json:12",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:15:informative",
+      "fingerprint_sha256": "74b071279460a19c52205262b807d496ce49a78a2e8c9d88174331f3bf08dde2",
+      "line_end": 15,
+      "line_start": 15,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "09811643f4ededd5c05fa822e6aff3ed10789d21fca2fcadfa8ee819e527c5c7",
+          "cedf2f03e812192c96f8fba7d39589993a53b55d71336b96c8ef046bb3fc82bf"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:15",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:16:informative",
+      "fingerprint_sha256": "1b5a0f61fbfacfe642efee0ab4086100bd04e43009f7f0cc35f81e00ca718c41",
+      "line_end": 16,
+      "line_start": 16,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "09811643f4ededd5c05fa822e6aff3ed10789d21fca2fcadfa8ee819e527c5c7",
+          "a3d40fa2011a3ab5f79797cad607c51577a2332e36f86aac1ee638a6278aa7d4"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:16",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:17:informative",
+      "fingerprint_sha256": "3b7b7b1b20c4d838e197db88e231bc01e0ca060f31618a54efdc70103e009d98",
+      "line_end": 17,
+      "line_start": 17,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "09811643f4ededd5c05fa822e6aff3ed10789d21fca2fcadfa8ee819e527c5c7",
+          "5955b64f2c121ba3f9160a219cc2d678fc8711186a94929b3c49b532a0233033"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:17",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:18:informative",
+      "fingerprint_sha256": "a264471b0e955c88f731d5096bee32409a871f3708996e4ba249a1d8497ce267",
+      "line_end": 18,
+      "line_start": 18,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "f71d68061afd9fa7cbc43bc0af01d46773d49213f4dd29ef0b091773fcc72785"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:18",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:22:informative",
+      "fingerprint_sha256": "ae834bd1a3611bbe1d4f8b5b4118ed6af4fbaae9b52fe092a3efbd0c28a8a80d",
+      "line_end": 22,
+      "line_start": 22,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "7063dece7cccf374d9fa1ee30ff23300fa42477e064e69be7bb6d01c0cfff682",
+          "996e1f714b08e971ec79e3bea686287e66441f043177999a13dbc546d8fe402a"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:22",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:27:risk",
+      "fingerprint_sha256": "b0c493695c574ee7aa90d8c3010b1d105d81d04b9acfe165ca39f6fb4d5366aa",
+      "line_end": 27,
+      "line_start": 27,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "7b3c7505bc6e7417d917ee66f5ff6b96c254cec94022781bbd186e1c857c7f44",
+          "d54415c2ad82b224a424e8ff12e5ed9e01d4c3afce36689010b92f48f274f5a8"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": true,
+      "source_reference": ".mozilla/firefox/logins.json:27",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:28:risk",
+      "fingerprint_sha256": "8af49fba6a1129d3124cb1f08462bd5c59d2742e004a29e7510d2e0d25618c7d",
+      "line_end": 28,
+      "line_start": 28,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "1220b57e3ab5083c0558ef8279071cb04c20fa10c6fe605959938d7190faad0c",
+          "8a24058e8e456240b125677d65b07faefe0208c7441e3c290e0b2b611079d098"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": true,
+      "source_reference": ".mozilla/firefox/logins.json:28",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:31:informative",
+      "fingerprint_sha256": "de72a10c55837e5069ebcabf8c1ab0d3e222b604f6ed989420053b72b0c5fba9",
+      "line_end": 31,
+      "line_start": 31,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "76390370d69c38dfd0afe07f85654217827f262fc4145544ef4089b2db7b7398",
+          "cedf2f03e812192c96f8fba7d39589993a53b55d71336b96c8ef046bb3fc82bf"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:31",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:32:informative",
+      "fingerprint_sha256": "03c35dc9ff90c8c5580bf32de7c7ef0d3cbe3d4c70d9b949ff98b8e209ee8b87",
+      "line_end": 32,
+      "line_start": 32,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "76390370d69c38dfd0afe07f85654217827f262fc4145544ef4089b2db7b7398",
+          "a3d40fa2011a3ab5f79797cad607c51577a2332e36f86aac1ee638a6278aa7d4"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:32",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:33:informative",
+      "fingerprint_sha256": "9a78405a757a787b50e59ce59ce1095193c04e3fc07859c12eefcedd52a6fff3",
+      "line_end": 33,
+      "line_start": 33,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "5955b64f2c121ba3f9160a219cc2d678fc8711186a94929b3c49b532a0233033",
+          "76390370d69c38dfd0afe07f85654217827f262fc4145544ef4089b2db7b7398"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:33",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:34:informative",
+      "fingerprint_sha256": "59291347dc094759f60d85d842ffd88b03cde1d3de1d806c47888cd2f160308b",
+      "line_end": 34,
+      "line_start": 34,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "f71d68061afd9fa7cbc43bc0af01d46773d49213f4dd29ef0b091773fcc72785"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:34",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:38:informative",
+      "fingerprint_sha256": "81deb21127efd1698a0872270679a26cf4fe9b23fa3169757a9c0e3808aa0f92",
+      "line_end": 38,
+      "line_start": 38,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "7063dece7cccf374d9fa1ee30ff23300fa42477e064e69be7bb6d01c0cfff682",
+          "996e1f714b08e971ec79e3bea686287e66441f043177999a13dbc546d8fe402a"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:38",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:43:risk",
+      "fingerprint_sha256": "7d574d0cd68deab47424ede990a3b17b475f24db0e1c167185362a5804359e29",
+      "line_end": 43,
+      "line_start": 43,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "7b3c7505bc6e7417d917ee66f5ff6b96c254cec94022781bbd186e1c857c7f44",
+          "ee6e3cf84ac826feff10901b6da9d47d8349ea7aed6228fa68c4f448d97c43c2"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": true,
+      "source_reference": ".mozilla/firefox/logins.json:43",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:44:risk",
+      "fingerprint_sha256": "5fa975cf6b445647d57c5e93fdeef7846a08e95001d4e40c604c2b23ce3c0561",
+      "line_end": 44,
+      "line_start": 44,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "1220b57e3ab5083c0558ef8279071cb04c20fa10c6fe605959938d7190faad0c",
+          "2f368dcee067fd3f35325d099c0275554cde189ed659f9c85def58ccfa1f23b6"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": true,
+      "source_reference": ".mozilla/firefox/logins.json:44",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:47:informative",
+      "fingerprint_sha256": "73f5b9d041b72c3b72a1ec55ab591f74e028caff9462d4a7765a0990708d9b56",
+      "line_end": 47,
+      "line_start": 47,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "44354a90be2ce43e084adba007223bc138ce7dfdbf00c3908c03d8ade498c6e9",
+          "cedf2f03e812192c96f8fba7d39589993a53b55d71336b96c8ef046bb3fc82bf"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:47",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:48:informative",
+      "fingerprint_sha256": "e854977820691aec7365482fe250418d8107c8b99dd64d988885a20a2b3b174a",
+      "line_end": 48,
+      "line_start": 48,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "44354a90be2ce43e084adba007223bc138ce7dfdbf00c3908c03d8ade498c6e9",
+          "a3d40fa2011a3ab5f79797cad607c51577a2332e36f86aac1ee638a6278aa7d4"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:48",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:49:informative",
+      "fingerprint_sha256": "d0d5d0febcce0e90e1a59dbe2b5d50c09fada61e8be4faa2ccc58efde90fd8fc",
+      "line_end": 49,
+      "line_start": 49,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "44354a90be2ce43e084adba007223bc138ce7dfdbf00c3908c03d8ade498c6e9",
+          "5955b64f2c121ba3f9160a219cc2d678fc8711186a94929b3c49b532a0233033"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:49",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:50:informative",
+      "fingerprint_sha256": "f0e02708d75cd7678c8e481c58916a1f886f8cf7b965432d36aa4a3c8dcd20ac",
+      "line_end": 50,
+      "line_start": 50,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "f71d68061afd9fa7cbc43bc0af01d46773d49213f4dd29ef0b091773fcc72785"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:50",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:54:informative",
+      "fingerprint_sha256": "cd6a5a9582d52a636a697fb50aa85213ce9c15299c9d87f3eed89a12daee303f",
+      "line_end": 54,
+      "line_start": 54,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "7063dece7cccf374d9fa1ee30ff23300fa42477e064e69be7bb6d01c0cfff682",
+          "996e1f714b08e971ec79e3bea686287e66441f043177999a13dbc546d8fe402a"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:54",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:59:risk",
+      "fingerprint_sha256": "31bae718400c9293dac2c9bba749722141618ff6173ffacd185e1c556c9f5509",
+      "line_end": 59,
+      "line_start": 59,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "7b3c7505bc6e7417d917ee66f5ff6b96c254cec94022781bbd186e1c857c7f44",
+          "f3953fc528609c5a04fddc10d6218a7a2a5ff67c5cb46285fe06959d7e3b92b5"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": true,
+      "source_reference": ".mozilla/firefox/logins.json:59",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:60:risk",
+      "fingerprint_sha256": "94cd7cd9e68f43c48465bce65a715462cb8d622419a66b016e77db23d08297d5",
+      "line_end": 60,
+      "line_start": 60,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "11d7743e0ae0479f22e637b30e5f9d3064afc30967d37519f32d2e84d2ec121b",
+          "1220b57e3ab5083c0558ef8279071cb04c20fa10c6fe605959938d7190faad0c"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": true,
+      "source_reference": ".mozilla/firefox/logins.json:60",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:63:informative",
+      "fingerprint_sha256": "0a989950ed6621f82ab0bb2d6ae304801441c497d2bf1558e96f97e3ea041464",
+      "line_end": 63,
+      "line_start": 63,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "31d47e4ece917ffeb56b28fc6f81db89c0fd79cb39ca0a2b3cb60fa6076b866b",
+          "cedf2f03e812192c96f8fba7d39589993a53b55d71336b96c8ef046bb3fc82bf"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:63",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:64:informative",
+      "fingerprint_sha256": "e964688798e930da2690b0461243b4dd5a9cd1259c4267fa6791c13fb6ee4b66",
+      "line_end": 64,
+      "line_start": 64,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "31d47e4ece917ffeb56b28fc6f81db89c0fd79cb39ca0a2b3cb60fa6076b866b",
+          "a3d40fa2011a3ab5f79797cad607c51577a2332e36f86aac1ee638a6278aa7d4"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:64",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:65:informative",
+      "fingerprint_sha256": "390524fb7917e0eeeb62754f8018e1343504c1489bee053dfff809b064fbc163",
+      "line_end": 65,
+      "line_start": 65,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "31d47e4ece917ffeb56b28fc6f81db89c0fd79cb39ca0a2b3cb60fa6076b866b",
+          "5955b64f2c121ba3f9160a219cc2d678fc8711186a94929b3c49b532a0233033"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:65",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.mozilla/firefox/logins.json:66:informative",
+      "fingerprint_sha256": "eec2eb8422e76a056a107fb69ed9f8e7c7cc55b94093b324fabdc7c98f34d135",
+      "line_end": 66,
+      "line_start": 66,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "f71d68061afd9fa7cbc43bc0af01d46773d49213f4dd29ef0b091773fcc72785"
+        ]
+      },
+      "notes": "",
+      "path": ".mozilla/firefox/logins.json",
+      "risk_bearing": false,
+      "source_reference": ".mozilla/firefox/logins.json:66",
+      "upstream_row": {
+        "informative": 20,
+        "risk": 8,
+        "total": 28
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.netrc:1:risk",
+      "fingerprint_sha256": "266c8730c744157a851b0e90d034f45880efb3588a4480f6d5b8776ea3996f15",
+      "line_end": 1,
+      "line_start": 1,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "04cbc13632f4740be67b163d34746b0ed353056b08b133d6edea1fd2d3a19f44",
+          "264e53d93759bde067fd01ef2698f98d1253c730d12f021116f02eebcfa9ace6",
+          "428821350e9691491f616b754cd8315fb86d797ab35d843479e732ef90665324",
+          "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+          "9b8769a4a742959a2d0298c36fb70623f2dfacda8436237df08d8dfd5b37374c",
+          "bc020a35b7f9cb1382e7b534c68e3c531d849b119bf14f75ddead6cc45c3ccc1"
+        ]
+      },
+      "notes": "",
+      "path": ".netrc",
+      "risk_bearing": true,
+      "source_reference": ".netrc:1",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 2,
+        "total": 2
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.netrc:2:risk",
+      "fingerprint_sha256": "a0154bc580fb0a0e6fd6eeb85c962cbc841860f4a8d0f0a02cccebadc9391b54",
+      "line_end": 2,
+      "line_start": 2,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "264e53d93759bde067fd01ef2698f98d1253c730d12f021116f02eebcfa9ace6",
+          "428821350e9691491f616b754cd8315fb86d797ab35d843479e732ef90665324",
+          "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+          "9b8769a4a742959a2d0298c36fb70623f2dfacda8436237df08d8dfd5b37374c",
+          "baf8948be444889e4c5309caa2da8bb3b3e14e4ebda34e5d87eaf4f5c44d22b2",
+          "bc020a35b7f9cb1382e7b534c68e3c531d849b119bf14f75ddead6cc45c3ccc1"
+        ]
+      },
+      "notes": "",
+      "path": ".netrc",
+      "risk_bearing": true,
+      "source_reference": ".netrc:2",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 2,
+        "total": 2
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.npmrc:5:informative",
+      "fingerprint_sha256": "49f423836dfe989c15033f03babc18d2d7453e9a90532bb3626593ba74926016",
+      "line_end": 5,
+      "line_start": 5,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "963dd12f8d2f181ee9bef66a67f7b3bd87f47e9e3ecc5b534c85766b227daa28"
+        ]
+      },
+      "notes": "",
+      "path": ".npmrc",
+      "risk_bearing": false,
+      "source_reference": ".npmrc:5",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 2,
+        "total": 3
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.npmrc:7:risk",
+      "fingerprint_sha256": "5aaccf347f1021c0f3b7ac5b89a47daa658c30ff5f43bdb378b4e4563e8bac72",
+      "line_end": 7,
+      "line_start": 7,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "12d8d9ea56a1acfb1a0acb463af53fdf460e9a0e88f8ea1aab487b6b91e6ff92"
+        ]
+      },
+      "notes": "",
+      "path": ".npmrc",
+      "risk_bearing": true,
+      "source_reference": ".npmrc:7",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 2,
+        "total": 3
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.npmrc:9:risk",
+      "fingerprint_sha256": "aec3569d3481e06a587fcbd37b8afcdd951528584783926cc456f8ce4db010a2",
+      "line_end": 9,
+      "line_start": 9,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "465c353cf150a3510388daf826e5a897b318120653d2e86cb44eac880cdfbef6",
+          "94d319de07193665cddfd1de09f9ccc65c035f4f7318affb3296d6b6ef585f39"
+        ]
+      },
+      "notes": "",
+      "path": ".npmrc",
+      "risk_bearing": true,
+      "source_reference": ".npmrc:9",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 2,
+        "total": 3
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.remote-sync.json:9:informative",
+      "fingerprint_sha256": "d8132fc865a6ecceee7f62ba583f14631e2bb8d74a2051d97bbdb173b7d27a2a",
+      "line_end": 9,
+      "line_start": 9,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "7063dece7cccf374d9fa1ee30ff23300fa42477e064e69be7bb6d01c0cfff682",
+          "a379a6f6eeafb9a55e378c118034e2751e682fab9f2d30ab13d2125586ce1947"
+        ]
+      },
+      "notes": "",
+      "path": ".remote-sync.json",
+      "risk_bearing": false,
+      "source_reference": ".remote-sync.json:9",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 1,
+        "total": 3
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.remote-sync.json:16:informative",
+      "fingerprint_sha256": "e89ac2f21994aaa76ace74e893d2b84aa4b4c2f8c7859a7660dd93e269e17fec",
+      "line_end": 16,
+      "line_start": 16,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "16f78a7d6317f102bbd95fc9a4f3ff2e3249287690b8bdad6b7810f82b34ace3",
+          "4813494d137e1631bba301d5acab6e7bb7aa74ce1185d456565ef51d737677b2"
+        ]
+      },
+      "notes": "",
+      "path": ".remote-sync.json",
+      "risk_bearing": false,
+      "source_reference": ".remote-sync.json:16",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 1,
+        "total": 3
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.remote-sync.json:17:risk",
+      "fingerprint_sha256": "cd6c424097d75238b71d49846fd9852e6fa5478b25f47f10f514512f9c7efd06",
+      "line_end": 17,
+      "line_start": 17,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "20d2fe5e369db54ec7090639a9dc30ec4d608604936239d39e2de07fda09eb0b",
+          "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
+        ]
+      },
+      "notes": "",
+      "path": ".remote-sync.json",
+      "risk_bearing": true,
+      "source_reference": ".remote-sync.json:17",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 1,
+        "total": 3
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.ssh/id_rsa:1:risk",
+      "fingerprint_sha256": "35c68dbd1773097cf7a30b02f9c76637cd49ad984277371182b9dba194df3f4c",
+      "line_end": 27,
+      "line_start": 1,
+      "location": "range:1-27",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false
+      },
+      "notes": "",
+      "path": ".ssh/id_rsa",
+      "risk_bearing": true,
+      "source_reference": ".ssh/id_rsa:1-27",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 1,
+        "total": 1
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.ssh/id_rsa.pub:1:informative",
+      "fingerprint_sha256": "c91c2068c774356e42347126be26e07f1bb71d2d64f2d3f474cb3747bed48106",
+      "line_end": 1,
+      "line_start": 1,
+      "location": "line",
+      "matching_policy": "line_range",
+      "notes": "",
+      "path": ".ssh/id_rsa.pub",
+      "risk_bearing": false,
+      "source_reference": ".ssh/id_rsa.pub:1",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 0,
+        "total": 1
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.vscode/sftp.json:3:informative",
+      "fingerprint_sha256": "aa7dfbc9e6d2267ce762d991336a8b7a175d5e1ea675df63611c2a4bea5c8611",
+      "line_end": 3,
+      "line_start": 3,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "4740ae6347b0172c01254ff55bae5aff5199f4446e7f6d643d40185b3f475145",
+          "a379a6f6eeafb9a55e378c118034e2751e682fab9f2d30ab13d2125586ce1947"
+        ]
+      },
+      "notes": "",
+      "path": ".vscode/sftp.json",
+      "risk_bearing": false,
+      "source_reference": ".vscode/sftp.json:3",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 1,
+        "total": 4
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.vscode/sftp.json:4:informative",
+      "fingerprint_sha256": "7142d9878630737df009b5c218207a40aa5d4980b78d3cd8e2cea1a7140a2490",
+      "line_end": 4,
+      "line_start": 4,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "8fa4c06421efb485280a5e96fef77a590997ca3e243dbe1573ba2298c7a92925",
+          "a7d1f26a8218716e0dd2bd21f67933c52a1097393a36a3590c4b9831304b34d2"
+        ]
+      },
+      "notes": "",
+      "path": ".vscode/sftp.json",
+      "risk_bearing": false,
+      "source_reference": ".vscode/sftp.json:4",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 1,
+        "total": 4
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.vscode/sftp.json:5:informative",
+      "fingerprint_sha256": "800a78fe21ae9a6d6bbcfb3277268cd42214df12139784a336f6c76df5678150",
+      "line_end": 5,
+      "line_start": 5,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "16f78a7d6317f102bbd95fc9a4f3ff2e3249287690b8bdad6b7810f82b34ace3",
+          "4813494d137e1631bba301d5acab6e7bb7aa74ce1185d456565ef51d737677b2"
+        ]
+      },
+      "notes": "",
+      "path": ".vscode/sftp.json",
+      "risk_bearing": false,
+      "source_reference": ".vscode/sftp.json:5",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 1,
+        "total": 4
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:.vscode/sftp.json:6:risk",
+      "fingerprint_sha256": "a420061cc879a87a1fc399e8192e6ba42bd8a901e06fd9d7261dd63e0f5bd408",
+      "line_end": 6,
+      "line_start": 6,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+          "ebf51a8e2d373e220e0aea79575f03ed4f64c6f1f95af134375aa74476987e9f"
+        ]
+      },
+      "notes": "",
+      "path": ".vscode/sftp.json",
+      "risk_bearing": true,
+      "source_reference": ".vscode/sftp.json:6",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 1,
+        "total": 4
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:cloud/.credentials:3:informative",
+      "fingerprint_sha256": "441db01d103839305a900585c11f416dacef7ba23bc89cc526e89b14fbe82323",
+      "line_end": 3,
+      "line_start": 3,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "66744ebb9dc5155f8404b0f8341abd12f1816e8d09b12c5ff703b6cbbe5bec93"
+        ]
+      },
+      "notes": "",
+      "path": "cloud/.credentials",
+      "risk_bearing": false,
+      "source_reference": "cloud/.credentials:3",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 2,
+        "total": 4
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:cloud/.credentials:4:risk",
+      "fingerprint_sha256": "64808f1866ceb2a1f102b64ace09e9de3ec4fa89cfb6816b5497abcee065beb2",
+      "line_end": 4,
+      "line_start": 4,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "6c59c177eda15f83d5c5d186e0c0d853c5985dd50f2e902112aac465bccde661"
+        ]
+      },
+      "notes": "",
+      "path": "cloud/.credentials",
+      "risk_bearing": true,
+      "source_reference": "cloud/.credentials:4",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 2,
+        "total": 4
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:cloud/.credentials:6:informative",
+      "fingerprint_sha256": "88b6d8a3e3287676fa2ba00b4c5bc8f21ffddc16c6ed74796238e137f4bacbcb",
+      "line_end": 6,
+      "line_start": 6,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "66744ebb9dc5155f8404b0f8341abd12f1816e8d09b12c5ff703b6cbbe5bec93"
+        ]
+      },
+      "notes": "",
+      "path": "cloud/.credentials",
+      "risk_bearing": false,
+      "source_reference": "cloud/.credentials:6",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 2,
+        "total": 4
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:cloud/.credentials:7:risk",
+      "fingerprint_sha256": "3e1b49a49bfca393d62d238bb70c1392c3dd9fbb3bd9ee4cea67b46b05830138",
+      "line_end": 7,
+      "line_start": 7,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "6c59c177eda15f83d5c5d186e0c0d853c5985dd50f2e902112aac465bccde661"
+        ]
+      },
+      "notes": "",
+      "path": "cloud/.credentials",
+      "risk_bearing": true,
+      "source_reference": "cloud/.credentials:7",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 2,
+        "total": 4
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:cloud/.s3cfg:1:risk",
+      "fingerprint_sha256": "27ad98efda7fd99ae2e187256dbc7c383199f289949b1ad3a063dfca236421a7",
+      "line_end": 1,
+      "line_start": 1,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "66744ebb9dc5155f8404b0f8341abd12f1816e8d09b12c5ff703b6cbbe5bec93"
+        ]
+      },
+      "notes": "",
+      "path": "cloud/.s3cfg",
+      "risk_bearing": true,
+      "source_reference": "cloud/.s3cfg:1",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 1,
+        "total": 3
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:cloud/.s3cfg:2:informative",
+      "fingerprint_sha256": "e8d321412b67c5b0382550fa9cb25972e34a1dbbdc9a46d50dd551ad47fa5600",
+      "line_end": 2,
+      "line_start": 2,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "6c59c177eda15f83d5c5d186e0c0d853c5985dd50f2e902112aac465bccde661"
+        ]
+      },
+      "notes": "",
+      "path": "cloud/.s3cfg",
+      "risk_bearing": false,
+      "source_reference": "cloud/.s3cfg:2",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 1,
+        "total": 3
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:cloud/.s3cfg:4:informative",
+      "fingerprint_sha256": "22a7825f85d2b89942af886c9749752ea3b012c3389c9d198e45884e7d143ab8",
+      "line_end": 4,
+      "line_start": 4,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "c8c0f6d0e2d6a0a4a726f5f395cd32e670ee93b9a28e830ec129cc5dc80e553a"
+        ]
+      },
+      "notes": "",
+      "path": "cloud/.s3cfg",
+      "risk_bearing": false,
+      "source_reference": "cloud/.s3cfg:4",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 1,
+        "total": 3
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:cloud/.tugboat:3:informative",
+      "fingerprint_sha256": "878327da33284d04b2eb5104b4e5b99601cc86d73beda4b340b2f606efbac5db",
+      "line_end": 3,
+      "line_start": 3,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "375921947517de319d465dabb0ca97c92ce658f73d3885b9eac153c6e4a989e1"
+        ]
+      },
+      "notes": "",
+      "path": "cloud/.tugboat",
+      "risk_bearing": false,
+      "source_reference": "cloud/.tugboat:3",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 1,
+        "total": 3
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:cloud/.tugboat:4:risk",
+      "fingerprint_sha256": "8c3de6fa6ecfd66756bc64cfc361b833d86d5f0d298ab27d7c45852401fd471e",
+      "line_end": 4,
+      "line_start": 4,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "062f4e87b077d6c650688d7415c1ef1b7a28ae2a6a4808dfcf3c0dce060188ec"
+        ]
+      },
+      "notes": "",
+      "path": "cloud/.tugboat",
+      "risk_bearing": true,
+      "source_reference": "cloud/.tugboat:4",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 1,
+        "total": 3
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:cloud/.tugboat:6:informative",
+      "fingerprint_sha256": "dae0caad464b16c5d13cbc875583afd671b092c39a7354d09ddce30187c6cc6b",
+      "line_end": 6,
+      "line_start": 6,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"
+        ]
+      },
+      "notes": "",
+      "path": "cloud/.tugboat",
+      "risk_bearing": false,
+      "source_reference": "cloud/.tugboat:6",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 1,
+        "total": 3
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:cloud/heroku.json:3:informative",
+      "fingerprint_sha256": "ea39bd049f24aea69337cda61ea53253c3207e2bdbfa2888e421a3f1cb1e244f",
+      "line_end": 3,
+      "line_start": 3,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "78f55cb0c2f15a2813b07b1a5faa505d246d4360a248f48b285cd3070cfb56ff",
+          "ed1114bf5cee83ccf30b6e637372a3627eed2328f34c4a0bc4295256898faabf"
+        ]
+      },
+      "notes": "",
+      "path": "cloud/heroku.json",
+      "risk_bearing": false,
+      "source_reference": "cloud/heroku.json:3",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 1,
+        "total": 2
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:cloud/heroku.json:4:risk",
+      "fingerprint_sha256": "eba0fa6fff1745b137f32d3d386a20bc56f63fcf3e7fa80b0325df25c14659ac",
+      "line_end": 4,
+      "line_start": 4,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "72597effb8e9f2dbee6b2b3ced2eb185f0770fd7d61009a22b7192c5c88c8357",
+          "b6f2ad854ee2ca135e5ff20257757e3fc217c0db2b172dfa9aab831e8f3a5fb8"
+        ]
+      },
+      "notes": "",
+      "path": "cloud/heroku.json",
+      "risk_bearing": true,
+      "source_reference": "cloud/heroku.json:4",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 1,
+        "total": 2
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:config:3:informative",
+      "fingerprint_sha256": "97505a9aa5c2202a5dcbeb97bd4654bc2f2c4c4d1dc77136df056dffcdfaf93f",
+      "line_end": 3,
+      "line_start": 3,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "7a5b16127377cd823a2654771ad14d730294036409304031c426d68187a42ec6"
+        ]
+      },
+      "notes": "",
+      "path": "config",
+      "risk_bearing": false,
+      "source_reference": "config:3",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 1,
+        "total": 4
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:config:5:informative",
+      "fingerprint_sha256": "e04d3c67fd77cb95ca2578755758612eb5753552fd9c15bb6cb13e19c7c30199",
+      "line_end": 5,
+      "line_start": 5,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "434aa25bc3ba9efc2894aac2616ea1e3edf5d07d34d29d16001a4409a91e05ac"
+        ]
+      },
+      "notes": "",
+      "path": "config",
+      "risk_bearing": false,
+      "source_reference": "config:5",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 1,
+        "total": 4
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:config:8:informative",
+      "fingerprint_sha256": "f025ed8fb38579898aa792b20cd7d3dca226240a18ca045cc4469da562145769",
+      "line_end": 8,
+      "line_start": 8,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "7f0b629cbb9d794b3daf19fcd686a30a039b47395545394dadc0574744996a87"
+        ]
+      },
+      "notes": "",
+      "path": "config",
+      "risk_bearing": false,
+      "source_reference": "config:8",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 1,
+        "total": 4
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:config:10:risk",
+      "fingerprint_sha256": "1fecfd45946752a1be57baa503dcb5e6c80a609ad1d2c758ec3e198c1e4abb43",
+      "line_end": 10,
+      "line_start": 10,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "f978a7a2ba1d1ce32fb69206663d5314b13f58b3acafe1c6791c53b2ed295590"
+        ]
+      },
+      "notes": "",
+      "path": "config",
+      "risk_bearing": true,
+      "source_reference": "config:10",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 1,
+        "total": 4
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/.pgpass:2:risk",
+      "fingerprint_sha256": "972064d3e6777e42b827ab56de78698ea7b9eed28dd5389902d5e8c891799e06",
+      "line_end": 2,
+      "line_start": 2,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "3549b0028b75d981cdda2e573e9cb49dedc200185876df299f912b79f69dabd8",
+          "4813494d137e1631bba301d5acab6e7bb7aa74ce1185d456565ef51d737677b2",
+          "49960de5880e8c687434170f6476605b8fe4aeb9a28632c7995cf3ba831d9763",
+          "4aeb7ad6d5d37a041c4c5ce6562bf9e3caf05a42d931cef4d9e2a60ca623194d",
+          "5ba5eb9e5fa5d123b118bb087155cb42e207913f791855b8178e83890eb69c37",
+          "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
+        ]
+      },
+      "notes": "",
+      "path": "db/.pgpass",
+      "risk_bearing": true,
+      "source_reference": "db/.pgpass:2",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 1,
+        "total": 1
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/dbeaver-data-sources.xml:4:risk",
+      "fingerprint_sha256": "b7a1f39d79330664163d2580615d8b61749da480d3c3cf8d9dc275eae1d1509e",
+      "line_end": 4,
+      "line_start": 4,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb",
+          "39ae309fc6378d58b8a7c5fbe7c92f3ad3cd533a1353e593d0df1a046690eeb9",
+          "49960de5880e8c687434170f6476605b8fe4aeb9a28632c7995cf3ba831d9763",
+          "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+          "62f70fbe735cf0fb40c8285acb22c62329a91ce056625efed3ee6517e2624fbe",
+          "9674b1f53ad3b01c8b4eeab981da48a47549f11f6ae31acc27099325c6beae32",
+          "aebccdc460bad8079b0694c626ac8891d8a935b9659c204c1595430e807ce6bc",
+          "d82a6afdfb6de1aa8e5876e0ed758d005c10eb8ad0ba079e1376fe3db66b8d43"
+        ]
+      },
+      "notes": "",
+      "path": "db/dbeaver-data-sources.xml",
+      "risk_bearing": true,
+      "source_reference": "db/dbeaver-data-sources.xml:4",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 1,
+        "total": 1
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/dump.sql:32:risk",
+      "fingerprint_sha256": "d4994ecd83b324c0845585246e76cb65dfb9f1dee9acd6f7b2a8d79d5a191fc7",
+      "line_end": 32,
+      "line_start": 32,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "1b4dc2b98faf986eb44199557afad2bbaa2320fba88d9d6d3d25f3174872ffa9",
+          "6d07bf410fda374a44462fdee563d3e0813800ab6d7fa66302110b07399a7252"
+        ]
+      },
+      "notes": "",
+      "path": "db/dump.sql",
+      "risk_bearing": true,
+      "source_reference": "db/dump.sql:32",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 10,
+        "total": 10
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/dump.sql:33:risk",
+      "fingerprint_sha256": "d6161ff36d4e44a498c4e6934399fc86e9cbd0c805d99f6b528cf94aecec5207",
+      "line_end": 33,
+      "line_start": 33,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "2ad98c7ddcce5b01e88d3b4c607f4fc2e902f7c6640b84656bef999ee34ac45d",
+          "2d14e1508aa538d7b75b536688ffa55650b4c9ef72c7c8bde72269f88ece01ed"
+        ]
+      },
+      "notes": "",
+      "path": "db/dump.sql",
+      "risk_bearing": true,
+      "source_reference": "db/dump.sql:33",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 10,
+        "total": 10
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/dump.sql:34:risk",
+      "fingerprint_sha256": "355e9db052b73ba53dae18f9523173c616ce77832ba8f7bfe67424fdb5abcbd9",
+      "line_end": 34,
+      "line_start": 34,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "54088d689739bd8ca06a6a51d90f41d5bf565153a5952d7d98ae583748054a01",
+          "e438a408c769d8f80f19e2e250ab47d392b60a917bd80fbbead03e88ca33f5df"
+        ]
+      },
+      "notes": "",
+      "path": "db/dump.sql",
+      "risk_bearing": true,
+      "source_reference": "db/dump.sql:34",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 10,
+        "total": 10
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/dump.sql:35:risk",
+      "fingerprint_sha256": "a9bf27585209b475e14dcda01e2cc891f68185d9c98b45aeb96a90827cb292e2",
+      "line_end": 35,
+      "line_start": 35,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "164dddd18382e1d7b33cf398dabde7086e91f929e7b5a4c357430ab07adff2b0",
+          "b9f3c72c77e1dfae148d0a5f60dd5028eb01878af14fa399f1f40be40b3ddd00"
+        ]
+      },
+      "notes": "",
+      "path": "db/dump.sql",
+      "risk_bearing": true,
+      "source_reference": "db/dump.sql:35",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 10,
+        "total": 10
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/dump.sql:36:risk",
+      "fingerprint_sha256": "d35f195c80052b6d48f0ffe3a7ef48d4f5d18e28bc991b5d2bd06653e2fdf0cb",
+      "line_end": 36,
+      "line_start": 36,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "658e6b87bbc107337bc90b704a49422cb23d28f3a6a586bb9e22ec5e0f3a67f3",
+          "9df861c09977a7a40184e0bfafe2d7d7bb77e2673db5c72936f13666328466fc"
+        ]
+      },
+      "notes": "",
+      "path": "db/dump.sql",
+      "risk_bearing": true,
+      "source_reference": "db/dump.sql:36",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 10,
+        "total": 10
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/dump.sql:37:risk",
+      "fingerprint_sha256": "d2c397b5cea2e04f11db738e0d35726f67b01c19f026f539ecb9e69dded20ed9",
+      "line_end": 37,
+      "line_start": 37,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "3882e341cf5ba630ff89c0b4515b3fbe6e1ae71806c844e9491cf9700cee8ebe",
+          "4a37a76b5bc4b1876db7c2ca9a4a97814e423db84460eb3f594ed7eb1e986015"
+        ]
+      },
+      "notes": "",
+      "path": "db/dump.sql",
+      "risk_bearing": true,
+      "source_reference": "db/dump.sql:37",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 10,
+        "total": 10
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/dump.sql:38:risk",
+      "fingerprint_sha256": "3e0e26ea8beb1d01bb68d4f7019b387aa92ec1ab2ab68f87e30483808b574939",
+      "line_end": 38,
+      "line_start": 38,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "94019ef30cbdc0eeeb1b22b9765becc94b3d1f4a496c1b981c16c78d1e16ee92",
+          "ce7eb9d96d16e44ff0a692d1122bf72e25a1ec0e9447a1232e35c3c75d26f201"
+        ]
+      },
+      "notes": "",
+      "path": "db/dump.sql",
+      "risk_bearing": true,
+      "source_reference": "db/dump.sql:38",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 10,
+        "total": 10
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/dump.sql:39:risk",
+      "fingerprint_sha256": "12ab92f2661dd4d3ba34ba2fc6c2d0d318c26a30bf30ae84c43fc4a5852453fe",
+      "line_end": 39,
+      "line_start": 39,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "1212749c33a1be5e6dd013c2f6d9bdb73454cd72306c623639d0ad2ec8cd4fb4",
+          "7af2fb2470f14311c14a8dbcd6ac7fb174d8342690e4de6958d1221eeb9aa2f5"
+        ]
+      },
+      "notes": "",
+      "path": "db/dump.sql",
+      "risk_bearing": true,
+      "source_reference": "db/dump.sql:39",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 10,
+        "total": 10
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/dump.sql:40:risk",
+      "fingerprint_sha256": "4c3ea98a866d3db29694cc24b4726b1a0ec9226927e249d84e72efc8b2237034",
+      "line_end": 40,
+      "line_start": 40,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "5fdf482c69edf0f5e0f6c50d6792646e5fc7728516ec9e18f7c3f84c4e076606",
+          "92e07a2ecb2055bc71d4281ccb65b0253aa3d45789fc4ec356aca3855fa80481"
+        ]
+      },
+      "notes": "",
+      "path": "db/dump.sql",
+      "risk_bearing": true,
+      "source_reference": "db/dump.sql:40",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 10,
+        "total": 10
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/dump.sql:41:risk",
+      "fingerprint_sha256": "ac1516489eed5f5d35a4720592da31908e2244ac3d85b3108fc115a447004ef2",
+      "line_end": 41,
+      "line_start": 41,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "9b17806dc1b8505ee6ca1c2e779145a62f37504af940a9625fdb61a63290c1c1",
+          "b66df69d065c6a0b617506f05b34abeaaf4f3b4ec56897067a14e5c68a7aa71a"
+        ]
+      },
+      "notes": "",
+      "path": "db/dump.sql",
+      "risk_bearing": true,
+      "source_reference": "db/dump.sql:41",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 10,
+        "total": 10
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/mongoid.yml:4:risk",
+      "fingerprint_sha256": "8156877feb01bd18e7cd6e22e0fb67b922ed63a12c411d0b4be69281a5026a4e",
+      "line_end": 4,
+      "line_start": 4,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "e632e17238597ee380fe3c84987b28f2330955c5b8bc090c555ccb85493f9db8"
+        ]
+      },
+      "notes": "",
+      "path": "db/mongoid.yml",
+      "risk_bearing": true,
+      "source_reference": "db/mongoid.yml:4",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 1,
+        "total": 1
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/robomongo.json:13:informative",
+      "fingerprint_sha256": "0fb7b4e5e7d9519e88f9d8c80a2db5da28872048a3d56ec860df5058c07bae28",
+      "line_end": 13,
+      "line_start": 13,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "23ac944be61d6c1753b9495d074d758d2501396868daa87c0a4a964dc2666ab5",
+          "25e7cc8ea32d03962cced190e31b0975467bb352f37d93e4b717eaf640be20e0"
+        ]
+      },
+      "notes": "",
+      "path": "db/robomongo.json",
+      "risk_bearing": false,
+      "source_reference": "db/robomongo.json:13",
+      "upstream_row": {
+        "informative": 4,
+        "risk": 3,
+        "total": 7
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/robomongo.json:14:risk",
+      "fingerprint_sha256": "46faab1be07a654dc08d60d7c9bbb4e9b4f2bbb1de3819e3b6be3379efe6b547",
+      "line_end": 14,
+      "line_start": 14,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "b25e7faf605a3681d11f66548bc48eb71badd7038cf186f0db9d7ac10edf68e1",
+          "c7f7278ad455e70505cf6eec61ae5d5154edde78330a7614d63e048d179050f4"
+        ]
+      },
+      "notes": "",
+      "path": "db/robomongo.json",
+      "risk_bearing": true,
+      "source_reference": "db/robomongo.json:14",
+      "upstream_row": {
+        "informative": 4,
+        "risk": 3,
+        "total": 7
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/robomongo.json:18:informative",
+      "fingerprint_sha256": "5170e8399c8c895a02b124a1e417e82315719efd9491c29e87d4c877676e87d1",
+      "line_end": 18,
+      "line_start": 18,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "0b171d6f7875bfe2945bf8bbcae68d8f98a316820af4dab4a654d92a9316e718",
+          "49960de5880e8c687434170f6476605b8fe4aeb9a28632c7995cf3ba831d9763"
+        ]
+      },
+      "notes": "",
+      "path": "db/robomongo.json",
+      "risk_bearing": false,
+      "source_reference": "db/robomongo.json:18",
+      "upstream_row": {
+        "informative": 4,
+        "risk": 3,
+        "total": 7
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/robomongo.json:21:informative",
+      "fingerprint_sha256": "a62891712ef837f01d8a63b41bb4628259ab351011c7344f57268f171383c27d",
+      "line_end": 21,
+      "line_start": 21,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "49960de5880e8c687434170f6476605b8fe4aeb9a28632c7995cf3ba831d9763",
+          "8a313aaa3bb6e1fda091a06e0e5bb17c20329a7514e83ac9f9b221ec1e506832"
+        ]
+      },
+      "notes": "",
+      "path": "db/robomongo.json",
+      "risk_bearing": false,
+      "source_reference": "db/robomongo.json:21",
+      "upstream_row": {
+        "informative": 4,
+        "risk": 3,
+        "total": 7
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/robomongo.json:22:risk",
+      "fingerprint_sha256": "a532dfdb6dfb91be070a7f4a92c4b5268f1fc9430aff4ecaaf2f5aabb6a3108e",
+      "line_end": 22,
+      "line_start": 22,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "168f39bc81005d2aae6aa2a5ed563bc29b9afb92be9bd33ae58e5676866afa73",
+          "a7abee752627ef38399e4cabd2a551d94199abdd2f4204809ea6d7a008290326"
+        ]
+      },
+      "notes": "",
+      "path": "db/robomongo.json",
+      "risk_bearing": true,
+      "source_reference": "db/robomongo.json:22",
+      "upstream_row": {
+        "informative": 4,
+        "risk": 3,
+        "total": 7
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/robomongo.json:26:informative",
+      "fingerprint_sha256": "1682bdc7867b4cfc4c2ab706a4db6e86940a01dce9eea23e7d78b59031415ec5",
+      "line_end": 26,
+      "line_start": 26,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "4813494d137e1631bba301d5acab6e7bb7aa74ce1185d456565ef51d737677b2",
+          "b6f16cf43d317f99c03d6758e37dc28159f91ede4577e25aca02cbbea2038e1d"
+        ]
+      },
+      "notes": "",
+      "path": "db/robomongo.json",
+      "risk_bearing": false,
+      "source_reference": "db/robomongo.json:26",
+      "upstream_row": {
+        "informative": 4,
+        "risk": 3,
+        "total": 7
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:db/robomongo.json:27:risk",
+      "fingerprint_sha256": "f6933fe0c2fd5d130aa6c1ae6e6b08309826aa913a559bdfbf61cefb024a0591",
+      "line_end": 27,
+      "line_start": 27,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "16ff8b15121ae253711daa289dc89f1ba16bf5c365c532ae7d93a834629a5cbd",
+          "c96b0e254f7513d365f18d1ee9b7cc00e9e069286166695174550ef517244cfe"
+        ]
+      },
+      "notes": "",
+      "path": "db/robomongo.json",
+      "risk_bearing": true,
+      "source_reference": "db/robomongo.json:27",
+      "upstream_row": {
+        "informative": 4,
+        "risk": 3,
+        "total": 7
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:deployment-config.json:3:informative",
+      "fingerprint_sha256": "d97fbe52d3aec25b52e6cf0b473a917c29fe101b8dce8d4c1c5a4273cea8b4d1",
+      "line_end": 3,
+      "line_start": 3,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "4740ae6347b0172c01254ff55bae5aff5199f4446e7f6d643d40185b3f475145",
+          "a379a6f6eeafb9a55e378c118034e2751e682fab9f2d30ab13d2125586ce1947"
+        ]
+      },
+      "notes": "",
+      "path": "deployment-config.json",
+      "risk_bearing": false,
+      "source_reference": "deployment-config.json:3",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 3,
+        "total": 4
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:deployment-config.json:4:informative",
+      "fingerprint_sha256": "5059dc55affe600d40acb99d2c84d555ae771ab57b6b372c8c514acb7fc31416",
+      "line_end": 4,
+      "line_start": 4,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "16f78a7d6317f102bbd95fc9a4f3ff2e3249287690b8bdad6b7810f82b34ace3",
+          "4813494d137e1631bba301d5acab6e7bb7aa74ce1185d456565ef51d737677b2"
+        ]
+      },
+      "notes": "",
+      "path": "deployment-config.json",
+      "risk_bearing": false,
+      "source_reference": "deployment-config.json:4",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 3,
+        "total": 4
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:deployment-config.json:5:risk",
+      "fingerprint_sha256": "b0c3ec25c7cf8949ae97182cb81ade50d1cf662c3b4fb73dfe88e7bf4a81a50b",
+      "line_end": 5,
+      "line_start": 5,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "20d2fe5e369db54ec7090639a9dc30ec4d608604936239d39e2de07fda09eb0b",
+          "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
+        ]
+      },
+      "notes": "",
+      "path": "deployment-config.json",
+      "risk_bearing": true,
+      "source_reference": "deployment-config.json:5",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 3,
+        "total": 4
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:deployment-config.json:7:informative",
+      "fingerprint_sha256": "a757f7a058605da72d40caf0d6d638f7a7e40aa10bc352c3181588667ab46e51",
+      "line_end": 7,
+      "line_start": 7,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "8fa4c06421efb485280a5e96fef77a590997ca3e243dbe1573ba2298c7a92925",
+          "a7d1f26a8218716e0dd2bd21f67933c52a1097393a36a3590c4b9831304b34d2"
+        ]
+      },
+      "notes": "",
+      "path": "deployment-config.json",
+      "risk_bearing": false,
+      "source_reference": "deployment-config.json:7",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 3,
+        "total": 4
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:etc/shadow:20:risk",
+      "fingerprint_sha256": "cfe1da4d27877f6e8387e5b0ec9ea6c401dbcb2a00a2d17449b4fb253a0d3ca5",
+      "line_end": 20,
+      "line_start": 20,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "a738afcc5833f2a6610c2266cbdcf39c6289a2a8065ece46d172205c90267e51"
+        ]
+      },
+      "notes": "",
+      "path": "etc/shadow",
+      "risk_bearing": true,
+      "source_reference": "etc/shadow:20",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 1,
+        "total": 1
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:filezilla/filezilla.xml:6:informative",
+      "fingerprint_sha256": "5966453efdf85d7760ee8b0935f0745aa48e770798ffde4caf8e5c448885aa33",
+      "line_end": 6,
+      "line_start": 6,
+      "location": "line",
+      "matching_policy": "line_range",
+      "notes": "",
+      "path": "filezilla/filezilla.xml",
+      "risk_bearing": false,
+      "source_reference": "filezilla/filezilla.xml:6",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 2,
+        "total": 3
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:filezilla/filezilla.xml:11:informative",
+      "fingerprint_sha256": "784887148f413189c925042c1cc5d497c250976183bac697d8b73ac4905782d1",
+      "line_end": 11,
+      "line_start": 11,
+      "location": "line",
+      "matching_policy": "line_range",
+      "notes": "",
+      "path": "filezilla/filezilla.xml",
+      "risk_bearing": false,
+      "source_reference": "filezilla/filezilla.xml:11",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 2,
+        "total": 3
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:filezilla/filezilla.xml:13:risk",
+      "fingerprint_sha256": "71c1822bbbfc538f6af46748fc5340ef661b4e3e634993843bcf6bfa6afffba4",
+      "line_end": 13,
+      "line_start": 13,
+      "location": "line",
+      "matching_policy": "line_range",
+      "notes": "",
+      "path": "filezilla/filezilla.xml",
+      "risk_bearing": true,
+      "source_reference": "filezilla/filezilla.xml:13",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 2,
+        "total": 3
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:filezilla/recentservers.xml:6:informative",
+      "fingerprint_sha256": "dcd02234e8ad1a99cadb5aa662d14e343c6bd4758cedeab95fd3001e9c110de5",
+      "line_end": 6,
+      "line_start": 6,
+      "location": "line",
+      "matching_policy": "line_range",
+      "notes": "",
+      "path": "filezilla/recentservers.xml",
+      "risk_bearing": false,
+      "source_reference": "filezilla/recentservers.xml:6",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 3,
+        "total": 6
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:filezilla/recentservers.xml:11:informative",
+      "fingerprint_sha256": "945619e1de9a70b501a0ce3949356c8f5527b7c4cbff29a0bc64a1e630bd2a80",
+      "line_end": 11,
+      "line_start": 11,
+      "location": "line",
+      "matching_policy": "line_range",
+      "notes": "",
+      "path": "filezilla/recentservers.xml",
+      "risk_bearing": false,
+      "source_reference": "filezilla/recentservers.xml:11",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 3,
+        "total": 6
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:filezilla/recentservers.xml:13:risk",
+      "fingerprint_sha256": "e2664e7d6a20896563e49ba4427d8420aeefb8bd88508a4b004040ff243d6546",
+      "line_end": 13,
+      "line_start": 13,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "371a286d5872a3730d644327581546ec3e658bbf1a3c7f7f0de2bc19905d4402",
+          "cfcc0ddd0af80631c4f7fdb6fe21571d453272582d75a9b3f20e7445b31aa4ba"
+        ]
+      },
+      "notes": "",
+      "path": "filezilla/recentservers.xml",
+      "risk_bearing": true,
+      "source_reference": "filezilla/recentservers.xml:13",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 3,
+        "total": 6
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:filezilla/recentservers.xml:23:informative",
+      "fingerprint_sha256": "b6d2d36d4a0215e3b386b5d9aa6021263e9f3de2ea46bb15b7077ff4c5e98eec",
+      "line_end": 23,
+      "line_start": 23,
+      "location": "line",
+      "matching_policy": "line_range",
+      "notes": "",
+      "path": "filezilla/recentservers.xml",
+      "risk_bearing": false,
+      "source_reference": "filezilla/recentservers.xml:23",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 3,
+        "total": 6
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:filezilla/recentservers.xml:28:informative",
+      "fingerprint_sha256": "b067fef49d409fe6bb379ff66320a538368bb8d0f966dd8b48f2c54bb4cb5090",
+      "line_end": 28,
+      "line_start": 28,
+      "location": "line",
+      "matching_policy": "line_range",
+      "notes": "",
+      "path": "filezilla/recentservers.xml",
+      "risk_bearing": false,
+      "source_reference": "filezilla/recentservers.xml:28",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 3,
+        "total": 6
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:filezilla/recentservers.xml:30:risk",
+      "fingerprint_sha256": "9b5bf873eda5419da3389e97331303896fbdac2d32324e5dd8979ead486f6b55",
+      "line_end": 30,
+      "line_start": 30,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "371a286d5872a3730d644327581546ec3e658bbf1a3c7f7f0de2bc19905d4402",
+          "cfcc0ddd0af80631c4f7fdb6fe21571d453272582d75a9b3f20e7445b31aa4ba"
+        ]
+      },
+      "notes": "",
+      "path": "filezilla/recentservers.xml",
+      "risk_bearing": true,
+      "source_reference": "filezilla/recentservers.xml:30",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 3,
+        "total": 6
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:high-entropy-misc.txt:1:informative",
+      "fingerprint_sha256": "c79bb2379ca6070ef9e9185c1d283fd18297d99dbf9d5090fe718491bced28c9",
+      "line_end": 1,
+      "line_start": 1,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "e0dd6edf673fa49ad1ce55270c0cdd51e9b4038fb570238c24e0fedaadcb0926",
+          "ecd1675b7cc6fa7875dd18f6f23e32b8a84d6f3a5ae0bcff0247603300d2cabd"
+        ]
+      },
+      "notes": "",
+      "path": "high-entropy-misc.txt",
+      "risk_bearing": false,
+      "source_reference": "high-entropy-misc.txt:1",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 0,
+        "total": 2
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:high-entropy-misc.txt:2:informative",
+      "fingerprint_sha256": "b831cba748dc72238a7818cab28041718561dd375cafdc8890c92c74bf498d03",
+      "line_end": 2,
+      "line_start": 2,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "9fdacf21d4f0c1e351f4082851d81a455d95aa533ffe59498b779f5d7599720d",
+          "a708dfcb59b3f05b27ac2a7f178c2b580e3e58677e0aa58c6414f9eaec27c85a"
+        ]
+      },
+      "notes": "",
+      "path": "high-entropy-misc.txt",
+      "risk_bearing": false,
+      "source_reference": "high-entropy-misc.txt:2",
+      "upstream_row": {
+        "informative": 2,
+        "risk": 0,
+        "total": 2
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:hub:3:informative",
+      "fingerprint_sha256": "e9a35d3341b789e4648d534ac89993a8c0c80c345448739b5b33cc41b33cdcbe",
+      "line_end": 3,
+      "line_start": 3,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "9e9aba8efae26f4f36b901228c87762f76d7a246740a2fa26a882e9cb6516341"
+        ]
+      },
+      "notes": "",
+      "path": "hub",
+      "risk_bearing": false,
+      "source_reference": "hub:3",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 1,
+        "total": 2
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:hub:4:risk",
+      "fingerprint_sha256": "d71260aa578663b38658f048418c11ccae320846464b3beb8fbbbd99516ef858",
+      "line_end": 4,
+      "line_start": 4,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "df7edb3221ef8f35015b5bafe5ec87311f7c85dde1754f62b06595004851e9d5"
+        ]
+      },
+      "notes": "",
+      "path": "hub",
+      "risk_bearing": true,
+      "source_reference": "hub:4",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 1,
+        "total": 2
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:misc-keys/cert-key.pem:1:risk",
+      "fingerprint_sha256": "a505ca10eb2cda84ea4028898657dbe1110bde8e231db228fd04fa004cc4cf14",
+      "line_end": 28,
+      "line_start": 1,
+      "location": "range:1-28",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false
+      },
+      "notes": "",
+      "path": "misc-keys/cert-key.pem",
+      "risk_bearing": true,
+      "source_reference": "misc-keys/cert-key.pem:1-28",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 1,
+        "total": 1
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:misc-keys/putty-example.ppk:4:informative",
+      "fingerprint_sha256": "01611e4d4d111ee25c41f5363c31e1c1fc6f9a4836682036b8e5975224295197",
+      "line_end": 10,
+      "line_start": 4,
+      "location": "range:4-10",
+      "matching_policy": "line_range",
+      "notes": "",
+      "path": "misc-keys/putty-example.ppk",
+      "risk_bearing": false,
+      "source_reference": "misc-keys/putty-example.ppk:4-10",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 1,
+        "total": 2
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:misc-keys/putty-example.ppk:11:risk",
+      "fingerprint_sha256": "bade59e4ba36826998f541cedc50b04ae3e4b6837a98a1ce6e40ff968c368f67",
+      "line_end": 26,
+      "line_start": 11,
+      "location": "range:11-26",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false
+      },
+      "notes": "",
+      "path": "misc-keys/putty-example.ppk",
+      "risk_bearing": true,
+      "source_reference": "misc-keys/putty-example.ppk:11-26",
+      "upstream_row": {
+        "informative": 1,
+        "risk": 1,
+        "total": 2
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:proftpdpasswd:1:risk",
+      "fingerprint_sha256": "2d5f0bd8c2f65ab7d02f1983894ccf69947e49798c7e1408d2b59e1ef582f923",
+      "line_end": 1,
+      "line_start": 1,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "70b2b501f00f171116af0f34ffc0954a390000bcb344ebd02e948c697fef4cfb"
+        ]
+      },
+      "notes": "",
+      "path": "proftpdpasswd",
+      "risk_bearing": true,
+      "source_reference": "proftpdpasswd:1",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 1,
+        "total": 1
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:sftp-config.json:13:informative",
+      "fingerprint_sha256": "e20942a516c6a97c4dd2f8d8161720ff4de9c173f76f8fadef0486d4ee9f095b",
+      "line_end": 13,
+      "line_start": 13,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "4740ae6347b0172c01254ff55bae5aff5199f4446e7f6d643d40185b3f475145",
+          "a379a6f6eeafb9a55e378c118034e2751e682fab9f2d30ab13d2125586ce1947"
+        ]
+      },
+      "notes": "",
+      "path": "sftp-config.json",
+      "risk_bearing": false,
+      "source_reference": "sftp-config.json:13",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 1,
+        "total": 4
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:sftp-config.json:14:informative",
+      "fingerprint_sha256": "21b44df03df97aa7db364cfbe60e05942a65d16624541e8cf3495a8867deeff5",
+      "line_end": 14,
+      "line_start": 14,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb",
+          "4813494d137e1631bba301d5acab6e7bb7aa74ce1185d456565ef51d737677b2"
+        ]
+      },
+      "notes": "",
+      "path": "sftp-config.json",
+      "risk_bearing": false,
+      "source_reference": "sftp-config.json:14",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 1,
+        "total": 4
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:sftp-config.json:15:risk",
+      "fingerprint_sha256": "eb7bcedf5160cac456fdfa036f4c86743afed1c39d0c4ef02fdb051444fbc4d8",
+      "line_end": 15,
+      "line_start": 15,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "20d2fe5e369db54ec7090639a9dc30ec4d608604936239d39e2de07fda09eb0b",
+          "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
+        ]
+      },
+      "notes": "",
+      "path": "sftp-config.json",
+      "risk_bearing": true,
+      "source_reference": "sftp-config.json:15",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 1,
+        "total": 4
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:sftp-config.json:18:informative",
+      "fingerprint_sha256": "3eb310312acb5bce90e2f50fab688a3adcc8cc7b8eb74523ff1bf7919d800952",
+      "line_end": 18,
+      "line_start": 18,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "48b6192e983f4cf4d3eb14af6226002633a76627e4cb900d96ccd03979bdcca1",
+          "6b4e025f54a46231ea94ca144a744a567283d2cc32c6f24c7b9ec0495382583c"
+        ]
+      },
+      "notes": "",
+      "path": "sftp-config.json",
+      "risk_bearing": false,
+      "source_reference": "sftp-config.json:18",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 1,
+        "total": 4
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:ventrilo_srv.ini:7:risk",
+      "fingerprint_sha256": "99d6e7873bea1d8cd4fa394d0a198eec0449c3bb9089765cd0d61f6e86ad4233",
+      "line_end": 7,
+      "line_start": 7,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "df8d881c50a6916c7ee00baef250c9850a3172fdd003fa5f54db0678aa84185a"
+        ]
+      },
+      "notes": "",
+      "path": "ventrilo_srv.ini",
+      "risk_bearing": true,
+      "source_reference": "ventrilo_srv.ini:7",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 2,
+        "total": 2
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:ventrilo_srv.ini:8:risk",
+      "fingerprint_sha256": "d6d3807209a27ad50c5250ce03808c6b15b6c9ff4c85e1956b9b35cf4300c4e3",
+      "line_end": 8,
+      "line_start": 8,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "7bc281b7f50baa533515888effe36926c0c13bee07dd7d5761021c6c5707e685"
+        ]
+      },
+      "notes": "",
+      "path": "ventrilo_srv.ini",
+      "risk_bearing": true,
+      "source_reference": "ventrilo_srv.ini:8",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 2,
+        "total": 2
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/django/settings.py:24:risk",
+      "fingerprint_sha256": "57bb271fd1d55f728f9dc9fc15e062aa25fd52591f8c48e0ed8c3f5de91b794b",
+      "line_end": 24,
+      "line_start": 24,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "d0890ce20e67143d1a6b4b8fb8382972bf5cf89413436b43d7422a348cddca21"
+        ]
+      },
+      "notes": "",
+      "path": "web/django/settings.py",
+      "risk_bearing": true,
+      "source_reference": "web/django/settings.py:24",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 1,
+        "total": 1
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/js/salesforce.js:7:risk",
+      "fingerprint_sha256": "f503b2e2f6663488298b7f524a31773de9ab2b1b558d38a11501a5913dbbcf83",
+      "line_end": 7,
+      "line_start": 7,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "1e3c86d23ad37d651a243473c03fbe27d8a2a6788f89191eff3a909327a7df7c",
+          "795bcb4bf560f9867afb3de2d0d3a94976324007c45ea099ec14e90231540547"
+        ]
+      },
+      "notes": "",
+      "path": "web/js/salesforce.js",
+      "risk_bearing": true,
+      "source_reference": "web/js/salesforce.js:7",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 1,
+        "total": 1
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/ruby/config/master.key:1:risk",
+      "fingerprint_sha256": "b499bf864f598863a609a516d6074ed72019581c917a84135ffbcf76f7f0159a",
+      "line_end": 1,
+      "line_start": 1,
+      "location": "line",
+      "matching_policy": "line_range",
+      "notes": "",
+      "path": "web/ruby/config/master.key",
+      "risk_bearing": true,
+      "source_reference": "web/ruby/config/master.key:1",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 1,
+        "total": 1
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/ruby/secrets.yml:14:risk",
+      "fingerprint_sha256": "d357f9cec87a07b7d924ba4299fa09a46a128a41b80996408c036ec658692301",
+      "line_end": 14,
+      "line_start": 14,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "ba173cec49796aadf80d223a959d6da5ab4914c6abb7a65966d98706d2a9d717"
+        ]
+      },
+      "notes": "",
+      "path": "web/ruby/secrets.yml",
+      "risk_bearing": true,
+      "source_reference": "web/ruby/secrets.yml:14",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 3,
+        "total": 3
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/ruby/secrets.yml:17:risk",
+      "fingerprint_sha256": "a5139f81d5cc625b4dd31d2d788883a560c057fa81d1112cfef10badc37abf6c",
+      "line_end": 17,
+      "line_start": 17,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "551617d8fe4a6af948233c3a017d942755321c16f120c811501cb3e8236d4585"
+        ]
+      },
+      "notes": "",
+      "path": "web/ruby/secrets.yml",
+      "risk_bearing": true,
+      "source_reference": "web/ruby/secrets.yml:17",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 3,
+        "total": 3
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/ruby/secrets.yml:22:risk",
+      "fingerprint_sha256": "4248ec54cb5229f2dfffc29872cdf6e4b0b695fd566b9ffb71c34970e36285f1",
+      "line_end": 22,
+      "line_start": 22,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "7806794b7892d783bf8ee3ee16e0019449779a8cb0af081d1539fa65f99effd2"
+        ]
+      },
+      "notes": "",
+      "path": "web/ruby/secrets.yml",
+      "risk_bearing": true,
+      "source_reference": "web/ruby/secrets.yml:22",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 3,
+        "total": 3
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/.env:5:risk",
+      "fingerprint_sha256": "065809f1c50b1781b1302fe84c0b356da091d34d13476356ca0317e1d060d4d1",
+      "line_end": 5,
+      "line_start": 5,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "96594aad7c31ed48a4db94718d4fa2a2d98d77a2fa18ef6a28ad7751ce407f0f",
+          "f5ab0f2bfa76f468c01b878948706a1c5c869cbd29956bd0a1e4094c218dd20d"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/.env",
+      "risk_bearing": true,
+      "source_reference": "web/var/www/.env:5",
+      "upstream_row": {
+        "informative": 4,
+        "risk": 6,
+        "total": 10
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/.env:8:informative",
+      "fingerprint_sha256": "c64fec73f3fa4dfc0b06795c24c052ab4033807d0fef71ade2a40f75abb86540",
+      "line_end": 8,
+      "line_start": 8,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "49960de5880e8c687434170f6476605b8fe4aeb9a28632c7995cf3ba831d9763"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/.env",
+      "risk_bearing": false,
+      "source_reference": "web/var/www/.env:8",
+      "upstream_row": {
+        "informative": 4,
+        "risk": 6,
+        "total": 10
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/.env:10:informative",
+      "fingerprint_sha256": "f30c50ebabc2436db1270d47fec3202445ae33eb78479bff84b7fead09ae3c58",
+      "line_end": 10,
+      "line_start": 10,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "0d6e4079e36703ebd37c00722f5891d28b0e2811dc114b129215123adcce3605"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/.env",
+      "risk_bearing": false,
+      "source_reference": "web/var/www/.env:10",
+      "upstream_row": {
+        "informative": 4,
+        "risk": 6,
+        "total": 10
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/.env:12:informative",
+      "fingerprint_sha256": "9f8cff68518fc82338a2ef1b903b904db54a4e489824df89a63e4e7323138b98",
+      "line_end": 12,
+      "line_start": 12,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "4813494d137e1631bba301d5acab6e7bb7aa74ce1185d456565ef51d737677b2"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/.env",
+      "risk_bearing": false,
+      "source_reference": "web/var/www/.env:12",
+      "upstream_row": {
+        "informative": 4,
+        "risk": 6,
+        "total": 10
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/.env:14:risk",
+      "fingerprint_sha256": "33600abebea387f367903ee87a30b55a507862b8837b5e79935a481936832fa7",
+      "line_end": 14,
+      "line_start": 14,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/.env",
+      "risk_bearing": true,
+      "source_reference": "web/var/www/.env:14",
+      "upstream_row": {
+        "informative": 4,
+        "risk": 6,
+        "total": 10
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/.env:21:informative",
+      "fingerprint_sha256": "b6b617b7147e117723768ce7c185fd41a54e190a999e82bc809c52523354b440",
+      "line_end": 21,
+      "line_start": 21,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "49960de5880e8c687434170f6476605b8fe4aeb9a28632c7995cf3ba831d9763"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/.env",
+      "risk_bearing": false,
+      "source_reference": "web/var/www/.env:21",
+      "upstream_row": {
+        "informative": 4,
+        "risk": 6,
+        "total": 10
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/.env:23:risk",
+      "fingerprint_sha256": "bad2cc50d79dc72c0188ea369d8441d4ebc902538424cc3f62783b9743640b48",
+      "line_end": 23,
+      "line_start": 23,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "e383621f9eda3cea127df6c911d13d543bd01a84e780b5bc3726db1c06885379"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/.env",
+      "risk_bearing": true,
+      "source_reference": "web/var/www/.env:23",
+      "upstream_row": {
+        "informative": 4,
+        "risk": 6,
+        "total": 10
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/.env:28:informative",
+      "fingerprint_sha256": "d7b245eeecc050a731c2ec103e703fc600d3e8bd92e213bcbf2341fa09a2a699",
+      "line_end": 28,
+      "line_start": 28,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "baf8948be444889e4c5309caa2da8bb3b3e14e4ebda34e5d87eaf4f5c44d22b2"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/.env",
+      "risk_bearing": false,
+      "source_reference": "web/var/www/.env:28",
+      "upstream_row": {
+        "informative": 4,
+        "risk": 6,
+        "total": 10
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/.env:31:informative",
+      "fingerprint_sha256": "c23ca354a2661ad2775df680d99d20e89420b685b2698d5f31a59c67b8e7ca3e",
+      "line_end": 31,
+      "line_start": 31,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "b4c9a289323b21a01c3e940f150eb9b8c542587f1abfd8f0e1cc1ffc5e475514"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/.env",
+      "risk_bearing": false,
+      "source_reference": "web/var/www/.env:31",
+      "upstream_row": {
+        "informative": 4,
+        "risk": 6,
+        "total": 10
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": true,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/.env:33:risk",
+      "fingerprint_sha256": "57b86cb2fea33efca136bfdb2a2f62cc38e6f1894ca946986bafe2c5b229b8aa",
+      "line_end": 33,
+      "line_start": 33,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "aecd2330eb2a657a260aa1124f8685b885b4fd35617c9a25c10501109598705b"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/.env",
+      "risk_bearing": true,
+      "source_reference": "web/var/www/.env:33",
+      "upstream_row": {
+        "informative": 4,
+        "risk": 6,
+        "total": 10
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/public_html/.htpasswd:1:risk",
+      "fingerprint_sha256": "7f11185e860902dcf69d13c91066f2d15d089bb04405207ea2ff9ba6efb1bb58",
+      "line_end": 1,
+      "line_start": 1,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "a86944a2fdfee8dddb4dd5af158ed542fe438961e1763c68a4c3882393382bbe"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/public_html/.htpasswd",
+      "risk_bearing": true,
+      "source_reference": "web/var/www/public_html/.htpasswd:1",
+      "upstream_row": {
+        "informative": 0,
+        "risk": 1,
+        "total": 1
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/public_html/config.php:4:informative",
+      "fingerprint_sha256": "e8b0244b855e071d6f25edc18153af3f026d4e17597d6e3f3ae23bb4e0cac53d",
+      "line_end": 4,
+      "line_start": 4,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "49960de5880e8c687434170f6476605b8fe4aeb9a28632c7995cf3ba831d9763"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/public_html/config.php",
+      "risk_bearing": false,
+      "source_reference": "web/var/www/public_html/config.php:4",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 1,
+        "total": 4
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/public_html/config.php:7:informative",
+      "fingerprint_sha256": "063c695f1329f0a3f341f4ddcc85645288a5ef287eed29b7a1d2acf5abdcc7fa",
+      "line_end": 7,
+      "line_start": 7,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "0d6e4079e36703ebd37c00722f5891d28b0e2811dc114b129215123adcce3605"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/public_html/config.php",
+      "risk_bearing": false,
+      "source_reference": "web/var/www/public_html/config.php:7",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 1,
+        "total": 4
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/public_html/config.php:9:informative",
+      "fingerprint_sha256": "6ac5d53f71f640c8045c621966c8456506a60a3a473bae595a625a97bf9905e5",
+      "line_end": 9,
+      "line_start": 9,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "4813494d137e1631bba301d5acab6e7bb7aa74ce1185d456565ef51d737677b2"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/public_html/config.php",
+      "risk_bearing": false,
+      "source_reference": "web/var/www/public_html/config.php:9",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 1,
+        "total": 4
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/public_html/config.php:11:risk",
+      "fingerprint_sha256": "069c8a4b46211e1e546c2ebfcb015bd7d5969c3c168958e3be2c6094e744f501",
+      "line_end": 11,
+      "line_start": 11,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "9b8769a4a742959a2d0298c36fb70623f2dfacda8436237df08d8dfd5b37374c"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/public_html/config.php",
+      "risk_bearing": true,
+      "source_reference": "web/var/www/public_html/config.php:11",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 1,
+        "total": 4
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/public_html/wp-config.php:16:informative",
+      "fingerprint_sha256": "5410ae161481845c8b5618e9c8a029d0fe9a2ce158b53dcdeca903bdf9f7491d",
+      "line_end": 16,
+      "line_start": 16,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "0d6e4079e36703ebd37c00722f5891d28b0e2811dc114b129215123adcce3605",
+          "2d699eff83333f0c615b88b9f5840010d7f7014909a2fe747b06530ade9229ce"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/public_html/wp-config.php",
+      "risk_bearing": false,
+      "source_reference": "web/var/www/public_html/wp-config.php:16",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 9,
+        "total": 12
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/public_html/wp-config.php:18:informative",
+      "fingerprint_sha256": "392479e65de54837f31c4649550c07fde597cf994ad1b422493a4ccdba682ff1",
+      "line_end": 18,
+      "line_start": 18,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "65e8bea1121f5584d05286c08130fab8b7f534e1b04685e6474f1e926ee18b92",
+          "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/public_html/wp-config.php",
+      "risk_bearing": false,
+      "source_reference": "web/var/www/public_html/wp-config.php:18",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 9,
+        "total": 12
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/public_html/wp-config.php:20:risk",
+      "fingerprint_sha256": "cbe407842b16ef2bc56b25afbbf16fe23a1c93f66dce69b8aae4544e67bd75c0",
+      "line_end": 20,
+      "line_start": 20,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+          "90a80c5dd31cb995ef8b8f068efd4664a333f11bf40b16456b74c11340b3e331"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/public_html/wp-config.php",
+      "risk_bearing": true,
+      "source_reference": "web/var/www/public_html/wp-config.php:20",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 9,
+        "total": 12
+      }
+    },
+    {
+      "category": "informative",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/public_html/wp-config.php:22:informative",
+      "fingerprint_sha256": "edeeedb9497c663d1e2fc89265a8062e06d02d5b5610f6d7fe986d53cbafc05f",
+      "line_end": 22,
+      "line_start": 22,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "34b70142fe606717038ceb05bbf0ddd86828e27566bf116fa0692cb8512397b9",
+          "49960de5880e8c687434170f6476605b8fe4aeb9a28632c7995cf3ba831d9763"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/public_html/wp-config.php",
+      "risk_bearing": false,
+      "source_reference": "web/var/www/public_html/wp-config.php:22",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 9,
+        "total": 12
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/public_html/wp-config.php:33:risk",
+      "fingerprint_sha256": "98adb5ed68a94f59d3f0435995b74364c1bc98b6e50f06ed172b6d28c9732420",
+      "line_end": 33,
+      "line_start": 33,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "7e628120c23a0a64e03af0103da5a5cc099676ef33e41fd47bb2710fa9e1e65b",
+          "c4e81ca0430030b049f3e9ee008929fd9e875552685a0318531fa8a266835431"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/public_html/wp-config.php",
+      "risk_bearing": true,
+      "source_reference": "web/var/www/public_html/wp-config.php:33",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 9,
+        "total": 12
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/public_html/wp-config.php:35:risk",
+      "fingerprint_sha256": "998626f9ff9c45846a05e5b0be1a64a05888912909f58d72ed9e8fa1ad67f83d",
+      "line_end": 35,
+      "line_start": 35,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "2c95ba2dde476e027f518a6a4a4180bc2ac328c903349249386ace01bc56c669",
+          "8ee470ae7422b09414269396eb2ed59d689793aa55a8a06e83703842b7ae9d59",
+          "f55aacd58f0b1d64586b39d6b2d859175bead7901e8a837a766a25512475425b"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/public_html/wp-config.php",
+      "risk_bearing": true,
+      "source_reference": "web/var/www/public_html/wp-config.php:35",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 9,
+        "total": 12
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/public_html/wp-config.php:37:risk",
+      "fingerprint_sha256": "ce3ee14ca10805cfed9aac6eccb20ce32fee49ecab110a1a44991fe82d3cec33",
+      "line_end": 37,
+      "line_start": 37,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "34883334139124440b045ce8d5d049c2a0ee76a740dac4fa25ca91db0ec11d47",
+          "483bddb223eb2ec4445841cf5cb976511c4a8ce7dbc5dfc4b41d8f13f4c69b20",
+          "54f06d0a72035a586b3fd7a4fdf1ec0e60742020897ecc2b0d179f9bb37dd6b1",
+          "e2cca7351a87aca6600652d7f982795d9c057ba671c349c8bb4ec969f0333e84"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/public_html/wp-config.php",
+      "risk_bearing": true,
+      "source_reference": "web/var/www/public_html/wp-config.php:37",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 9,
+        "total": 12
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/public_html/wp-config.php:39:risk",
+      "fingerprint_sha256": "572c99c39768bc41be3c4b47231462c1f1776a5c346615afeb4226a74898398d",
+      "line_end": 39,
+      "line_start": 39,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "abfed5acd2fcdb9a86314636e6277d47b34ae21b5bb2b15367aa7bb436711f22",
+          "adbf728774891f5b54148def1d6fbc02448bd5a6f5aea464a0048d124ffe8719"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/public_html/wp-config.php",
+      "risk_bearing": true,
+      "source_reference": "web/var/www/public_html/wp-config.php:39",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 9,
+        "total": 12
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/public_html/wp-config.php:41:risk",
+      "fingerprint_sha256": "e0a03d331a200290f3558cecd83ef4be70dba99196ace8381c0363d6352a4051",
+      "line_end": 41,
+      "line_start": 41,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "2b7e4e386e473383c5e63713ada08c38666985277f0c644251869da11bb3e28c",
+          "375e6b755f38c7c0407e284929f0f61605d5b7ad2fc018d7a6d3b8db00e246e3",
+          "b41705b7eb8e9c9f2f28c201332bc0ed69ad56c2965be69a33d1d62852236483"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/public_html/wp-config.php",
+      "risk_bearing": true,
+      "source_reference": "web/var/www/public_html/wp-config.php:41",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 9,
+        "total": 12
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/public_html/wp-config.php:43:risk",
+      "fingerprint_sha256": "5859f6a0ee339e411231d68c4aac116cf5ec1d05ace52419d6d286f7858e67c5",
+      "line_end": 43,
+      "line_start": 43,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "24e784eae368c6964299d67dfa0dc7c33ddcb647cc3159c321fa5a4ef80eb982",
+          "5e1b0aed64a8c6dc2dc14c458a5da91b12b520270ae79fc43c8ed67b7f770672"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/public_html/wp-config.php",
+      "risk_bearing": true,
+      "source_reference": "web/var/www/public_html/wp-config.php:43",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 9,
+        "total": 12
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/public_html/wp-config.php:45:risk",
+      "fingerprint_sha256": "576406525f42f0f6a17a4296010b1b0b112cc633fb364444d65ecc5cbff2d681",
+      "line_end": 45,
+      "line_start": 45,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "425199a710a4a106834edc05d42f44c3ecb5460745f6df5bc7cd85f0d32d747a",
+          "58930ff0a91efb891a6e7c62fc9cbf7f4f84987d0f579195425663493ef6abb3",
+          "7c203e63173c876efe21162cb7f6b8d205ae365b5021ca371218d2d30f54eea3",
+          "91a0b191fcd5eb3e7eab3007def8ccae303810ff08c6899fb0c525c32f55d560",
+          "a36d50cf295010350aab49dc5e580095a18c958e3151cd8ac153003fc11026f8"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/public_html/wp-config.php",
+      "risk_bearing": true,
+      "source_reference": "web/var/www/public_html/wp-config.php:45",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 9,
+        "total": 12
+      }
+    },
+    {
+      "category": "risk",
+      "category_conflict": false,
+      "classification": "EXPECTED_DETECTION",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "finding_id": "leaky-repo:web/var/www/public_html/wp-config.php:47:risk",
+      "fingerprint_sha256": "9b2e5b67ced8f1cb05c97f316180dfc573b85478075bbeff629660235e63ed01",
+      "line_end": 47,
+      "line_start": 47,
+      "location": "line",
+      "matching_policy": "line_range",
+      "metadata": {
+        "requires_value": false,
+        "value_fingerprints": [
+          "0ede9e3f6246094e24b5aca65cbe74b5e34aeb77a2c4e2bade69cdcfca34bdba",
+          "2f4186df00b761a443a4515fd4516073e97d286702f3bb6b3003a8d107420884",
+          "b6f011afc7e0e1b8fc846cce35ff4928e2b2832953565062f85dde80caab129f"
+        ]
+      },
+      "notes": "",
+      "path": "web/var/www/public_html/wp-config.php",
+      "risk_bearing": true,
+      "source_reference": "web/var/www/public_html/wp-config.php:47",
+      "upstream_row": {
+        "informative": 3,
+        "risk": 9,
+        "total": 12
+      }
+    }
+  ],
+  "manifest_id": "rnc-leaky-repo-truth",
+  "manifest_version": "rnc-leaky-truth-v1",
+  "schema_version": 1,
+  "scoring_policy": {
+    "id": "leaky-line-v1",
+    "matching": "file_and_line_range",
+    "negative_oracle": false,
+    "one_finding_per_expected_item": true,
+    "partial_matching": false
+  },
+  "upstream_inventory_sha256": "146df5e25fa987a0b5c5610a958941e5416a29c9f72eadaa3677abc620b281ce"
+}

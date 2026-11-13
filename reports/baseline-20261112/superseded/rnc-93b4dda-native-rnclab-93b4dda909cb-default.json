@@ -1,0 +1,4316 @@
+{
+  "adapter": {
+    "key": "rnc",
+    "name": "RNC Scanner",
+    "supported_suites": [
+      "synthetic-filesystem",
+      "levain",
+      "leaky-repo",
+      "rnclab"
+    ]
+  },
+  "benchmark_environment": {
+    "allowed_stress_profiles": [
+      "none",
+      "cpu",
+      "memory",
+      "io",
+      "network"
+    ],
+    "contention": "uncontrolled",
+    "description": "contended developer workstation; functional and preliminary timing",
+    "documented_conditions": "not a controlled benchmark host",
+    "mode": "DEV",
+    "publishable": false,
+    "stability_threshold": 0.25,
+    "stress_profile": "none"
+  },
+  "builds": {
+    "windows-amd64": {
+      "artifact_path": "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261112T233929Z-d229bba6\\builds\\windows-amd64\\rnc-windows-amd64.exe",
+      "artifact_sha256": "deaded803e5941f18151454400b18dcf3ad58bbc7ef8b3dc243368acf38b3c56",
+      "command": [
+        "C:\\Users\\david\\.cargo\\bin\\cargo.EXE",
+        "build",
+        "--release",
+        "--locked",
+        "--bin",
+        "rnc",
+        "--target-dir",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261112T233929Z-d229bba6\\builds\\windows-amd64\\cargo-target"
+      ],
+      "duration_seconds": 43.625,
+      "error": null,
+      "exit_code": 0,
+      "image_id": null,
+      "image_tag": null,
+      "metadata": {
+        "build_tool": "cargo",
+        "execution_method": "native",
+        "goarch": "amd64",
+        "goos": "windows",
+        "history_capability": true,
+        "implementation": "rust",
+        "ruleset": {
+          "component_extractors": [
+            "database-uri-password"
+          ],
+          "digest": "sha256:dc1ab16f64a5dfb91262b46f321a9f5b219a13ed3bfb49e0f79c067de40bbc0f",
+          "digest_validation": "rnc rules validate --strategy auto",
+          "family_count": 22,
+          "path": "rules/rnc-providers-v1.json",
+          "rule_count": 37,
+          "ruleset_id": "rnc-providers-v1",
+          "ruleset_version": "2026.11.4",
+          "schema_version": "0.2.0",
+          "sha256": "87d7f9051ae41df34df29a0d5447ee8c9d71854ada46b789c9b7a00e4320a73a",
+          "source": "bundled provider catalogue in the pinned source checkout"
+        },
+        "source_commit": "93b4dda909cb3b41606a4d0f36c8ef9d06b77fde",
+        "source_repository": "C:\\Dev\\rnc-security-audit",
+        "toolchain": {
+          "cargo": "cargo 1.85.0 (d73d2caf9 2024-12-31)",
+          "docker": "29.9.3",
+          "git": "git version 2.45.2.windows.1",
+          "go": "go version go1.27.3 windows/amd64",
+          "rustc": "rustc 1.85.0 (4d91de4e4 2025-02-17)"
+        }
+      },
+      "platform": {
+        "arch": "amd64",
+        "docker_platform": null,
+        "goarch": "amd64",
+        "goos": "windows",
+        "key": "windows-amd64",
+        "kind": "executable",
+        "os_name": "windows"
+      },
+      "status": "PASS",
+      "stderr_sha256": "b56cdd28d5d3fbea1eddd97993b23c9eb32f5f1b1b9dc50cd14e560344095398",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": "0.1.0",
+      "version_status": "PASS"
+    }
+  },
+  "cleanup": {
+    "actions": [
+      "No Docker product was built or invoked; no container cleanup was required.",
+      "Removed run-owned checkout, build outputs, and evidence workspace."
+    ],
+    "containers_removed": [],
+    "failures": [],
+    "images_removed": [],
+    "retained": false,
+    "status": "PASS",
+    "workspace": "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261112T233929Z-d229bba6",
+    "workspace_removed": true
+  },
+  "datasets": {
+    "rnclab": {
+      "build_id": "v3",
+      "corpus_sha256": "161cb863f22b817982d26113b3981bec24b30bc37dd881fc10e9e8cc48ac91f3",
+      "counts": {
+        "filesystem": {
+          "INFORMATIVE": 150,
+          "NEGATIVE_ORDINARY": 330,
+          "NEGATIVE_TRAP": 162,
+          "POSITIVE": 640,
+          "TOTAL": 1282
+        },
+        "git": {
+          "INFORMATIVE": 50,
+          "NEGATIVE_ORDINARY": 70,
+          "NEGATIVE_TRAP": 40,
+          "POSITIVE": 160,
+          "TOTAL": 320
+        },
+        "total": 1602
+      },
+      "frozen_verification": {
+        "corpus_sha256": "161cb863f22b817982d26113b3981bec24b30bc37dd881fc10e9e8cc48ac91f3",
+        "corpus_unchanged": true,
+        "git_head": "cba273f44ccb90cbe3cb60cf2750b1847960830a",
+        "git_head_unchanged": true,
+        "manifest_sha256": "691548588679f4a1e5e41ecd5d253d7137693337c1ddef2c6e8943bbb7cd7d0b",
+        "manifest_unchanged": true,
+        "oracle_sha256": "83dea16b343ff7a9340ff463513f4bdb454cea6faaf3234696a78fe8e6b85214",
+        "oracle_unchanged": true,
+        "status": "PASS"
+      },
+      "manifest_sha256": "691548588679f4a1e5e41ecd5d253d7137693337c1ddef2c6e8943bbb7cd7d0b",
+      "name": "RNC Synthetic Secrets Lab",
+      "oracle_sha256": "83dea16b343ff7a9340ff463513f4bdb454cea6faaf3234696a78fe8e6b85214",
+      "source_validation": {
+        "checked_items": 1602,
+        "checked_spans": 1602,
+        "corpus_files": 360,
+        "corpus_sha256": "161cb863f22b817982d26113b3981bec24b30bc37dd881fc10e9e8cc48ac91f3",
+        "git_commit_count": 51,
+        "git_head": "cba273f44ccb90cbe3cb60cf2750b1847960830a",
+        "git_remotes": [],
+        "manifest_sha256": "691548588679f4a1e5e41ecd5d253d7137693337c1ddef2c6e8943bbb7cd7d0b",
+        "oracle_sha256": "83dea16b343ff7a9340ff463513f4bdb454cea6faaf3234696a78fe8e6b85214",
+        "status": "PASS"
+      },
+      "unique_positive_groups": 496,
+      "version": "rnc-synthetic-secrets-lab/1.2.0"
+    }
+  },
+  "detection": {
+    "leaky_filesystem": {
+      "legacy_count_coverage": {
+        "coverage_percent": null,
+        "covered_count": null,
+        "excess_findings": null,
+        "expected_count": null,
+        "expected_files": null,
+        "files_covered": null,
+        "label": "LEGACY COUNT COVERAGE",
+        "unlisted_findings": null
+      },
+      "methodology": "legacy_count_plus_rich_line_truth",
+      "rich_line_truth": {
+        "category_conflict_items": null,
+        "detection_recall_percent": null,
+        "duplicate_count": null,
+        "expected_count": null,
+        "f1_percent": null,
+        "line_only_count": null,
+        "matched_count": null,
+        "missed_count": null,
+        "negative_oracle": false,
+        "precision_percent": null,
+        "unexpected_count": null,
+        "value_verified_count": null
+      }
+    },
+    "leaky_history": {
+      "commits_scanned": null,
+      "coverage_verified": null,
+      "denominator": "65 source occurrences / 53 unique groups",
+      "duplicate_count": null,
+      "execution_status": null,
+      "expected_commits": null,
+      "expected_occurrences": null,
+      "f1_percent": null,
+      "informative_match_count": null,
+      "matched_occurrences": null,
+      "missed_occurrences": null,
+      "observed_findings": null,
+      "occurrence_recall_percent": null,
+      "precision_certification_status": null,
+      "precision_percent": null,
+      "scope_matches": null,
+      "score_status": null,
+      "scored": false,
+      "truth_status": null,
+      "unique_expected": null,
+      "unique_matched": null,
+      "unique_recall_percent": null,
+      "unique_secret_fingerprints": null,
+      "unmatched_pending_review_count": null,
+      "unverified_evidence_count": null,
+      "verified_false_positive_count": null
+    },
+    "levain": {},
+    "rnclab": {
+      "build": "v3",
+      "denominators": {
+        "filesystem_total_items": 1282,
+        "git_total_items": 320,
+        "positive_occurrences": 800,
+        "unique_credential_identities": 496
+      },
+      "filesystem": {
+        "duplicate_count": 0,
+        "expected_positives": 640,
+        "expected_unique_groups": 366,
+        "f1_percent": null,
+        "false_negative_occurrences": 0,
+        "informative_match_count": 0,
+        "occurrence_recall_percent": 0.0,
+        "precision_certification_status": "BLOCKED_INCOMPLETE_NEGATIVE_ORACLE",
+        "precision_percent": null,
+        "true_positive_occurrences": 0,
+        "unique_groups_matched": 0,
+        "unique_recall_percent": 0.0,
+        "unmatched_pending_review_count": 0,
+        "unverified_evidence_count": 0,
+        "verified_false_positive_alert_count": 0
+      },
+      "git": {
+        "lanes": {
+          "windows-amd64": {
+            "capability": {
+              "assessment": "executed and source-scored",
+              "mode": "git",
+              "supported": true
+            },
+            "metrics": {
+              "accounted_finding_count": 121,
+              "accounted_percent": 100.0,
+              "duplicate_count": 1,
+              "expected_positives": 160,
+              "expected_unique_groups": 130,
+              "f1_percent": null,
+              "false_negative_occurrences": 55,
+              "informative_match_count": 0,
+              "informative_unique_item_count": 0,
+              "invocation": {
+                "duration_seconds": 6.367,
+                "exit_code": 10,
+                "mode": "git",
+                "timed_out": false
+              },
+              "negative_oracle": true,
+              "observed_findings": 121,
+              "occurrence_recall_percent": 65.62,
+              "precision_certification_status": "BLOCKED_INCOMPLETE_NEGATIVE_ORACLE",
+              "precision_percent": null,
+              "true_positive_occurrences": 105,
+              "unique_groups_matched": 78,
+              "unique_recall_percent": 60.0,
+              "unique_verified_nonsecret_exposures": 3,
+              "unmatched_pending_review_count": 12,
+              "unmatched_positive_container_counts": {
+                "git": 55
+              },
+              "unsupported_capability_count": 0,
+              "unverified_evidence_count": 0,
+              "verified_false_positive_alert_count": 3
+            },
+            "outcome": "COMPLETED_AND_SCORED",
+            "reason": null,
+            "status": "PASS"
+          }
+        },
+        "supported": true
+      },
+      "lab": "rnc-synthetic-secrets-lab/1.2.0"
+    },
+    "synthetic_filesystem": {},
+    "synthetic_history": {}
+  },
+  "detection_by_product": {
+    "windows-amd64": {
+      "rnclab": {
+        "metrics": {},
+        "outcome": "BLOCKED",
+        "reason": "scanner invocation problem: INCOMPLETE",
+        "status": "BLOCKED"
+      }
+    }
+  },
+  "generated_at": "2026-11-12T23:43:19Z",
+  "harness_version": "0.5.0",
+  "host": {
+    "capacity": {
+      "cpu_count": 8,
+      "disk": {
+        "free_bytes": 138884956160,
+        "total_bytes": 1997447098368,
+        "used_bytes": 1858562142208,
+        "used_percent": 93.05
+      },
+      "load_average": null,
+      "memory_available_bytes": 12940288000,
+      "memory_bytes": 34047959040,
+      "memory_load_percent": 61,
+      "method": "stdlib"
+    },
+    "cpu_count": 8,
+    "hostname_kind": "redacted",
+    "machine": "AMD64",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+    "python": "3.13.5",
+    "system": "Windows",
+    "toolchain": {
+      "cargo": "cargo 1.85.0 (d73d2caf9 2024-12-31)",
+      "docker": "29.9.3",
+      "git": "git version 2.45.2.windows.1",
+      "go": "go version go1.27.3 windows/amd64",
+      "rustc": "rustc 1.85.0 (4d91de4e4 2025-02-17)"
+    }
+  },
+  "limitations": [
+    "Source commit is the primary experiment identity; artifact hashes and image IDs are supporting provenance.",
+    "A successfully built artifact is not counted as tested unless an applicable suite executed it.",
+    "RNC Lab negative references are source-adjudicated within the frozen corpus; findings not present in the oracle remain pending review and precision/F1 are not certified.",
+    "Filesystem (1,282) and Git-history (320) denominators are separate and are never combined.",
+    "Private-key credit requires private-key material; public-key-only, SPKI-only, filename-only and encrypted-container-only evidence is not a true positive.",
+    "The frozen lab is verified before and after scanning; a hash change blocks the run.",
+    "The rule bundle is read from the pinned source checkout and hashed after the source build.",
+    "The empty repository configuration suppresses target auto-discovery; it does not alter the provider rule bundle.",
+    "Git-history capability is verified from the pinned CLI source after build; unsupported source commits are reported rather than assumed.",
+    "Performance measurements used the DEV environment profile; the host was contended/uncontrolled and these timings are not release evidence."
+  ],
+  "performance": {
+    "limitations": [
+      "Performance is reported separately from detection accuracy; no weighted combined score exists.",
+      "Native, container, and emulated-architecture products are not directly comparable.",
+      "Unavailable CPU or memory telemetry is null, never zero.",
+      "DEV measurements are contended and not publishable as release evidence.",
+      "Levain, Leaky filesystem, Leaky Git and RNC Lab filesystem/Git are separate workloads.",
+      "RNC Lab legacy-5x/legacy-10x loads are performance-only and are never scored against the canonical oracle.",
+      "Archive extraction and inspected-file coverage are recorded from the declared workload; scanner-internal traversal is not inferred from timing."
+    ],
+    "methodology": {
+      "build_time_separate": true,
+      "cache_state": "warm_after_warmup",
+      "copies": 10,
+      "detection_and_performance_separate": true,
+      "environment_mode": "DEV",
+      "load_measured_runs": 3,
+      "load_profiles": [
+        "legacy-5x",
+        "legacy-10x"
+      ],
+      "load_warmups": 1,
+      "measured_runs": 5,
+      "scanner_order": [
+        "windows-amd64"
+      ],
+      "sequential": true,
+      "single_active_execution": true,
+      "stress_profile": "none",
+      "version": "2",
+      "warmups": 1,
+      "workloads": [
+        "rnclab-filesystem",
+        "rnclab-git"
+      ]
+    },
+    "products": [
+      {
+        "benchmark": {
+          "cache_state": "warm_after_warmup",
+          "environment_mode": "DEV",
+          "measured_runs": 5,
+          "mode": "dir",
+          "scanner_order_controlled": true,
+          "sequence_index": 0,
+          "sequential": true,
+          "stress_profile": "none",
+          "timeout_seconds": 1200,
+          "version": "2",
+          "warmups": 1
+        },
+        "benchmark_environment": {
+          "allowed_stress_profiles": [
+            "none",
+            "cpu",
+            "memory",
+            "io",
+            "network"
+          ],
+          "contention": "uncontrolled",
+          "description": "contended developer workstation; functional and preliminary timing",
+          "documented_conditions": "not a controlled benchmark host",
+          "mode": "DEV",
+          "publishable": false,
+          "stability_threshold": 0.25,
+          "stress_profile": "none"
+        },
+        "build": {
+          "artifact_sha256": "deaded803e5941f18151454400b18dcf3ad58bbc7ef8b3dc243368acf38b3c56",
+          "command": [
+            "C:\\Users\\david\\.cargo\\bin\\cargo.EXE",
+            "build",
+            "--release",
+            "--locked",
+            "--bin",
+            "rnc",
+            "--target-dir",
+            "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261112T233929Z-d229bba6\\builds\\windows-amd64\\cargo-target"
+          ],
+          "duration_seconds": 43.625,
+          "image_id": null,
+          "source_commit": "93b4dda909cb3b41606a4d0f36c8ef9d06b77fde",
+          "status": "PASS"
+        },
+        "dataset": {
+          "build_id": "v3",
+          "dataset_id": "rnc-synthetic-secrets-lab",
+          "dataset_version": "rnc-synthetic-secrets-lab/1.2.0",
+          "lane": "filesystem",
+          "manifest_sha256": "691548588679f4a1e5e41ecd5d253d7137693337c1ddef2c6e8943bbb7cd7d0b",
+          "oracle_sha256": "83dea16b343ff7a9340ff463513f4bdb454cea6faaf3234696a78fe8e6b85214"
+        },
+        "environment": {
+          "capacity": {
+            "cpu_count": 8,
+            "disk": {
+              "free_bytes": 138757894144,
+              "total_bytes": 1997447098368,
+              "used_bytes": 1858689204224,
+              "used_percent": 93.05
+            },
+            "load_average": null,
+            "memory_available_bytes": 12998160384,
+            "memory_bytes": 34047959040,
+            "memory_load_percent": 61,
+            "method": "stdlib"
+          },
+          "cpu_count": 8,
+          "hostname_kind": "redacted",
+          "machine": "AMD64",
+          "platform": "Windows-11-10.0.26300-SP0",
+          "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+          "python": "3.13.5",
+          "system": "Windows"
+        },
+        "harness_version": "0.5.0",
+        "load_profile": null,
+        "performance_version": "2",
+        "product": {
+          "architecture": "amd64",
+          "artifact_sha256": "deaded803e5941f18151454400b18dcf3ad58bbc7ef8b3dc243368acf38b3c56",
+          "emulated": false,
+          "execution_method": "native",
+          "image_id": null,
+          "image_tag": null,
+          "kind": "executable",
+          "platform": "windows-amd64"
+        },
+        "report_type": "rnc-scan-harness/performance",
+        "requested_multiplier": 1,
+        "runs": [
+          {
+            "cache_state": "warmup",
+            "cpu_total_seconds": null,
+            "cpu_utilization_percent": null,
+            "duration_seconds": 0.0,
+            "error": "INCOMPLETE",
+            "exit_code": null,
+            "peak_memory_bytes": null,
+            "phase": "warmup",
+            "run_index": 0,
+            "sequence_index": 0,
+            "telemetry_method": "unavailable",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          },
+          {
+            "cache_state": "warm_after_warmup",
+            "cpu_total_seconds": null,
+            "cpu_utilization_percent": null,
+            "duration_seconds": 0.0,
+            "error": "INCOMPLETE",
+            "exit_code": null,
+            "peak_memory_bytes": null,
+            "phase": "measured",
+            "run_index": 0,
+            "sequence_index": 0,
+            "telemetry_method": "unavailable",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          },
+          {
+            "cache_state": "warm_after_warmup",
+            "cpu_total_seconds": null,
+            "cpu_utilization_percent": null,
+            "duration_seconds": 0.0,
+            "error": "INCOMPLETE",
+            "exit_code": null,
+            "peak_memory_bytes": null,
+            "phase": "measured",
+            "run_index": 1,
+            "sequence_index": 0,
+            "telemetry_method": "unavailable",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          },
+          {
+            "cache_state": "warm_after_warmup",
+            "cpu_total_seconds": null,
+            "cpu_utilization_percent": null,
+            "duration_seconds": 0.0,
+            "error": "INCOMPLETE",
+            "exit_code": null,
+            "peak_memory_bytes": null,
+            "phase": "measured",
+            "run_index": 2,
+            "sequence_index": 0,
+            "telemetry_method": "unavailable",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          },
+          {
+            "cache_state": "warm_after_warmup",
+            "cpu_total_seconds": null,
+            "cpu_utilization_percent": null,
+            "duration_seconds": 0.0,
+            "error": "INCOMPLETE",
+            "exit_code": null,
+            "peak_memory_bytes": null,
+            "phase": "measured",
+            "run_index": 3,
+            "sequence_index": 0,
+            "telemetry_method": "unavailable",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          },
+          {
+            "cache_state": "warm_after_warmup",
+            "cpu_total_seconds": null,
+            "cpu_utilization_percent": null,
+            "duration_seconds": 0.0,
+            "error": "INCOMPLETE",
+            "exit_code": null,
+            "peak_memory_bytes": null,
+            "phase": "measured",
+            "run_index": 4,
+            "sequence_index": 0,
+            "telemetry_method": "unavailable",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          }
+        ],
+        "scanner": {
+          "key": "rnc",
+          "version": "0.1.0"
+        },
+        "suite": "rnclab",
+        "summary": {
+          "archive_files": null,
+          "archives_extracted": null,
+          "cpu_total_seconds": {
+            "coefficient_of_variation": null,
+            "count": 0,
+            "maximum": null,
+            "median": null,
+            "minimum": null,
+            "stdev": null
+          },
+          "cpu_utilization_percent": {
+            "coefficient_of_variation": null,
+            "count": 0,
+            "maximum": null,
+            "median": null,
+            "minimum": null,
+            "stdev": null
+          },
+          "failures": 6,
+          "file_coverage_percent": 100.0,
+          "files_eligible": 360,
+          "files_inspected": 360,
+          "inspected_throughput_bytes_per_second": null,
+          "peak_memory_bytes": {
+            "available_samples": 0,
+            "max": null,
+            "median": null
+          },
+          "resource_limit_events": null,
+          "runtime_seconds": {
+            "coefficient_of_variation": null,
+            "count": 0,
+            "maximum": null,
+            "median": null,
+            "minimum": null,
+            "stdev": null
+          },
+          "stability": "INCOMPLETE",
+          "stability_threshold_cv": 0.25,
+          "telemetry_methods": [
+            "unavailable"
+          ],
+          "throughput_bytes_per_second": null,
+          "timeouts": 0
+        },
+        "workload": {
+          "bytes": 258574,
+          "dataset": "rnc-synthetic-secrets-lab",
+          "eligible_files": 360,
+          "files": 360,
+          "lane": "filesystem",
+          "oracle_items": 1282,
+          "positives": 640
+        },
+        "workload_key": "rnclab-filesystem",
+        "workload_title": "RNC Lab v3 canonical filesystem"
+      },
+      {
+        "benchmark": {
+          "cache_state": "warm_after_warmup",
+          "environment_mode": "DEV",
+          "measured_runs": 5,
+          "mode": "git",
+          "scanner_order_controlled": true,
+          "sequence_index": 1,
+          "sequential": true,
+          "stress_profile": "none",
+          "timeout_seconds": 1200,
+          "version": "2",
+          "warmups": 1
+        },
+        "benchmark_environment": {
+          "allowed_stress_profiles": [
+            "none",
+            "cpu",
+            "memory",
+            "io",
+            "network"
+          ],
+          "contention": "uncontrolled",
+          "description": "contended developer workstation; functional and preliminary timing",
+          "documented_conditions": "not a controlled benchmark host",
+          "mode": "DEV",
+          "publishable": false,
+          "stability_threshold": 0.25,
+          "stress_profile": "none"
+        },
+        "build": {
+          "artifact_sha256": "deaded803e5941f18151454400b18dcf3ad58bbc7ef8b3dc243368acf38b3c56",
+          "command": [
+            "C:\\Users\\david\\.cargo\\bin\\cargo.EXE",
+            "build",
+            "--release",
+            "--locked",
+            "--bin",
+            "rnc",
+            "--target-dir",
+            "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261112T233929Z-d229bba6\\builds\\windows-amd64\\cargo-target"
+          ],
+          "duration_seconds": 43.625,
+          "image_id": null,
+          "source_commit": "93b4dda909cb3b41606a4d0f36c8ef9d06b77fde",
+          "status": "PASS"
+        },
+        "dataset": {
+          "build_id": "v3",
+          "commit_count": 51,
+          "dataset_id": "rnc-synthetic-secrets-lab",
+          "dataset_version": "rnc-synthetic-secrets-lab/1.2.0",
+          "git_head": "cba273f44ccb90cbe3cb60cf2750b1847960830a",
+          "lane": "git",
+          "manifest_sha256": "691548588679f4a1e5e41ecd5d253d7137693337c1ddef2c6e8943bbb7cd7d0b",
+          "oracle_sha256": "83dea16b343ff7a9340ff463513f4bdb454cea6faaf3234696a78fe8e6b85214"
+        },
+        "environment": {
+          "capacity": {
+            "cpu_count": 8,
+            "disk": {
+              "free_bytes": 138756788224,
+              "total_bytes": 1997447098368,
+              "used_bytes": 1858690310144,
+              "used_percent": 93.05
+            },
+            "load_average": null,
+            "memory_available_bytes": 12996702208,
+            "memory_bytes": 34047959040,
+            "memory_load_percent": 61,
+            "method": "stdlib"
+          },
+          "cpu_count": 8,
+          "hostname_kind": "redacted",
+          "machine": "AMD64",
+          "platform": "Windows-11-10.0.26300-SP0",
+          "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+          "python": "3.13.5",
+          "system": "Windows"
+        },
+        "harness_version": "0.5.0",
+        "load_profile": null,
+        "performance_version": "2",
+        "product": {
+          "architecture": "amd64",
+          "artifact_sha256": "deaded803e5941f18151454400b18dcf3ad58bbc7ef8b3dc243368acf38b3c56",
+          "emulated": false,
+          "execution_method": "native",
+          "image_id": null,
+          "image_tag": null,
+          "kind": "executable",
+          "platform": "windows-amd64"
+        },
+        "report_type": "rnc-scan-harness/performance",
+        "requested_multiplier": 1,
+        "runs": [
+          {
+            "cache_state": "warmup",
+            "cpu_total_seconds": 0.625,
+            "cpu_utilization_percent": 9.78,
+            "duration_seconds": 6.39,
+            "error": null,
+            "exit_code": 10,
+            "peak_memory_bytes": 88121344,
+            "phase": "warmup",
+            "run_index": 0,
+            "sequence_index": 1,
+            "telemetry_method": "windows_process_times",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          },
+          {
+            "cache_state": "warm_after_warmup",
+            "cpu_total_seconds": 0.625,
+            "cpu_utilization_percent": 9.953,
+            "duration_seconds": 6.28,
+            "error": null,
+            "exit_code": 10,
+            "peak_memory_bytes": 88252416,
+            "phase": "measured",
+            "run_index": 0,
+            "sequence_index": 1,
+            "telemetry_method": "windows_process_times",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          },
+          {
+            "cache_state": "warm_after_warmup",
+            "cpu_total_seconds": 0.5625,
+            "cpu_utilization_percent": 8.911,
+            "duration_seconds": 6.312,
+            "error": null,
+            "exit_code": 10,
+            "peak_memory_bytes": 88178688,
+            "phase": "measured",
+            "run_index": 1,
+            "sequence_index": 1,
+            "telemetry_method": "windows_process_times",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          },
+          {
+            "cache_state": "warm_after_warmup",
+            "cpu_total_seconds": 0.765625,
+            "cpu_utilization_percent": 12.098,
+            "duration_seconds": 6.329,
+            "error": null,
+            "exit_code": 10,
+            "peak_memory_bytes": 88027136,
+            "phase": "measured",
+            "run_index": 2,
+            "sequence_index": 1,
+            "telemetry_method": "windows_process_times",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          },
+          {
+            "cache_state": "warm_after_warmup",
+            "cpu_total_seconds": 0.71875,
+            "cpu_utilization_percent": 11.279,
+            "duration_seconds": 6.372,
+            "error": null,
+            "exit_code": 10,
+            "peak_memory_bytes": 88231936,
+            "phase": "measured",
+            "run_index": 3,
+            "sequence_index": 1,
+            "telemetry_method": "windows_process_times",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          },
+          {
+            "cache_state": "warm_after_warmup",
+            "cpu_total_seconds": 0.671875,
+            "cpu_utilization_percent": 10.706,
+            "duration_seconds": 6.276,
+            "error": null,
+            "exit_code": 10,
+            "peak_memory_bytes": 88072192,
+            "phase": "measured",
+            "run_index": 4,
+            "sequence_index": 1,
+            "telemetry_method": "windows_process_times",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          }
+        ],
+        "scanner": {
+          "key": "rnc",
+          "version": "0.1.0"
+        },
+        "suite": "rnclab",
+        "summary": {
+          "archive_files": null,
+          "archives_extracted": null,
+          "cpu_total_seconds": {
+            "coefficient_of_variation": 0.105942,
+            "count": 5,
+            "maximum": 0.765625,
+            "median": 0.671875,
+            "minimum": 0.5625,
+            "stdev": 0.070849
+          },
+          "cpu_utilization_percent": {
+            "coefficient_of_variation": 0.103336,
+            "count": 5,
+            "maximum": 12.098,
+            "median": 10.706,
+            "minimum": 8.911,
+            "stdev": 1.094262
+          },
+          "failures": 0,
+          "file_coverage_percent": 100.0,
+          "files_eligible": 102,
+          "files_inspected": 102,
+          "inspected_throughput_bytes_per_second": 6567.649,
+          "peak_memory_bytes": {
+            "available_samples": 5,
+            "max": 88252416,
+            "median": 88178688
+          },
+          "resource_limit_events": null,
+          "runtime_seconds": {
+            "coefficient_of_variation": 0.005574,
+            "count": 5,
+            "maximum": 6.372,
+            "median": 6.312,
+            "minimum": 6.276,
+            "stdev": 0.035193
+          },
+          "stability": "STABLE",
+          "stability_threshold_cv": 0.25,
+          "telemetry_methods": [
+            "windows_process_times"
+          ],
+          "throughput_bytes_per_second": 6567.649,
+          "timeouts": 0
+        },
+        "workload": {
+          "bytes": 41455,
+          "commits": 51,
+          "dataset": "rnc-synthetic-secrets-lab",
+          "eligible_files": 102,
+          "files": 102,
+          "lane": "git",
+          "oracle_items": 320,
+          "positives": 160
+        },
+        "workload_key": "rnclab-git",
+        "workload_title": "RNC Lab v3 canonical Git history"
+      },
+      {
+        "accuracy_scored": false,
+        "benchmark": {
+          "cache_state": "warm_after_warmup",
+          "environment_mode": "DEV",
+          "measured_runs": 3,
+          "mode": "dir",
+          "scanner_order_controlled": true,
+          "sequence_index": 2,
+          "sequential": true,
+          "stress_profile": "none",
+          "timeout_seconds": 1200,
+          "version": "2",
+          "warmups": 1
+        },
+        "benchmark_environment": {
+          "allowed_stress_profiles": [
+            "none",
+            "cpu",
+            "memory",
+            "io",
+            "network"
+          ],
+          "contention": "uncontrolled",
+          "description": "contended developer workstation; functional and preliminary timing",
+          "documented_conditions": "not a controlled benchmark host",
+          "mode": "DEV",
+          "publishable": false,
+          "stability_threshold": 0.25,
+          "stress_profile": "none"
+        },
+        "build": {
+          "artifact_sha256": "deaded803e5941f18151454400b18dcf3ad58bbc7ef8b3dc243368acf38b3c56",
+          "command": [
+            "C:\\Users\\david\\.cargo\\bin\\cargo.EXE",
+            "build",
+            "--release",
+            "--locked",
+            "--bin",
+            "rnc",
+            "--target-dir",
+            "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261112T233929Z-d229bba6\\builds\\windows-amd64\\cargo-target"
+          ],
+          "duration_seconds": 43.625,
+          "image_id": null,
+          "source_commit": "93b4dda909cb3b41606a4d0f36c8ef9d06b77fde",
+          "status": "PASS"
+        },
+        "dataset": {
+          "build_id": "v3",
+          "dataset_id": "rnc-synthetic-secrets-lab",
+          "dataset_version": "rnc-synthetic-secrets-lab/1.2.0",
+          "generated_corpus": true,
+          "load_profile": "legacy-5x",
+          "manifest_sha256": "691548588679f4a1e5e41ecd5d253d7137693337c1ddef2c6e8943bbb7cd7d0b"
+        },
+        "environment": {
+          "capacity": {
+            "cpu_count": 8,
+            "disk": {
+              "free_bytes": 138676768768,
+              "total_bytes": 1997447098368,
+              "used_bytes": 1858770329600,
+              "used_percent": 93.06
+            },
+            "load_average": null,
+            "memory_available_bytes": 13229301760,
+            "memory_bytes": 34047959040,
+            "memory_load_percent": 61,
+            "method": "stdlib"
+          },
+          "cpu_count": 8,
+          "hostname_kind": "redacted",
+          "machine": "AMD64",
+          "platform": "Windows-11-10.0.26300-SP0",
+          "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+          "python": "3.13.5",
+          "system": "Windows"
+        },
+        "harness_version": "0.5.0",
+        "load_generation": {
+          "bytes": 68402295,
+          "command": [
+            "C:\\Python313\\python.exe",
+            "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261112T233929Z-d229bba6\\evidence\\performance\\windows-amd64\\loads\\legacy-5x\\lab\\generator\\stress.py",
+            "--profile",
+            "legacy-5x",
+            "--out",
+            "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261112T233929Z-d229bba6\\evidence\\performance\\windows-amd64\\loads\\legacy-5x\\lab\\stress-runs"
+          ],
+          "files": 1810,
+          "manifest": {
+            "bytes": 68401766,
+            "created_at": "2026-11-12T23:41:07.724256+00:00",
+            "directories": 0,
+            "duplicate_files": 0,
+            "duration_seconds": 3.62,
+            "files": 1809,
+            "hardlinks": 0,
+            "max_depth": 43,
+            "notes": [
+              "Performance workload only. It is NOT part of the canonical 1,600-item accuracy oracle and must not be scored against it."
+            ],
+            "params": {
+              "copies": 5,
+              "source": "corpus/filesystem"
+            },
+            "profile": "legacy-5x",
+            "schema": "rnc-synth-stress/1",
+            "seed": 1600,
+            "symlinks": 0
+          }
+        },
+        "load_profile": "legacy-5x",
+        "performance_version": "2",
+        "product": {
+          "architecture": "amd64",
+          "artifact_sha256": "deaded803e5941f18151454400b18dcf3ad58bbc7ef8b3dc243368acf38b3c56",
+          "emulated": false,
+          "execution_method": "native",
+          "image_id": null,
+          "image_tag": null,
+          "kind": "executable",
+          "platform": "windows-amd64"
+        },
+        "report_type": "rnc-scan-harness/performance",
+        "requested_multiplier": 5,
+        "runs": [
+          {
+            "cache_state": "warmup",
+            "cpu_total_seconds": null,
+            "cpu_utilization_percent": null,
+            "duration_seconds": 0.0,
+            "error": "INCOMPLETE",
+            "exit_code": null,
+            "peak_memory_bytes": null,
+            "phase": "warmup",
+            "run_index": 0,
+            "sequence_index": 2,
+            "telemetry_method": "unavailable",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          },
+          {
+            "cache_state": "warm_after_warmup",
+            "cpu_total_seconds": null,
+            "cpu_utilization_percent": null,
+            "duration_seconds": 0.0,
+            "error": "INCOMPLETE",
+            "exit_code": null,
+            "peak_memory_bytes": null,
+            "phase": "measured",
+            "run_index": 0,
+            "sequence_index": 2,
+            "telemetry_method": "unavailable",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          },
+          {
+            "cache_state": "warm_after_warmup",
+            "cpu_total_seconds": null,
+            "cpu_utilization_percent": null,
+            "duration_seconds": 0.0,
+            "error": "INCOMPLETE",
+            "exit_code": null,
+            "peak_memory_bytes": null,
+            "phase": "measured",
+            "run_index": 1,
+            "sequence_index": 2,
+            "telemetry_method": "unavailable",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          },
+          {
+            "cache_state": "warm_after_warmup",
+            "cpu_total_seconds": null,
+            "cpu_utilization_percent": null,
+            "duration_seconds": 0.0,
+            "error": "INCOMPLETE",
+            "exit_code": null,
+            "peak_memory_bytes": null,
+            "phase": "measured",
+            "run_index": 2,
+            "sequence_index": 2,
+            "telemetry_method": "unavailable",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          }
+        ],
+        "scaling": {
+          "actual_file_multiplier": 5.028,
+          "canonical_median_seconds": null,
+          "canonical_peak_memory_bytes": null,
+          "canonical_throughput_bytes_per_second": null,
+          "load_median_seconds": null,
+          "load_peak_memory_bytes": null,
+          "load_throughput_bytes_per_second": null,
+          "memory_scaling": null,
+          "runtime_scaling": null
+        },
+        "scanner": {
+          "key": "rnc",
+          "version": "0.1.0"
+        },
+        "suite": "rnclab",
+        "summary": {
+          "archive_files": null,
+          "archives_extracted": null,
+          "cpu_total_seconds": {
+            "coefficient_of_variation": null,
+            "count": 0,
+            "maximum": null,
+            "median": null,
+            "minimum": null,
+            "stdev": null
+          },
+          "cpu_utilization_percent": {
+            "coefficient_of_variation": null,
+            "count": 0,
+            "maximum": null,
+            "median": null,
+            "minimum": null,
+            "stdev": null
+          },
+          "failures": 4,
+          "file_coverage_percent": 100.0,
+          "files_eligible": 1810,
+          "files_inspected": 1810,
+          "inspected_throughput_bytes_per_second": null,
+          "peak_memory_bytes": {
+            "available_samples": 0,
+            "max": null,
+            "median": null
+          },
+          "resource_limit_events": null,
+          "runtime_seconds": {
+            "coefficient_of_variation": null,
+            "count": 0,
+            "maximum": null,
+            "median": null,
+            "minimum": null,
+            "stdev": null
+          },
+          "stability": "INCOMPLETE",
+          "stability_threshold_cv": 0.25,
+          "telemetry_methods": [
+            "unavailable"
+          ],
+          "throughput_bytes_per_second": null,
+          "timeouts": 0
+        },
+        "workload": {
+          "bytes": 68402295,
+          "dataset": "rnc-synthetic-secrets-lab",
+          "eligible_files": 1810,
+          "files": 1810,
+          "lane": "filesystem",
+          "load_profile": "legacy-5x",
+          "oracle_scored": false,
+          "requested_multiplier": 5,
+          "stress_manifest": {
+            "bytes": 68401766,
+            "created_at": "2026-11-12T23:41:07.724256+00:00",
+            "directories": 0,
+            "duplicate_files": 0,
+            "duration_seconds": 3.62,
+            "files": 1809,
+            "hardlinks": 0,
+            "max_depth": 43,
+            "notes": [
+              "Performance workload only. It is NOT part of the canonical 1,600-item accuracy oracle and must not be scored against it."
+            ],
+            "params": {
+              "copies": 5,
+              "source": "corpus/filesystem"
+            },
+            "profile": "legacy-5x",
+            "schema": "rnc-synth-stress/1",
+            "seed": 1600,
+            "symlinks": 0
+          }
+        },
+        "workload_key": "rnclab-legacy-5x",
+        "workload_title": "RNC Lab legacy-5x load"
+      },
+      {
+        "accuracy_scored": false,
+        "benchmark": {
+          "cache_state": "warm_after_warmup",
+          "environment_mode": "DEV",
+          "measured_runs": 3,
+          "mode": "dir",
+          "scanner_order_controlled": true,
+          "sequence_index": 3,
+          "sequential": true,
+          "stress_profile": "none",
+          "timeout_seconds": 1200,
+          "version": "2",
+          "warmups": 1
+        },
+        "benchmark_environment": {
+          "allowed_stress_profiles": [
+            "none",
+            "cpu",
+            "memory",
+            "io",
+            "network"
+          ],
+          "contention": "uncontrolled",
+          "description": "contended developer workstation; functional and preliminary timing",
+          "documented_conditions": "not a controlled benchmark host",
+          "mode": "DEV",
+          "publishable": false,
+          "stability_threshold": 0.25,
+          "stress_profile": "none"
+        },
+        "build": {
+          "artifact_sha256": "deaded803e5941f18151454400b18dcf3ad58bbc7ef8b3dc243368acf38b3c56",
+          "command": [
+            "C:\\Users\\david\\.cargo\\bin\\cargo.EXE",
+            "build",
+            "--release",
+            "--locked",
+            "--bin",
+            "rnc",
+            "--target-dir",
+            "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261112T233929Z-d229bba6\\builds\\windows-amd64\\cargo-target"
+          ],
+          "duration_seconds": 43.625,
+          "image_id": null,
+          "source_commit": "93b4dda909cb3b41606a4d0f36c8ef9d06b77fde",
+          "status": "PASS"
+        },
+        "dataset": {
+          "build_id": "v3",
+          "dataset_id": "rnc-synthetic-secrets-lab",
+          "dataset_version": "rnc-synthetic-secrets-lab/1.2.0",
+          "generated_corpus": true,
+          "load_profile": "legacy-10x",
+          "manifest_sha256": "691548588679f4a1e5e41ecd5d253d7137693337c1ddef2c6e8943bbb7cd7d0b"
+        },
+        "environment": {
+          "capacity": {
+            "cpu_count": 8,
+            "disk": {
+              "free_bytes": 138649481216,
+              "total_bytes": 1997447098368,
+              "used_bytes": 1858797617152,
+              "used_percent": 93.06
+            },
+            "load_average": null,
+            "memory_available_bytes": 12926337024,
+            "memory_bytes": 34047959040,
+            "memory_load_percent": 62,
+            "method": "stdlib"
+          },
+          "cpu_count": 8,
+          "hostname_kind": "redacted",
+          "machine": "AMD64",
+          "platform": "Windows-11-10.0.26300-SP0",
+          "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+          "python": "3.13.5",
+          "system": "Windows"
+        },
+        "harness_version": "0.5.0",
+        "load_generation": {
+          "bytes": 69695167,
+          "command": [
+            "C:\\Python313\\python.exe",
+            "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261112T233929Z-d229bba6\\evidence\\performance\\windows-amd64\\loads\\legacy-10x\\lab\\generator\\stress.py",
+            "--profile",
+            "legacy-10x",
+            "--out",
+            "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261112T233929Z-d229bba6\\evidence\\performance\\windows-amd64\\loads\\legacy-10x\\lab\\stress-runs"
+          ],
+          "files": 3610,
+          "manifest": {
+            "bytes": 69694636,
+            "created_at": "2026-11-12T23:42:04.772274+00:00",
+            "directories": 0,
+            "duplicate_files": 0,
+            "duration_seconds": 6.03,
+            "files": 3609,
+            "hardlinks": 0,
+            "max_depth": 43,
+            "notes": [
+              "Performance workload only. It is NOT part of the canonical 1,600-item accuracy oracle and must not be scored against it."
+            ],
+            "params": {
+              "copies": 10,
+              "source": "corpus/filesystem"
+            },
+            "profile": "legacy-10x",
+            "schema": "rnc-synth-stress/1",
+            "seed": 1600,
+            "symlinks": 0
+          }
+        },
+        "load_profile": "legacy-10x",
+        "performance_version": "2",
+        "product": {
+          "architecture": "amd64",
+          "artifact_sha256": "deaded803e5941f18151454400b18dcf3ad58bbc7ef8b3dc243368acf38b3c56",
+          "emulated": false,
+          "execution_method": "native",
+          "image_id": null,
+          "image_tag": null,
+          "kind": "executable",
+          "platform": "windows-amd64"
+        },
+        "report_type": "rnc-scan-harness/performance",
+        "requested_multiplier": 10,
+        "runs": [
+          {
+            "cache_state": "warmup",
+            "cpu_total_seconds": null,
+            "cpu_utilization_percent": null,
+            "duration_seconds": 0.0,
+            "error": "INCOMPLETE",
+            "exit_code": null,
+            "peak_memory_bytes": null,
+            "phase": "warmup",
+            "run_index": 0,
+            "sequence_index": 3,
+            "telemetry_method": "unavailable",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          },
+          {
+            "cache_state": "warm_after_warmup",
+            "cpu_total_seconds": null,
+            "cpu_utilization_percent": null,
+            "duration_seconds": 0.0,
+            "error": "INCOMPLETE",
+            "exit_code": null,
+            "peak_memory_bytes": null,
+            "phase": "measured",
+            "run_index": 0,
+            "sequence_index": 3,
+            "telemetry_method": "unavailable",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          },
+          {
+            "cache_state": "warm_after_warmup",
+            "cpu_total_seconds": null,
+            "cpu_utilization_percent": null,
+            "duration_seconds": 0.0,
+            "error": "INCOMPLETE",
+            "exit_code": null,
+            "peak_memory_bytes": null,
+            "phase": "measured",
+            "run_index": 1,
+            "sequence_index": 3,
+            "telemetry_method": "unavailable",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          },
+          {
+            "cache_state": "warm_after_warmup",
+            "cpu_total_seconds": null,
+            "cpu_utilization_percent": null,
+            "duration_seconds": 0.0,
+            "error": "INCOMPLETE",
+            "exit_code": null,
+            "peak_memory_bytes": null,
+            "phase": "measured",
+            "run_index": 2,
+            "sequence_index": 3,
+            "telemetry_method": "unavailable",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          }
+        ],
+        "scaling": {
+          "actual_file_multiplier": 10.028,
+          "canonical_median_seconds": null,
+          "canonical_peak_memory_bytes": null,
+          "canonical_throughput_bytes_per_second": null,
+          "load_median_seconds": null,
+          "load_peak_memory_bytes": null,
+          "load_throughput_bytes_per_second": null,
+          "memory_scaling": null,
+          "runtime_scaling": null
+        },
+        "scanner": {
+          "key": "rnc",
+          "version": "0.1.0"
+        },
+        "suite": "rnclab",
+        "summary": {
+          "archive_files": null,
+          "archives_extracted": null,
+          "cpu_total_seconds": {
+            "coefficient_of_variation": null,
+            "count": 0,
+            "maximum": null,
+            "median": null,
+            "minimum": null,
+            "stdev": null
+          },
+          "cpu_utilization_percent": {
+            "coefficient_of_variation": null,
+            "count": 0,
+            "maximum": null,
+            "median": null,
+            "minimum": null,
+            "stdev": null
+          },
+          "failures": 4,
+          "file_coverage_percent": 100.0,
+          "files_eligible": 3610,
+          "files_inspected": 3610,
+          "inspected_throughput_bytes_per_second": null,
+          "peak_memory_bytes": {
+            "available_samples": 0,
+            "max": null,
+            "median": null
+          },
+          "resource_limit_events": null,
+          "runtime_seconds": {
+            "coefficient_of_variation": null,
+            "count": 0,
+            "maximum": null,
+            "median": null,
+            "minimum": null,
+            "stdev": null
+          },
+          "stability": "INCOMPLETE",
+          "stability_threshold_cv": 0.25,
+          "telemetry_methods": [
+            "unavailable"
+          ],
+          "throughput_bytes_per_second": null,
+          "timeouts": 0
+        },
+        "workload": {
+          "bytes": 69695167,
+          "dataset": "rnc-synthetic-secrets-lab",
+          "eligible_files": 3610,
+          "files": 3610,
+          "lane": "filesystem",
+          "load_profile": "legacy-10x",
+          "oracle_scored": false,
+          "requested_multiplier": 10,
+          "stress_manifest": {
+            "bytes": 69694636,
+            "created_at": "2026-11-12T23:42:04.772274+00:00",
+            "directories": 0,
+            "duplicate_files": 0,
+            "duration_seconds": 6.03,
+            "files": 3609,
+            "hardlinks": 0,
+            "max_depth": 43,
+            "notes": [
+              "Performance workload only. It is NOT part of the canonical 1,600-item accuracy oracle and must not be scored against it."
+            ],
+            "params": {
+              "copies": 10,
+              "source": "corpus/filesystem"
+            },
+            "profile": "legacy-10x",
+            "schema": "rnc-synth-stress/1",
+            "seed": 1600,
+            "symlinks": 0
+          }
+        },
+        "workload_key": "rnclab-legacy-10x",
+        "workload_title": "RNC Lab legacy-10x load"
+      }
+    ],
+    "status": "PASS",
+    "workload": {
+      "bytes": 300029,
+      "count": 2,
+      "files": 462,
+      "items": [
+        {
+          "bytes": 258574,
+          "files": 360,
+          "key": "rnclab-filesystem",
+          "mode": "dir",
+          "multiplier": 1,
+          "suite": "rnclab"
+        },
+        {
+          "bytes": 41455,
+          "files": 102,
+          "key": "rnclab-git",
+          "mode": "git",
+          "multiplier": 1,
+          "suite": "rnclab"
+        }
+      ]
+    }
+  },
+  "platforms": [
+    {
+      "arch": "amd64",
+      "docker_platform": null,
+      "goarch": "amd64",
+      "goos": "windows",
+      "key": "windows-amd64",
+      "kind": "executable",
+      "os_name": "windows"
+    }
+  ],
+  "profile": {
+    "applied_settings": {
+      "cleared_environment": [
+        "BETTERLEAKS_CONFIG",
+        "BETTERLEAKS_CONFIG_TOML",
+        "GITLEAKS_CONFIG",
+        "GITLEAKS_CONFIG_TOML",
+        "RNC_CONFIG",
+        "RNC_SCANNER_CONFIG"
+      ],
+      "configuration_file_required": false,
+      "profile": "DEFAULT",
+      "rules_sha256": "87d7f9051ae41df34df29a0d5447ee8c9d71854ada46b789c9b7a00e4320a73a",
+      "scanner_config_argument": null,
+      "working_directory": "empty run-owned scanner-cwd"
+    },
+    "baseline_metrics_included": true,
+    "config_path": null,
+    "config_sha256": null,
+    "config_source": "scanner bundled default rules",
+    "default_isolation": {
+      "config_argument": "--rules",
+      "config_isolation": "empty repository configuration passed as --config to suppress target auto-discovery",
+      "history_mode": {
+        "argument": "--history",
+        "limitations": [
+          "History scope is the pinned HEAD's reachable history, selected with --ref HEAD.",
+          "Submodules, symlinks and other uninspected units are never treated as covered."
+        ],
+        "read_only": true,
+        "ref": "HEAD",
+        "ref_argument": "--ref",
+        "runtime_dependency": "git executable in the native host or container image",
+        "scope": "selected-refs"
+      },
+      "isolated_working_directory": true,
+      "limitations": [
+        "The rule bundle is read from the pinned source checkout and hashed after the source build.",
+        "The empty repository configuration suppresses target auto-discovery; it does not alter the provider rule bundle.",
+        "Git-history capability is verified from the pinned CLI source after build; unsupported source commits are reported rather than assumed."
+      ],
+      "mode": "bundled-provider-rules",
+      "removed_environment": [
+        "BETTERLEAKS_CONFIG",
+        "BETTERLEAKS_CONFIG_TOML",
+        "GITLEAKS_CONFIG",
+        "GITLEAKS_CONFIG_TOML",
+        "RNC_CONFIG",
+        "RNC_SCANNER_CONFIG"
+      ],
+      "rules_hash_recorded_after_build": true,
+      "rules_path": "rules/rnc-providers-v1.json",
+      "rules_sha256": null,
+      "verifiable": true
+    },
+    "is_default": true,
+    "limitations": [
+      "The rule bundle is read from the pinned source checkout and hashed after the source build.",
+      "The empty repository configuration suppresses target auto-discovery; it does not alter the provider rule bundle.",
+      "Git-history capability is verified from the pinned CLI source after build; unsupported source commits are reported rather than assumed."
+    ],
+    "name": "default",
+    "ruleset": {
+      "component_extractors": [
+        "database-uri-password"
+      ],
+      "digest": "sha256:dc1ab16f64a5dfb91262b46f321a9f5b219a13ed3bfb49e0f79c067de40bbc0f",
+      "digest_validation": "rnc rules validate --strategy auto",
+      "family_count": 22,
+      "path": "rules/rnc-providers-v1.json",
+      "rule_count": 37,
+      "ruleset_id": "rnc-providers-v1",
+      "ruleset_version": "2026.11.4",
+      "schema_version": "0.2.0",
+      "sha256": "87d7f9051ae41df34df29a0d5447ee8c9d71854ada46b789c9b7a00e4320a73a",
+      "source": "bundled provider catalogue in the pinned source checkout"
+    }
+  },
+  "raw_policy": "discarded",
+  "report_options": {
+    "exception_mode": "exceptions-only",
+    "exceptions_enabled": true,
+    "include_baseline_deltas": true,
+    "include_coverage_gaps": true,
+    "include_not_applicable": false,
+    "include_skipped": true
+  },
+  "report_type": "rnc-scan-harness/experiment",
+  "reports": {
+    "raw": null,
+    "sanitized": [
+      "reports\\baseline-20261112\\rnc-93b4dda-native-rnclab-93b4dda909cb-default.json",
+      "reports\\baseline-20261112\\rnc-93b4dda-native-rnclab-93b4dda909cb-default.md"
+    ]
+  },
+  "run_id": "20261112T233929Z-d229bba6",
+  "scanner": {
+    "identity": "source-commit",
+    "key": "rnc",
+    "name": "RNC Scanner",
+    "ruleset": {
+      "component_extractors": [
+        "database-uri-password"
+      ],
+      "digest": "sha256:dc1ab16f64a5dfb91262b46f321a9f5b219a13ed3bfb49e0f79c067de40bbc0f",
+      "digest_validation": "rnc rules validate --strategy auto",
+      "family_count": 22,
+      "path": "rules/rnc-providers-v1.json",
+      "rule_count": 37,
+      "ruleset_id": "rnc-providers-v1",
+      "ruleset_version": "2026.11.4",
+      "schema_version": "0.2.0",
+      "sha256": "87d7f9051ae41df34df29a0d5447ee8c9d71854ada46b789c9b7a00e4320a73a",
+      "source": "bundled provider catalogue in the pinned source checkout"
+    },
+    "version": "0.1.0"
+  },
+  "schema_version": 2,
+  "source": {
+    "clone_command": [
+      "git",
+      "clone",
+      "--quiet",
+      "--filter=blob:none",
+      "--no-checkout",
+      "--",
+      "C:\\Dev\\rnc-security-audit",
+      "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261112T233929Z-d229bba6\\source"
+    ],
+    "clone_duration_seconds": 0.581,
+    "clone_stderr_sha256": "bda57e90af415f86e4709fee5405d120e0a29f2afdad988fd508cda0ef7db2dd",
+    "clone_stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "commit": "93b4dda909cb3b41606a4d0f36c8ef9d06b77fde",
+    "fetch_command": null,
+    "fetch_duration_seconds": null,
+    "fetch_stderr_sha256": null,
+    "fetch_stdout_sha256": null,
+    "head": "93b4dda909cb3b41606a4d0f36c8ef9d06b77fde",
+    "head_verified": true,
+    "path": "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261112T233929Z-d229bba6\\source",
+    "repository": "C:\\Dev\\rnc-security-audit",
+    "requested_commit": "93b4dda909cb3b41606a4d0f36c8ef9d06b77fde"
+  },
+  "started_at": "2026-11-12T23:39:29Z",
+  "suites": {
+    "rnclab": {
+      "applicable": true,
+      "baseline_metric": true,
+      "comparisons": {},
+      "details": {
+        "capability": {
+          "git": {
+            "assessment": "adapter reports Git mode and the pinned source CLI contains the history entry point",
+            "supported": true
+          }
+        },
+        "datasets": {
+          "rnclab": {
+            "build_id": "v3",
+            "corpus_sha256": "161cb863f22b817982d26113b3981bec24b30bc37dd881fc10e9e8cc48ac91f3",
+            "counts": {
+              "filesystem": {
+                "INFORMATIVE": 150,
+                "NEGATIVE_ORDINARY": 330,
+                "NEGATIVE_TRAP": 162,
+                "POSITIVE": 640,
+                "TOTAL": 1282
+              },
+              "git": {
+                "INFORMATIVE": 50,
+                "NEGATIVE_ORDINARY": 70,
+                "NEGATIVE_TRAP": 40,
+                "POSITIVE": 160,
+                "TOTAL": 320
+              },
+              "total": 1602
+            },
+            "frozen_verification": {
+              "corpus_sha256": "161cb863f22b817982d26113b3981bec24b30bc37dd881fc10e9e8cc48ac91f3",
+              "corpus_unchanged": true,
+              "git_head": "cba273f44ccb90cbe3cb60cf2750b1847960830a",
+              "git_head_unchanged": true,
+              "manifest_sha256": "691548588679f4a1e5e41ecd5d253d7137693337c1ddef2c6e8943bbb7cd7d0b",
+              "manifest_unchanged": true,
+              "oracle_sha256": "83dea16b343ff7a9340ff463513f4bdb454cea6faaf3234696a78fe8e6b85214",
+              "oracle_unchanged": true,
+              "status": "PASS"
+            },
+            "manifest_sha256": "691548588679f4a1e5e41ecd5d253d7137693337c1ddef2c6e8943bbb7cd7d0b",
+            "name": "RNC Synthetic Secrets Lab",
+            "oracle_sha256": "83dea16b343ff7a9340ff463513f4bdb454cea6faaf3234696a78fe8e6b85214",
+            "source_validation": {
+              "checked_items": 1602,
+              "checked_spans": 1602,
+              "corpus_files": 360,
+              "corpus_sha256": "161cb863f22b817982d26113b3981bec24b30bc37dd881fc10e9e8cc48ac91f3",
+              "git_commit_count": 51,
+              "git_head": "cba273f44ccb90cbe3cb60cf2750b1847960830a",
+              "git_remotes": [],
+              "manifest_sha256": "691548588679f4a1e5e41ecd5d253d7137693337c1ddef2c6e8943bbb7cd7d0b",
+              "oracle_sha256": "83dea16b343ff7a9340ff463513f4bdb454cea6faaf3234696a78fe8e6b85214",
+              "status": "PASS"
+            },
+            "unique_positive_groups": 496,
+            "version": "rnc-synthetic-secrets-lab/1.2.0"
+          }
+        },
+        "exceptions": [
+          {
+            "classification": "UNMATCHED_PENDING_REVIEW",
+            "dimension": "git:windows-amd64",
+            "expected_id": null,
+            "line": 1,
+            "path": "services/checkout/keys/deploy.pem",
+            "reason": "no exact source value identity at the finding path",
+            "rule_id": "pem-private-key"
+          },
+          {
+            "classification": "UNMATCHED_PENDING_REVIEW",
+            "dimension": "git:windows-amd64",
+            "expected_id": null,
+            "line": 1,
+            "path": "services/risk/keys/deploy.pem",
+            "reason": "no exact source value identity at the finding path",
+            "rule_id": "pem-private-key"
+          },
+          {
+            "classification": "UNMATCHED_PENDING_REVIEW",
+            "dimension": "git:windows-amd64",
+            "expected_id": null,
+            "line": 1,
+            "path": "services/pricing/keys/deploy.pem",
+            "reason": "no exact source value identity at the finding path",
+            "rule_id": "pem-private-key"
+          },
+          {
+            "classification": "FALSE_POSITIVE",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-TRP-000171",
+            "line": 5,
+            "path": "docs/integration-guide.md",
+            "reason": "exact path and value identity",
+            "rule_id": "generic-secret-assignment"
+          },
+          {
+            "classification": "FALSE_POSITIVE",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-TRP-000179",
+            "line": 13,
+            "path": "docs/integration-guide.md",
+            "reason": "exact path and value identity",
+            "rule_id": "generic-secret-assignment"
+          },
+          {
+            "classification": "FALSE_POSITIVE",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-TRP-000187",
+            "line": 21,
+            "path": "docs/integration-guide.md",
+            "reason": "exact path and value identity",
+            "rule_id": "generic-secret-assignment"
+          },
+          {
+            "classification": "UNMATCHED_PENDING_REVIEW",
+            "dimension": "git:windows-amd64",
+            "expected_id": null,
+            "line": 1,
+            "path": "services/giftcards/keys/deploy.pem",
+            "reason": "no exact source value identity at the finding path",
+            "rule_id": "pem-private-key"
+          },
+          {
+            "classification": "UNMATCHED_PENDING_REVIEW",
+            "dimension": "git:windows-amd64",
+            "expected_id": null,
+            "line": 4,
+            "path": "services/billing/config/payments.yml",
+            "reason": "no exact source value identity at the finding path",
+            "rule_id": "generic-secret-assignment"
+          },
+          {
+            "classification": "UNMATCHED_PENDING_REVIEW",
+            "dimension": "git:windows-amd64",
+            "expected_id": null,
+            "line": 6,
+            "path": "services/billing/config/payments.yml",
+            "reason": "no exact source value identity at the finding path",
+            "rule_id": "github-classic-pat"
+          },
+          {
+            "classification": "UNMATCHED_PENDING_REVIEW",
+            "dimension": "git:windows-amd64",
+            "expected_id": null,
+            "line": 1,
+            "path": "services/reporting/keys/deploy.pem",
+            "reason": "no exact source value identity at the finding path",
+            "rule_id": "pem-private-key"
+          },
+          {
+            "classification": "UNMATCHED_PENDING_REVIEW",
+            "dimension": "git:windows-amd64",
+            "expected_id": null,
+            "line": 1,
+            "path": "services/notify/keys/deploy.pem",
+            "reason": "no exact source value identity at the finding path",
+            "rule_id": "pem-private-key"
+          },
+          {
+            "classification": "UNMATCHED_PENDING_REVIEW",
+            "dimension": "git:windows-amd64",
+            "expected_id": null,
+            "line": 1,
+            "path": "services/orders/keys/deploy.pem",
+            "reason": "no exact source value identity at the finding path",
+            "rule_id": "pem-private-key"
+          },
+          {
+            "classification": "UNMATCHED_PENDING_REVIEW",
+            "dimension": "git:windows-amd64",
+            "expected_id": null,
+            "line": 1,
+            "path": "services/promo/keys/deploy.pem",
+            "reason": "no exact source value identity at the finding path",
+            "rule_id": "pem-private-key"
+          },
+          {
+            "classification": "UNMATCHED_PENDING_REVIEW",
+            "dimension": "git:windows-amd64",
+            "expected_id": null,
+            "line": 1,
+            "path": "services/subscription/keys/deploy.pem",
+            "reason": "no exact source value identity at the finding path",
+            "rule_id": "pem-private-key"
+          },
+          {
+            "classification": "UNMATCHED_PENDING_REVIEW",
+            "dimension": "git:windows-amd64",
+            "expected_id": null,
+            "line": 1,
+            "path": "services/identity/keys/deploy.pem",
+            "reason": "no exact source value identity at the finding path",
+            "rule_id": "pem-private-key"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000643",
+            "line": 4,
+            "path": "services/analytics/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000649",
+            "line": 4,
+            "path": "services/billing/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000655",
+            "line": 4,
+            "path": "services/catalog/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000660",
+            "line": 4,
+            "path": "services/checkout/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000664",
+            "line": 1,
+            "path": "services/checkout/keys/deploy.pem",
+            "reason": "private_key/rsa_private_key_pkcs1 in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000666",
+            "line": 4,
+            "path": "services/compliance/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000670",
+            "line": 3,
+            "path": "services/fraud/.env",
+            "reason": "password/database_password in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000671",
+            "line": 4,
+            "path": "services/fraud/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000675",
+            "line": 4,
+            "path": "services/giftcards/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000678",
+            "line": 1,
+            "path": "services/giftcards/keys/deploy.pem",
+            "reason": "private_key/rsa_private_key_pkcs1 in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000681",
+            "line": 4,
+            "path": "services/identity/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000684",
+            "line": 1,
+            "path": "services/identity/keys/deploy.pem",
+            "reason": "private_key/rsa_private_key_pkcs1 in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000686",
+            "line": 4,
+            "path": "services/inventory/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000691",
+            "line": 4,
+            "path": "services/invoice/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000694",
+            "line": 6,
+            "path": "services/invoice/config/app.yml",
+            "reason": "provider_token/twilio_auth_token in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000698",
+            "line": 4,
+            "path": "services/locator/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000702",
+            "line": 4,
+            "path": "services/loyalty/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000705",
+            "line": 6,
+            "path": "services/loyalty/config/app.yml",
+            "reason": "provider_token/twilio_auth_token in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000708",
+            "line": 4,
+            "path": "services/media/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000711",
+            "line": 6,
+            "path": "services/media/config/app.yml",
+            "reason": "provider_token/twilio_auth_token in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000712",
+            "line": 3,
+            "path": "services/mobile/.env",
+            "reason": "password/database_password in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000713",
+            "line": 4,
+            "path": "services/mobile/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000715",
+            "line": 4,
+            "path": "services/mobile/config/app.yml",
+            "reason": "password/database_password in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000716",
+            "line": 6,
+            "path": "services/mobile/config/app.yml",
+            "reason": "provider_token/twilio_auth_token in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000718",
+            "line": 4,
+            "path": "services/notify/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000721",
+            "line": 1,
+            "path": "services/notify/keys/deploy.pem",
+            "reason": "private_key/rsa_private_key_pkcs1 in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000724",
+            "line": 4,
+            "path": "services/orders/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000728",
+            "line": 1,
+            "path": "services/orders/keys/deploy.pem",
+            "reason": "private_key/rsa_private_key_pkcs1 in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000731",
+            "line": 4,
+            "path": "services/payment/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000732",
+            "line": 6,
+            "path": "services/payment/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000735",
+            "line": 3,
+            "path": "services/payment/config/v2.yml",
+            "reason": "provider_token/stripe_webhook_secret in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000738",
+            "line": 4,
+            "path": "services/pricing/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000742",
+            "line": 1,
+            "path": "services/pricing/keys/deploy.pem",
+            "reason": "private_key/rsa_private_key_pkcs1 in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000744",
+            "line": 4,
+            "path": "services/promo/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000748",
+            "line": 1,
+            "path": "services/promo/keys/deploy.pem",
+            "reason": "private_key/rsa_private_key_pkcs1 in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000750",
+            "line": 4,
+            "path": "services/reporting/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000753",
+            "line": 1,
+            "path": "services/reporting/keys/deploy.pem",
+            "reason": "private_key/rsa_private_key_pkcs1 in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000755",
+            "line": 4,
+            "path": "services/returns/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000758",
+            "line": 3,
+            "path": "services/review/.env",
+            "reason": "password/database_password in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000759",
+            "line": 4,
+            "path": "services/review/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000760",
+            "line": 4,
+            "path": "services/review/config/app.yml",
+            "reason": "password/database_password in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000763",
+            "line": 4,
+            "path": "services/risk/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000767",
+            "line": 1,
+            "path": "services/risk/keys/deploy.pem",
+            "reason": "private_key/rsa_private_key_pkcs1 in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000770",
+            "line": 4,
+            "path": "services/search/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000774",
+            "line": 4,
+            "path": "services/shipping/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000777",
+            "line": 6,
+            "path": "services/shipping/config/app.yml",
+            "reason": "provider_token/twilio_auth_token in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000779",
+            "line": 4,
+            "path": "services/storefront/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000783",
+            "line": 4,
+            "path": "services/subscription/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000786",
+            "line": 1,
+            "path": "services/subscription/keys/deploy.pem",
+            "reason": "private_key/rsa_private_key_pkcs1 in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000788",
+            "line": 4,
+            "path": "services/suppliers/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000791",
+            "line": 6,
+            "path": "services/suppliers/config/app.yml",
+            "reason": "provider_token/sendgrid_api_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000792",
+            "line": 3,
+            "path": "services/tax/.env",
+            "reason": "password/database_password in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000793",
+            "line": 4,
+            "path": "services/tax/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000794",
+            "line": 4,
+            "path": "services/tax/config/app.yml",
+            "reason": "password/database_password in git"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "dimension": "git:windows-amd64",
+            "expected_id": "RNC-SL-POS-000797",
+            "line": 4,
+            "path": "services/wishlist/.env",
+            "reason": "hmac_secret/application_signing_key in git"
+          }
+        ],
+        "lanes": {
+          "windows-amd64": {
+            "filesystem": {
+              "findings": [],
+              "metrics": {},
+              "outcome": "BLOCKED",
+              "reason": "scanner invocation problem: INCOMPLETE",
+              "status": "BLOCKED"
+            },
+            "git": {
+              "accounted": 121,
+              "capability": {
+                "assessment": "executed and source-scored",
+                "mode": "git",
+                "supported": true
+              },
+              "categories": [
+                {
+                  "category": "api_key",
+                  "expected_groups": 15,
+                  "expected_occurrences": 15,
+                  "matched_groups": 15,
+                  "matched_occurrences": 15,
+                  "occurrence_recall_percent": 100.0
+                },
+                {
+                  "category": "hmac_secret",
+                  "expected_groups": 31,
+                  "expected_occurrences": 31,
+                  "matched_groups": 0,
+                  "matched_occurrences": 0,
+                  "occurrence_recall_percent": 0.0
+                },
+                {
+                  "category": "password",
+                  "expected_groups": 41,
+                  "expected_occurrences": 71,
+                  "matched_groups": 37,
+                  "matched_occurrences": 64,
+                  "occurrence_recall_percent": 90.14
+                },
+                {
+                  "category": "private_key",
+                  "expected_groups": 10,
+                  "expected_occurrences": 10,
+                  "matched_groups": 0,
+                  "matched_occurrences": 0,
+                  "occurrence_recall_percent": 0.0
+                },
+                {
+                  "category": "provider_token",
+                  "expected_groups": 33,
+                  "expected_occurrences": 33,
+                  "matched_groups": 26,
+                  "matched_occurrences": 26,
+                  "occurrence_recall_percent": 78.79
+                }
+              ],
+              "exception_count": 70,
+              "exceptions": [
+                {
+                  "classification": "UNMATCHED_PENDING_REVIEW",
+                  "expected_id": null,
+                  "line": 1,
+                  "path": "services/checkout/keys/deploy.pem",
+                  "reason": "no exact source value identity at the finding path",
+                  "rule_id": "pem-private-key"
+                },
+                {
+                  "classification": "UNMATCHED_PENDING_REVIEW",
+                  "expected_id": null,
+                  "line": 1,
+                  "path": "services/risk/keys/deploy.pem",
+                  "reason": "no exact source value identity at the finding path",
+                  "rule_id": "pem-private-key"
+                },
+                {
+                  "classification": "UNMATCHED_PENDING_REVIEW",
+                  "expected_id": null,
+                  "line": 1,
+                  "path": "services/pricing/keys/deploy.pem",
+                  "reason": "no exact source value identity at the finding path",
+                  "rule_id": "pem-private-key"
+                },
+                {
+                  "classification": "FALSE_POSITIVE",
+                  "expected_id": "RNC-SL-TRP-000171",
+                  "line": 5,
+                  "path": "docs/integration-guide.md",
+                  "reason": "exact path and value identity",
+                  "rule_id": "generic-secret-assignment"
+                },
+                {
+                  "classification": "FALSE_POSITIVE",
+                  "expected_id": "RNC-SL-TRP-000179",
+                  "line": 13,
+                  "path": "docs/integration-guide.md",
+                  "reason": "exact path and value identity",
+                  "rule_id": "generic-secret-assignment"
+                },
+                {
+                  "classification": "FALSE_POSITIVE",
+                  "expected_id": "RNC-SL-TRP-000187",
+                  "line": 21,
+                  "path": "docs/integration-guide.md",
+                  "reason": "exact path and value identity",
+                  "rule_id": "generic-secret-assignment"
+                },
+                {
+                  "classification": "UNMATCHED_PENDING_REVIEW",
+                  "expected_id": null,
+                  "line": 1,
+                  "path": "services/giftcards/keys/deploy.pem",
+                  "reason": "no exact source value identity at the finding path",
+                  "rule_id": "pem-private-key"
+                },
+                {
+                  "classification": "UNMATCHED_PENDING_REVIEW",
+                  "expected_id": null,
+                  "line": 4,
+                  "path": "services/billing/config/payments.yml",
+                  "reason": "no exact source value identity at the finding path",
+                  "rule_id": "generic-secret-assignment"
+                },
+                {
+                  "classification": "UNMATCHED_PENDING_REVIEW",
+                  "expected_id": null,
+                  "line": 6,
+                  "path": "services/billing/config/payments.yml",
+                  "reason": "no exact source value identity at the finding path",
+                  "rule_id": "github-classic-pat"
+                },
+                {
+                  "classification": "UNMATCHED_PENDING_REVIEW",
+                  "expected_id": null,
+                  "line": 1,
+                  "path": "services/reporting/keys/deploy.pem",
+                  "reason": "no exact source value identity at the finding path",
+                  "rule_id": "pem-private-key"
+                },
+                {
+                  "classification": "UNMATCHED_PENDING_REVIEW",
+                  "expected_id": null,
+                  "line": 1,
+                  "path": "services/notify/keys/deploy.pem",
+                  "reason": "no exact source value identity at the finding path",
+                  "rule_id": "pem-private-key"
+                },
+                {
+                  "classification": "UNMATCHED_PENDING_REVIEW",
+                  "expected_id": null,
+                  "line": 1,
+                  "path": "services/orders/keys/deploy.pem",
+                  "reason": "no exact source value identity at the finding path",
+                  "rule_id": "pem-private-key"
+                },
+                {
+                  "classification": "UNMATCHED_PENDING_REVIEW",
+                  "expected_id": null,
+                  "line": 1,
+                  "path": "services/promo/keys/deploy.pem",
+                  "reason": "no exact source value identity at the finding path",
+                  "rule_id": "pem-private-key"
+                },
+                {
+                  "classification": "UNMATCHED_PENDING_REVIEW",
+                  "expected_id": null,
+                  "line": 1,
+                  "path": "services/subscription/keys/deploy.pem",
+                  "reason": "no exact source value identity at the finding path",
+                  "rule_id": "pem-private-key"
+                },
+                {
+                  "classification": "UNMATCHED_PENDING_REVIEW",
+                  "expected_id": null,
+                  "line": 1,
+                  "path": "services/identity/keys/deploy.pem",
+                  "reason": "no exact source value identity at the finding path",
+                  "rule_id": "pem-private-key"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000643",
+                  "line": 4,
+                  "path": "services/analytics/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000649",
+                  "line": 4,
+                  "path": "services/billing/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000655",
+                  "line": 4,
+                  "path": "services/catalog/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000660",
+                  "line": 4,
+                  "path": "services/checkout/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000664",
+                  "line": 1,
+                  "path": "services/checkout/keys/deploy.pem",
+                  "reason": "private_key/rsa_private_key_pkcs1 in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000666",
+                  "line": 4,
+                  "path": "services/compliance/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000670",
+                  "line": 3,
+                  "path": "services/fraud/.env",
+                  "reason": "password/database_password in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000671",
+                  "line": 4,
+                  "path": "services/fraud/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000675",
+                  "line": 4,
+                  "path": "services/giftcards/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000678",
+                  "line": 1,
+                  "path": "services/giftcards/keys/deploy.pem",
+                  "reason": "private_key/rsa_private_key_pkcs1 in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000681",
+                  "line": 4,
+                  "path": "services/identity/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000684",
+                  "line": 1,
+                  "path": "services/identity/keys/deploy.pem",
+                  "reason": "private_key/rsa_private_key_pkcs1 in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000686",
+                  "line": 4,
+                  "path": "services/inventory/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000691",
+                  "line": 4,
+                  "path": "services/invoice/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000694",
+                  "line": 6,
+                  "path": "services/invoice/config/app.yml",
+                  "reason": "provider_token/twilio_auth_token in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000698",
+                  "line": 4,
+                  "path": "services/locator/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000702",
+                  "line": 4,
+                  "path": "services/loyalty/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000705",
+                  "line": 6,
+                  "path": "services/loyalty/config/app.yml",
+                  "reason": "provider_token/twilio_auth_token in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000708",
+                  "line": 4,
+                  "path": "services/media/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000711",
+                  "line": 6,
+                  "path": "services/media/config/app.yml",
+                  "reason": "provider_token/twilio_auth_token in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000712",
+                  "line": 3,
+                  "path": "services/mobile/.env",
+                  "reason": "password/database_password in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000713",
+                  "line": 4,
+                  "path": "services/mobile/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000715",
+                  "line": 4,
+                  "path": "services/mobile/config/app.yml",
+                  "reason": "password/database_password in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000716",
+                  "line": 6,
+                  "path": "services/mobile/config/app.yml",
+                  "reason": "provider_token/twilio_auth_token in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000718",
+                  "line": 4,
+                  "path": "services/notify/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000721",
+                  "line": 1,
+                  "path": "services/notify/keys/deploy.pem",
+                  "reason": "private_key/rsa_private_key_pkcs1 in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000724",
+                  "line": 4,
+                  "path": "services/orders/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000728",
+                  "line": 1,
+                  "path": "services/orders/keys/deploy.pem",
+                  "reason": "private_key/rsa_private_key_pkcs1 in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000731",
+                  "line": 4,
+                  "path": "services/payment/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000732",
+                  "line": 6,
+                  "path": "services/payment/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000735",
+                  "line": 3,
+                  "path": "services/payment/config/v2.yml",
+                  "reason": "provider_token/stripe_webhook_secret in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000738",
+                  "line": 4,
+                  "path": "services/pricing/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000742",
+                  "line": 1,
+                  "path": "services/pricing/keys/deploy.pem",
+                  "reason": "private_key/rsa_private_key_pkcs1 in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000744",
+                  "line": 4,
+                  "path": "services/promo/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000748",
+                  "line": 1,
+                  "path": "services/promo/keys/deploy.pem",
+                  "reason": "private_key/rsa_private_key_pkcs1 in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000750",
+                  "line": 4,
+                  "path": "services/reporting/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000753",
+                  "line": 1,
+                  "path": "services/reporting/keys/deploy.pem",
+                  "reason": "private_key/rsa_private_key_pkcs1 in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000755",
+                  "line": 4,
+                  "path": "services/returns/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000758",
+                  "line": 3,
+                  "path": "services/review/.env",
+                  "reason": "password/database_password in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000759",
+                  "line": 4,
+                  "path": "services/review/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000760",
+                  "line": 4,
+                  "path": "services/review/config/app.yml",
+                  "reason": "password/database_password in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000763",
+                  "line": 4,
+                  "path": "services/risk/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000767",
+                  "line": 1,
+                  "path": "services/risk/keys/deploy.pem",
+                  "reason": "private_key/rsa_private_key_pkcs1 in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000770",
+                  "line": 4,
+                  "path": "services/search/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000774",
+                  "line": 4,
+                  "path": "services/shipping/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000777",
+                  "line": 6,
+                  "path": "services/shipping/config/app.yml",
+                  "reason": "provider_token/twilio_auth_token in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000779",
+                  "line": 4,
+                  "path": "services/storefront/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000783",
+                  "line": 4,
+                  "path": "services/subscription/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000786",
+                  "line": 1,
+                  "path": "services/subscription/keys/deploy.pem",
+                  "reason": "private_key/rsa_private_key_pkcs1 in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000788",
+                  "line": 4,
+                  "path": "services/suppliers/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000791",
+                  "line": 6,
+                  "path": "services/suppliers/config/app.yml",
+                  "reason": "provider_token/sendgrid_api_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000792",
+                  "line": 3,
+                  "path": "services/tax/.env",
+                  "reason": "password/database_password in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000793",
+                  "line": 4,
+                  "path": "services/tax/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000794",
+                  "line": 4,
+                  "path": "services/tax/config/app.yml",
+                  "reason": "password/database_password in git"
+                },
+                {
+                  "classification": "MISSED_EXPECTATION",
+                  "expected_id": "RNC-SL-POS-000797",
+                  "line": 4,
+                  "path": "services/wishlist/.env",
+                  "reason": "hmac_secret/application_signing_key in git"
+                }
+              ],
+              "findings": [
+                {
+                  "commit": "8737058223491998d9238dae1dbb6f989fa4933a",
+                  "file": "services/analytics/.env",
+                  "index": 0,
+                  "line": 3,
+                  "match_sha256": "0354088b47dd4529913e19ae47a07a7233c0156f81525be30ed9a13364435990",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "0354088b47dd4529913e19ae47a07a7233c0156f81525be30ed9a13364435990"
+                },
+                {
+                  "commit": "30ce5b5101a98f82f1dba28f3fdfb5d01586e29d",
+                  "file": "services/risk/.env",
+                  "index": 1,
+                  "line": 3,
+                  "match_sha256": "41eb63884ff0648a9174dc09ebae4f686c4eced579b63d6cdd7657710c0d19ff",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "41eb63884ff0648a9174dc09ebae4f686c4eced579b63d6cdd7657710c0d19ff"
+                },
+                {
+                  "commit": "1599b1e457280cb3962697aa4caaa5d7519a8329",
+                  "file": "services/payment/.env",
+                  "index": 2,
+                  "line": 3,
+                  "match_sha256": "c52152be44db8101e8fc6c8e1746286c956d5156db7f91a4804daf2937e7a3f0",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "c52152be44db8101e8fc6c8e1746286c956d5156db7f91a4804daf2937e7a3f0"
+                },
+                {
+                  "commit": "b8b05c482a48e957275bf3aa2b2d0a8536ab692f",
+                  "file": "services/pricing/config/app.yml",
+                  "index": 3,
+                  "line": 4,
+                  "match_sha256": "3a488f94cce0884262b6885316000dee08478e51776735a7c2dfc31f56c7b30d",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "3a488f94cce0884262b6885316000dee08478e51776735a7c2dfc31f56c7b30d"
+                },
+                {
+                  "commit": "b8b05c482a48e957275bf3aa2b2d0a8536ab692f",
+                  "file": "services/pricing/config/app.yml",
+                  "index": 4,
+                  "line": 6,
+                  "match_sha256": "92e16633e12762e5a6991ade01c8b50002713e96c7ccf0404607c7b58e89376a",
+                  "rule_id": "stripe-secret-api-key",
+                  "secret_sha256": "92e16633e12762e5a6991ade01c8b50002713e96c7ccf0404607c7b58e89376a"
+                },
+                {
+                  "commit": "67989bf8a730e8f3d41defd3da7c96366ed68577",
+                  "file": "services/storefront/config/app.yml",
+                  "index": 5,
+                  "line": 4,
+                  "match_sha256": "3e946ec6ff451456ea444237a57deaadf78cfc5c7218ee20f36a1dc09f092e08",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "3e946ec6ff451456ea444237a57deaadf78cfc5c7218ee20f36a1dc09f092e08"
+                },
+                {
+                  "commit": "67989bf8a730e8f3d41defd3da7c96366ed68577",
+                  "file": "services/storefront/config/app.yml",
+                  "index": 6,
+                  "line": 6,
+                  "match_sha256": "d0a0b4e4fef7bb8502489ff3459f0bb5a703e4e3bae338b480b3b46f149ae5d2",
+                  "rule_id": "npm-auth-token",
+                  "secret_sha256": "d0a0b4e4fef7bb8502489ff3459f0bb5a703e4e3bae338b480b3b46f149ae5d2"
+                },
+                {
+                  "commit": "6f8e25de930a9d5746538f81478e9ab993341011",
+                  "file": "services/catalog/config/app.yml",
+                  "index": 7,
+                  "line": 4,
+                  "match_sha256": "b4ff14ea074bef59ef1e1c4d9b11980b7c8b3845b213207cd84e7f6ca6aa8361",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "b4ff14ea074bef59ef1e1c4d9b11980b7c8b3845b213207cd84e7f6ca6aa8361"
+                },
+                {
+                  "commit": "6f8e25de930a9d5746538f81478e9ab993341011",
+                  "file": "services/catalog/config/app.yml",
+                  "index": 8,
+                  "line": 6,
+                  "match_sha256": "6b9c38bf829d858fa77b3f4cb38f787e6d6a96ac0a70e12a67529243e8650d10",
+                  "rule_id": "sendgrid-api-key",
+                  "secret_sha256": "6b9c38bf829d858fa77b3f4cb38f787e6d6a96ac0a70e12a67529243e8650d10"
+                },
+                {
+                  "commit": "b4d8b0cf2c33271ddf04615800a1ad8f527347f9",
+                  "file": "services/tax/config/app.yml",
+                  "index": 9,
+                  "line": 6,
+                  "match_sha256": "0514065e5b4f83bc755efb67fc16e0fce18df3416e697d821bc47cdb934345f7",
+                  "rule_id": "npm-auth-token",
+                  "secret_sha256": "0514065e5b4f83bc755efb67fc16e0fce18df3416e697d821bc47cdb934345f7"
+                },
+                {
+                  "commit": "6f8e25de930a9d5746538f81478e9ab993341011",
+                  "file": "services/catalog/.github/workflows/ci.yml",
+                  "index": 10,
+                  "line": 6,
+                  "match_sha256": "c7c19cc5651610bf638dc97a8c416b40ae39f9a8603e75d3f35976a604ffd489",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "c7c19cc5651610bf638dc97a8c416b40ae39f9a8603e75d3f35976a604ffd489"
+                },
+                {
+                  "commit": "2fa436262102a12ccf489c0fb67418e7af39a5ee",
+                  "file": "services/media/.env",
+                  "index": 11,
+                  "line": 3,
+                  "match_sha256": "4e35f8745074c234b91c2b7f1434542236410c0ec53610bb22b04bc685b938df",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "4e35f8745074c234b91c2b7f1434542236410c0ec53610bb22b04bc685b938df"
+                },
+                {
+                  "commit": "d260db128fffb47f5e9d65825a4441186a0f8dbd",
+                  "file": "services/identity/config/app.yml",
+                  "index": 12,
+                  "line": 4,
+                  "match_sha256": "583c08ded66a4a2452971781c5a02956b2649730fa7468e18a0c48ebaded0294",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "583c08ded66a4a2452971781c5a02956b2649730fa7468e18a0c48ebaded0294"
+                },
+                {
+                  "commit": "d260db128fffb47f5e9d65825a4441186a0f8dbd",
+                  "file": "services/identity/config/app.yml",
+                  "index": 13,
+                  "line": 6,
+                  "match_sha256": "673d21fd5bcd926dbc0695b99d487e09e2bc92771410555be5594496b3379f79",
+                  "rule_id": "slack-token",
+                  "secret_sha256": "673d21fd5bcd926dbc0695b99d487e09e2bc92771410555be5594496b3379f79"
+                },
+                {
+                  "commit": "aabe02947b5c452dc0ae3cfb131f3e61a1527a34",
+                  "file": "services/orders/.env",
+                  "index": 14,
+                  "line": 3,
+                  "match_sha256": "16ea03cf75de9df3ff5005610665494e2f112355f4fdb85fc196141ae9800104",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "16ea03cf75de9df3ff5005610665494e2f112355f4fdb85fc196141ae9800104"
+                },
+                {
+                  "commit": "772a9af8f5de6501684078236d65e75f3538b18d",
+                  "file": "services/reporting/config/app.yml",
+                  "index": 15,
+                  "line": 4,
+                  "match_sha256": "887601f58c5cf657a06b68bc3a013bfb21e8b516c05eb25c7d3153c9c2936c8d",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "887601f58c5cf657a06b68bc3a013bfb21e8b516c05eb25c7d3153c9c2936c8d"
+                },
+                {
+                  "commit": "772a9af8f5de6501684078236d65e75f3538b18d",
+                  "file": "services/reporting/config/app.yml",
+                  "index": 16,
+                  "line": 6,
+                  "match_sha256": "07766e9b2f33b6444b91682b784000745557fb202500580d0638989afede5f0a",
+                  "rule_id": "slack-token",
+                  "secret_sha256": "07766e9b2f33b6444b91682b784000745557fb202500580d0638989afede5f0a"
+                },
+                {
+                  "commit": "772a9af8f5de6501684078236d65e75f3538b18d",
+                  "file": "services/reporting/.env",
+                  "index": 17,
+                  "line": 3,
+                  "match_sha256": "887601f58c5cf657a06b68bc3a013bfb21e8b516c05eb25c7d3153c9c2936c8d",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "887601f58c5cf657a06b68bc3a013bfb21e8b516c05eb25c7d3153c9c2936c8d"
+                },
+                {
+                  "commit": "90d2f7e93f2ee68ddecdc5f23f02a36984072363",
+                  "file": "services/catalog/.env",
+                  "index": 18,
+                  "line": 3,
+                  "match_sha256": "82685add4d33f89d3de5fe5b015fc5202efe50161a7b501dcdfc07018f7c1345",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "82685add4d33f89d3de5fe5b015fc5202efe50161a7b501dcdfc07018f7c1345"
+                },
+                {
+                  "commit": "afb305a4f4a63ba7f84a6fc8a92c8850a5621403",
+                  "file": "services/invoice/config/app.yml",
+                  "index": 19,
+                  "line": 4,
+                  "match_sha256": "1e9e78012f79e7a88a7981ee6b54b5ef61439f5b036f2278e37c899b5562a9c7",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "1e9e78012f79e7a88a7981ee6b54b5ef61439f5b036f2278e37c899b5562a9c7"
+                },
+                {
+                  "commit": "377a2e8e219b0b4e7724fe76d347f340c9bf47a9",
+                  "file": "services/orders/.env",
+                  "index": 20,
+                  "line": 3,
+                  "match_sha256": "f7e06de9b4b9a2f72f9468b4ed5fc8949aa1669a47617d3cc5459dc9520950dd",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "f7e06de9b4b9a2f72f9468b4ed5fc8949aa1669a47617d3cc5459dc9520950dd"
+                },
+                {
+                  "commit": "d1de22aa4d09b3c0cc577fda5ee554eb03066d42",
+                  "file": "services/loyalty/.env",
+                  "index": 21,
+                  "line": 3,
+                  "match_sha256": "c154385189b8840abcbe76c2e33e55cae8fde6e124041eb6ba2a4c5e4a412d99",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "c154385189b8840abcbe76c2e33e55cae8fde6e124041eb6ba2a4c5e4a412d99"
+                },
+                {
+                  "commit": "6e9039db6965a41ce5cbcd2caa4930a3bdc09bb7",
+                  "file": "services/fraud/config/app.yml",
+                  "index": 22,
+                  "line": 4,
+                  "match_sha256": "550b76bb3a953801cc24ec5b1df315586df36e7bfe94978a9791d53ea829042c",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "550b76bb3a953801cc24ec5b1df315586df36e7bfe94978a9791d53ea829042c"
+                },
+                {
+                  "commit": "6e9039db6965a41ce5cbcd2caa4930a3bdc09bb7",
+                  "file": "services/fraud/config/app.yml",
+                  "index": 23,
+                  "line": 6,
+                  "match_sha256": "aa1be7021b785d25fe946aa1831bb51972a8dfd549bd22c4e920ea97f9f135e8",
+                  "rule_id": "github-classic-pat",
+                  "secret_sha256": "aa1be7021b785d25fe946aa1831bb51972a8dfd549bd22c4e920ea97f9f135e8"
+                },
+                {
+                  "commit": "50b4ed2996bd629167dd9a58d011d518a49cc67a",
+                  "file": "services/promo/.env",
+                  "index": 24,
+                  "line": 3,
+                  "match_sha256": "b9806d01906d2e2bdfd1e58e2fcfcf7d025322625dcc87dce00569adb6b8ac26",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "b9806d01906d2e2bdfd1e58e2fcfcf7d025322625dcc87dce00569adb6b8ac26"
+                },
+                {
+                  "commit": "5f30af8930eae4d930045450c647c7a913c35d12",
+                  "file": "services/giftcards/.env",
+                  "index": 25,
+                  "line": 3,
+                  "match_sha256": "f0deb3c3664948834b2dd271fae66dfeab72b504f187d9ff7b4f77740d7dc161",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "f0deb3c3664948834b2dd271fae66dfeab72b504f187d9ff7b4f77740d7dc161"
+                },
+                {
+                  "commit": "50b4ed2996bd629167dd9a58d011d518a49cc67a",
+                  "file": "services/promo/.github/workflows/ci.yml",
+                  "index": 26,
+                  "line": 6,
+                  "match_sha256": "ee520c329a40a84b5abe2f99ae3a7238352a559e69e6579fe0547c3dff40f0a5",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "ee520c329a40a84b5abe2f99ae3a7238352a559e69e6579fe0547c3dff40f0a5"
+                },
+                {
+                  "commit": "30ce5b5101a98f82f1dba28f3fdfb5d01586e29d",
+                  "file": "services/risk/.github/workflows/ci.yml",
+                  "index": 27,
+                  "line": 6,
+                  "match_sha256": "619e866b6def7fa89772a9ffa6021aa2f066a1e4631beadcbd1103c53bb9310c",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "619e866b6def7fa89772a9ffa6021aa2f066a1e4631beadcbd1103c53bb9310c"
+                },
+                {
+                  "commit": "68f20c609de7ac5fcca4d7093863d590dace19a1",
+                  "file": "services/suppliers/.github/workflows/ci.yml",
+                  "index": 28,
+                  "line": 6,
+                  "match_sha256": "6b190a67279a76b58ef803fb7b7d78d95eb88675f3c126a6691ee338755ac5a7",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "6b190a67279a76b58ef803fb7b7d78d95eb88675f3c126a6691ee338755ac5a7"
+                },
+                {
+                  "commit": "68f20c609de7ac5fcca4d7093863d590dace19a1",
+                  "file": "services/suppliers/.env",
+                  "index": 29,
+                  "line": 3,
+                  "match_sha256": "0e6be3795497701da3b2d0cb19aacd5ad6643442cbf01ff4eb777ca9902dc5d6",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "0e6be3795497701da3b2d0cb19aacd5ad6643442cbf01ff4eb777ca9902dc5d6"
+                },
+                {
+                  "commit": "d64a24e47c0a061fc1fdc36273eb8c7e5b752adc",
+                  "file": "services/subscription/config/app.yml",
+                  "index": 30,
+                  "line": 4,
+                  "match_sha256": "b191c4c765739a65152b9979d3aa86f590302ac37bfd6454b6d7ebb6e506c6fd",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "b191c4c765739a65152b9979d3aa86f590302ac37bfd6454b6d7ebb6e506c6fd"
+                },
+                {
+                  "commit": "d64a24e47c0a061fc1fdc36273eb8c7e5b752adc",
+                  "file": "services/subscription/config/app.yml",
+                  "index": 31,
+                  "line": 6,
+                  "match_sha256": "d53bff6f36f39c6a2256d39e883db95b98c7b651d5856579535307d020f2a01e",
+                  "rule_id": "slack-token",
+                  "secret_sha256": "d53bff6f36f39c6a2256d39e883db95b98c7b651d5856579535307d020f2a01e"
+                },
+                {
+                  "commit": "75ef6998b82cdd951a07cb3c2251f2bc0c7a4842",
+                  "file": "services/pricing/.env",
+                  "index": 32,
+                  "line": 3,
+                  "match_sha256": "ce070e0989c9e5bbad0b0085e34ed44c11ba47c1097d15d32b042bfbe5667660",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "ce070e0989c9e5bbad0b0085e34ed44c11ba47c1097d15d32b042bfbe5667660"
+                },
+                {
+                  "commit": "377a2e8e219b0b4e7724fe76d347f340c9bf47a9",
+                  "file": "services/orders/.github/workflows/ci.yml",
+                  "index": 33,
+                  "line": 6,
+                  "match_sha256": "ca6e2af69912fbbab19abf2b0a93e02acdf1f4c503d4ec0a58494624c8d2bb8f",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "ca6e2af69912fbbab19abf2b0a93e02acdf1f4c503d4ec0a58494624c8d2bb8f"
+                },
+                {
+                  "commit": "f7e70c67d63e05af0a7b21af80b19d6388e03b47",
+                  "file": "services/checkout/keys/deploy.pem",
+                  "index": 34,
+                  "line": 1,
+                  "match_sha256": "6ddc3dfe1c50aa9cb56531338d6c04a28bca44afbaaa73fa1bec507614c66b7a",
+                  "rule_id": "pem-private-key",
+                  "secret_sha256": "6ddc3dfe1c50aa9cb56531338d6c04a28bca44afbaaa73fa1bec507614c66b7a"
+                },
+                {
+                  "commit": "f7e70c67d63e05af0a7b21af80b19d6388e03b47",
+                  "file": "services/checkout/.env",
+                  "index": 35,
+                  "line": 3,
+                  "match_sha256": "d9e5957f0359fb34aeca44cb044b6972f552d7c57ed24edcca7bb1395e247817",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "d9e5957f0359fb34aeca44cb044b6972f552d7c57ed24edcca7bb1395e247817"
+                },
+                {
+                  "commit": "d1de22aa4d09b3c0cc577fda5ee554eb03066d42",
+                  "file": "services/loyalty/config/app.yml",
+                  "index": 36,
+                  "line": 4,
+                  "match_sha256": "c154385189b8840abcbe76c2e33e55cae8fde6e124041eb6ba2a4c5e4a412d99",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "c154385189b8840abcbe76c2e33e55cae8fde6e124041eb6ba2a4c5e4a412d99"
+                },
+                {
+                  "commit": "ead12087d3fb362cc876ada2e46c69e4f725afe3",
+                  "file": "services/returns/config/app.yml",
+                  "index": 37,
+                  "line": 4,
+                  "match_sha256": "e41034cfe1c71a919af95f8429c0d51c1c9811323cc9a912305374e0d3893812",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "e41034cfe1c71a919af95f8429c0d51c1c9811323cc9a912305374e0d3893812"
+                },
+                {
+                  "commit": "ead12087d3fb362cc876ada2e46c69e4f725afe3",
+                  "file": "services/returns/config/app.yml",
+                  "index": 38,
+                  "line": 6,
+                  "match_sha256": "76349152c0683ec087ff018e2ea2d5a8f88da158228205b8b31df48d4f1eeccf",
+                  "rule_id": "github-classic-pat",
+                  "secret_sha256": "76349152c0683ec087ff018e2ea2d5a8f88da158228205b8b31df48d4f1eeccf"
+                },
+                {
+                  "commit": "f3792898440c992ea23b5b35187d8af62c23ed93",
+                  "file": "services/billing/.env",
+                  "index": 39,
+                  "line": 3,
+                  "match_sha256": "9b359337b60531acabb7b0655e6217a0a28b849f474cdb46cd26d9cc9a2c353b",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "9b359337b60531acabb7b0655e6217a0a28b849f474cdb46cd26d9cc9a2c353b"
+                },
+                {
+                  "commit": "30ce5b5101a98f82f1dba28f3fdfb5d01586e29d",
+                  "file": "services/risk/keys/deploy.pem",
+                  "index": 40,
+                  "line": 1,
+                  "match_sha256": "0224e89ce007a630a971e556be56ef743a3fa4a9126671c9f1f8acc92d462258",
+                  "rule_id": "pem-private-key",
+                  "secret_sha256": "0224e89ce007a630a971e556be56ef743a3fa4a9126671c9f1f8acc92d462258"
+                },
+                {
+                  "commit": "35e65d99907bf28ebd57d4d24e93b8d9bf142188",
+                  "file": "services/wishlist/.env",
+                  "index": 41,
+                  "line": 3,
+                  "match_sha256": "355e185379a17bcff2c8d95df60a558da63090152e8cd6e9813d9af0259447c3",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "355e185379a17bcff2c8d95df60a558da63090152e8cd6e9813d9af0259447c3"
+                },
+                {
+                  "commit": "7182ce718232c0f4290ca80142e59ff138601e96",
+                  "file": "services/locator/.env",
+                  "index": 42,
+                  "line": 3,
+                  "match_sha256": "fb55abd8049aa4a489304b52700f05c118cbd167c5cafd7eb19b0d3fb158db66",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "fb55abd8049aa4a489304b52700f05c118cbd167c5cafd7eb19b0d3fb158db66"
+                },
+                {
+                  "commit": "8737058223491998d9238dae1dbb6f989fa4933a",
+                  "file": "services/analytics/config/app.yml",
+                  "index": 43,
+                  "line": 4,
+                  "match_sha256": "0354088b47dd4529913e19ae47a07a7233c0156f81525be30ed9a13364435990",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "0354088b47dd4529913e19ae47a07a7233c0156f81525be30ed9a13364435990"
+                },
+                {
+                  "commit": "8737058223491998d9238dae1dbb6f989fa4933a",
+                  "file": "services/analytics/config/app.yml",
+                  "index": 44,
+                  "line": 6,
+                  "match_sha256": "1db3bf4bd56c25f142fce215d8cd84366d6b3feb6a2c93a1e11369b2578cbc1f",
+                  "rule_id": "sendgrid-api-key",
+                  "secret_sha256": "1db3bf4bd56c25f142fce215d8cd84366d6b3feb6a2c93a1e11369b2578cbc1f"
+                },
+                {
+                  "commit": "69a3c7ef663a60c400c064c76fa92361cd78dd17",
+                  "file": "services/payment/config/app.yml",
+                  "index": 45,
+                  "line": 4,
+                  "match_sha256": "ca574653c6e7f04c2f1eaac1587387c29e0c5b967eec68748af23a3c2cd4d72a",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "ca574653c6e7f04c2f1eaac1587387c29e0c5b967eec68748af23a3c2cd4d72a"
+                },
+                {
+                  "commit": "69a3c7ef663a60c400c064c76fa92361cd78dd17",
+                  "file": "services/payment/config/app.yml",
+                  "index": 46,
+                  "line": 6,
+                  "match_sha256": "151ad4b57dcdd804702243713c50c524018d5e4cb4748fa98cfb01f9a6ed3ab9",
+                  "rule_id": "npm-auth-token",
+                  "secret_sha256": "151ad4b57dcdd804702243713c50c524018d5e4cb4748fa98cfb01f9a6ed3ab9"
+                },
+                {
+                  "commit": "d310f588a42798dc156ae20756ea5632f9ab78f8",
+                  "file": "services/media/.env",
+                  "index": 47,
+                  "line": 3,
+                  "match_sha256": "2d269a0696cbf01c6957dbbebdaefec58b20ee26d7fc353bcdab436ff8989c17",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "2d269a0696cbf01c6957dbbebdaefec58b20ee26d7fc353bcdab436ff8989c17"
+                },
+                {
+                  "commit": "377a2e8e219b0b4e7724fe76d347f340c9bf47a9",
+                  "file": "services/orders/config/app.yml",
+                  "index": 48,
+                  "line": 4,
+                  "match_sha256": "f7e06de9b4b9a2f72f9468b4ed5fc8949aa1669a47617d3cc5459dc9520950dd",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "f7e06de9b4b9a2f72f9468b4ed5fc8949aa1669a47617d3cc5459dc9520950dd"
+                },
+                {
+                  "commit": "377a2e8e219b0b4e7724fe76d347f340c9bf47a9",
+                  "file": "services/orders/config/app.yml",
+                  "index": 49,
+                  "line": 6,
+                  "match_sha256": "98189ca7a18ccab24cfd8cacc7a4ca77181ebce310d33e0d2bc34cd7bc651126",
+                  "rule_id": "stripe-secret-api-key",
+                  "secret_sha256": "98189ca7a18ccab24cfd8cacc7a4ca77181ebce310d33e0d2bc34cd7bc651126"
+                },
+                {
+                  "commit": "ff8d6eeea9846e3bd6e1a05e8bb49baf2c5c70e2",
+                  "file": "services/search/config/app.yml",
+                  "index": 50,
+                  "line": 4,
+                  "match_sha256": "6ace496b31375fa51abe9026b95d33e6275861e4da2007e7bd8a266673984087",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "6ace496b31375fa51abe9026b95d33e6275861e4da2007e7bd8a266673984087"
+                },
+                {
+                  "commit": "ff8d6eeea9846e3bd6e1a05e8bb49baf2c5c70e2",
+                  "file": "services/search/config/app.yml",
+                  "index": 51,
+                  "line": 6,
+                  "match_sha256": "fa11de4770d8aeb64dfd68cbcf02cffe5f3927f48ab5f224e6ebd641bb8e5617",
+                  "rule_id": "npm-auth-token",
+                  "secret_sha256": "fa11de4770d8aeb64dfd68cbcf02cffe5f3927f48ab5f224e6ebd641bb8e5617"
+                },
+                {
+                  "commit": "b8b05c482a48e957275bf3aa2b2d0a8536ab692f",
+                  "file": "services/pricing/.github/workflows/ci.yml",
+                  "index": 52,
+                  "line": 6,
+                  "match_sha256": "f4ea57a378c41d99ec7bb6cf93d1c52a6f6d59b2956f40728023b560ea711c27",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "f4ea57a378c41d99ec7bb6cf93d1c52a6f6d59b2956f40728023b560ea711c27"
+                },
+                {
+                  "commit": "f90327d19e50b9c02ba86e8a9e79c713039653a4",
+                  "file": "services/inventory/.env",
+                  "index": 53,
+                  "line": 3,
+                  "match_sha256": "ccb63b3ba3838bd8d7e1fea25fc268d1015bd40c76da93b62374fd22276c257f",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "ccb63b3ba3838bd8d7e1fea25fc268d1015bd40c76da93b62374fd22276c257f"
+                },
+                {
+                  "commit": "6f8e25de930a9d5746538f81478e9ab993341011",
+                  "file": "services/catalog/.env",
+                  "index": 54,
+                  "line": 3,
+                  "match_sha256": "b4ff14ea074bef59ef1e1c4d9b11980b7c8b3845b213207cd84e7f6ca6aa8361",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "b4ff14ea074bef59ef1e1c4d9b11980b7c8b3845b213207cd84e7f6ca6aa8361"
+                },
+                {
+                  "commit": "adbc71526cd4ed15da7d74a36a0e158c3483fe75",
+                  "file": "services/billing/.env",
+                  "index": 55,
+                  "line": 3,
+                  "match_sha256": "84cb9d8c0f839ab0a2f691bc1a203b90b1a4e532870f02c9d881cb93a2f1e7cc",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "84cb9d8c0f839ab0a2f691bc1a203b90b1a4e532870f02c9d881cb93a2f1e7cc"
+                },
+                {
+                  "commit": "b8b05c482a48e957275bf3aa2b2d0a8536ab692f",
+                  "file": "services/pricing/keys/deploy.pem",
+                  "index": 56,
+                  "line": 1,
+                  "match_sha256": "e84c55f68f4bb7c2e650b9879c9f579473902c94277f90081fa5711e1bc68fe4",
+                  "rule_id": "pem-private-key",
+                  "secret_sha256": "e84c55f68f4bb7c2e650b9879c9f579473902c94277f90081fa5711e1bc68fe4"
+                },
+                {
+                  "commit": "3fe2357ead670072eb3c929956824acd3b3dcf68",
+                  "file": "docs/integration-guide.md",
+                  "index": 57,
+                  "line": 5,
+                  "match_sha256": "3b2dcaf24ae9d888ee7462d4d6441791455ae2dc58b6811600c119778fc40263",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "3b2dcaf24ae9d888ee7462d4d6441791455ae2dc58b6811600c119778fc40263"
+                },
+                {
+                  "commit": "3fe2357ead670072eb3c929956824acd3b3dcf68",
+                  "file": "docs/integration-guide.md",
+                  "index": 58,
+                  "line": 13,
+                  "match_sha256": "3b2dcaf24ae9d888ee7462d4d6441791455ae2dc58b6811600c119778fc40263",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "3b2dcaf24ae9d888ee7462d4d6441791455ae2dc58b6811600c119778fc40263"
+                },
+                {
+                  "commit": "3fe2357ead670072eb3c929956824acd3b3dcf68",
+                  "file": "docs/integration-guide.md",
+                  "index": 59,
+                  "line": 21,
+                  "match_sha256": "3b2dcaf24ae9d888ee7462d4d6441791455ae2dc58b6811600c119778fc40263",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "3b2dcaf24ae9d888ee7462d4d6441791455ae2dc58b6811600c119778fc40263"
+                },
+                {
+                  "commit": "5f30af8930eae4d930045450c647c7a913c35d12",
+                  "file": "services/giftcards/keys/deploy.pem",
+                  "index": 60,
+                  "line": 1,
+                  "match_sha256": "757de8995529ad0945b7971ec61826ae7b8ba7c1b2e6b858db70bd4c57acfaab",
+                  "rule_id": "pem-private-key",
+                  "secret_sha256": "757de8995529ad0945b7971ec61826ae7b8ba7c1b2e6b858db70bd4c57acfaab"
+                },
+                {
+                  "commit": "d310f588a42798dc156ae20756ea5632f9ab78f8",
+                  "file": "services/media/config/app.yml",
+                  "index": 61,
+                  "line": 4,
+                  "match_sha256": "2d269a0696cbf01c6957dbbebdaefec58b20ee26d7fc353bcdab436ff8989c17",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "2d269a0696cbf01c6957dbbebdaefec58b20ee26d7fc353bcdab436ff8989c17"
+                },
+                {
+                  "commit": "69a3c7ef663a60c400c064c76fa92361cd78dd17",
+                  "file": "services/payment/.env",
+                  "index": 62,
+                  "line": 3,
+                  "match_sha256": "ca574653c6e7f04c2f1eaac1587387c29e0c5b967eec68748af23a3c2cd4d72a",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "ca574653c6e7f04c2f1eaac1587387c29e0c5b967eec68748af23a3c2cd4d72a"
+                },
+                {
+                  "commit": "020e2d14bd598e1ffc92fd3af9f8d263f11f7ef9",
+                  "file": "services/review/config/app.yml",
+                  "index": 63,
+                  "line": 6,
+                  "match_sha256": "9d8a1cd310807389c0bc586617225d98fb0f162d5e816bc132d5ed64361cbe4e",
+                  "rule_id": "github-classic-pat",
+                  "secret_sha256": "9d8a1cd310807389c0bc586617225d98fb0f162d5e816bc132d5ed64361cbe4e"
+                },
+                {
+                  "commit": "bf1d071e573824d33388f08f890a66e92aafe6f1",
+                  "file": "services/shipping/.env",
+                  "index": 64,
+                  "line": 3,
+                  "match_sha256": "1a845edd6783b547939770049669a447dfb8bdce1da49ff88278b50a3fdf02b3",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "1a845edd6783b547939770049669a447dfb8bdce1da49ff88278b50a3fdf02b3"
+                },
+                {
+                  "commit": "d6b706fcd91ca836238557e99282ae17f5c882a4",
+                  "file": "services/billing/config/payments.yml",
+                  "index": 65,
+                  "line": 4,
+                  "match_sha256": "9b359337b60531acabb7b0655e6217a0a28b849f474cdb46cd26d9cc9a2c353b",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "9b359337b60531acabb7b0655e6217a0a28b849f474cdb46cd26d9cc9a2c353b"
+                },
+                {
+                  "commit": "d6b706fcd91ca836238557e99282ae17f5c882a4",
+                  "file": "services/billing/config/payments.yml",
+                  "index": 66,
+                  "line": 6,
+                  "match_sha256": "73bddfb0473f5eebefc2c58a542755546f32699205d6dc26c5ede919fb8a2a90",
+                  "rule_id": "github-classic-pat",
+                  "secret_sha256": "73bddfb0473f5eebefc2c58a542755546f32699205d6dc26c5ede919fb8a2a90"
+                },
+                {
+                  "commit": "f7e70c67d63e05af0a7b21af80b19d6388e03b47",
+                  "file": "services/checkout/config/app.yml",
+                  "index": 67,
+                  "line": 4,
+                  "match_sha256": "d9e5957f0359fb34aeca44cb044b6972f552d7c57ed24edcca7bb1395e247817",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "d9e5957f0359fb34aeca44cb044b6972f552d7c57ed24edcca7bb1395e247817"
+                },
+                {
+                  "commit": "f7e70c67d63e05af0a7b21af80b19d6388e03b47",
+                  "file": "services/checkout/config/app.yml",
+                  "index": 68,
+                  "line": 6,
+                  "match_sha256": "30797e3021f98adb33ff7f2d135352def4d84e769dbd37132255abaaecf3013a",
+                  "rule_id": "stripe-secret-api-key",
+                  "secret_sha256": "30797e3021f98adb33ff7f2d135352def4d84e769dbd37132255abaaecf3013a"
+                },
+                {
+                  "commit": "b8b05c482a48e957275bf3aa2b2d0a8536ab692f",
+                  "file": "services/pricing/.env",
+                  "index": 69,
+                  "line": 3,
+                  "match_sha256": "3a488f94cce0884262b6885316000dee08478e51776735a7c2dfc31f56c7b30d",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "3a488f94cce0884262b6885316000dee08478e51776735a7c2dfc31f56c7b30d"
+                },
+                {
+                  "commit": "30ce5b5101a98f82f1dba28f3fdfb5d01586e29d",
+                  "file": "services/risk/config/app.yml",
+                  "index": 70,
+                  "line": 4,
+                  "match_sha256": "41eb63884ff0648a9174dc09ebae4f686c4eced579b63d6cdd7657710c0d19ff",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "41eb63884ff0648a9174dc09ebae4f686c4eced579b63d6cdd7657710c0d19ff"
+                },
+                {
+                  "commit": "30ce5b5101a98f82f1dba28f3fdfb5d01586e29d",
+                  "file": "services/risk/config/app.yml",
+                  "index": 71,
+                  "line": 6,
+                  "match_sha256": "6f8e08458ec9ad72e0d7d7e4cf476c0b1574f600f40bcc817b4da6595bf18294",
+                  "rule_id": "stripe-secret-api-key",
+                  "secret_sha256": "6f8e08458ec9ad72e0d7d7e4cf476c0b1574f600f40bcc817b4da6595bf18294"
+                },
+                {
+                  "commit": "d260db128fffb47f5e9d65825a4441186a0f8dbd",
+                  "file": "services/identity/.env",
+                  "index": 72,
+                  "line": 3,
+                  "match_sha256": "583c08ded66a4a2452971781c5a02956b2649730fa7468e18a0c48ebaded0294",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "583c08ded66a4a2452971781c5a02956b2649730fa7468e18a0c48ebaded0294"
+                },
+                {
+                  "commit": "8c75ac914649973429df8193a4fa60a3721afd01",
+                  "file": "services/identity/.env",
+                  "index": 73,
+                  "line": 3,
+                  "match_sha256": "35681a36536c0f0085d1fe2c9abd05cc8474d6e06a0a538de8e11b1528265f0c",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "35681a36536c0f0085d1fe2c9abd05cc8474d6e06a0a538de8e11b1528265f0c"
+                },
+                {
+                  "commit": "7313b0146a4644e6ffc02c9e5299bac9d7707e92",
+                  "file": "services/notify/.env",
+                  "index": 74,
+                  "line": 3,
+                  "match_sha256": "a3fa69bb73b364dd957a8afd9e35254783d7b0968eb082c19ef9bf0e8a9f23b1",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "a3fa69bb73b364dd957a8afd9e35254783d7b0968eb082c19ef9bf0e8a9f23b1"
+                },
+                {
+                  "commit": "f7e70c67d63e05af0a7b21af80b19d6388e03b47",
+                  "file": "services/checkout/.github/workflows/ci.yml",
+                  "index": 75,
+                  "line": 6,
+                  "match_sha256": "4660fb2529aa0b876742665ba655654dca349ed0bde16873a4733dd43f6d1923",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "4660fb2529aa0b876742665ba655654dca349ed0bde16873a4733dd43f6d1923"
+                },
+                {
+                  "commit": "35e65d99907bf28ebd57d4d24e93b8d9bf142188",
+                  "file": "services/wishlist/.github/workflows/ci.yml",
+                  "index": 76,
+                  "line": 6,
+                  "match_sha256": "143a869b9c1d17d440f5c5264ce4ff3ad0ec70c8b171620a7e3b1cda7a81f11f",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "143a869b9c1d17d440f5c5264ce4ff3ad0ec70c8b171620a7e3b1cda7a81f11f"
+                },
+                {
+                  "commit": "47d96a93cec5cb8e73b3801422987b958977de3e",
+                  "file": "services/payment/.env",
+                  "index": 77,
+                  "line": 3,
+                  "match_sha256": "c52152be44db8101e8fc6c8e1746286c956d5156db7f91a4804daf2937e7a3f0",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "c52152be44db8101e8fc6c8e1746286c956d5156db7f91a4804daf2937e7a3f0"
+                },
+                {
+                  "commit": "afb305a4f4a63ba7f84a6fc8a92c8850a5621403",
+                  "file": "services/invoice/.github/workflows/ci.yml",
+                  "index": 78,
+                  "line": 6,
+                  "match_sha256": "29e70ddcf00442bd1b3e1ce5d91804b768a604199af52610eabfcbd3c2a44b48",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "29e70ddcf00442bd1b3e1ce5d91804b768a604199af52610eabfcbd3c2a44b48"
+                },
+                {
+                  "commit": "bf1d071e573824d33388f08f890a66e92aafe6f1",
+                  "file": "services/shipping/config/app.yml",
+                  "index": 79,
+                  "line": 4,
+                  "match_sha256": "1a845edd6783b547939770049669a447dfb8bdce1da49ff88278b50a3fdf02b3",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "1a845edd6783b547939770049669a447dfb8bdce1da49ff88278b50a3fdf02b3"
+                },
+                {
+                  "commit": "68f20c609de7ac5fcca4d7093863d590dace19a1",
+                  "file": "services/suppliers/config/app.yml",
+                  "index": 80,
+                  "line": 4,
+                  "match_sha256": "0e6be3795497701da3b2d0cb19aacd5ad6643442cbf01ff4eb777ca9902dc5d6",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "0e6be3795497701da3b2d0cb19aacd5ad6643442cbf01ff4eb777ca9902dc5d6"
+                },
+                {
+                  "commit": "bf1d071e573824d33388f08f890a66e92aafe6f1",
+                  "file": "services/shipping/.github/workflows/ci.yml",
+                  "index": 81,
+                  "line": 6,
+                  "match_sha256": "48d67242b6914f80cef011e12fcfce70200e8bcb6252da47d5e8271b56a07603",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "48d67242b6914f80cef011e12fcfce70200e8bcb6252da47d5e8271b56a07603"
+                },
+                {
+                  "commit": "d310f588a42798dc156ae20756ea5632f9ab78f8",
+                  "file": "services/media/.github/workflows/ci.yml",
+                  "index": 82,
+                  "line": 6,
+                  "match_sha256": "c04592903b39bc32a36310950d68bfdcd77fb60ff38e5e09578cdde586dc15f4",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "c04592903b39bc32a36310950d68bfdcd77fb60ff38e5e09578cdde586dc15f4"
+                },
+                {
+                  "commit": "06feeeff85d678409cf931a1f3813a6676165f2d",
+                  "file": "services/catalog/.env",
+                  "index": 83,
+                  "line": 2,
+                  "match_sha256": "1ed0d44d288ff9e8726e00d62292fd134a7926eca91ee4c84759083be0c4b73d",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "1ed0d44d288ff9e8726e00d62292fd134a7926eca91ee4c84759083be0c4b73d"
+                },
+                {
+                  "commit": "f3792898440c992ea23b5b35187d8af62c23ed93",
+                  "file": "services/billing/config/app.yml",
+                  "index": 84,
+                  "line": 4,
+                  "match_sha256": "9b359337b60531acabb7b0655e6217a0a28b849f474cdb46cd26d9cc9a2c353b",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "9b359337b60531acabb7b0655e6217a0a28b849f474cdb46cd26d9cc9a2c353b"
+                },
+                {
+                  "commit": "f3792898440c992ea23b5b35187d8af62c23ed93",
+                  "file": "services/billing/config/app.yml",
+                  "index": 85,
+                  "line": 6,
+                  "match_sha256": "73bddfb0473f5eebefc2c58a542755546f32699205d6dc26c5ede919fb8a2a90",
+                  "rule_id": "github-classic-pat",
+                  "secret_sha256": "73bddfb0473f5eebefc2c58a542755546f32699205d6dc26c5ede919fb8a2a90"
+                },
+                {
+                  "commit": "7182ce718232c0f4290ca80142e59ff138601e96",
+                  "file": "services/locator/config/app.yml",
+                  "index": 86,
+                  "line": 4,
+                  "match_sha256": "fb55abd8049aa4a489304b52700f05c118cbd167c5cafd7eb19b0d3fb158db66",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "fb55abd8049aa4a489304b52700f05c118cbd167c5cafd7eb19b0d3fb158db66"
+                },
+                {
+                  "commit": "7182ce718232c0f4290ca80142e59ff138601e96",
+                  "file": "services/locator/config/app.yml",
+                  "index": 87,
+                  "line": 6,
+                  "match_sha256": "5c1092520c9d8a2a63c91fb63e59bed94f88d9f25ef6b3ad37bb304854ce7ab0",
+                  "rule_id": "npm-auth-token",
+                  "secret_sha256": "5c1092520c9d8a2a63c91fb63e59bed94f88d9f25ef6b3ad37bb304854ce7ab0"
+                },
+                {
+                  "commit": "7313b0146a4644e6ffc02c9e5299bac9d7707e92",
+                  "file": "services/notify/config/app.yml",
+                  "index": 88,
+                  "line": 4,
+                  "match_sha256": "a3fa69bb73b364dd957a8afd9e35254783d7b0968eb082c19ef9bf0e8a9f23b1",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "a3fa69bb73b364dd957a8afd9e35254783d7b0968eb082c19ef9bf0e8a9f23b1"
+                },
+                {
+                  "commit": "7313b0146a4644e6ffc02c9e5299bac9d7707e92",
+                  "file": "services/notify/config/app.yml",
+                  "index": 89,
+                  "line": 6,
+                  "match_sha256": "e224df4a7c60567737b6432c6fd3cd86090e346f3e80a6333ad5917dcc5fd32c",
+                  "rule_id": "slack-token",
+                  "secret_sha256": "e224df4a7c60567737b6432c6fd3cd86090e346f3e80a6333ad5917dcc5fd32c"
+                },
+                {
+                  "commit": "772a9af8f5de6501684078236d65e75f3538b18d",
+                  "file": "services/reporting/keys/deploy.pem",
+                  "index": 90,
+                  "line": 1,
+                  "match_sha256": "aac1d44a7ce5a25d3ffc09eb7d7eb8723ff46812a71e57583f0fd50c8d94a148",
+                  "rule_id": "pem-private-key",
+                  "secret_sha256": "aac1d44a7ce5a25d3ffc09eb7d7eb8723ff46812a71e57583f0fd50c8d94a148"
+                },
+                {
+                  "commit": "50b4ed2996bd629167dd9a58d011d518a49cc67a",
+                  "file": "services/promo/config/app.yml",
+                  "index": 91,
+                  "line": 4,
+                  "match_sha256": "b9806d01906d2e2bdfd1e58e2fcfcf7d025322625dcc87dce00569adb6b8ac26",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "b9806d01906d2e2bdfd1e58e2fcfcf7d025322625dcc87dce00569adb6b8ac26"
+                },
+                {
+                  "commit": "50b4ed2996bd629167dd9a58d011d518a49cc67a",
+                  "file": "services/promo/config/app.yml",
+                  "index": 92,
+                  "line": 6,
+                  "match_sha256": "60551df967cb14eca66cfcf57b94463609c9abcb6ba93218a870ed9d189527d1",
+                  "rule_id": "stripe-secret-api-key",
+                  "secret_sha256": "60551df967cb14eca66cfcf57b94463609c9abcb6ba93218a870ed9d189527d1"
+                },
+                {
+                  "commit": "cba273f44ccb90cbe3cb60cf2750b1847960830a",
+                  "file": "services/legacy/order-import/.env.legacy",
+                  "index": 93,
+                  "line": 2,
+                  "match_sha256": "1e44d703177678e47eea1fefea7028d6fe06830584e70629ab0a5655727b24a4",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "1e44d703177678e47eea1fefea7028d6fe06830584e70629ab0a5655727b24a4"
+                },
+                {
+                  "commit": "cba273f44ccb90cbe3cb60cf2750b1847960830a",
+                  "file": "services/legacy/order-import/.env.legacy",
+                  "index": 94,
+                  "line": 3,
+                  "match_sha256": "45c21b0d7a3085388aeb80ae42cb18497f6e9cf5a121bdfbf0a848ecf315cc74",
+                  "rule_id": "github-classic-pat",
+                  "secret_sha256": "45c21b0d7a3085388aeb80ae42cb18497f6e9cf5a121bdfbf0a848ecf315cc74"
+                },
+                {
+                  "commit": "ead12087d3fb362cc876ada2e46c69e4f725afe3",
+                  "file": "services/returns/.env",
+                  "index": 95,
+                  "line": 3,
+                  "match_sha256": "e41034cfe1c71a919af95f8429c0d51c1c9811323cc9a912305374e0d3893812",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "e41034cfe1c71a919af95f8429c0d51c1c9811323cc9a912305374e0d3893812"
+                },
+                {
+                  "commit": "7313b0146a4644e6ffc02c9e5299bac9d7707e92",
+                  "file": "services/notify/keys/deploy.pem",
+                  "index": 96,
+                  "line": 1,
+                  "match_sha256": "74039d8c253c8f4e001938078f303a21d48ef77cd459d2f146b2cc728b79a7fc",
+                  "rule_id": "pem-private-key",
+                  "secret_sha256": "74039d8c253c8f4e001938078f303a21d48ef77cd459d2f146b2cc728b79a7fc"
+                },
+                {
+                  "commit": "67989bf8a730e8f3d41defd3da7c96366ed68577",
+                  "file": "services/storefront/.env",
+                  "index": 97,
+                  "line": 3,
+                  "match_sha256": "3e946ec6ff451456ea444237a57deaadf78cfc5c7218ee20f36a1dc09f092e08",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "3e946ec6ff451456ea444237a57deaadf78cfc5c7218ee20f36a1dc09f092e08"
+                },
+                {
+                  "commit": "7fbc2e4cb5ed10cfbb3b4d5e50647f49d7ff4f7c",
+                  "file": "services/compliance/.env",
+                  "index": 98,
+                  "line": 3,
+                  "match_sha256": "719d6716033e2ff45af5ba951dc2d3430d35ab8203960aee3b3d775caa5b2f2e",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "719d6716033e2ff45af5ba951dc2d3430d35ab8203960aee3b3d775caa5b2f2e"
+                },
+                {
+                  "commit": "ff8d6eeea9846e3bd6e1a05e8bb49baf2c5c70e2",
+                  "file": "services/search/.env",
+                  "index": 99,
+                  "line": 3,
+                  "match_sha256": "6ace496b31375fa51abe9026b95d33e6275861e4da2007e7bd8a266673984087",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "6ace496b31375fa51abe9026b95d33e6275861e4da2007e7bd8a266673984087"
+                },
+                {
+                  "commit": "8737058223491998d9238dae1dbb6f989fa4933a",
+                  "file": "services/analytics/.github/workflows/ci.yml",
+                  "index": 100,
+                  "line": 6,
+                  "match_sha256": "97310a9d86c83bc398cf7bcd583c17cab2bf6f2e1314090def42d44e268edfdb",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "97310a9d86c83bc398cf7bcd583c17cab2bf6f2e1314090def42d44e268edfdb"
+                },
+                {
+                  "commit": "377a2e8e219b0b4e7724fe76d347f340c9bf47a9",
+                  "file": "services/orders/keys/deploy.pem",
+                  "index": 101,
+                  "line": 1,
+                  "match_sha256": "d1167421047bba62d2ab8c2e895bb5fe230f1dbb9a432b7fb82691b46ccb3b3e",
+                  "rule_id": "pem-private-key",
+                  "secret_sha256": "d1167421047bba62d2ab8c2e895bb5fe230f1dbb9a432b7fb82691b46ccb3b3e"
+                },
+                {
+                  "commit": "35e65d99907bf28ebd57d4d24e93b8d9bf142188",
+                  "file": "services/wishlist/config/app.yml",
+                  "index": 102,
+                  "line": 4,
+                  "match_sha256": "355e185379a17bcff2c8d95df60a558da63090152e8cd6e9813d9af0259447c3",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "355e185379a17bcff2c8d95df60a558da63090152e8cd6e9813d9af0259447c3"
+                },
+                {
+                  "commit": "35e65d99907bf28ebd57d4d24e93b8d9bf142188",
+                  "file": "services/wishlist/config/app.yml",
+                  "index": 103,
+                  "line": 6,
+                  "match_sha256": "22c71be4f6a18ea5b440a8422f48aaf7ea0ee76940d24f57a943def09bfefa4c",
+                  "rule_id": "sendgrid-api-key",
+                  "secret_sha256": "22c71be4f6a18ea5b440a8422f48aaf7ea0ee76940d24f57a943def09bfefa4c"
+                },
+                {
+                  "commit": "50b4ed2996bd629167dd9a58d011d518a49cc67a",
+                  "file": "services/promo/keys/deploy.pem",
+                  "index": 104,
+                  "line": 1,
+                  "match_sha256": "beebd93ed888dd49ea77b278003f3be7b3c0498a9c74d043b97883a551c8b512",
+                  "rule_id": "pem-private-key",
+                  "secret_sha256": "beebd93ed888dd49ea77b278003f3be7b3c0498a9c74d043b97883a551c8b512"
+                },
+                {
+                  "commit": "afb305a4f4a63ba7f84a6fc8a92c8850a5621403",
+                  "file": "services/invoice/.env",
+                  "index": 105,
+                  "line": 3,
+                  "match_sha256": "1e9e78012f79e7a88a7981ee6b54b5ef61439f5b036f2278e37c899b5562a9c7",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "1e9e78012f79e7a88a7981ee6b54b5ef61439f5b036f2278e37c899b5562a9c7"
+                },
+                {
+                  "commit": "05c8d8cefd770a4917174096c858aac26bcb2cfd",
+                  "file": "services/search/.env",
+                  "index": 106,
+                  "line": 3,
+                  "match_sha256": "4353e2cdc3ad37c68b1d7663578c05a2fdd2c1e9b6ccb3cc1a99fbb913b83350",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "4353e2cdc3ad37c68b1d7663578c05a2fdd2c1e9b6ccb3cc1a99fbb913b83350"
+                },
+                {
+                  "commit": "d1de22aa4d09b3c0cc577fda5ee554eb03066d42",
+                  "file": "services/loyalty/.github/workflows/ci.yml",
+                  "index": 107,
+                  "line": 6,
+                  "match_sha256": "ca4312308a95fea77243b9c7a119174d12e627dcbd9f3ed8b57f21aa081f6bfb",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "ca4312308a95fea77243b9c7a119174d12e627dcbd9f3ed8b57f21aa081f6bfb"
+                },
+                {
+                  "commit": "5f30af8930eae4d930045450c647c7a913c35d12",
+                  "file": "services/giftcards/config/app.yml",
+                  "index": 108,
+                  "line": 4,
+                  "match_sha256": "f0deb3c3664948834b2dd271fae66dfeab72b504f187d9ff7b4f77740d7dc161",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "f0deb3c3664948834b2dd271fae66dfeab72b504f187d9ff7b4f77740d7dc161"
+                },
+                {
+                  "commit": "5f30af8930eae4d930045450c647c7a913c35d12",
+                  "file": "services/giftcards/config/app.yml",
+                  "index": 109,
+                  "line": 6,
+                  "match_sha256": "6fd6d23d250eb7d6b7aa3cbeeafab2129058ea3e5f798e45321f0e6496e8994d",
+                  "rule_id": "slack-token",
+                  "secret_sha256": "6fd6d23d250eb7d6b7aa3cbeeafab2129058ea3e5f798e45321f0e6496e8994d"
+                },
+                {
+                  "commit": "21c5dd6f6a9f20759a150d9cc73e43b2acd9fad8",
+                  "file": "services/mobile/.github/workflows/ci.yml",
+                  "index": 110,
+                  "line": 6,
+                  "match_sha256": "cd4842a2ca3462b1ab3e3a2cf65408c5581eef2176953d906925b4928e9f33ee",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "cd4842a2ca3462b1ab3e3a2cf65408c5581eef2176953d906925b4928e9f33ee"
+                },
+                {
+                  "commit": "d64a24e47c0a061fc1fdc36273eb8c7e5b752adc",
+                  "file": "services/subscription/keys/deploy.pem",
+                  "index": 111,
+                  "line": 1,
+                  "match_sha256": "877d29e486aba56f93f42e1f4f497bcca842577b2f608a794fbace494f6b78a6",
+                  "rule_id": "pem-private-key",
+                  "secret_sha256": "877d29e486aba56f93f42e1f4f497bcca842577b2f608a794fbace494f6b78a6"
+                },
+                {
+                  "commit": "6a991d472c29e03a748531e415e8b409e9038c05",
+                  "file": "scripts/deploy.sh",
+                  "index": 112,
+                  "line": 3,
+                  "match_sha256": "63135ef355aaa4dd673237e69ce1432b08d33750fbf842ba15dd214511f12306",
+                  "rule_id": "github-classic-pat",
+                  "secret_sha256": "63135ef355aaa4dd673237e69ce1432b08d33750fbf842ba15dd214511f12306"
+                },
+                {
+                  "commit": "f90327d19e50b9c02ba86e8a9e79c713039653a4",
+                  "file": "services/inventory/config/app.yml",
+                  "index": 113,
+                  "line": 4,
+                  "match_sha256": "ccb63b3ba3838bd8d7e1fea25fc268d1015bd40c76da93b62374fd22276c257f",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "ccb63b3ba3838bd8d7e1fea25fc268d1015bd40c76da93b62374fd22276c257f"
+                },
+                {
+                  "commit": "f90327d19e50b9c02ba86e8a9e79c713039653a4",
+                  "file": "services/inventory/config/app.yml",
+                  "index": 114,
+                  "line": 6,
+                  "match_sha256": "c38c9ebf95c6eb4db66fd37f9974319748c8c0b2cff343f0f6ef6c020eddfeec",
+                  "rule_id": "sendgrid-api-key",
+                  "secret_sha256": "c38c9ebf95c6eb4db66fd37f9974319748c8c0b2cff343f0f6ef6c020eddfeec"
+                },
+                {
+                  "commit": "d64a24e47c0a061fc1fdc36273eb8c7e5b752adc",
+                  "file": "services/subscription/.env",
+                  "index": 115,
+                  "line": 3,
+                  "match_sha256": "b191c4c765739a65152b9979d3aa86f590302ac37bfd6454b6d7ebb6e506c6fd",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "b191c4c765739a65152b9979d3aa86f590302ac37bfd6454b6d7ebb6e506c6fd"
+                },
+                {
+                  "commit": "7fbc2e4cb5ed10cfbb3b4d5e50647f49d7ff4f7c",
+                  "file": "services/compliance/config/app.yml",
+                  "index": 116,
+                  "line": 4,
+                  "match_sha256": "719d6716033e2ff45af5ba951dc2d3430d35ab8203960aee3b3d775caa5b2f2e",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "719d6716033e2ff45af5ba951dc2d3430d35ab8203960aee3b3d775caa5b2f2e"
+                },
+                {
+                  "commit": "7fbc2e4cb5ed10cfbb3b4d5e50647f49d7ff4f7c",
+                  "file": "services/compliance/config/app.yml",
+                  "index": 117,
+                  "line": 6,
+                  "match_sha256": "4614fc56ffabeb02a5cf91f9c510b86dd4b8bc72979fab9769b9f42e5cefa723",
+                  "rule_id": "github-classic-pat",
+                  "secret_sha256": "4614fc56ffabeb02a5cf91f9c510b86dd4b8bc72979fab9769b9f42e5cefa723"
+                },
+                {
+                  "commit": "f90327d19e50b9c02ba86e8a9e79c713039653a4",
+                  "file": "services/inventory/.github/workflows/ci.yml",
+                  "index": 118,
+                  "line": 6,
+                  "match_sha256": "67663395fed19af5df8d8084cb044290aec0a977ea81ca12a6d9ea619eb053bc",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "67663395fed19af5df8d8084cb044290aec0a977ea81ca12a6d9ea619eb053bc"
+                },
+                {
+                  "commit": "6e9039db6965a41ce5cbcd2caa4930a3bdc09bb7",
+                  "file": "services/fraud/.env",
+                  "index": 119,
+                  "line": 3,
+                  "match_sha256": "550b76bb3a953801cc24ec5b1df315586df36e7bfe94978a9791d53ea829042c",
+                  "rule_id": "generic-secret-assignment",
+                  "secret_sha256": "550b76bb3a953801cc24ec5b1df315586df36e7bfe94978a9791d53ea829042c"
+                },
+                {
+                  "commit": "d260db128fffb47f5e9d65825a4441186a0f8dbd",
+                  "file": "services/identity/keys/deploy.pem",
+                  "index": 120,
+                  "line": 1,
+                  "match_sha256": "60404628e18fd86f4a739a1e16edbfdb336b2c4c561338b5849cf4b1e2a2ad3f",
+                  "rule_id": "pem-private-key",
+                  "secret_sha256": "60404628e18fd86f4a739a1e16edbfdb336b2c4c561338b5849cf4b1e2a2ad3f"
+                }
+              ],
+              "matched_positive_ids": [
+                "RNC-SL-POS-000641",
+                "RNC-SL-POS-000642",
+                "RNC-SL-POS-000644",
+                "RNC-SL-POS-000645",
+                "RNC-SL-POS-000646",
+                "RNC-SL-POS-000647",
+                "RNC-SL-POS-000648",
+                "RNC-SL-POS-000650",
+                "RNC-SL-POS-000651",
+                "RNC-SL-POS-000652",
+                "RNC-SL-POS-000653",
+                "RNC-SL-POS-000654",
+                "RNC-SL-POS-000656",
+                "RNC-SL-POS-000657",
+                "RNC-SL-POS-000658",
+                "RNC-SL-POS-000659",
+                "RNC-SL-POS-000661",
+                "RNC-SL-POS-000662",
+                "RNC-SL-POS-000663",
+                "RNC-SL-POS-000665",
+                "RNC-SL-POS-000667",
+                "RNC-SL-POS-000668",
+                "RNC-SL-POS-000669",
+                "RNC-SL-POS-000672",
+                "RNC-SL-POS-000673",
+                "RNC-SL-POS-000674",
+                "RNC-SL-POS-000676",
+                "RNC-SL-POS-000677",
+                "RNC-SL-POS-000679",
+                "RNC-SL-POS-000680",
+                "RNC-SL-POS-000682",
+                "RNC-SL-POS-000683",
+                "RNC-SL-POS-000685",
+                "RNC-SL-POS-000687",
+                "RNC-SL-POS-000688",
+                "RNC-SL-POS-000689",
+                "RNC-SL-POS-000690",
+                "RNC-SL-POS-000692",
+                "RNC-SL-POS-000693",
+                "RNC-SL-POS-000695",
+                "RNC-SL-POS-000696",
+                "RNC-SL-POS-000697",
+                "RNC-SL-POS-000699",
+                "RNC-SL-POS-000700",
+                "RNC-SL-POS-000701",
+                "RNC-SL-POS-000703",
+                "RNC-SL-POS-000704",
+                "RNC-SL-POS-000706",
+                "RNC-SL-POS-000707",
+                "RNC-SL-POS-000709",
+                "RNC-SL-POS-000710",
+                "RNC-SL-POS-000714",
+                "RNC-SL-POS-000717",
+                "RNC-SL-POS-000719",
+                "RNC-SL-POS-000720",
+                "RNC-SL-POS-000722",
+                "RNC-SL-POS-000723",
+                "RNC-SL-POS-000725",
+                "RNC-SL-POS-000726",
+                "RNC-SL-POS-000727",
+                "RNC-SL-POS-000729",
+                "RNC-SL-POS-000730",
+                "RNC-SL-POS-000733",
+                "RNC-SL-POS-000734",
+                "RNC-SL-POS-000736",
+                "RNC-SL-POS-000737",
+                "RNC-SL-POS-000739",
+                "RNC-SL-POS-000740",
+                "RNC-SL-POS-000741",
+                "RNC-SL-POS-000743",
+                "RNC-SL-POS-000745",
+                "RNC-SL-POS-000746",
+                "RNC-SL-POS-000747",
+                "RNC-SL-POS-000749",
+                "RNC-SL-POS-000751",
+                "RNC-SL-POS-000752",
+                "RNC-SL-POS-000754",
+                "RNC-SL-POS-000756",
+                "RNC-SL-POS-000757",
+                "RNC-SL-POS-000761",
+                "RNC-SL-POS-000762",
+                "RNC-SL-POS-000764",
+                "RNC-SL-POS-000765",
+                "RNC-SL-POS-000766",
+                "RNC-SL-POS-000768",
+                "RNC-SL-POS-000769",
+                "RNC-SL-POS-000771",
+                "RNC-SL-POS-000772",
+                "RNC-SL-POS-000773",
+                "RNC-SL-POS-000775",
+                "RNC-SL-POS-000776",
+                "RNC-SL-POS-000778",
+                "RNC-SL-POS-000780",
+                "RNC-SL-POS-000781",
+                "RNC-SL-POS-000782",
+                "RNC-SL-POS-000784",
+                "RNC-SL-POS-000785",
+                "RNC-SL-POS-000787",
+                "RNC-SL-POS-000789",
+                "RNC-SL-POS-000790",
+                "RNC-SL-POS-000795",
+                "RNC-SL-POS-000796",
+                "RNC-SL-POS-000798",
+                "RNC-SL-POS-000799",
+                "RNC-SL-POS-000800"
+              ],
+              "metrics": {
+                "accounted_finding_count": 121,
+                "accounted_percent": 100.0,
+                "duplicate_count": 1,
+                "expected_positives": 160,
+                "expected_unique_groups": 130,
+                "f1_percent": null,
+                "false_negative_occurrences": 55,
+                "informative_match_count": 0,
+                "informative_unique_item_count": 0,
+                "invocation": {
+                  "duration_seconds": 6.367,
+                  "exit_code": 10,
+                  "mode": "git",
+                  "timed_out": false
+                },
+                "negative_oracle": true,
+                "observed_findings": 121,
+                "occurrence_recall_percent": 65.62,
+                "precision_certification_status": "BLOCKED_INCOMPLETE_NEGATIVE_ORACLE",
+                "precision_percent": null,
+                "true_positive_occurrences": 105,
+                "unique_groups_matched": 78,
+                "unique_recall_percent": 60.0,
+                "unique_verified_nonsecret_exposures": 3,
+                "unmatched_pending_review_count": 12,
+                "unmatched_positive_container_counts": {
+                  "git": 55
+                },
+                "unsupported_capability_count": 0,
+                "unverified_evidence_count": 0,
+                "verified_false_positive_alert_count": 3
+              },
+              "missed_positive_ids": [
+                "RNC-SL-POS-000643",
+                "RNC-SL-POS-000649",
+                "RNC-SL-POS-000655",
+                "RNC-SL-POS-000660",
+                "RNC-SL-POS-000664",
+                "RNC-SL-POS-000666",
+                "RNC-SL-POS-000670",
+                "RNC-SL-POS-000671",
+                "RNC-SL-POS-000675",
+                "RNC-SL-POS-000678",
+                "RNC-SL-POS-000681",
+                "RNC-SL-POS-000684",
+                "RNC-SL-POS-000686",
+                "RNC-SL-POS-000691",
+                "RNC-SL-POS-000694",
+                "RNC-SL-POS-000698",
+                "RNC-SL-POS-000702",
+                "RNC-SL-POS-000705",
+                "RNC-SL-POS-000708",
+                "RNC-SL-POS-000711",
+                "RNC-SL-POS-000712",
+                "RNC-SL-POS-000713",
+                "RNC-SL-POS-000715",
+                "RNC-SL-POS-000716",
+                "RNC-SL-POS-000718",
+                "RNC-SL-POS-000721",
+                "RNC-SL-POS-000724",
+                "RNC-SL-POS-000728",
+                "RNC-SL-POS-000731",
+                "RNC-SL-POS-000732",
+                "RNC-SL-POS-000735",
+                "RNC-SL-POS-000738",
+                "RNC-SL-POS-000742",
+                "RNC-SL-POS-000744",
+                "RNC-SL-POS-000748",
+                "RNC-SL-POS-000750",
+                "RNC-SL-POS-000753",
+                "RNC-SL-POS-000755",
+                "RNC-SL-POS-000758",
+                "RNC-SL-POS-000759",
+                "RNC-SL-POS-000760",
+                "RNC-SL-POS-000763",
+                "RNC-SL-POS-000767",
+                "RNC-SL-POS-000770",
+                "RNC-SL-POS-000774",
+                "RNC-SL-POS-000777",
+                "RNC-SL-POS-000779",
+                "RNC-SL-POS-000783",
+                "RNC-SL-POS-000786",
+                "RNC-SL-POS-000788",
+                "RNC-SL-POS-000791",
+                "RNC-SL-POS-000792",
+                "RNC-SL-POS-000793",
+                "RNC-SL-POS-000794",
+                "RNC-SL-POS-000797"
+              ],
+              "outcome": "COMPLETED_AND_SCORED",
+              "reason": null,
+              "representations": [
+                {
+                  "expected_occurrences": 41,
+                  "matched_occurrences": 37,
+                  "occurrence_recall_percent": 90.24,
+                  "representation": "dotenv_value"
+                },
+                {
+                  "expected_occurrences": 32,
+                  "matched_occurrences": 1,
+                  "occurrence_recall_percent": 3.12,
+                  "representation": "env_value"
+                },
+                {
+                  "expected_occurrences": 15,
+                  "matched_occurrences": 15,
+                  "occurrence_recall_percent": 100.0,
+                  "representation": "github_actions_expression_value"
+                },
+                {
+                  "expected_occurrences": 10,
+                  "matched_occurrences": 0,
+                  "occurrence_recall_percent": 0.0,
+                  "representation": "pem_pkcs1"
+                },
+                {
+                  "expected_occurrences": 1,
+                  "matched_occurrences": 1,
+                  "occurrence_recall_percent": 100.0,
+                  "representation": "shell_assignment"
+                },
+                {
+                  "expected_occurrences": 61,
+                  "matched_occurrences": 51,
+                  "occurrence_recall_percent": 83.61,
+                  "representation": "yaml_value"
+                }
+              ],
+              "source_root": "C:\\Dev\\gitleaks\\gitleaks-harness\\datasets\\cache\\rnc-synth-lab\\corpus\\history",
+              "status": "PASS"
+            }
+          }
+        },
+        "load_profiles": [
+          "legacy-5x",
+          "legacy-10x"
+        ]
+      },
+      "key": "rnclab",
+      "limitations": [
+        "RNC Lab negative references are source-adjudicated within the frozen corpus; findings not present in the oracle remain pending review and precision/F1 are not certified.",
+        "Filesystem (1,282) and Git-history (320) denominators are separate and are never combined.",
+        "Private-key credit requires private-key material; public-key-only, SPKI-only, filename-only and encrypted-container-only evidence is not a true positive.",
+        "The frozen lab is verified before and after scanning; a hash change blocks the run."
+      ],
+      "metrics": {
+        "duplicate_count": 0,
+        "expected_positives": 640,
+        "expected_unique_groups": 366,
+        "f1_percent": null,
+        "false_negative_occurrences": 0,
+        "informative_match_count": 0,
+        "observed_findings": 0,
+        "occurrence_recall_percent": 0.0,
+        "precision_certification_status": "BLOCKED_INCOMPLETE_NEGATIVE_ORACLE",
+        "precision_percent": null,
+        "products": 0,
+        "true_positive_occurrences": 0,
+        "unique_groups_matched": 0,
+        "unique_recall_percent": 0.0,
+        "unique_verified_nonsecret_exposures": 0,
+        "unmatched_pending_review_count": 0,
+        "unverified_evidence_count": 0,
+        "verified_false_positive_alert_count": 0
+      },
+      "outcome": "BLOCKED",
+      "reason": null,
+      "results": [],
+      "status": "BLOCKED",
+      "summary": {
+        "build": "v3",
+        "filesystem_items": 1282,
+        "git_items": 320,
+        "git_mode_supported": true,
+        "lab": "rnc-synthetic-secrets-lab/1.2.0",
+        "platforms_executed": 0,
+        "positive_unique_groups": 496
+      },
+      "targets": {
+        "windows-amd64": {
+          "lanes": {
+            "filesystem": {
+              "capability": null,
+              "metrics": {},
+              "outcome": "BLOCKED",
+              "reason": "scanner invocation problem: INCOMPLETE",
+              "status": "BLOCKED"
+            },
+            "git": {
+              "capability": {
+                "assessment": "executed and source-scored",
+                "mode": "git",
+                "supported": true
+              },
+              "metrics": {
+                "accounted_finding_count": 121,
+                "accounted_percent": 100.0,
+                "duplicate_count": 1,
+                "expected_positives": 160,
+                "expected_unique_groups": 130,
+                "f1_percent": null,
+                "false_negative_occurrences": 55,
+                "informative_match_count": 0,
+                "informative_unique_item_count": 0,
+                "invocation": {
+                  "duration_seconds": 6.367,
+                  "exit_code": 10,
+                  "mode": "git",
+                  "timed_out": false
+                },
+                "negative_oracle": true,
+                "observed_findings": 121,
+                "occurrence_recall_percent": 65.62,
+                "precision_certification_status": "BLOCKED_INCOMPLETE_NEGATIVE_ORACLE",
+                "precision_percent": null,
+                "true_positive_occurrences": 105,
+                "unique_groups_matched": 78,
+                "unique_recall_percent": 60.0,
+                "unique_verified_nonsecret_exposures": 3,
+                "unmatched_pending_review_count": 12,
+                "unmatched_positive_container_counts": {
+                  "git": 55
+                },
+                "unsupported_capability_count": 0,
+                "unverified_evidence_count": 0,
+                "verified_false_positive_alert_count": 3
+              },
+              "outcome": "COMPLETED_AND_SCORED",
+              "reason": null,
+              "status": "PASS"
+            }
+          },
+          "metrics": {},
+          "outcome": "BLOCKED",
+          "reason": "scanner invocation problem: INCOMPLETE",
+          "status": "BLOCKED"
+        }
+      },
+      "title": "RNC Synthetic Secrets Lab v3"
+    }
+  },
+  "summary": {
+    "baseline_metrics_executed": false,
+    "baseline_metrics_included": true,
+    "benchmark_environment": "DEV",
+    "builds": {
+      "windows-amd64": "PASS"
+    },
+    "cleanup_status": "PASS",
+    "counts": {
+      "blocked": 1,
+      "fail": 0,
+      "not_applicable": 0,
+      "not_run": 0,
+      "pass": 0
+    },
+    "coverage_complete": true,
+    "experiment_status": "INCOMPLETE",
+    "fatal_error": null,
+    "matrix_status": "BLOCKED",
+    "outcomes": {
+      "rnclab": "BLOCKED"
+    },
+    "overall": "INCOMPLETE",
+    "performance_status": "PASS",
+    "profile": "default",
+    "scoring_oracle_unavailable": [],
+    "source_commit": "93b4dda909cb3b41606a4d0f36c8ef9d06b77fde",
+    "source_head_verified": true,
+    "stress_profile": "none",
+    "suites": {
+      "rnclab": "BLOCKED"
+    },
+    "tested_platforms": []
+  }
+}

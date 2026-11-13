@@ -1,0 +1,92 @@
+{
+  "applied": false,
+  "counts": {
+    "INFORMATIVE": 30,
+    "LINEAGE_ONLY": 0,
+    "NEGATIVE": 89,
+    "POSITIVE": 65,
+    "held": 0,
+    "positive_occurrences": 65,
+    "positive_unique_groups": 53,
+    "repeat_extra_placements": 12,
+    "repeat_placement_groups": 5,
+    "total": 184
+  },
+  "errors": [],
+  "report_type": "cp5d1-proposal-validation",
+  "schema_version": 1,
+  "simulation": {
+    "accounted_observed_count": 61,
+    "ambiguous_count": 0,
+    "duplicate_count": 21,
+    "informative_match_count": 7,
+    "matched_occurrences": 21,
+    "unique_matched": 19,
+    "unique_verified_nonsecret_exposure_count": 4,
+    "unmatched_pending_review_count": 0,
+    "verified_false_positive_count": 12
+  },
+  "source_validation": {
+    "checked_blobs": 184,
+    "checked_items": 184,
+    "commit_count": 25,
+    "errors": [],
+    "expected_commit_count": 25,
+    "expected_head": "2e951359cac53addbee56437da3ffb546e3dfe24",
+    "head": "2e951359cac53addbee56437da3ffb546e3dfe24",
+    "root": "C:/Dev/gitleaks/gitleaks-harness/datasets/cache/leaky-repo/2e951359cac53addbee56437da3ffb546e3dfe24/source",
+    "scope": {
+      "additions": 62,
+      "changed_path_count": 65,
+      "commit_count": 25,
+      "current_file_count": 61,
+      "current_only_path_count": 0,
+      "current_only_paths": [],
+      "current_truth_manifest": "datasets/leaky-repo.rnc-truth.json",
+      "current_truth_scope": "pinned working tree only",
+      "dataset_id": "leaky-repo",
+      "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "deletions": 1,
+      "duplicate_blob_group_count": 0,
+      "duplicate_blob_groups": [],
+      "filesystem_denominator_reusable": false,
+      "first_commit": "903a9caba59d2514ca1aab7129fece6be3b9b849",
+      "head": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "historical_only_path_count": 4,
+      "historical_only_paths": [
+        ".docker/config",
+        "benchmarking/DETECT-SECRETS.md",
+        "benchmarking/TRUFFLEHOG.md",
+        "misc-keys/cert-example.pem"
+      ],
+      "history_truth_status": "BLOCKED",
+      "modifications": 52,
+      "object_count": 207,
+      "reason": "The pinned repository has no independently verified per-commit secret manifest. Git-history observations cannot be converted into recall or precision without inventing historical expectations.",
+      "renames": [
+        {
+          "commit": "9f1468c79df2cf13c66041692ca7f044a27a874b",
+          "from": "benchmarking/DETECT-SECRETS.md",
+          "to": ".leaky-meta/benchmarking/DETECT-SECRETS.md"
+        },
+        {
+          "commit": "9f1468c79df2cf13c66041692ca7f044a27a874b",
+          "from": "benchmarking/TRUFFLEHOG.md",
+          "to": ".leaky-meta/benchmarking/TRUFFLEHOG.md"
+        },
+        {
+          "commit": "38f1204b43142c13b5e9c5d08060bed8dbc1ad04",
+          "from": ".docker/config",
+          "to": "config"
+        }
+      ],
+      "scope_version": "1",
+      "unverified_history_observations": "reported separately by the Leaky Repo history mode",
+      "verified_historical_findings": 0
+    },
+    "source": "C:\\Dev\\gitleaks\\gitleaks-harness\\datasets\\cache\\leaky-repo\\2e951359cac53addbee56437da3ffb546e3dfe24\\source",
+    "status": "PASS"
+  },
+  "status": "PASS",
+  "validator": "harness.history_oracle.validate_proposed"
+}

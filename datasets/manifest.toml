@@ -1,0 +1,102 @@
+# Dataset references and provenance pins.
+# No third-party corpus data is committed to this repository. `prepare` fetches
+# the pinned revision into an ignored cache and verifies every hash below.
+# Entries must stay disabled until revision, artifacts, license, and counts are verified.
+schema_version = 1
+
+[datasets.levain]
+name = "Levain FP Corpus (negative and positive fixtures)"
+source_repository = "https://github.com/levainbot/fp-corpus"
+author_reference = "https://levain.bmac.io/false-positives.html"
+license = "MIT"
+license_url = "https://github.com/levainbot/fp-corpus/blob/c130c321aa9046af17a6c876cb97e2ed71397110/LICENSE"
+license_sha256 = "77cc69213a9c08cbd96f731793cff881a4b40a1d0682c70c70a1846afc700043"
+revision = "c130c321aa9046af17a6c876cb97e2ed71397110"
+revision_tag = "v1"
+revision_date = "2026-09-10T18:05:41-04:00"
+enabled = true
+status = "PINNED_AND_VERIFIED"
+counting_unit = "individual labeled case: negative corpus counts sections (expected secrets are zero); positive corpus counts planted credentials"
+license_notice = "datasets/THIRD_PARTY_NOTICES.md"
+
+[datasets.levain.expected]
+negative_sections = 116
+negative_lines = 866
+negative_secrets = 0
+negative_personal_data = 57
+positive_sections = 45
+positive_lines = 368
+positive_secrets = 85
+positive_hard_sections = 3
+positive_hard_secrets = 3
+positive_personal_data = 8
+
+# SHA-256 of canonical Git blob bytes at the pinned commit, independent of the
+# host platform's line-ending conversion.
+[datasets.levain.artifact_sha256]
+"LICENSE" = "77cc69213a9c08cbd96f731793cff881a4b40a1d0682c70c70a1846afc700043"
+"README.md" = "97f582590d45b5518b262c225394618e38404b9569c62c26427f78e480502b82"
+"fp-corpus.json" = "c71669dfae7fa73064c358060d951633554ed2590aa281ad7a3e94f957c3684f"
+"fp-corpus.txt" = "e8667a00e06a39ea650e8608bf65cb45801a66ae42a28bcb7bf1e205f6848f04"
+"tp-corpus.json.b64" = "2548857616dcc3c8007c9ffb830eaac47e48679d926becfec8b3b503dc6d1ef1"
+"tp-corpus.txt.b64" = "c1ad1ce89267e2fca0c32f60acfbd7577af1f530937c84742b45a089ee00dc25"
+"materialize.py" = "80193ec15432d2eebb55f7fa1d828e39da18fcdbf032824d7f69f0fd46a0a3b4"
+
+# Decoded true-positive artifacts produced by `prepare` from the .b64 sources.
+# These digests are independently recomputed during prepare; the upstream
+# materialize.py records the same two values.
+[datasets.levain.derived_sha256]
+"tp-corpus.json" = "be98a3072b22f97be42cca9d8bbefaa7667692b2a4dfdbf3d22c138608c8eb41"
+"tp-corpus.txt" = "182be9899aa36f446e3737a766bb463210a90d88aa8c71dc00e917ad590fe2e2"
+
+# Leaky Repo: MIT-licensed deliberately leaky repository used as a count-based
+# filesystem benchmark. The source files are never committed; only this pin,
+# its inventory lock, and the license notice are committed.
+[datasets.leaky_repo]
+name = "Leaky Repo filesystem benchmark"
+source_repository = "https://github.com/Plazmaz/leaky-repo"
+author_reference = "https://github.com/Plazmaz/leaky-repo"
+license = "MIT"
+license_url = "https://github.com/Plazmaz/leaky-repo/blob/2e951359cac53addbee56437da3ffb546e3dfe24/LICENSE"
+license_sha256 = "fcba3a10b27145467a3c92560a806e09ede71977584e4627b5a33f2e42cdf66f"
+revision = "2e951359cac53addbee56437da3ffb546e3dfe24"
+revision_tag = "master@2020-02-29"
+revision_date = "2020-02-29T18:36:02-08:00"
+enabled = true
+status = "PINNED_AND_VERIFIED"
+counting_unit = "one count unit from .leaky-meta/secrets.csv; risk and informative counts are non-overlapping per file row"
+license_notice = "datasets/THIRD_PARTY_NOTICES.md"
+inventory_path = "datasets/leaky-repo.inventory.json"
+inventory_sha256 = "146df5e25fa987a0b5c5610a958941e5416a29c9f72eadaa3677abc620b281ce"
+truth_manifest_path = "datasets/leaky-repo.rnc-truth.json"
+truth_manifest_sha256 = "621d3ad39929b7143e0c799883da03123d8ca6da2f174ef330aec3590365c8a9"
+truth_manifest_version = "rnc-leaky-truth-v1"
+history_scope_path = "datasets/leaky-repo.history-scope.json"
+history_scope_sha256 = "c2161522927ba6770e8c1232367c4affb71cfb2f8062047fc1ef39daa2d5195a"
+history_scope_version = "leaky-history-scope-v1"
+history_oracle_path = "datasets/leaky-repo.history-oracle.json"
+history_oracle_sha256 = "bb6d24bfecd53c7208c2915c105a5b501cbb3af3390fac7a4e5fcf92e50a078c"
+history_oracle_version = "2026-11-12.3"
+expected_count = 175
+expected_risk = 96
+expected_informative = 79
+expected_files = 44
+
+# Other corpora are intentionally absent. ProwlBench is not approved:
+# PolyForm Noncommercial 1.0.0 requires a separate licensing disposition.
+
+[scanners.betterleaks]
+name = "Betterleaks"
+source_repository = "https://github.com/betterleaks/betterleaks"
+revision = "5eab48332cc48565864514e3bc6de89df091a7c4"
+release = "v1.8.1"
+historical_only = true
+note = "CP2 historical identity. CP3 builds Betterleaks from an operator-supplied source commit; this release does not control runtime execution."
+license = "MIT"
+license_url = "https://github.com/betterleaks/betterleaks/blob/main/LICENSE"
+windows_binary_sha256 = "727820f1a9f9264319cc50458b99f01acbb93e93df7a39b8eaa2715a7b1aaed5"
+windows_archive_sha256 = "94310d028285a1bcce7f160bc19eb62f87de6460c95bfd4319151ef5b501ed3f"
+docker_amd64 = "ghcr.io/betterleaks/betterleaks:v1.8.1"
+docker_arm64 = "ghcr.io/betterleaks/betterleaks@sha256:12175773aede5b775478f8eb04dffc64ed1f6c29b8f3fd61851bcf2757d1e874"
+status = "HISTORICAL_CP2_IDENTITY"
+capabilities = ["filesystem", "git-history"]

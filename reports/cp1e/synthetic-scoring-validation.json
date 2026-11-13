@@ -1,0 +1,1915 @@
+{
+  "cases": [
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 8,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 0,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 0,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "informative": {
+              "expected": 2,
+              "matched": 2,
+              "missed": 0
+            },
+            "risk": {
+              "expected": 6,
+              "matched": 6,
+              "missed": 0
+            }
+          },
+          "count_coverage_percent": 100.0,
+          "detection_recall_percent": 100.0,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 8,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 8,
+          "matched_count": 8,
+          "missed_count": 0,
+          "negative_oracle": false,
+          "not_applicable_count": 1,
+          "observed_count": 8,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "100% expected detection with all categories",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "detection_recall_percent": 100.0,
+          "duplicate_count": 0,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "matched_count": 8,
+          "missed_count": 0,
+          "not_applicable_count": 1,
+          "observed_count": 8,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "all-expected"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 0,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 8,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 0,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "informative": {
+              "expected": 2,
+              "matched": 0,
+              "missed": 2
+            },
+            "risk": {
+              "expected": 6,
+              "matched": 0,
+              "missed": 6
+            }
+          },
+          "count_coverage_percent": 0.0,
+          "detection_recall_percent": 0.0,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 8,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 0,
+          "matched_count": 0,
+          "missed_count": 8,
+          "negative_oracle": false,
+          "not_applicable_count": 1,
+          "observed_count": 0,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "0% expected detection with no findings",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "detection_recall_percent": 0.0,
+          "duplicate_count": 0,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "matched_count": 0,
+          "missed_count": 8,
+          "not_applicable_count": 1,
+          "observed_count": 0,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "zero-detection"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 7,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 1,
+          "PARTIAL_MATCH": 1,
+          "UNEXPECTED_FINDING": 0,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "informative": {
+              "expected": 2,
+              "matched": 2,
+              "missed": 0
+            },
+            "risk": {
+              "expected": 6,
+              "matched": 5,
+              "missed": 1
+            }
+          },
+          "count_coverage_percent": 87.5,
+          "detection_recall_percent": 87.5,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 8,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 7,
+          "matched_count": 7,
+          "missed_count": 1,
+          "negative_oracle": false,
+          "not_applicable_count": 1,
+          "observed_count": 8,
+          "partial_count": 1,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "off-by-one line is partial, not credited",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "detection_recall_percent": 87.5,
+          "duplicate_count": 0,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "matched_count": 7,
+          "missed_count": 1,
+          "not_applicable_count": 1,
+          "observed_count": 8,
+          "partial_count": 1,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "partial-match"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 7,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 1,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 0,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "informative": {
+              "expected": 2,
+              "matched": 2,
+              "missed": 0
+            },
+            "risk": {
+              "expected": 6,
+              "matched": 5,
+              "missed": 1
+            }
+          },
+          "count_coverage_percent": 87.5,
+          "detection_recall_percent": 87.5,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 8,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 7,
+          "matched_count": 7,
+          "missed_count": 1,
+          "negative_oracle": false,
+          "not_applicable_count": 1,
+          "observed_count": 7,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "one expected finding is missing",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "detection_recall_percent": 87.5,
+          "duplicate_count": 0,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "matched_count": 7,
+          "missed_count": 1,
+          "not_applicable_count": 1,
+          "observed_count": 7,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "missing-one"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 8,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 0,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 1,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "informative": {
+              "expected": 2,
+              "matched": 2,
+              "missed": 0
+            },
+            "risk": {
+              "expected": 6,
+              "matched": 6,
+              "missed": 0
+            }
+          },
+          "count_coverage_percent": 100.0,
+          "detection_recall_percent": 100.0,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 8,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 8,
+          "matched_count": 8,
+          "missed_count": 0,
+          "negative_oracle": false,
+          "not_applicable_count": 1,
+          "observed_count": 9,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 1,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "finding outside truth is unexpected, not crudely a false positive",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "detection_recall_percent": 100.0,
+          "duplicate_count": 0,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "matched_count": 8,
+          "missed_count": 0,
+          "not_applicable_count": 1,
+          "observed_count": 9,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 1,
+          "unmapped_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "unexpected-finding"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 8,
+          "FALSE_POSITIVE": 1,
+          "MISSED_EXPECTATION": 0,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 0,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "informative": {
+              "expected": 2,
+              "matched": 2,
+              "missed": 0
+            },
+            "risk": {
+              "expected": 6,
+              "matched": 6,
+              "missed": 0
+            }
+          },
+          "count_coverage_percent": 100.0,
+          "detection_recall_percent": 100.0,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 8,
+          "f1_percent": 94.12,
+          "false_positive_count": 1,
+          "line_only_count": 8,
+          "matched_count": 8,
+          "missed_count": 0,
+          "negative_oracle": true,
+          "not_applicable_count": 1,
+          "observed_count": 9,
+          "partial_count": 0,
+          "precision_percent": 88.89,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "negative-oracle finding is a verified false positive",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "detection_recall_percent": 100.0,
+          "duplicate_count": 0,
+          "f1_percent": 94.12,
+          "false_positive_count": 1,
+          "matched_count": 8,
+          "missed_count": 0,
+          "not_applicable_count": 1,
+          "observed_count": 9,
+          "partial_count": 0,
+          "precision_percent": 88.89,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "false-positive-negative-oracle"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 1,
+          "EXPECTED_DETECTION": 8,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 0,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 0,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "informative": {
+              "expected": 2,
+              "matched": 2,
+              "missed": 0
+            },
+            "risk": {
+              "expected": 6,
+              "matched": 6,
+              "missed": 0
+            }
+          },
+          "count_coverage_percent": 100.0,
+          "detection_recall_percent": 100.0,
+          "duplicate_count": 1,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 8,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 8,
+          "matched_count": 8,
+          "missed_count": 0,
+          "negative_oracle": false,
+          "not_applicable_count": 1,
+          "observed_count": 9,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "duplicate finding does not double-credit",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "detection_recall_percent": 100.0,
+          "duplicate_count": 1,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "matched_count": 8,
+          "missed_count": 0,
+          "not_applicable_count": 1,
+          "observed_count": 9,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "duplicate"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 5,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 3,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 0,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "informative": {
+              "expected": 2,
+              "matched": 1,
+              "missed": 1
+            },
+            "risk": {
+              "expected": 6,
+              "matched": 4,
+              "missed": 2
+            }
+          },
+          "count_coverage_percent": 62.5,
+          "detection_recall_percent": 62.5,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 8,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 5,
+          "matched_count": 5,
+          "missed_count": 3,
+          "negative_oracle": false,
+          "not_applicable_count": 1,
+          "observed_count": 5,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "multiple expected findings in one file",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "detection_recall_percent": 62.5,
+          "duplicate_count": 0,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "matched_count": 5,
+          "missed_count": 3,
+          "not_applicable_count": 1,
+          "observed_count": 5,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "multiple-same-file"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 0,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 8,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 1,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "informative": {
+              "expected": 2,
+              "matched": 0,
+              "missed": 2
+            },
+            "risk": {
+              "expected": 6,
+              "matched": 0,
+              "missed": 6
+            }
+          },
+          "count_coverage_percent": 0.0,
+          "detection_recall_percent": 0.0,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 8,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 0,
+          "matched_count": 0,
+          "missed_count": 8,
+          "negative_oracle": false,
+          "not_applicable_count": 1,
+          "observed_count": 1,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 1,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "correct line identity in the wrong file is not credited",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "detection_recall_percent": 0.0,
+          "duplicate_count": 0,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "matched_count": 0,
+          "missed_count": 8,
+          "not_applicable_count": 1,
+          "observed_count": 1,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 1,
+          "unmapped_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "wrong-file"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 7,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 1,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 1,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "informative": {
+              "expected": 2,
+              "matched": 2,
+              "missed": 0
+            },
+            "risk": {
+              "expected": 6,
+              "matched": 5,
+              "missed": 1
+            }
+          },
+          "count_coverage_percent": 87.5,
+          "detection_recall_percent": 87.5,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 8,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 7,
+          "matched_count": 7,
+          "missed_count": 1,
+          "negative_oracle": false,
+          "not_applicable_count": 1,
+          "observed_count": 8,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 1,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "wrong rule classification is not credited",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "detection_recall_percent": 87.5,
+          "duplicate_count": 0,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "matched_count": 7,
+          "missed_count": 1,
+          "not_applicable_count": 1,
+          "observed_count": 8,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 1,
+          "unmapped_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "wrong-classification"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 1,
+          "EXPECTED_DETECTION": 8,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 0,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 0,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "informative": {
+              "expected": 2,
+              "matched": 2,
+              "missed": 0
+            },
+            "risk": {
+              "expected": 6,
+              "matched": 6,
+              "missed": 0
+            }
+          },
+          "count_coverage_percent": 100.0,
+          "detection_recall_percent": 100.0,
+          "duplicate_count": 1,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 8,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 8,
+          "matched_count": 8,
+          "missed_count": 0,
+          "negative_oracle": false,
+          "not_applicable_count": 1,
+          "observed_count": 9,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "range match plus duplicate in same overlapping range",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "detection_recall_percent": 100.0,
+          "duplicate_count": 1,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "matched_count": 8,
+          "missed_count": 0,
+          "not_applicable_count": 1,
+          "observed_count": 9,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "overlapping-range"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 8,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 0,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 0,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "informative": {
+              "expected": 2,
+              "matched": 2,
+              "missed": 0
+            },
+            "risk": {
+              "expected": 6,
+              "matched": 6,
+              "missed": 0
+            }
+          },
+          "count_coverage_percent": 100.0,
+          "detection_recall_percent": 100.0,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 8,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 8,
+          "matched_count": 8,
+          "missed_count": 0,
+          "negative_oracle": false,
+          "not_applicable_count": 1,
+          "observed_count": 8,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "skipped truth item is not a miss",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "detection_recall_percent": 100.0,
+          "duplicate_count": 0,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "matched_count": 8,
+          "missed_count": 0,
+          "not_applicable_count": 1,
+          "observed_count": 8,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "skipped-truth"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 8,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 0,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 0,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "informative": {
+              "expected": 2,
+              "matched": 2,
+              "missed": 0
+            },
+            "risk": {
+              "expected": 6,
+              "matched": 6,
+              "missed": 0
+            }
+          },
+          "count_coverage_percent": 100.0,
+          "detection_recall_percent": 100.0,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 8,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 8,
+          "matched_count": 8,
+          "missed_count": 0,
+          "negative_oracle": false,
+          "not_applicable_count": 1,
+          "observed_count": 8,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "not-applicable truth item is not a miss",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "detection_recall_percent": 100.0,
+          "duplicate_count": 0,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "matched_count": 8,
+          "missed_count": 0,
+          "not_applicable_count": 1,
+          "observed_count": 8,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "unavailable-truth"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 0,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 0,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 0,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "execution_error": true,
+          "expected_count": 8
+        },
+        "scoring_status": "BLOCKED"
+      },
+      "correct": true,
+      "description": "blocked target is not a detection result",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "execution_error": true,
+          "expected_count": 8
+        },
+        "scoring_status": "BLOCKED"
+      },
+      "id": "blocked-execution"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 0,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 0,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 0,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "execution_error": true,
+          "expected_count": 8
+        },
+        "scoring_status": "EXECUTION_ERROR"
+      },
+      "correct": true,
+      "description": "execution error separated from detection quality",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "execution_error": true,
+          "expected_count": 8
+        },
+        "scoring_status": "EXECUTION_ERROR"
+      },
+      "id": "execution-error"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 0,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 0,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 0,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 0,
+          "category_conflict_items": 0,
+          "category_metrics": {},
+          "count_coverage_percent": null,
+          "detection_recall_percent": null,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 0,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 0,
+          "matched_count": 0,
+          "missed_count": 0,
+          "negative_oracle": false,
+          "not_applicable_count": 0,
+          "observed_count": 0,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 0,
+          "unexpected_count": 0,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "empty truth and empty output do not crash",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "expected_count": 0,
+          "matched_count": 0,
+          "missed_count": 0,
+          "observed_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "empty-dataset"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 0,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 8,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 0,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "informative": {
+              "expected": 2,
+              "matched": 0,
+              "missed": 2
+            },
+            "risk": {
+              "expected": 6,
+              "matched": 0,
+              "missed": 6
+            }
+          },
+          "count_coverage_percent": 0.0,
+          "detection_recall_percent": 0.0,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 8,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 0,
+          "matched_count": 0,
+          "missed_count": 8,
+          "negative_oracle": false,
+          "not_applicable_count": 1,
+          "observed_count": 0,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "empty scanner output is a complete zero-detection score",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "detection_recall_percent": 0.0,
+          "duplicate_count": 0,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "matched_count": 0,
+          "missed_count": 8,
+          "not_applicable_count": 1,
+          "observed_count": 0,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "empty-output"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 0,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 8,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 0,
+          "UNMAPPED": 1
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "informative": {
+              "expected": 2,
+              "matched": 0,
+              "missed": 2
+            },
+            "risk": {
+              "expected": 6,
+              "matched": 0,
+              "missed": 6
+            }
+          },
+          "count_coverage_percent": 0.0,
+          "detection_recall_percent": 0.0,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 8,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 0,
+          "matched_count": 0,
+          "missed_count": 8,
+          "negative_oracle": false,
+          "not_applicable_count": 1,
+          "observed_count": 1,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 1,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "finding without file identity is unmapped",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 1,
+          "detection_recall_percent": 0.0,
+          "duplicate_count": 0,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "matched_count": 0,
+          "missed_count": 8,
+          "not_applicable_count": 1,
+          "observed_count": 1,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 1,
+          "unexpected_count": 0,
+          "unmapped_count": 1
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "malformed-finding"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 1,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 0,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 2,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 0,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 1,
+          "blocked_count": 0,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "risk": {
+              "expected": 2,
+              "matched": 0,
+              "missed": 2
+            }
+          },
+          "count_coverage_percent": 0.0,
+          "detection_recall_percent": 0.0,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 2,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 0,
+          "matched_count": 0,
+          "missed_count": 2,
+          "negative_oracle": false,
+          "not_applicable_count": 0,
+          "observed_count": 1,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 0,
+          "unexpected_count": 0,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "one finding matching two truth items is ambiguous",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "ambiguous_count": 1,
+          "detection_recall_percent": 0.0,
+          "matched_count": 0,
+          "missed_count": 2,
+          "observed_count": 1
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "ambiguous-truth"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 0,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 0,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 0,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "expected_count": 11,
+          "reason": "synthetic invalid manifest"
+        },
+        "scoring_status": "NOT_READY"
+      },
+      "correct": true,
+      "description": "invalid truth integrity cannot be scored",
+      "errors": [],
+      "expected": {
+        "metrics": {
+          "expected_count": 11,
+          "reason": "synthetic invalid manifest"
+        },
+        "scoring_status": "NOT_READY"
+      },
+      "id": "not-ready-integrity"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 1,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 0,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 0,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 0,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "risk": {
+              "expected": 1,
+              "matched": 1,
+              "missed": 0
+            }
+          },
+          "count_coverage_percent": 100.0,
+          "detection_recall_percent": 100.0,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 1,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 0,
+          "matched_count": 1,
+          "missed_count": 0,
+          "negative_oracle": false,
+          "not_applicable_count": 0,
+          "observed_count": 1,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 0,
+          "unexpected_count": 0,
+          "unmapped_count": 0,
+          "value_verified_count": 1
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "correct file, line, and value fingerprint",
+      "errors": [],
+      "expected": {
+        "evaluations": [
+          {
+            "classification": "EXPECTED_DETECTION",
+            "expected_id": "V1",
+            "identity_confidence": "value",
+            "line": 1,
+            "path": "identity.txt"
+          }
+        ],
+        "metrics": {
+          "line_only_count": 0,
+          "matched_count": 1,
+          "missed_count": 0,
+          "unexpected_count": 0,
+          "value_verified_count": 1
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "identity-value-verified"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 0,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 1,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 1,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 0,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "risk": {
+              "expected": 1,
+              "matched": 0,
+              "missed": 1
+            }
+          },
+          "count_coverage_percent": 0.0,
+          "detection_recall_percent": 0.0,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 1,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 0,
+          "matched_count": 0,
+          "missed_count": 1,
+          "negative_oracle": false,
+          "not_applicable_count": 0,
+          "observed_count": 1,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 0,
+          "unexpected_count": 1,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "correct file and line, incorrect secret value",
+      "errors": [],
+      "expected": {
+        "evaluations": [
+          {
+            "classification": "MISSED_EXPECTATION",
+            "expected_id": "V2",
+            "line": 2,
+            "path": "identity.txt"
+          },
+          {
+            "classification": "UNEXPECTED_FINDING",
+            "expected_id": null,
+            "line": 2,
+            "path": "identity.txt"
+          }
+        ],
+        "metrics": {
+          "matched_count": 0,
+          "missed_count": 1,
+          "unexpected_count": 1
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "identity-value-mismatch"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 0,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 2,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 2,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 0,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "risk": {
+              "expected": 2,
+              "matched": 0,
+              "missed": 2
+            }
+          },
+          "count_coverage_percent": 0.0,
+          "detection_recall_percent": 0.0,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 2,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 0,
+          "matched_count": 0,
+          "missed_count": 2,
+          "negative_oracle": false,
+          "not_applicable_count": 0,
+          "observed_count": 2,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 0,
+          "unexpected_count": 2,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "swapped finding identities do not match",
+      "errors": [],
+      "expected": {
+        "evaluations": [
+          {
+            "classification": "MISSED_EXPECTATION",
+            "expected_id": "V3",
+            "line": 3,
+            "path": "identity.txt"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "expected_id": "V4",
+            "line": 4,
+            "path": "identity.txt"
+          },
+          {
+            "classification": "UNEXPECTED_FINDING",
+            "line": 3,
+            "path": "identity.txt"
+          },
+          {
+            "classification": "UNEXPECTED_FINDING",
+            "line": 4,
+            "path": "identity.txt"
+          }
+        ],
+        "metrics": {
+          "matched_count": 0,
+          "missed_count": 2,
+          "unexpected_count": 2
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "identity-swapped"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 1,
+          "EXPECTED_DETECTION": 1,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 0,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 0,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 0,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "risk": {
+              "expected": 1,
+              "matched": 1,
+              "missed": 0
+            }
+          },
+          "count_coverage_percent": 100.0,
+          "detection_recall_percent": 100.0,
+          "duplicate_count": 1,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 1,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 0,
+          "matched_count": 1,
+          "missed_count": 0,
+          "negative_oracle": false,
+          "not_applicable_count": 0,
+          "observed_count": 2,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 0,
+          "unexpected_count": 0,
+          "unmapped_count": 0,
+          "value_verified_count": 1
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "duplicate findings at the same file and line are not double-credited",
+      "errors": [],
+      "expected": {
+        "evaluations": [
+          {
+            "classification": "EXPECTED_DETECTION",
+            "expected_id": "V5",
+            "line": 5,
+            "path": "identity.txt"
+          },
+          {
+            "classification": "DUPLICATE",
+            "expected_id": "V5",
+            "line": 5,
+            "path": "identity.txt"
+          }
+        ],
+        "metrics": {
+          "duplicate_count": 1,
+          "matched_count": 1,
+          "missed_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "identity-duplicate-same-key"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 0,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 1,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 1,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 0,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "risk": {
+              "expected": 1,
+              "matched": 0,
+              "missed": 1
+            }
+          },
+          "count_coverage_percent": 0.0,
+          "detection_recall_percent": 0.0,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 1,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 0,
+          "matched_count": 0,
+          "missed_count": 1,
+          "negative_oracle": false,
+          "not_applicable_count": 0,
+          "observed_count": 1,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 0,
+          "unexpected_count": 1,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "correct location but wrong classification/rule",
+      "errors": [],
+      "expected": {
+        "evaluations": [
+          {
+            "classification": "MISSED_EXPECTATION",
+            "expected_id": "V6",
+            "line": 6,
+            "path": "identity.txt"
+          },
+          {
+            "classification": "UNEXPECTED_FINDING",
+            "line": 6,
+            "path": "identity.txt"
+          }
+        ],
+        "metrics": {
+          "matched_count": 0,
+          "missed_count": 1,
+          "unexpected_count": 1
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "identity-wrong-rule"
+    },
+    {
+      "actual": {
+        "classifications": {
+          "AMBIGUOUS_MATCH": 0,
+          "DUPLICATE": 0,
+          "EXPECTED_DETECTION": 0,
+          "FALSE_POSITIVE": 0,
+          "MISSED_EXPECTATION": 1,
+          "PARTIAL_MATCH": 0,
+          "UNEXPECTED_FINDING": 1,
+          "UNMAPPED": 0
+        },
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 0,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "risk": {
+              "expected": 1,
+              "matched": 0,
+              "missed": 1
+            }
+          },
+          "count_coverage_percent": 0.0,
+          "detection_recall_percent": 0.0,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 1,
+          "f1_percent": null,
+          "false_positive_count": 0,
+          "line_only_count": 0,
+          "matched_count": 0,
+          "missed_count": 1,
+          "negative_oracle": false,
+          "not_applicable_count": 0,
+          "observed_count": 1,
+          "partial_count": 0,
+          "precision_percent": null,
+          "skipped_count": 0,
+          "unexpected_count": 1,
+          "unmapped_count": 0,
+          "value_verified_count": 0
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "correct": true,
+      "description": "redacted scanner output cannot verify a required value fingerprint",
+      "errors": [],
+      "expected": {
+        "evaluations": [
+          {
+            "classification": "MISSED_EXPECTATION",
+            "expected_id": "V7",
+            "line": 7,
+            "path": "identity.txt"
+          },
+          {
+            "classification": "UNEXPECTED_FINDING",
+            "line": 7,
+            "path": "identity.txt"
+          }
+        ],
+        "metrics": {
+          "matched_count": 0,
+          "missed_count": 1,
+          "unexpected_count": 1
+        },
+        "scoring_status": "COMPLETED"
+      },
+      "id": "identity-redacted-unverified"
+    },
+    {
+      "actual": {
+        "changed_classification": [],
+        "existing_gaps": [],
+        "new_misses": [
+          "A2"
+        ],
+        "new_unexpected": [],
+        "reason": null,
+        "recovered": [],
+        "resolved_unexpected": [],
+        "status": "FAIL",
+        "summary": "0 existing gaps, 1 new misses, 0 recovered, 0 new unexpected, 0 resolved unexpected"
+      },
+      "correct": true,
+      "expected": {
+        "new_misses": [
+          "A2"
+        ],
+        "status": "FAIL"
+      },
+      "id": "baseline-regression"
+    },
+    {
+      "actual": {
+        "changed_classification": [],
+        "existing_gaps": [],
+        "new_misses": [],
+        "new_unexpected": [],
+        "reason": null,
+        "recovered": [
+          "A2"
+        ],
+        "resolved_unexpected": [],
+        "status": "PASS",
+        "summary": "0 existing gaps, 0 new misses, 1 recovered, 0 new unexpected, 0 resolved unexpected"
+      },
+      "correct": true,
+      "expected": {
+        "recovered": [
+          "A2"
+        ],
+        "status": "PASS"
+      },
+      "id": "baseline-improvement"
+    },
+    {
+      "actual": {
+        "changed_classification": [],
+        "existing_gaps": [
+          "A4",
+          "A5",
+          "B1",
+          "B2",
+          "C1"
+        ],
+        "new_misses": [
+          "A1"
+        ],
+        "new_unexpected": [],
+        "reason": null,
+        "recovered": [
+          "A3"
+        ],
+        "resolved_unexpected": [],
+        "status": "FAIL",
+        "summary": "5 existing gaps, 1 new misses, 1 recovered, 0 new unexpected, 0 resolved unexpected"
+      },
+      "correct": true,
+      "expected": {
+        "new_misses": [
+          "A1"
+        ],
+        "recovered": [
+          "A3"
+        ],
+        "status": "FAIL"
+      },
+      "id": "identical-counts-different-identities"
+    },
+    {
+      "actual": {
+        "covered_count": 2,
+        "excess_findings": 0,
+        "expected_count": 3,
+        "files_covered": 1,
+        "unlisted_findings": 1
+      },
+      "correct": true,
+      "expected": {
+        "covered_count": 2,
+        "excess_findings": 0,
+        "expected_count": 3,
+        "files_covered": 1,
+        "unlisted_findings": 1
+      },
+      "id": "legacy-count-scoring"
+    },
+    {
+      "actual": {
+        "raw_report": "raw-export-directory",
+        "sanitized_reports": [
+          "synthetic.json",
+          "synthetic.md"
+        ]
+      },
+      "correct": true,
+      "expected": {
+        "raw_contains_value": true,
+        "sanitized_omits_value": true
+      },
+      "id": "sanitized-unsanitized-reporting"
+    }
+  ],
+  "dataset_id": "synthetic-scoring",
+  "dataset_version": "synthetic-v1",
+  "report_type": "scanner-harness/synthetic-scoring-validation",
+  "summary": {
+    "cases": 31,
+    "correct": 31,
+    "incorrect": 0,
+    "scoring_accuracy_percent": 100.0,
+    "unexpected_classifications": []
+  }
+}

@@ -1,0 +1,512 @@
+{
+  "adapter": {
+    "key": "gitleaks",
+    "name": "Gitleaks",
+    "supported_suites": [
+      "gitleaks",
+      "git-history",
+      "levain",
+      "leaky-repo",
+      "rnclab",
+      "synthetic-filesystem"
+    ]
+  },
+  "benchmark_environment": {
+    "allowed_stress_profiles": [
+      "none",
+      "cpu",
+      "memory",
+      "io",
+      "network"
+    ],
+    "contention": "uncontrolled",
+    "description": "contended developer workstation; functional and preliminary timing",
+    "documented_conditions": "not a controlled benchmark host",
+    "mode": "DEV",
+    "publishable": false,
+    "stability_threshold": 0.25,
+    "stress_profile": "none"
+  },
+  "builds": {
+    "docker-linux-amd64": {
+      "artifact_path": null,
+      "artifact_sha256": null,
+      "command": [
+        "docker",
+        "build",
+        "--quiet",
+        "--pull=false",
+        "--network",
+        "none",
+        "--platform",
+        "linux/amd64",
+        "-f",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261112T233543Z-db80aaa0\\builds\\docker-linux-amd64\\Dockerfile.rnc-gitleaks",
+        "--label",
+        "rnc-scan-harness.run=20261112T233543Z-db80aaa0",
+        "--label",
+        "rnc-scan-harness.adapter=gitleaks",
+        "--build-arg",
+        "VERSION=v8.0.0-rnc.5f6ec56cfa6f",
+        "-t",
+        "rnc-gitleaks-20261112t233543z-db80aaa0-5f6ec56cfa6f-docker-linux-amd64",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261112T233543Z-db80aaa0\\source"
+      ],
+      "duration_seconds": 16.94,
+      "error": null,
+      "exit_code": 0,
+      "image_id": "sha256:33fc2eabcedd903fa843798d1d1dcbb1cc6a8f31cd6df41998c4d31bfe2104fe",
+      "image_tag": "rnc-gitleaks-20261112t233543z-db80aaa0-5f6ec56cfa6f-docker-linux-amd64",
+      "metadata": {
+        "architecture_verified": true,
+        "build_version_tag": "v8.0.0-rnc.5f6ec56cfa6f",
+        "docker_base_images": [
+          "golang:1.27.4"
+        ],
+        "docker_build_strategy": "adapter-source-dockerfile-local-base",
+        "dockerfile_sha256": "43bfff8c87d6de750112809dbbd4f9ed20c6c2a3daef0b84622caf44cde4d6b0",
+        "emulated": false,
+        "execution_method": "docker",
+        "expected_os_architecture": "linux/amd64",
+        "host_architecture": "amd64",
+        "image_os_architecture": "linux/amd64",
+        "network_disabled": true,
+        "pull_disabled": true,
+        "source_commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+        "source_repository": "C:\\Dev\\gitleaks\\gitleaks",
+        "toolchain": {
+          "cargo": "cargo 1.85.0 (d73d2caf9 2024-12-31)",
+          "docker": "29.9.3",
+          "git": "git version 2.45.2.windows.1",
+          "go": "go version go1.27.3 windows/amd64",
+          "rustc": "rustc 1.85.0 (4d91de4e4 2025-02-17)"
+        },
+        "vendor_inventory": "1929 vendored files",
+        "vendor_sha256": "cdf1216b46a8b537bb7ff574bfadd06f8b94d45da1d7aacb5233ef50813caf19"
+      },
+      "platform": {
+        "arch": "amd64",
+        "docker_platform": "linux/amd64",
+        "goarch": "amd64",
+        "goos": "linux",
+        "key": "docker-linux-amd64",
+        "kind": "docker",
+        "os_name": "linux"
+      },
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "69483c7a864b23ed2b7c91eeb65bc70e192c5620026eaaa63731ca8d4be51297",
+      "version": "v8.0.0-rnc.5f6ec56cfa6f",
+      "version_status": "PASS"
+    }
+  },
+  "cleanup": {
+    "actions": [
+      "No run-owned containers found.",
+      "Removed 1 run-owned image(s).",
+      "Removed image tag rnc-gitleaks-20261112t233543z-db80aaa0-5f6ec56cfa6f-docker-linux-amd64.",
+      "Removed run-owned checkout, build outputs, and evidence workspace."
+    ],
+    "containers_removed": [],
+    "failures": [],
+    "images_removed": [
+      "33fc2eabcedd",
+      "rnc-gitleaks-20261112t233543z-db80aaa0-5f6ec56cfa6f-docker-linux-amd64"
+    ],
+    "retained": false,
+    "status": "PASS",
+    "workspace": "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261112T233543Z-db80aaa0",
+    "workspace_removed": true
+  },
+  "datasets": {
+    "gitleaks-fixtures": {
+      "inventory_digest": "cd7f05e76b4590ee738d4573f3ddb3c493142ecd1204bc15754a21d0e66f7345",
+      "manifest_sha256": "e39a1c491b36571c86cd43bf489e975bbf5990a1288b129e0dc1f9d62b45d36a",
+      "name": "Gitleaks pinned functional fixtures",
+      "revision": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c"
+    }
+  },
+  "detection": {
+    "leaky_filesystem": {
+      "legacy_count_coverage": {
+        "coverage_percent": null,
+        "covered_count": null,
+        "excess_findings": null,
+        "expected_count": null,
+        "expected_files": null,
+        "files_covered": null,
+        "label": "LEGACY COUNT COVERAGE",
+        "unlisted_findings": null
+      },
+      "methodology": "legacy_count_plus_rich_line_truth",
+      "rich_line_truth": {
+        "category_conflict_items": null,
+        "detection_recall_percent": null,
+        "duplicate_count": null,
+        "expected_count": null,
+        "f1_percent": null,
+        "line_only_count": null,
+        "matched_count": null,
+        "missed_count": null,
+        "negative_oracle": false,
+        "precision_percent": null,
+        "unexpected_count": null,
+        "value_verified_count": null
+      }
+    },
+    "leaky_history": {
+      "commits_scanned": null,
+      "coverage_verified": null,
+      "denominator": "65 source occurrences / 53 unique groups",
+      "duplicate_count": null,
+      "execution_status": null,
+      "expected_commits": null,
+      "expected_occurrences": null,
+      "f1_percent": null,
+      "informative_match_count": null,
+      "matched_occurrences": null,
+      "missed_occurrences": null,
+      "observed_findings": null,
+      "occurrence_recall_percent": null,
+      "precision_certification_status": null,
+      "precision_percent": null,
+      "scope_matches": null,
+      "score_status": null,
+      "scored": false,
+      "truth_status": null,
+      "unique_expected": null,
+      "unique_matched": null,
+      "unique_recall_percent": null,
+      "unique_secret_fingerprints": null,
+      "unmatched_pending_review_count": null,
+      "unverified_evidence_count": null,
+      "verified_false_positive_count": null
+    },
+    "levain": {},
+    "rnclab": {
+      "build": null,
+      "denominators": {
+        "filesystem_total_items": 1282,
+        "git_total_items": 320,
+        "positive_occurrences": 800,
+        "unique_credential_identities": 496
+      },
+      "filesystem": {
+        "duplicate_count": null,
+        "expected_positives": null,
+        "expected_unique_groups": null,
+        "f1_percent": null,
+        "false_negative_occurrences": null,
+        "informative_match_count": null,
+        "occurrence_recall_percent": null,
+        "precision_certification_status": null,
+        "precision_percent": null,
+        "true_positive_occurrences": null,
+        "unique_groups_matched": null,
+        "unique_recall_percent": null,
+        "unmatched_pending_review_count": null,
+        "unverified_evidence_count": null,
+        "verified_false_positive_alert_count": null
+      },
+      "git": {
+        "lanes": {},
+        "supported": null
+      },
+      "lab": null
+    },
+    "synthetic_filesystem": {},
+    "synthetic_history": {}
+  },
+  "detection_by_product": {
+    "docker-linux-amd64": {
+      "gitleaks": {
+        "metrics": {},
+        "outcome": null,
+        "reason": null,
+        "status": "PASS"
+      }
+    }
+  },
+  "generated_at": "2026-11-12T23:37:05Z",
+  "harness_version": "0.5.0",
+  "host": {
+    "capacity": {
+      "cpu_count": 8,
+      "disk": {
+        "free_bytes": 138894737408,
+        "total_bytes": 1997447098368,
+        "used_bytes": 1858552360960,
+        "used_percent": 93.05
+      },
+      "load_average": null,
+      "memory_available_bytes": 11356049408,
+      "memory_bytes": 34047959040,
+      "memory_load_percent": 66,
+      "method": "stdlib"
+    },
+    "cpu_count": 8,
+    "hostname_kind": "redacted",
+    "machine": "AMD64",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+    "python": "3.13.5",
+    "system": "Windows",
+    "toolchain": {
+      "cargo": "cargo 1.85.0 (d73d2caf9 2024-12-31)",
+      "docker": "29.9.3",
+      "git": "git version 2.45.2.windows.1",
+      "go": "go version go1.27.3 windows/amd64",
+      "rustc": "rustc 1.85.0 (4d91de4e4 2025-02-17)"
+    }
+  },
+  "limitations": [
+    "Source commit is the primary experiment identity; artifact hashes and image IDs are supporting provenance.",
+    "A successfully built artifact is not counted as tested unless an applicable suite executed it.",
+    "One Linux-only symlink scenario is NOT_APPLICABLE on Windows native execution.",
+    "The legacy fixture lane retains hashed reports rather than raw scanner report bytes.",
+    "DEFAULT isolation is enforced by omitting --config, clearing known scanner-config environment variables, and executing from an empty run-owned working directory.",
+    "The scanner does not expose a machine-readable digest of its embedded default rule set; the harness therefore verifies invocation isolation rather than the rule-file bytes."
+  ],
+  "performance": {
+    "limitations": [],
+    "methodology": {
+      "build_time_separate": true,
+      "detection_and_performance_separate": true,
+      "sequential": true
+    },
+    "products": [],
+    "reason": "the selected suites do not define a performance workload (the scanner-specific fixture lane is functional-only)",
+    "status": "NOT_APPLICABLE",
+    "workload": {},
+    "workloads": []
+  },
+  "platforms": [
+    {
+      "arch": "amd64",
+      "docker_platform": "linux/amd64",
+      "goarch": "amd64",
+      "goos": "linux",
+      "key": "docker-linux-amd64",
+      "kind": "docker",
+      "os_name": "linux"
+    }
+  ],
+  "profile": {
+    "applied_settings": {
+      "cleared_environment": [
+        "BETTERLEAKS_CONFIG",
+        "BETTERLEAKS_CONFIG_TOML",
+        "GITLEAKS_CONFIG",
+        "GITLEAKS_CONFIG_TOML",
+        "RNC_CONFIG",
+        "RNC_SCANNER_CONFIG"
+      ],
+      "configuration_file_required": false,
+      "profile": "DEFAULT",
+      "scanner_config_argument": null,
+      "working_directory": "empty run-owned scanner-cwd"
+    },
+    "baseline_metrics_included": true,
+    "config_path": null,
+    "config_sha256": null,
+    "config_source": "scanner bundled default rules",
+    "default_isolation": {
+      "config_argument": null,
+      "isolated_working_directory": true,
+      "limitations": [
+        "DEFAULT isolation is enforced by omitting --config, clearing known scanner-config environment variables, and executing from an empty run-owned working directory.",
+        "The scanner does not expose a machine-readable digest of its embedded default rule set; the harness therefore verifies invocation isolation rather than the rule-file bytes."
+      ],
+      "mode": "bundled-default",
+      "removed_environment": [
+        "BETTERLEAKS_CONFIG",
+        "BETTERLEAKS_CONFIG_TOML",
+        "GITLEAKS_CONFIG",
+        "GITLEAKS_CONFIG_TOML",
+        "RNC_CONFIG",
+        "RNC_SCANNER_CONFIG"
+      ],
+      "verifiable": true
+    },
+    "is_default": true,
+    "limitations": [
+      "DEFAULT isolation is enforced by omitting --config, clearing known scanner-config environment variables, and executing from an empty run-owned working directory.",
+      "The scanner does not expose a machine-readable digest of its embedded default rule set; the harness therefore verifies invocation isolation rather than the rule-file bytes."
+    ],
+    "name": "default"
+  },
+  "raw_policy": "discarded",
+  "report_options": {
+    "exception_mode": "exceptions-only",
+    "exceptions_enabled": true,
+    "include_baseline_deltas": true,
+    "include_coverage_gaps": true,
+    "include_not_applicable": false,
+    "include_skipped": true
+  },
+  "report_type": "rnc-scan-harness/experiment",
+  "reports": {
+    "raw": null,
+    "sanitized": [
+      "reports\\baseline-20261112\\gitleaks-5f6ec56-docker-amd64-fixtures-5f6ec56cfa6f-default.json",
+      "reports\\baseline-20261112\\gitleaks-5f6ec56-docker-amd64-fixtures-5f6ec56cfa6f-default.md"
+    ]
+  },
+  "run_id": "20261112T233543Z-db80aaa0",
+  "scanner": {
+    "identity": "source-commit",
+    "key": "gitleaks",
+    "name": "Gitleaks",
+    "ruleset": null,
+    "version": "v8.0.0-rnc.5f6ec56cfa6f"
+  },
+  "schema_version": 2,
+  "source": {
+    "clone_command": [
+      "git",
+      "clone",
+      "--quiet",
+      "--filter=blob:none",
+      "--no-checkout",
+      "--",
+      "C:\\Dev\\gitleaks\\gitleaks",
+      "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261112T233543Z-db80aaa0\\source"
+    ],
+    "clone_duration_seconds": 0.142,
+    "clone_stderr_sha256": "bda57e90af415f86e4709fee5405d120e0a29f2afdad988fd508cda0ef7db2dd",
+    "clone_stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+    "fetch_command": null,
+    "fetch_duration_seconds": null,
+    "fetch_stderr_sha256": null,
+    "fetch_stdout_sha256": null,
+    "head": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+    "head_verified": true,
+    "path": "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261112T233543Z-db80aaa0\\source",
+    "repository": "C:\\Dev\\gitleaks\\gitleaks",
+    "requested_commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c"
+  },
+  "started_at": "2026-11-12T23:35:43Z",
+  "suites": {
+    "gitleaks": {
+      "applicable": true,
+      "baseline_metric": false,
+      "comparisons": {},
+      "details": {
+        "configuration": {
+          "baseline_metric": false,
+          "config_source": "pinned Gitleaks fixture scenarios",
+          "profile": "FIXTURE_CONTROLLED"
+        },
+        "datasets": {
+          "gitleaks-fixtures": {
+            "inventory_digest": "cd7f05e76b4590ee738d4573f3ddb3c493142ecd1204bc15754a21d0e66f7345",
+            "manifest_sha256": "e39a1c491b36571c86cd43bf489e975bbf5990a1288b129e0dc1f9d62b45d36a",
+            "name": "Gitleaks pinned functional fixtures",
+            "revision": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c"
+          }
+        },
+        "exceptions": [],
+        "lane_statuses": {
+          "docker-linux-amd64": "PASS"
+        }
+      },
+      "key": "gitleaks",
+      "limitations": [
+        "One Linux-only symlink scenario is NOT_APPLICABLE on Windows native execution.",
+        "The legacy fixture lane retains hashed reports rather than raw scanner report bytes."
+      ],
+      "metrics": {
+        "assertion_failed": 0,
+        "assertion_passed": 147,
+        "assertion_total": 147,
+        "docker_parity": true,
+        "scenario_passed": 23,
+        "scenario_total": 23
+      },
+      "outcome": "COMPLETED_AND_SCORED",
+      "reason": null,
+      "results": [
+        {
+          "baseline_metric": false,
+          "configuration_profile": "FIXTURE_CONTROLLED",
+          "dimension": "functional-fixtures",
+          "outcome": "COMPLETED_AND_SCORED",
+          "platform": "docker-linux-amd64",
+          "status": "PASS"
+        }
+      ],
+      "status": "PASS",
+      "summary": {
+        "baseline_metric": false,
+        "configuration_profile": "FIXTURE_CONTROLLED",
+        "coverage_incomplete": false,
+        "platforms_executed": 1
+      },
+      "targets": {
+        "docker-linux-amd64": {
+          "adapter": null,
+          "parity": {
+            "assertions": 147,
+            "docker_applicable_fixtures": 33,
+            "expected_assertions": 147,
+            "expected_docker_applicable_fixtures": 33,
+            "expected_scenarios": 23,
+            "matches": true,
+            "scenarios": 23
+          },
+          "reason": null,
+          "status": "PASS",
+          "summary": {
+            "assertion_failed": 0,
+            "assertion_passed": 147,
+            "assertion_total": 147,
+            "docker_applicable_fixtures": 33,
+            "docker_validated_fixtures": 33,
+            "scenario_passed": 23,
+            "scenario_total": 23,
+            "unvalidated_fixtures": 75,
+            "validated_fixtures": 33
+          }
+        }
+      },
+      "title": "Gitleaks functional fixtures"
+    }
+  },
+  "summary": {
+    "baseline_metrics_executed": false,
+    "baseline_metrics_included": true,
+    "benchmark_environment": "DEV",
+    "builds": {
+      "docker-linux-amd64": "PASS"
+    },
+    "cleanup_status": "PASS",
+    "counts": {
+      "blocked": 0,
+      "fail": 0,
+      "not_applicable": 0,
+      "not_run": 0,
+      "pass": 1
+    },
+    "coverage_complete": true,
+    "experiment_status": "COMPLETE_WITH_LIMITATIONS",
+    "fatal_error": null,
+    "matrix_status": "PASS",
+    "outcomes": {
+      "gitleaks": "COMPLETED_AND_SCORED"
+    },
+    "overall": "COMPLETE_WITH_LIMITATIONS",
+    "performance_status": "NOT_APPLICABLE",
+    "profile": "default",
+    "scoring_oracle_unavailable": [],
+    "source_commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+    "source_head_verified": true,
+    "stress_profile": "none",
+    "suites": {
+      "gitleaks": "PASS"
+    },
+    "tested_platforms": [
+      "docker-linux-amd64"
+    ]
+  }
+}

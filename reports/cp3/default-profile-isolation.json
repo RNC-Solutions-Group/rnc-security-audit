@@ -1,0 +1,176 @@
+{
+  "records": [
+    {
+      "binary_sha256": "c68865ea9cd5645e21c6bef2cfdc16a49b4d693b24028b5e4badfda593a913d1",
+      "conclusion": "DEFAULT did not load the hostile external config; CUSTOM applied it explicitly.",
+      "custom_profile": {
+        "exit_code": 1,
+        "finding_count": 1,
+        "invocation_problem": null,
+        "profile": {
+          "applied_settings": {
+            "cleared_environment": [
+              "GITLEAKS_CONFIG",
+              "GITLEAKS_CONFIG_TOML",
+              "BETTERLEAKS_CONFIG",
+              "BETTERLEAKS_CONFIG_TOML"
+            ],
+            "profile": "CUSTOM",
+            "scanner_config_argument": "--config",
+            "scanner_config_path": "C:\\Dev\\gitleaks\\gitleaks-harness\\work\\recon\\default-isolation\\hostile.toml",
+            "scanner_config_sha256": "4c5f148e3d695e183706c5b0d85361670cd67270b546132b1eaf7d0574a7e306",
+            "working_directory": "empty run-owned scanner-cwd"
+          },
+          "baseline_metrics_included": false,
+          "config_path": "C:\\Dev\\gitleaks\\gitleaks-harness\\work\\recon\\default-isolation\\hostile.toml",
+          "config_sha256": "4c5f148e3d695e183706c5b0d85361670cd67270b546132b1eaf7d0574a7e306",
+          "config_source": "C:\\Dev\\gitleaks\\gitleaks-harness\\work\\recon\\default-isolation\\hostile.toml",
+          "default_isolation": {},
+          "is_default": false,
+          "limitations": [
+            "CUSTOM results are a separate experiment profile and are excluded from DEFAULT baseline metrics."
+          ],
+          "name": "custom"
+        },
+        "rule_ids": [
+          "hostile-config-rule"
+        ]
+      },
+      "default_profile": {
+        "exit_code": 0,
+        "finding_count": 0,
+        "invocation_problem": null,
+        "profile": {
+          "applied_settings": {
+            "cleared_environment": [
+              "BETTERLEAKS_CONFIG",
+              "BETTERLEAKS_CONFIG_TOML",
+              "GITLEAKS_CONFIG",
+              "GITLEAKS_CONFIG_TOML"
+            ],
+            "configuration_file_required": false,
+            "profile": "DEFAULT",
+            "scanner_config_argument": null,
+            "working_directory": "empty run-owned scanner-cwd"
+          },
+          "baseline_metrics_included": true,
+          "config_path": null,
+          "config_sha256": null,
+          "config_source": "scanner bundled default rules",
+          "default_isolation": {
+            "config_argument": null,
+            "isolated_working_directory": true,
+            "limitations": [
+              "DEFAULT isolation is enforced by omitting --config, clearing known scanner-config environment variables, and executing from an empty run-owned working directory.",
+              "The scanner does not expose a machine-readable digest of its embedded default rule set; the harness therefore verifies invocation isolation rather than the rule-file bytes."
+            ],
+            "mode": "bundled-default",
+            "removed_environment": [
+              "BETTERLEAKS_CONFIG",
+              "BETTERLEAKS_CONFIG_TOML",
+              "GITLEAKS_CONFIG",
+              "GITLEAKS_CONFIG_TOML"
+            ],
+            "verifiable": true
+          },
+          "is_default": true,
+          "limitations": [
+            "DEFAULT isolation is enforced by omitting --config, clearing known scanner-config environment variables, and executing from an empty run-owned working directory.",
+            "The scanner does not expose a machine-readable digest of its embedded default rule set; the harness therefore verifies invocation isolation rather than the rule-file bytes."
+          ],
+          "name": "default"
+        },
+        "rule_ids": []
+      },
+      "hostile_config_sha256": "4c5f148e3d695e183706c5b0d85361670cd67270b546132b1eaf7d0574a7e306",
+      "scanner": "gitleaks"
+    },
+    {
+      "binary_sha256": "18d1fb705b8545616c5c7ad14d5aa1c75dce93978b136cbb517875253438c1ee",
+      "conclusion": "DEFAULT did not load the hostile external config; CUSTOM applied it explicitly.",
+      "custom_profile": {
+        "exit_code": 1,
+        "finding_count": 1,
+        "invocation_problem": null,
+        "profile": {
+          "applied_settings": {
+            "cleared_environment": [
+              "GITLEAKS_CONFIG",
+              "GITLEAKS_CONFIG_TOML",
+              "BETTERLEAKS_CONFIG",
+              "BETTERLEAKS_CONFIG_TOML"
+            ],
+            "profile": "CUSTOM",
+            "scanner_config_argument": "--config",
+            "scanner_config_path": "C:\\Dev\\gitleaks\\gitleaks-harness\\work\\recon\\default-isolation\\hostile.toml",
+            "scanner_config_sha256": "4c5f148e3d695e183706c5b0d85361670cd67270b546132b1eaf7d0574a7e306",
+            "working_directory": "empty run-owned scanner-cwd"
+          },
+          "baseline_metrics_included": false,
+          "config_path": "C:\\Dev\\gitleaks\\gitleaks-harness\\work\\recon\\default-isolation\\hostile.toml",
+          "config_sha256": "4c5f148e3d695e183706c5b0d85361670cd67270b546132b1eaf7d0574a7e306",
+          "config_source": "C:\\Dev\\gitleaks\\gitleaks-harness\\work\\recon\\default-isolation\\hostile.toml",
+          "default_isolation": {},
+          "is_default": false,
+          "limitations": [
+            "CUSTOM results are a separate experiment profile and are excluded from DEFAULT baseline metrics."
+          ],
+          "name": "custom"
+        },
+        "rule_ids": [
+          "hostile-config-rule"
+        ]
+      },
+      "default_profile": {
+        "exit_code": 0,
+        "finding_count": 0,
+        "invocation_problem": null,
+        "profile": {
+          "applied_settings": {
+            "cleared_environment": [
+              "BETTERLEAKS_CONFIG",
+              "BETTERLEAKS_CONFIG_TOML",
+              "GITLEAKS_CONFIG",
+              "GITLEAKS_CONFIG_TOML"
+            ],
+            "configuration_file_required": false,
+            "profile": "DEFAULT",
+            "scanner_config_argument": null,
+            "working_directory": "empty run-owned scanner-cwd"
+          },
+          "baseline_metrics_included": true,
+          "config_path": null,
+          "config_sha256": null,
+          "config_source": "scanner bundled default rules",
+          "default_isolation": {
+            "config_argument": null,
+            "isolated_working_directory": true,
+            "limitations": [
+              "DEFAULT isolation is enforced by omitting --config, clearing known scanner-config environment variables, and executing from an empty run-owned working directory.",
+              "The scanner does not expose a machine-readable digest of its embedded default rule set; the harness therefore verifies invocation isolation rather than the rule-file bytes."
+            ],
+            "mode": "bundled-default",
+            "removed_environment": [
+              "BETTERLEAKS_CONFIG",
+              "BETTERLEAKS_CONFIG_TOML",
+              "GITLEAKS_CONFIG",
+              "GITLEAKS_CONFIG_TOML"
+            ],
+            "verifiable": true
+          },
+          "is_default": true,
+          "limitations": [
+            "DEFAULT isolation is enforced by omitting --config, clearing known scanner-config environment variables, and executing from an empty run-owned working directory.",
+            "The scanner does not expose a machine-readable digest of its embedded default rule set; the harness therefore verifies invocation isolation rather than the rule-file bytes."
+          ],
+          "name": "default"
+        },
+        "rule_ids": []
+      },
+      "hostile_config_sha256": "4c5f148e3d695e183706c5b0d85361670cd67270b546132b1eaf7d0574a7e306",
+      "scanner": "betterleaks"
+    }
+  ],
+  "report_type": "rnc-scan-harness/default-profile-isolation",
+  "schema_version": 1
+}

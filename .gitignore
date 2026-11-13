@@ -1,0 +1,43 @@
+# Downloaded third-party corpora and disposable scan targets
+/datasets/cache/
+/datasets/downloads/
+/datasets/work/
+/work/
+/tmp/
+/temp/
+
+# Built Gitleaks binaries, diagnostics, and local artifacts
+/build/
+/dist/
+/artifacts/
+/profiles/
+/coverage/
+
+# Raw outputs may contain synthetic secret-shaped values
+/reports/raw/
+/reports/local/
+/reports/sanitized/
+/reports/unsanitized/
+/harness/docker/.work/
+/harness/docker/reports/
+*.prof
+*.trace
+*.out
+
+# Python caches and local configuration
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+!/.env.example
+/harness.toml
+
+# IDE and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# AI Agent Instruction
+AGENTS.md

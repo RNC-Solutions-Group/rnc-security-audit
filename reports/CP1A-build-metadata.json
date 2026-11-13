@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "checkpoint": "CP1A",
+  "source": {
+    "repository": "https://github.com/RNC-Solutions-Group/gitleaks",
+    "revision": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+    "submitted_short_sha": "5f6ec56",
+    "branch": "origin/master",
+    "go_mod_directive": "1.24.11",
+    "disposable_checkout": "C:/Dev/gitleaks-cp1a-build/source"
+  },
+  "toolchain": {
+    "go_version": "go1.27.3 windows/amd64",
+    "gotoolchain": "local",
+    "goos": "windows",
+    "goarch": "amd64",
+    "goamd64": "v1",
+    "cgo_enabled": "0"
+  },
+  "build": {
+    "initial_command": "go build -mod=readonly -trimpath -buildvcs=true -o C:/Dev/gitleaks-cp1a-build/bin/gitleaks.exe .",
+    "initial_started_utc": "2026-11-09T20:42:50Z",
+    "initial_finished_utc": "2026-11-09T20:44:12Z",
+    "initial_exit_code": 0,
+    "final_command": "go build -mod=readonly -trimpath -buildvcs=true -ldflags \"-X=github.com/zricethezav/gitleaks/v8/version.Version=v8.0.0-20261023204459-5f6ec56cfa6f\" -o C:/Dev/gitleaks-cp1a-build/bin/gitleaks.exe .",
+    "final_exit_code": 0,
+    "source_checkout_clean_after_build": true,
+    "application_worktree_modified": false,
+    "network_module_retrieval": true
+  },
+  "binary": {
+    "path": "C:/Dev/gitleaks-cp1a-build/bin/gitleaks.exe",
+    "sha256": "54dd670dda5f6a84b9b195a2fab33a766ed5976b60dbd73e4b15eb6ffc2aff8a",
+    "bytes": 24981504,
+    "executable_version_output": "v8.0.0-20261023204459-5f6ec56cfa6f"
+  },
+  "embedded": {
+    "module": "github.com/zricethezav/gitleaks/v8",
+    "module_version": "v8.0.0-20261023204459-5f6ec56cfa6f",
+    "vcs": "git",
+    "vcs_revision": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+    "vcs_time": "2026-10-23T20:44:59Z",
+    "vcs_modified": "false",
+    "trimpath": "true"
+  },
+  "cli": {
+    "commands": ["completion", "dir", "git", "stdin", "version"],
+    "validated_invocation": "gitleaks dir <corpus-dir> --report-format json --report-path <report> --no-banner",
+    "report_shape": "JSON array of finding objects",
+    "observed_fields": ["Author", "Commit", "Date", "Description", "Email", "EndColumn", "EndLine", "Entropy", "File", "Fingerprint", "Match", "Message", "RuleID", "Secret", "StartColumn", "StartLine", "SymlinkFile", "Tags"],
+    "exit_code_with_findings": 1,
+    "exit_code_clean": 0,
+    "configuration_used": "built-in default (no --config; no GITLEAKS_CONFIG/GITLEAKS_CONFIG_TOML)"
+  }
+}

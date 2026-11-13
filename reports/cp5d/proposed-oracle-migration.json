@@ -1,0 +1,290 @@
+{
+  "baseline_oracle": {
+    "informative": 30,
+    "lineage_only": 0,
+    "negative": 86,
+    "positive_occurrences": 65,
+    "positive_unique_groups": 53,
+    "total": 181
+  },
+  "consolidation": {
+    "explanation": "9f1468c is an ancestor of 4ad3f90, 226fcb4 and 2e95135. The two CP5C records at 4ad3f90 were duplicate branch observations of the two comments introduced at 9f1468c. Two records at 9f1468c cover all eight metadata alerts through unchanged-line lineage, including the +2 line shift.",
+    "metadata_after": 2,
+    "metadata_before": 4,
+    "overlap_resolution": "No overlapping source records: one metadata record per comment at 9f1468c; one exact-value JavaScript record at 903a9ca. Native/Docker and merge observations are repeats, not new negative identities.",
+    "total_proposed_records": 3,
+    "unique_javascript_extractions": 1,
+    "unique_metadata_source_placements": 2
+  },
+  "expected_if_approved": {
+    "accounted_observed_count": 61,
+    "rnc_ambiguous_count": 0,
+    "rnc_duplicate_count": 21,
+    "rnc_informative_match_count": 7,
+    "rnc_matched_occurrences": 21,
+    "rnc_unique_matched": 19,
+    "rnc_unique_verified_nonsecret_exposure_count": 4,
+    "rnc_unmatched_pending_review_count": 0,
+    "rnc_verified_false_positive_count": 12
+  },
+  "false_positive_accounting": {
+    "current_verified_alert_observations": 1,
+    "current_verified_unique_exposures": 1,
+    "definition_total_alerts": "Every observed finding matched to a negative reference.",
+    "definition_unique_exposure": "One owner-approved or proposed negative source identity; repeated alerts from the same identity count once.",
+    "precision_f1": "NOT_CERTIFIED; reviewed negatives remain non-exhaustive.",
+    "proposed_javascript_alert_observations": 3,
+    "proposed_javascript_unique_exposures": 1,
+    "proposed_metadata_alert_observations": 8,
+    "proposed_metadata_unique_exposures": 2,
+    "proposed_total_alert_observations": 12,
+    "proposed_total_unique_exposures": 4
+  },
+  "items": [
+    {
+      "category": "NON_SECRET_REFERENCE",
+      "disposition": "NEGATIVE",
+      "id": "PNM-001",
+      "identity": {
+        "repetition": "NOT_APPLICABLE",
+        "secret_sha256": "168f39bc81005d2aae6aa2a5ed563bc29b9afb92be9bd33ae58e5676866afa73",
+        "unique_group": null
+      },
+      "proposal": {
+        "expected_observations": 4,
+        "extracted_value": "sshPassphrase",
+        "provenance": [
+          {
+            "commit": "9f1468c79df2cf13c66041692ca7f044a27a874b",
+            "line": 46
+          },
+          {
+            "commit": "4ad3f90463c8b7de38a71a0b077ac34824f1707a",
+            "line": 46
+          },
+          {
+            "commit": "226fcb481daf5914c121d87372875955fe4fedfb",
+            "line": 48
+          },
+          {
+            "commit": "2e951359cac53addbee56437da3ffb546e3dfe24",
+            "line": 48
+          }
+        ],
+        "rationale": "Benchmark risk-category comment; extracted word is metadata vocabulary, not a credential."
+      },
+      "proposed_id": "PNM-001",
+      "review": {
+        "note": "Owner approval required before oracle migration.",
+        "status": "PROPOSED_NOT_APPLIED"
+      },
+      "scoring": {
+        "expected_occurrence": false,
+        "informative_only": false,
+        "lineage_only": false,
+        "negative_reference": true,
+        "unique_group_first": false
+      },
+      "source": {
+        "change_event": "Added",
+        "current_path": ".leaky-meta/secrets.csv",
+        "current_presence": "Current",
+        "evidence_url": "https://github.com/Plazmaz/leaky-repo/blob/9f1468c79df2cf13c66041692ca7f044a27a874b/.leaky-meta/secrets.csv#L46",
+        "git_blob_sha": "8886c8fa10b2152a552d2d719b60fa4f68709adf",
+        "introduced_at": "9f1468c79df2cf13c66041692ca7f044a27a874b",
+        "line_end": 46,
+        "line_start": 46,
+        "observed_commit": "9f1468c79df2cf13c66041692ca7f044a27a874b",
+        "path": ".leaky-meta/secrets.csv"
+      },
+      "stable_identity": "leaky-repo:.leaky-meta/secrets.csv:risk-sshPassphrase"
+    },
+    {
+      "category": "NON_SECRET_REFERENCE",
+      "disposition": "NEGATIVE",
+      "id": "PNM-002",
+      "identity": {
+        "repetition": "NOT_APPLICABLE",
+        "secret_sha256": "1e089e3c5323ad80a90767bdd5907297b4138163f027097fd3bdbeab528d2d68",
+        "unique_group": null
+      },
+      "proposal": {
+        "expected_observations": 4,
+        "extracted_value": "passphrase",
+        "provenance": [
+          {
+            "commit": "9f1468c79df2cf13c66041692ca7f044a27a874b",
+            "line": 67
+          },
+          {
+            "commit": "4ad3f90463c8b7de38a71a0b077ac34824f1707a",
+            "line": 67
+          },
+          {
+            "commit": "226fcb481daf5914c121d87372875955fe4fedfb",
+            "line": 69
+          },
+          {
+            "commit": "2e951359cac53addbee56437da3ffb546e3dfe24",
+            "line": 69
+          }
+        ],
+        "rationale": "Benchmark risk-category comment; extracted word is metadata vocabulary, not a credential."
+      },
+      "proposed_id": "PNM-002",
+      "review": {
+        "note": "Owner approval required before oracle migration.",
+        "status": "PROPOSED_NOT_APPLIED"
+      },
+      "scoring": {
+        "expected_occurrence": false,
+        "informative_only": false,
+        "lineage_only": false,
+        "negative_reference": true,
+        "unique_group_first": false
+      },
+      "source": {
+        "change_event": "Added",
+        "current_path": ".leaky-meta/secrets.csv",
+        "current_presence": "Current",
+        "evidence_url": "https://github.com/Plazmaz/leaky-repo/blob/9f1468c79df2cf13c66041692ca7f044a27a874b/.leaky-meta/secrets.csv#L67",
+        "git_blob_sha": "8886c8fa10b2152a552d2d719b60fa4f68709adf",
+        "introduced_at": "9f1468c79df2cf13c66041692ca7f044a27a874b",
+        "line_end": 67,
+        "line_start": 67,
+        "observed_commit": "9f1468c79df2cf13c66041692ca7f044a27a874b",
+        "path": ".leaky-meta/secrets.csv"
+      },
+      "stable_identity": "leaky-repo:.leaky-meta/secrets.csv:risk-passphrase"
+    },
+    {
+      "category": "NON_SECRET_REFERENCE",
+      "disposition": "NEGATIVE",
+      "id": "PNJ-001",
+      "identity": {
+        "repetition": "NOT_APPLICABLE",
+        "secret_sha256": "7a6d503ccb60241ad7a7f8381c4442792fb8143ea4625942bc9d7578750a1a0d",
+        "unique_group": null
+      },
+      "proposal": {
+        "expected_observations": 3,
+        "extracted_value": "function(err",
+        "provenance": [
+          {
+            "commit": "903a9caba59d2514ca1aab7129fece6be3b9b849",
+            "line": 6
+          },
+          {
+            "commit": "9f1468c79df2cf13c66041692ca7f044a27a874b",
+            "line": 7
+          },
+          {
+            "commit": "4ad3f90463c8b7de38a71a0b077ac34824f1707a",
+            "line": 7
+          }
+        ],
+        "rationale": "Exact non-secret extraction on a line that also contains the approved informative salesforcepassword. The negative is value-scoped to function(err), not to the line.",
+        "schema_note": "Uses the existing optional identity.secret_sha256 field for exact-value negative identity; no new schema field is required."
+      },
+      "proposed_id": "PNJ-001",
+      "review": {
+        "note": "Owner approval required before oracle migration.",
+        "status": "PROPOSED_NOT_APPLIED"
+      },
+      "scoring": {
+        "expected_occurrence": false,
+        "informative_only": false,
+        "lineage_only": false,
+        "negative_reference": true,
+        "unique_group_first": false
+      },
+      "source": {
+        "change_event": "Added",
+        "current_path": "web/js/salesforce.js",
+        "current_presence": "Current",
+        "evidence_url": "https://github.com/Plazmaz/leaky-repo/blob/903a9caba59d2514ca1aab7129fece6be3b9b849/web/js/salesforce.js#L6",
+        "git_blob_sha": "878a931abbf99542bfb279cf97d19ccc51727313",
+        "introduced_at": "903a9caba59d2514ca1aab7129fece6be3b9b849",
+        "line_end": 6,
+        "line_start": 6,
+        "observed_commit": "903a9caba59d2514ca1aab7129fece6be3b9b849",
+        "path": "web/js/salesforce.js"
+      },
+      "stable_identity": "leaky-repo:web/js/salesforce.js:extracted:function(err"
+    }
+  ],
+  "official_validation": {
+    "checked_blobs": 184,
+    "checked_items": 184,
+    "counts": {
+      "INFORMATIVE": 30,
+      "LINEAGE_ONLY": 0,
+      "NEGATIVE": 89,
+      "POSITIVE": 65,
+      "positive_occurrences": 65,
+      "positive_unique_groups": 53,
+      "total": 184
+    },
+    "errors": [],
+    "source_validation": "PASS",
+    "status": "PASS",
+    "validator": "harness.history_oracle.validate_proposed"
+  },
+  "oracle_modified": false,
+  "owner_approval_required": true,
+  "owner_migration_steps": [
+    "Approve the exact-value negative semantics and the three proposed source records.",
+    "Revise the owner-approved oracle document and counts from 181/86 to 184/89; add the three item IDs without changing the 65 positive occurrences or 53 unique groups.",
+    "Update the oracle validator constants for total/ID sequence/negative count and preserve the existing 65/53 positive validation.",
+    "Run the official proposed-oracle validator and both native/Docker rescoring; do not treat these proposals as accepted before that review."
+  ],
+  "proposed_counts": {
+    "informative": 30,
+    "lineage_only": 0,
+    "negative": 89,
+    "positive_occurrences": 65,
+    "positive_unique_groups": 53,
+    "total": 184
+  },
+  "report_type": "cp5d-proposed-oracle-migration",
+  "schema_compatibility": {
+    "negative_exact_value_field": "identity.secret_sha256 (existing optional field)",
+    "schema_extension_required": false,
+    "source_location": "source.observed_commit/path/line_start/line_end + git_blob_sha",
+    "validation": "Existing source validator checks the digest is evidenced by the reviewed line; the matcher requires exact digest identity for a digest-bearing negative.",
+    "validator_constant_update_required": true
+  },
+  "schema_version": 1,
+  "simulation": {
+    "finding_accountability": {
+      "hub_unique_exposures": 1,
+      "javascript_alerts": 3,
+      "javascript_unique_exposures": 1,
+      "metadata_alerts": 8,
+      "metadata_unique_exposures": 2,
+      "total_fp_alerts": 12,
+      "total_unique_exposures": 4
+    },
+    "rnc": {
+      "accounted_observed_count": 61,
+      "ambiguous_count": 0,
+      "duplicate_count": 21,
+      "informative_match_count": 7,
+      "matched_occurrences": 21,
+      "unique_matched": 19,
+      "unique_verified_nonsecret_exposure_count": 4,
+      "unmatched_pending_review_count": 0,
+      "verified_false_positive_count": 12
+    },
+    "status": "IN_MEMORY_ONLY_NOT_APPLIED"
+  },
+  "source_validation": {
+    "checked_blobs": 184,
+    "checked_items": 184,
+    "errors": [],
+    "note": "Validated with the official proposed-oracle profile (184 total / 89 negatives) against the pinned source. The approved 181/86 loader profile is unchanged.",
+    "status": "PASS",
+    "validator": "harness.history_oracle.validate_proposed"
+  },
+  "status": "PROPOSED_NOT_APPLIED"
+}

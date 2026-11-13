@@ -1,0 +1,61 @@
+{
+  "baseline": "CP10 baseline-20261112",
+  "cleanup": {
+    "containers_removed": [],
+    "images_removed": [],
+    "reason": "no run-owned Docker image/container created",
+    "status": "PASS"
+  },
+  "dependency_audit": {
+    "cargo_offline_vendor_command": [
+      "cargo",
+      "vendor",
+      "vendor"
+    ],
+    "cargo_offline_vendor_error": "failed to download bitflags v2.13.2: attempting to make an HTTP request, but --offline was specified",
+    "cargo_offline_vendor_exit": 101,
+    "cargo_registry_bitflags_present": [
+      "2.6.0"
+    ],
+    "cargo_registry_bitflags_required": "2.13.2",
+    "docker_bases_missing": [
+      "debian:bookworm-slim"
+    ],
+    "docker_bases_present": [
+      "rust:1.85-bookworm"
+    ]
+  },
+  "docker_image": null,
+  "environment": "DEV",
+  "execution_policy": {
+    "network_disabled": true,
+    "pull_disabled": true,
+    "scanner_source_edits": false,
+    "sequential": true,
+    "source_only": true
+  },
+  "generated_at": "2026-11-12",
+  "matrix": {
+    "docker_linux_amd64": "BLOCKED_MISSING_LOCAL_DEPENDENCY",
+    "leaky_repo_filesystem": "COMPLETED_NATIVE_ONLY",
+    "leaky_repo_git": "COMPLETED_NATIVE_ONLY",
+    "levain": "COMPLETED_NATIVE_ONLY",
+    "rnclab_filesystem": "COMPLETED_NATIVE_ONLY",
+    "rnclab_git": "COMPLETED_NATIVE_ONLY",
+    "rnclab_legacy_10x": "COMPLETED_NATIVE_ONLY",
+    "rnclab_legacy_5x": "COMPLETED_NATIVE_ONLY",
+    "rnclab_performance": "COMPLETED_NATIVE_ONLY"
+  },
+  "native_artifact": "See the corresponding native CP10 experiment report in this baseline directory.",
+  "reason": "Docker Linux AMD64 source build was not attempted to completion: the local Rust/Docker dependency set is insufficient for an offline build. The pinned Cargo.lock requires bitflags 2.13.2, which is absent from the local Cargo registry cache (only 2.6.0 is present); cargo vendor --offline therefore fails before a Docker build. The adapter runtime base debian:bookworm-slim is also absent locally. Network acquisition is prohibited by CP10.0. The native AMD64 source build and native benchmarks completed.",
+  "reason_code": "MISSING_LOCAL_DEPENDENCY",
+  "report_type": "rnc-scan-harness/baseline-blocked",
+  "scanner": {
+    "key": "rnc",
+    "name": "RNC Scanner",
+    "repository": "RNC-Solutions-Group/rnc-security-audit",
+    "source_commit": "93b4dda909cb3b41606a4d0f36c8ef9d06b77fde"
+  },
+  "schema_version": 1,
+  "status": "BLOCKED"
+}

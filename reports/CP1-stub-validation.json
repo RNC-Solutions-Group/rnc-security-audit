@@ -1,0 +1,850 @@
+{
+  "config": {
+    "path": null,
+    "sha256": null
+  },
+  "dataset": {
+    "artifact_sha256": {
+      "LICENSE": "77cc69213a9c08cbd96f731793cff881a4b40a1d0682c70c70a1846afc700043",
+      "README.md": "97f582590d45b5518b262c225394618e38404b9569c62c26427f78e480502b82",
+      "fp-corpus.json": "c71669dfae7fa73064c358060d951633554ed2590aa281ad7a3e94f957c3684f",
+      "fp-corpus.txt": "e8667a00e06a39ea650e8608bf65cb45801a66ae42a28bcb7bf1e205f6848f04",
+      "materialize.py": "80193ec15432d2eebb55f7fa1d828e39da18fcdbf032824d7f69f0fd46a0a3b4",
+      "tp-corpus.json.b64": "2548857616dcc3c8007c9ffb830eaac47e48679d926becfec8b3b503dc6d1ef1",
+      "tp-corpus.txt.b64": "c1ad1ce89267e2fca0c32f60acfbd7577af1f530937c84742b45a089ee00dc25"
+    },
+    "author_reference": "https://levain.bmac.io/false-positives.html",
+    "counting_unit": "individual labeled case: negative corpus counts sections (expected secrets are zero); positive corpus counts planted credentials",
+    "derived_sha256": {
+      "tp-corpus.json": "be98a3072b22f97be42cca9d8bbefaa7667692b2a4dfdbf3d22c138608c8eb41",
+      "tp-corpus.txt": "182be9899aa36f446e3737a766bb463210a90d88aa8c71dc00e917ad590fe2e2"
+    },
+    "license": "MIT",
+    "license_notice": "datasets/THIRD_PARTY_NOTICES.md",
+    "license_sha256": "77cc69213a9c08cbd96f731793cff881a4b40a1d0682c70c70a1846afc700043",
+    "license_url": "https://github.com/levainbot/fp-corpus/blob/c130c321aa9046af17a6c876cb97e2ed71397110/LICENSE",
+    "manifest_sha256": "c456d2a4943494dea0ac3e5161193d91a77250c700c23e5113de12b2a311af3e",
+    "name": "Levain FP Corpus (negative and positive fixtures)",
+    "negative_counts": {
+      "hard_secrets": 0,
+      "hard_sections": 0,
+      "lines": 866,
+      "personal_data": 57,
+      "secrets": 0,
+      "sections": 116
+    },
+    "positive_counts": {
+      "hard_secrets": 3,
+      "hard_sections": 3,
+      "lines": 368,
+      "personal_data": 8,
+      "secrets": 85,
+      "sections": 45
+    },
+    "revision": "c130c321aa9046af17a6c876cb97e2ed71397110",
+    "revision_date": "2026-09-10T18:05:41-04:00",
+    "source_repository": "https://github.com/levainbot/fp-corpus",
+    "tag": "v1"
+  },
+  "environment": {
+    "machine": "AMD64",
+    "python": "3.13.5",
+    "release": "11",
+    "system": "Windows"
+  },
+  "generated_at": "2026-11-09T19:18:51Z",
+  "harness_version": "0.1.0",
+  "limitations": [
+    "The scanner used for this report is a controlled test double, not Gitleaks. The counts below validate the harness and must not be read as Gitleaks detection accuracy.",
+    "Only the CP1 detection lane is implemented; functional conformance, performance, and Go race testing are not part of this report.",
+    "The corpus is synthetic and finite; it does not measure real-world repository or credential prevalence.",
+    "Negative-corpus true negatives are not inferred from line counts; the oracle is 'expected secrets are zero'.",
+    "Three hard-tier credentials are reported separately and are not included in the core recall percentage.",
+    "The Gitleaks JSON report parser is written to the documented shape but has not been exercised against a real Gitleaks executable in this checkpoint.",
+    "No target Gitleaks source revision was supplied."
+  ],
+  "redaction": {
+    "expected_secret_values_omitted": true,
+    "raw_matches_omitted": true,
+    "raw_scanner_report_retained": false
+  },
+  "report_type": "gitleaks-scan-harness/detection",
+  "runs": [
+    {
+      "control": {
+        "file": "000-control.log",
+        "findings": 10,
+        "kinds_echoed": [
+          "aws-access-key-id",
+          "github-token",
+          "private-key"
+        ],
+        "planted": [
+          "aws-access-key-id",
+          "github-token",
+          "private-key"
+        ],
+        "reported": true
+      },
+      "corpus": "negative",
+      "invocation": {
+        "argv": [
+          "tests/fixtures/stub-gitleaks.cmd",
+          "dir",
+          "<corpus-dir>",
+          "--report-format",
+          "json",
+          "--report-path",
+          "<report>",
+          "--no-banner"
+        ],
+        "duration_seconds": 0.18,
+        "error_code": null,
+        "error_message": "",
+        "exit_code": 0,
+        "mode": "dir",
+        "report_bytes": 379909,
+        "report_sha256": "ec9b4582505a11cf6349c59d1f47bd94609f641410d070118e5113020395f8df",
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_summary": "",
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "timeout_seconds": 300.0
+      },
+      "notes": [],
+      "results": {
+        "clean": false,
+        "counting_unit": "section/format; expected credentials are zero",
+        "duplicates": 0,
+        "examples": [
+          {
+            "line": 1,
+            "rule_id": "stub",
+            "section": "gpg public keyring"
+          },
+          {
+            "line": 2,
+            "rule_id": "stub",
+            "section": "gpg public keyring"
+          },
+          {
+            "line": 3,
+            "rule_id": "stub",
+            "section": "gpg public keyring"
+          },
+          {
+            "line": 4,
+            "rule_id": "stub",
+            "section": "gpg public keyring"
+          },
+          {
+            "line": 6,
+            "rule_id": "stub",
+            "section": "gpg public keyring"
+          },
+          {
+            "line": 7,
+            "rule_id": "stub",
+            "section": "gpg public keyring"
+          },
+          {
+            "line": 8,
+            "rule_id": "stub",
+            "section": "gpg public keyring"
+          },
+          {
+            "line": 9,
+            "rule_id": "stub",
+            "section": "gpg public keyring"
+          },
+          {
+            "line": 10,
+            "rule_id": "stub",
+            "section": "gpg public keyring"
+          },
+          {
+            "line": 3,
+            "rule_id": "stub",
+            "section": "nginx access"
+          }
+        ],
+        "expected_secrets": 0,
+        "false_positives": 833,
+        "findings_total": 882,
+        "lines_scanned": 866,
+        "personal_data_matches": 49,
+        "sections_scanned": 116,
+        "sections_tripped": 115,
+        "true_negatives": null,
+        "true_negatives_note": "not inferred from lines; this corpus has no per-line oracle",
+        "worst_sections": [
+          {
+            "findings": 32,
+            "section": "pem certificate"
+          },
+          {
+            "findings": 29,
+            "section": "windows event log xml"
+          },
+          {
+            "findings": 22,
+            "section": "dpkg and apt history log"
+          },
+          {
+            "findings": 22,
+            "section": "openapi security scheme"
+          },
+          {
+            "findings": 18,
+            "section": "json schema with patterns"
+          },
+          {
+            "findings": 18,
+            "section": "package-lock json"
+          },
+          {
+            "findings": 18,
+            "section": "progress bar with carriage returns"
+          },
+          {
+            "findings": 18,
+            "section": "terraform state"
+          },
+          {
+            "findings": 17,
+            "section": "aws cli"
+          },
+          {
+            "findings": 15,
+            "section": "grpcurl and protobuf"
+          }
+        ]
+      },
+      "scored": true,
+      "status": "COMPLETED",
+      "unattributed_files": []
+    },
+    {
+      "control": {
+        "file": "000-control.log",
+        "findings": 10,
+        "kinds_echoed": [
+          "aws-access-key-id",
+          "github-token",
+          "private-key"
+        ],
+        "planted": [
+          "aws-access-key-id",
+          "github-token",
+          "private-key"
+        ],
+        "reported": true
+      },
+      "corpus": "positive",
+      "invocation": {
+        "argv": [
+          "tests/fixtures/stub-gitleaks.cmd",
+          "dir",
+          "<corpus-dir>",
+          "--report-format",
+          "json",
+          "--report-path",
+          "<report>",
+          "--no-banner"
+        ],
+        "duration_seconds": 0.152,
+        "error_code": null,
+        "error_message": "",
+        "exit_code": 0,
+        "mode": "dir",
+        "report_bytes": 151693,
+        "report_sha256": "d9d17685a3d0f97be403b7987785950d5a8b980300a23aa3b52bb30d10b43fd0",
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_summary": "",
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "timeout_seconds": 300.0
+      },
+      "notes": [],
+      "results": {
+        "core_false_negatives": 0,
+        "core_recall_percent": 100.0,
+        "core_true_positives": 82,
+        "counting_unit": "planted credential; one expected secret is one case",
+        "duplicates": 15,
+        "examples": [
+          {
+            "line": 1,
+            "rule_id": "stub",
+            "section": "env-file"
+          },
+          {
+            "line": 2,
+            "rule_id": "stub",
+            "section": "env-file"
+          },
+          {
+            "line": 3,
+            "rule_id": "stub",
+            "section": "env-file"
+          },
+          {
+            "line": 4,
+            "rule_id": "stub",
+            "section": "env-file"
+          },
+          {
+            "line": 9,
+            "rule_id": "stub",
+            "section": "env-file"
+          },
+          {
+            "line": 10,
+            "rule_id": "stub",
+            "section": "env-file"
+          },
+          {
+            "line": 1,
+            "rule_id": "stub",
+            "section": "docker-run-command"
+          },
+          {
+            "line": 2,
+            "rule_id": "stub",
+            "section": "docker-run-command"
+          },
+          {
+            "line": 5,
+            "rule_id": "stub",
+            "section": "docker-run-command"
+          },
+          {
+            "line": 6,
+            "rule_id": "stub",
+            "section": "docker-run-command"
+          }
+        ],
+        "expected_core": 82,
+        "expected_hard": 3,
+        "expected_secrets": 85,
+        "false_negatives": 0,
+        "false_positives": 259,
+        "findings_total": 368,
+        "hard_false_negatives": 0,
+        "hard_recall_percent": 100.0,
+        "hard_true_positives": 3,
+        "lines_scanned": 368,
+        "matched_secrets": [
+          {
+            "hard": false,
+            "kind": "aws_access_key_id",
+            "section": "env-file"
+          },
+          {
+            "hard": false,
+            "kind": "aws_secret_access_key",
+            "section": "env-file"
+          },
+          {
+            "hard": false,
+            "kind": "stripe_secret_key",
+            "section": "env-file"
+          },
+          {
+            "hard": false,
+            "kind": "generic_assignment",
+            "section": "env-file"
+          },
+          {
+            "hard": false,
+            "kind": "github_pat_classic",
+            "section": "docker-run-command"
+          },
+          {
+            "hard": false,
+            "kind": "generic_assignment",
+            "section": "docker-run-command"
+          },
+          {
+            "hard": false,
+            "kind": "github_pat_fine_grained",
+            "section": "github-actions-log"
+          },
+          {
+            "hard": false,
+            "kind": "http_basic_auth",
+            "section": "curl-verbose-basic-auth"
+          },
+          {
+            "hard": false,
+            "kind": "pgp_private_key_block",
+            "section": "gpg-secret-key-export"
+          },
+          {
+            "hard": false,
+            "kind": "wallet_seed_phrase",
+            "section": "hardhat-deploy-failure"
+          },
+          {
+            "hard": false,
+            "kind": "wallet_seed_phrase",
+            "section": "wallet-restore-env"
+          },
+          {
+            "hard": false,
+            "kind": "generic_assignment",
+            "section": "wallet-restore-env"
+          },
+          {
+            "hard": false,
+            "kind": "bearer_token",
+            "section": "axios-error-dump"
+          },
+          {
+            "hard": false,
+            "kind": "url_password",
+            "section": "postgres-connection-failure"
+          },
+          {
+            "hard": false,
+            "kind": "url_password",
+            "section": "mongodb-uri"
+          },
+          {
+            "hard": false,
+            "kind": "url_password",
+            "section": "cloudsql-iam-dsn"
+          },
+          {
+            "hard": false,
+            "kind": "email",
+            "section": "cloudsql-iam-dsn"
+          },
+          {
+            "hard": false,
+            "kind": "generic_assignment",
+            "section": "kubectl-describe-pod"
+          },
+          {
+            "hard": false,
+            "kind": "sendgrid_api_key",
+            "section": "kubectl-describe-pod"
+          },
+          {
+            "hard": false,
+            "kind": "slack_bot_token",
+            "section": "slack-integration-error"
+          },
+          {
+            "hard": false,
+            "kind": "slack_webhook_url",
+            "section": "slack-integration-error"
+          },
+          {
+            "hard": false,
+            "kind": "google_api_key",
+            "section": "google-api-error"
+          },
+          {
+            "hard": false,
+            "kind": "twilio_api_key_sid",
+            "section": "twilio-sdk-error"
+          },
+          {
+            "hard": false,
+            "kind": "npm_token",
+            "section": "npmrc-and-publish"
+          },
+          {
+            "hard": false,
+            "kind": "mailgun_api_key",
+            "section": "mailgun-delivery-log"
+          },
+          {
+            "hard": false,
+            "kind": "azure_storage_key",
+            "section": "azure-storage-connection-string"
+          },
+          {
+            "hard": false,
+            "kind": "jwt",
+            "section": "jwt-in-request-log"
+          },
+          {
+            "hard": false,
+            "kind": "private_key_pem",
+            "section": "ssh-private-key-in-log"
+          },
+          {
+            "hard": false,
+            "kind": "private_key_escaped_json",
+            "section": "gcp-service-account-json"
+          },
+          {
+            "hard": false,
+            "kind": "payment_card",
+            "section": "payment-processing-log"
+          },
+          {
+            "hard": false,
+            "kind": "payment_card",
+            "section": "payment-processing-log"
+          },
+          {
+            "hard": false,
+            "kind": "github_oauth_token",
+            "section": "github-oauth-callback"
+          },
+          {
+            "hard": false,
+            "kind": "aws_access_key_id",
+            "section": "terraform-apply-output"
+          },
+          {
+            "hard": false,
+            "kind": "aws_secret_access_key",
+            "section": "terraform-apply-output"
+          },
+          {
+            "hard": false,
+            "kind": "stripe_secret_key",
+            "section": "jenkins-console-mixed"
+          },
+          {
+            "hard": false,
+            "kind": "npm_token",
+            "section": "jenkins-console-mixed"
+          },
+          {
+            "hard": false,
+            "kind": "url_password",
+            "section": "pip-index-url-with-password"
+          },
+          {
+            "hard": false,
+            "kind": "groq_api_key",
+            "section": "ai-gateway-upstream-errors"
+          },
+          {
+            "hard": false,
+            "kind": "xai_api_key",
+            "section": "ai-gateway-upstream-errors"
+          },
+          {
+            "hard": false,
+            "kind": "perplexity_api_key",
+            "section": "ai-gateway-upstream-errors"
+          },
+          {
+            "hard": false,
+            "kind": "fireworks_api_key",
+            "section": "ai-gateway-upstream-errors"
+          },
+          {
+            "hard": false,
+            "kind": "replicate_api_token",
+            "section": "inference-worker-traceback"
+          },
+          {
+            "hard": false,
+            "kind": "pinecone_api_key",
+            "section": "inference-worker-traceback"
+          },
+          {
+            "hard": false,
+            "kind": "elevenlabs_api_key",
+            "section": "inference-worker-traceback"
+          },
+          {
+            "hard": false,
+            "kind": "doppler_token",
+            "section": "platform-cli-auth-failures"
+          },
+          {
+            "hard": false,
+            "kind": "databricks_pat",
+            "section": "platform-cli-auth-failures"
+          },
+          {
+            "hard": false,
+            "kind": "grafana_service_account_token",
+            "section": "platform-cli-auth-failures"
+          },
+          {
+            "hard": false,
+            "kind": "planetscale_token",
+            "section": "platform-cli-auth-failures"
+          },
+          {
+            "hard": false,
+            "kind": "supabase_access_token",
+            "section": "platform-cli-auth-failures"
+          },
+          {
+            "hard": false,
+            "kind": "netlify_pat",
+            "section": "platform-cli-auth-failures"
+          },
+          {
+            "hard": false,
+            "kind": "tailscale_auth_key",
+            "section": "platform-cli-auth-failures"
+          },
+          {
+            "hard": false,
+            "kind": "rubygems_api_key",
+            "section": "ci-publish-step-output"
+          },
+          {
+            "hard": false,
+            "kind": "nuget_api_key",
+            "section": "ci-publish-step-output"
+          },
+          {
+            "hard": false,
+            "kind": "sonarqube_token",
+            "section": "ci-publish-step-output"
+          },
+          {
+            "hard": false,
+            "kind": "sentry_org_auth_token",
+            "section": "ci-publish-step-output"
+          },
+          {
+            "hard": false,
+            "kind": "newrelic_user_key",
+            "section": "ci-publish-step-output"
+          },
+          {
+            "hard": false,
+            "kind": "dynatrace_api_token",
+            "section": "ci-publish-step-output"
+          },
+          {
+            "hard": false,
+            "kind": "terraform_cloud_token",
+            "section": "ci-publish-step-output"
+          },
+          {
+            "hard": false,
+            "kind": "discord_webhook_url",
+            "section": "webhook-and-oauth-callback-dump"
+          },
+          {
+            "hard": false,
+            "kind": "slack_app_level_token",
+            "section": "webhook-and-oauth-callback-dump"
+          },
+          {
+            "hard": false,
+            "kind": "google_oauth_client_secret",
+            "section": "webhook-and-oauth-callback-dump"
+          },
+          {
+            "hard": false,
+            "kind": "resend_api_key",
+            "section": "webhook-and-oauth-callback-dump"
+          },
+          {
+            "hard": false,
+            "kind": "postman_api_key",
+            "section": "webhook-and-oauth-callback-dump"
+          },
+          {
+            "hard": false,
+            "kind": "airtable_pat",
+            "section": "webhook-and-oauth-callback-dump"
+          },
+          {
+            "hard": false,
+            "kind": "aws_access_key_id",
+            "section": "edge-aws-secret-ends-in-plus"
+          },
+          {
+            "hard": false,
+            "kind": "aws_secret_access_key",
+            "section": "edge-aws-secret-ends-in-plus"
+          },
+          {
+            "hard": false,
+            "kind": "github_pat_classic",
+            "section": "edge-github-tokens-containing-placeholder-words"
+          },
+          {
+            "hard": false,
+            "kind": "github_pat_classic",
+            "section": "edge-github-tokens-containing-placeholder-words"
+          },
+          {
+            "hard": false,
+            "kind": "openai_project_key",
+            "section": "edge-openai-project-key-ends-in-hyphen"
+          },
+          {
+            "hard": false,
+            "kind": "gitlab_pat",
+            "section": "edge-gitlab-pat-ends-in-hyphen"
+          },
+          {
+            "hard": false,
+            "kind": "confluent_cloud_key",
+            "section": "edge-confluent-secret-ends-in-slash"
+          },
+          {
+            "hard": false,
+            "kind": "confluent_cloud_secret",
+            "section": "edge-confluent-secret-ends-in-slash"
+          },
+          {
+            "hard": false,
+            "kind": "vault_service_token",
+            "section": "edge-vault-token-with-letter-prefixed-body"
+          },
+          {
+            "hard": false,
+            "kind": "custom_internal_format",
+            "section": "custom-vendor-prefix-convention"
+          },
+          {
+            "hard": false,
+            "kind": "aws_access_key_id",
+            "section": "ansi-github-actions-raw-log"
+          },
+          {
+            "hard": false,
+            "kind": "aws_secret_access_key",
+            "section": "ansi-github-actions-raw-log"
+          },
+          {
+            "hard": false,
+            "kind": "github_pat_classic",
+            "section": "ansi-github-actions-raw-log"
+          },
+          {
+            "hard": false,
+            "kind": "url_password",
+            "section": "ansi-docker-compose-logs"
+          },
+          {
+            "hard": false,
+            "kind": "bearer_token",
+            "section": "ansi-docker-compose-logs"
+          },
+          {
+            "hard": false,
+            "kind": "npm_token",
+            "section": "ansi-pytest-npm-publish-failure"
+          },
+          {
+            "hard": false,
+            "kind": "sendgrid_api_key",
+            "section": "ansi-terraform-plan-diff"
+          },
+          {
+            "hard": false,
+            "kind": "generic_assignment",
+            "section": "ansi-terraform-plan-diff"
+          },
+          {
+            "hard": true,
+            "kind": "shapeless_password",
+            "section": "hard-shapeless-password"
+          },
+          {
+            "hard": true,
+            "kind": "capability_url_segment",
+            "section": "hard-capability-url"
+          },
+          {
+            "hard": true,
+            "kind": "wrapped_token",
+            "section": "hard-token-split-across-lines"
+          }
+        ],
+        "missed_secrets": [],
+        "overall_recall_percent": 100.0,
+        "personal_data_matches": 10,
+        "sections_scanned": 45,
+        "sections_tripped": 45,
+        "true_positives": 85,
+        "unexpected_findings": 259,
+        "worst_sections": [
+          {
+            "findings": 14,
+            "section": "kubectl-describe-pod"
+          },
+          {
+            "findings": 13,
+            "section": "axios-error-dump"
+          },
+          {
+            "findings": 13,
+            "section": "hardhat-deploy-failure"
+          },
+          {
+            "findings": 10,
+            "section": "ansi-pytest-npm-publish-failure"
+          },
+          {
+            "findings": 10,
+            "section": "curl-verbose-basic-auth"
+          },
+          {
+            "findings": 10,
+            "section": "docker-run-command"
+          },
+          {
+            "findings": 9,
+            "section": "ansi-terraform-plan-diff"
+          },
+          {
+            "findings": 9,
+            "section": "ci-publish-step-output"
+          },
+          {
+            "findings": 8,
+            "section": "jenkins-console-mixed"
+          },
+          {
+            "findings": 8,
+            "section": "terraform-apply-output"
+          }
+        ]
+      },
+      "scored": true,
+      "status": "COMPLETED",
+      "unattributed_files": []
+    }
+  ],
+  "scenario_version": "cp1-v1",
+  "schema_version": 1,
+  "scope": {
+    "functional_conformance": "NOT_RUN",
+    "lane": "detection_accuracy",
+    "performance": "NOT_RUN",
+    "race_stability": "NOT_TESTED"
+  },
+  "summary": {
+    "detection_accuracy": "NOT_A_GITLEAKS_MEASUREMENT",
+    "failed_or_unscored_runs": 0,
+    "gitleaks_execution": "BLOCKED",
+    "gitleaks_integration": "STUB_VALIDATION_ONLY",
+    "overall_status": "COMPLETED",
+    "runs": 2,
+    "scanner_kind": "stub",
+    "scored_runs": 2
+  },
+  "target": {
+    "binary_path": "tests/fixtures/stub-gitleaks.cmd",
+    "binary_sha256": "56cd2b9dd324602b8a26ff2253c22b3ad936201e7bcabe6adb5785240c3e256a",
+    "gitleaks_execution": "BLOCKED",
+    "integration_status": "STUB_VALIDATION_ONLY",
+    "mode": "dir",
+    "scanner_kind": "stub",
+    "source_revision": null
+  }
+}

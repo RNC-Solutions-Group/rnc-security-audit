@@ -1,0 +1,621 @@
+{
+  "conflicts": [
+    {
+      "conflict_items": 3,
+      "expected_total": 3,
+      "path": ".esmtprc",
+      "rnc_informative": 2,
+      "rnc_items": 3,
+      "rnc_risk": 1,
+      "status": "CONFLICT",
+      "upstream_informative": 1,
+      "upstream_risk": 2
+    },
+    {
+      "conflict_items": 5,
+      "expected_total": 5,
+      "path": ".ftpconfig",
+      "rnc_informative": 3,
+      "rnc_items": 5,
+      "rnc_risk": 2,
+      "status": "CONFLICT",
+      "upstream_informative": 2,
+      "upstream_risk": 3
+    },
+    {
+      "conflict_items": 4,
+      "expected_total": 4,
+      "path": "deployment-config.json",
+      "rnc_informative": 3,
+      "rnc_items": 4,
+      "rnc_risk": 1,
+      "status": "CONFLICT",
+      "upstream_informative": 1,
+      "upstream_risk": 3
+    },
+    {
+      "conflict_items": 3,
+      "expected_total": 3,
+      "path": "filezilla/filezilla.xml",
+      "rnc_informative": 2,
+      "rnc_items": 3,
+      "rnc_risk": 1,
+      "status": "CONFLICT",
+      "upstream_informative": 1,
+      "upstream_risk": 2
+    },
+    {
+      "conflict_items": 6,
+      "expected_total": 6,
+      "path": "filezilla/recentservers.xml",
+      "rnc_informative": 4,
+      "rnc_items": 6,
+      "rnc_risk": 2,
+      "status": "CONFLICT",
+      "upstream_informative": 3,
+      "upstream_risk": 3
+    },
+    {
+      "conflict_items": 10,
+      "expected_total": 10,
+      "path": "web/var/www/.env",
+      "rnc_informative": 6,
+      "rnc_items": 10,
+      "rnc_risk": 4,
+      "status": "CONFLICT",
+      "upstream_informative": 4,
+      "upstream_risk": 6
+    }
+  ],
+  "dataset_id": "leaky-repo",
+  "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+  "files": [
+    {
+      "conflict_items": 0,
+      "expected_total": 11,
+      "path": ".bash_profile",
+      "rnc_informative": 5,
+      "rnc_items": 11,
+      "rnc_risk": 6,
+      "status": "MATCH",
+      "upstream_informative": 5,
+      "upstream_risk": 6
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 6,
+      "path": ".bashrc",
+      "rnc_informative": 3,
+      "rnc_items": 6,
+      "rnc_risk": 3,
+      "status": "MATCH",
+      "upstream_informative": 3,
+      "upstream_risk": 3
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 4,
+      "path": ".docker/.dockercfg",
+      "rnc_informative": 2,
+      "rnc_items": 4,
+      "rnc_risk": 2,
+      "status": "MATCH",
+      "upstream_informative": 2,
+      "upstream_risk": 2
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 4,
+      "path": ".docker/config.json",
+      "rnc_informative": 2,
+      "rnc_items": 4,
+      "rnc_risk": 2,
+      "status": "MATCH",
+      "upstream_informative": 2,
+      "upstream_risk": 2
+    },
+    {
+      "conflict_items": 3,
+      "expected_total": 3,
+      "path": ".esmtprc",
+      "rnc_informative": 2,
+      "rnc_items": 3,
+      "rnc_risk": 1,
+      "status": "CONFLICT",
+      "upstream_informative": 1,
+      "upstream_risk": 2
+    },
+    {
+      "conflict_items": 5,
+      "expected_total": 5,
+      "path": ".ftpconfig",
+      "rnc_informative": 3,
+      "rnc_items": 5,
+      "rnc_risk": 2,
+      "status": "CONFLICT",
+      "upstream_informative": 2,
+      "upstream_risk": 3
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 1,
+      "path": ".git-credentials",
+      "rnc_informative": 0,
+      "rnc_items": 1,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 0,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 2,
+      "path": ".idea/WebServers.xml",
+      "rnc_informative": 1,
+      "rnc_items": 2,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 1,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 28,
+      "path": ".mozilla/firefox/logins.json",
+      "rnc_informative": 20,
+      "rnc_items": 28,
+      "rnc_risk": 8,
+      "status": "MATCH",
+      "upstream_informative": 20,
+      "upstream_risk": 8
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 2,
+      "path": ".netrc",
+      "rnc_informative": 0,
+      "rnc_items": 2,
+      "rnc_risk": 2,
+      "status": "MATCH",
+      "upstream_informative": 0,
+      "upstream_risk": 2
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 3,
+      "path": ".npmrc",
+      "rnc_informative": 1,
+      "rnc_items": 3,
+      "rnc_risk": 2,
+      "status": "MATCH",
+      "upstream_informative": 1,
+      "upstream_risk": 2
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 3,
+      "path": ".remote-sync.json",
+      "rnc_informative": 2,
+      "rnc_items": 3,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 2,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 1,
+      "path": ".ssh/id_rsa",
+      "rnc_informative": 0,
+      "rnc_items": 1,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 0,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 1,
+      "path": ".ssh/id_rsa.pub",
+      "rnc_informative": 1,
+      "rnc_items": 1,
+      "rnc_risk": 0,
+      "status": "MATCH",
+      "upstream_informative": 1,
+      "upstream_risk": 0
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 4,
+      "path": ".vscode/sftp.json",
+      "rnc_informative": 3,
+      "rnc_items": 4,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 3,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 4,
+      "path": "cloud/.credentials",
+      "rnc_informative": 2,
+      "rnc_items": 4,
+      "rnc_risk": 2,
+      "status": "MATCH",
+      "upstream_informative": 2,
+      "upstream_risk": 2
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 3,
+      "path": "cloud/.s3cfg",
+      "rnc_informative": 2,
+      "rnc_items": 3,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 2,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 3,
+      "path": "cloud/.tugboat",
+      "rnc_informative": 2,
+      "rnc_items": 3,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 2,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 2,
+      "path": "cloud/heroku.json",
+      "rnc_informative": 1,
+      "rnc_items": 2,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 1,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 4,
+      "path": "config",
+      "rnc_informative": 3,
+      "rnc_items": 4,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 3,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 1,
+      "path": "db/.pgpass",
+      "rnc_informative": 0,
+      "rnc_items": 1,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 0,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 1,
+      "path": "db/dbeaver-data-sources.xml",
+      "rnc_informative": 0,
+      "rnc_items": 1,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 0,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 10,
+      "path": "db/dump.sql",
+      "rnc_informative": 0,
+      "rnc_items": 10,
+      "rnc_risk": 10,
+      "status": "MATCH",
+      "upstream_informative": 0,
+      "upstream_risk": 10
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 1,
+      "path": "db/mongoid.yml",
+      "rnc_informative": 0,
+      "rnc_items": 1,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 0,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 7,
+      "path": "db/robomongo.json",
+      "rnc_informative": 4,
+      "rnc_items": 7,
+      "rnc_risk": 3,
+      "status": "MATCH",
+      "upstream_informative": 4,
+      "upstream_risk": 3
+    },
+    {
+      "conflict_items": 4,
+      "expected_total": 4,
+      "path": "deployment-config.json",
+      "rnc_informative": 3,
+      "rnc_items": 4,
+      "rnc_risk": 1,
+      "status": "CONFLICT",
+      "upstream_informative": 1,
+      "upstream_risk": 3
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 1,
+      "path": "etc/shadow",
+      "rnc_informative": 0,
+      "rnc_items": 1,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 0,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 3,
+      "expected_total": 3,
+      "path": "filezilla/filezilla.xml",
+      "rnc_informative": 2,
+      "rnc_items": 3,
+      "rnc_risk": 1,
+      "status": "CONFLICT",
+      "upstream_informative": 1,
+      "upstream_risk": 2
+    },
+    {
+      "conflict_items": 6,
+      "expected_total": 6,
+      "path": "filezilla/recentservers.xml",
+      "rnc_informative": 4,
+      "rnc_items": 6,
+      "rnc_risk": 2,
+      "status": "CONFLICT",
+      "upstream_informative": 3,
+      "upstream_risk": 3
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 2,
+      "path": "high-entropy-misc.txt",
+      "rnc_informative": 2,
+      "rnc_items": 2,
+      "rnc_risk": 0,
+      "status": "MATCH",
+      "upstream_informative": 2,
+      "upstream_risk": 0
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 2,
+      "path": "hub",
+      "rnc_informative": 1,
+      "rnc_items": 2,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 1,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 1,
+      "path": "misc-keys/cert-key.pem",
+      "rnc_informative": 0,
+      "rnc_items": 1,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 0,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 2,
+      "path": "misc-keys/putty-example.ppk",
+      "rnc_informative": 1,
+      "rnc_items": 2,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 1,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 1,
+      "path": "proftpdpasswd",
+      "rnc_informative": 0,
+      "rnc_items": 1,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 0,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 4,
+      "path": "sftp-config.json",
+      "rnc_informative": 3,
+      "rnc_items": 4,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 3,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 2,
+      "path": "ventrilo_srv.ini",
+      "rnc_informative": 0,
+      "rnc_items": 2,
+      "rnc_risk": 2,
+      "status": "MATCH",
+      "upstream_informative": 0,
+      "upstream_risk": 2
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 1,
+      "path": "web/django/settings.py",
+      "rnc_informative": 0,
+      "rnc_items": 1,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 0,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 1,
+      "path": "web/js/salesforce.js",
+      "rnc_informative": 0,
+      "rnc_items": 1,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 0,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 1,
+      "path": "web/ruby/config/master.key",
+      "rnc_informative": 0,
+      "rnc_items": 1,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 0,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 3,
+      "path": "web/ruby/secrets.yml",
+      "rnc_informative": 0,
+      "rnc_items": 3,
+      "rnc_risk": 3,
+      "status": "MATCH",
+      "upstream_informative": 0,
+      "upstream_risk": 3
+    },
+    {
+      "conflict_items": 10,
+      "expected_total": 10,
+      "path": "web/var/www/.env",
+      "rnc_informative": 6,
+      "rnc_items": 10,
+      "rnc_risk": 4,
+      "status": "CONFLICT",
+      "upstream_informative": 4,
+      "upstream_risk": 6
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 1,
+      "path": "web/var/www/public_html/.htpasswd",
+      "rnc_informative": 0,
+      "rnc_items": 1,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 0,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 4,
+      "path": "web/var/www/public_html/config.php",
+      "rnc_informative": 3,
+      "rnc_items": 4,
+      "rnc_risk": 1,
+      "status": "MATCH",
+      "upstream_informative": 3,
+      "upstream_risk": 1
+    },
+    {
+      "conflict_items": 0,
+      "expected_total": 12,
+      "path": "web/var/www/public_html/wp-config.php",
+      "rnc_informative": 3,
+      "rnc_items": 12,
+      "rnc_risk": 9,
+      "status": "MATCH",
+      "upstream_informative": 3,
+      "upstream_risk": 9
+    }
+  ],
+  "integrity": {
+    "category_reconciliation": {
+      "conflicted_files": [
+        {
+          "path": ".esmtprc",
+          "upstream_informative": 1,
+          "upstream_risk": 2
+        },
+        {
+          "path": ".ftpconfig",
+          "upstream_informative": 2,
+          "upstream_risk": 3
+        },
+        {
+          "path": "deployment-config.json",
+          "upstream_informative": 1,
+          "upstream_risk": 3
+        },
+        {
+          "path": "filezilla/filezilla.xml",
+          "upstream_informative": 1,
+          "upstream_risk": 2
+        },
+        {
+          "path": "filezilla/recentservers.xml",
+          "upstream_informative": 3,
+          "upstream_risk": 3
+        },
+        {
+          "path": "web/var/www/.env",
+          "upstream_informative": 4,
+          "upstream_risk": 6
+        }
+      ],
+      "rnc_informative": 87,
+      "rnc_risk": 88,
+      "status": "CONFLICT",
+      "upstream_informative": 79,
+      "upstream_risk": 96
+    },
+    "file_sha256": "173d6e96dfa9c36ed74f55b0fbc924f1ce6150e3f637eeb0b3af6b8f05768c25",
+    "reason": null,
+    "status": "PASS",
+    "verified_file_count": 44,
+    "verified_informative": 87,
+    "verified_item_count": 175,
+    "verified_risk": 88,
+    "verified_root": "C:\\Dev\\gitleaks\\gitleaks-harness\\datasets\\cache\\leaky-repo\\2e951359cac53addbee56437da3ffb546e3dfe24\\source"
+  },
+  "manifest_version": "rnc-leaky-truth-v1",
+  "rnc": {
+    "conflict_items": 31,
+    "files": 44,
+    "informative": 87,
+    "items": 175,
+    "risk": 88
+  },
+  "upstream": {
+    "files": 44,
+    "informative": 79,
+    "risk": 96,
+    "total": 175
+  }
+}

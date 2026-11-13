@@ -1,0 +1,61 @@
+{
+  "baseline": "CP10 baseline-20261112",
+  "cleanup": {
+    "containers_removed": [],
+    "images_removed": [],
+    "reason": "no run-owned resources created",
+    "status": "PASS"
+  },
+  "docker_image": null,
+  "environment": "DEV",
+  "execution_policy": {
+    "network_disabled": true,
+    "pull_disabled": true,
+    "scanner_source_edits": false,
+    "sequential": true,
+    "source_only": true
+  },
+  "generated_at": "2026-11-12",
+  "matrix": {
+    "gitleaks_specific_fixtures": "NOT_APPLICABLE",
+    "leaky_repo_filesystem": "BLOCKED",
+    "leaky_repo_git": "BLOCKED",
+    "levain": "BLOCKED",
+    "rnclab_filesystem": "BLOCKED",
+    "rnclab_git": "BLOCKED",
+    "rnclab_legacy_10x": "BLOCKED",
+    "rnclab_legacy_5x": "BLOCKED",
+    "rnclab_performance": "BLOCKED"
+  },
+  "native_artifact": null,
+  "reason": "No local Betterleaks source checkout or source archive exists at the pinned 5eab48332cc48565864514e3bc6de89df091a7c4. The local Go module cache contains only v1.8.1.info for github.com/betterleaks/betterleaks; no .zip, extracted module, bare clone, worktree, or source checkout was found. Network acquisition is prohibited by CP10.0, so no product was built or executed.",
+  "reason_code": "MISSING_LOCAL_SOURCE",
+  "report_type": "rnc-scan-harness/baseline-blocked",
+  "scanner": {
+    "key": "betterleaks",
+    "name": "Betterleaks",
+    "repository": "betterleaks/betterleaks",
+    "source_commit": "5eab48332cc48565864514e3bc6de89df091a7c4"
+  },
+  "schema_version": 1,
+  "source_audit": {
+    "go_module_cache": {
+      "extracted_source_present": false,
+      "files": [
+        "v1.8.1.info"
+      ],
+      "path": "C:/Users/david/go/pkg/mod/cache/download/github.com/betterleaks/betterleaks/@v",
+      "source_zip_present": false
+    },
+    "searched_paths": [
+      "C:/Dev/betterleaks",
+      "C:/Dev/repositories",
+      "C:/Users/david/gitrepos",
+      "C:/Users/david/.cargo/git/checkouts",
+      "C:/Users/david/go/pkg/mod",
+      "C:/Dev/gitleaks/gitleaks-harness/work"
+    ],
+    "source_checkout_present": false
+  },
+  "status": "BLOCKED"
+}

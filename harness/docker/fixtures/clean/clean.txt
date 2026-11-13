@@ -1,0 +1,1 @@
+This is a clean fixture with no credential-shaped values.

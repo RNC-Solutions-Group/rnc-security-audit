@@ -1,0 +1,548 @@
+{
+  "counting_units": {
+    "files": 44,
+    "informative": 79,
+    "risk": 96,
+    "total": 175
+  },
+  "files": [
+    {
+      "git_blob_sha256": "2243104bd92109e90555451c721432d38e90e4f43714c217c00546a6fbff00a2",
+      "git_mode": "100644",
+      "path": ".bash_profile",
+      "size": 1312
+    },
+    {
+      "git_blob_sha256": "409948945726e915eb22f52d8e7e9905c9c7ed673bdb98f20878d196f2e0b051",
+      "git_mode": "100644",
+      "path": ".bashrc",
+      "size": 3810
+    },
+    {
+      "git_blob_sha256": "540af3087e15ff0e7dc59c53d1f04ecbf489019a9f710ba9a3911f8f7ec088ad",
+      "git_mode": "100644",
+      "path": ".docker/.dockercfg",
+      "size": 401
+    },
+    {
+      "git_blob_sha256": "0c3d59de8b5615fd6340222aac159bb0cd26f164c74ec503d9296825a3fe1ed9",
+      "git_mode": "100644",
+      "path": ".docker/config.json",
+      "size": 475
+    },
+    {
+      "git_blob_sha256": "00a568b06be3d8c18936753fcbed72d0927121f7d77ae080e84fe406f5f41b73",
+      "git_mode": "100644",
+      "path": ".mozilla/firefox/logins.json",
+      "size": 3076
+    },
+    {
+      "git_blob_sha256": "5f536d4a342e66a2eb24097399b0774acbd35822e6cc8d2bb2218e8c780c748e",
+      "git_mode": "100644",
+      "path": ".ssh/id_rsa",
+      "size": 1674
+    },
+    {
+      "git_blob_sha256": "f5c499e4f95df94be467bddd8f5a741be789d1d2c7e90d0ce0a4d9874ba2d7db",
+      "git_mode": "100644",
+      "path": ".ssh/id_rsa.pub",
+      "size": 380
+    },
+    {
+      "git_blob_sha256": "a58f13af6ec30fc11908157ac5c3785b938cb2e0cdadac080dab47b6e506b49d",
+      "git_mode": "100644",
+      "path": "cloud/.credentials",
+      "size": 340
+    },
+    {
+      "git_blob_sha256": "bbbd1ff81b751b6731bbcf959d91282a780535ee3ff2571c7d7fa0e0095f7c04",
+      "git_mode": "100644",
+      "path": "cloud/.s3cfg",
+      "size": 272
+    },
+    {
+      "git_blob_sha256": "ee55ab7ef336d1e4fa21be7537b88a9deb7ff607abe572f9fbc28263a44feab8",
+      "git_mode": "100644",
+      "path": "cloud/.tugboat",
+      "size": 360
+    },
+    {
+      "git_blob_sha256": "41d98114b811034454e00880240e36e052664ff40416548460f0e15aac4f80cb",
+      "git_mode": "100644",
+      "path": "cloud/heroku.json",
+      "size": 130
+    },
+    {
+      "git_blob_sha256": "8c91bfb826a1681b8acd1cacc73a9b7e486573003b2cad4d9a6f0dc23eb9e3ce",
+      "git_mode": "100644",
+      "path": "db/dump.sql",
+      "size": 2006
+    },
+    {
+      "git_blob_sha256": "9ff9ed5b97b6c79ad86be92c62e29841b6dc4b311ac2bd625611a5bcff7025e3",
+      "git_mode": "100644",
+      "path": "db/mongoid.yml",
+      "size": 112
+    },
+    {
+      "git_blob_sha256": "cc5cdbe5089e0fd1a302151479e90f644a871ecfb655d5fedc6c8ac8f608b19b",
+      "git_mode": "100644",
+      "path": "etc/shadow",
+      "size": 626
+    },
+    {
+      "git_blob_sha256": "282c1bb2dc36ced689c3c0a172e9a6c0246f4a6a36c7abf24c7d99cf8324b686",
+      "git_mode": "100644",
+      "path": "filezilla/recentservers.xml",
+      "size": 1206
+    },
+    {
+      "git_blob_sha256": "a4a6d1405bba7b313019699f3e822000a8d1c3dce69019de6c48dce8827b0083",
+      "git_mode": "100644",
+      "path": "filezilla/filezilla.xml",
+      "size": 895
+    },
+    {
+      "git_blob_sha256": "b3f9f0b10ffc25b7d619b3ec11b156b8500114672c704f819ac2e19f871fa25a",
+      "git_mode": "100644",
+      "path": "high-entropy-misc.txt",
+      "size": 163
+    },
+    {
+      "git_blob_sha256": "7657ab6dd4ffe401024ed8284e39ebfa9dce5eb57542db7afdc781187349ae9b",
+      "git_mode": "100644",
+      "path": "misc-keys/cert-key.pem",
+      "size": 1704
+    },
+    {
+      "git_blob_sha256": "cd97a4515d41144ae183b0d061624d71352e6e642ae59d51a73f00da1ad8fafd",
+      "git_mode": "100644",
+      "path": "misc-keys/putty-example.ppk",
+      "size": 1427
+    },
+    {
+      "git_blob_sha256": "68783d81d2eea00bb7d81a14ac832e13440dbcbb9021606191b99cfdaaf94ba3",
+      "git_mode": "100644",
+      "path": "proftpdpasswd",
+      "size": 144
+    },
+    {
+      "git_blob_sha256": "ad2e944933c0866649626d6206fe899ca00d16f42e49f5d2270ba7257d1e9e72",
+      "git_mode": "100644",
+      "path": "web/ruby/config/master.key",
+      "size": 32
+    },
+    {
+      "git_blob_sha256": "2639ee5787f3c8592ff42a79b46556b629ca8e03ea4b4a88c9d273d6eed7e921",
+      "git_mode": "100644",
+      "path": "web/ruby/secrets.yml",
+      "size": 1062
+    },
+    {
+      "git_blob_sha256": "0afb8a5d6375eeb2f382118f12c2abd904e0b60a906f3a0c8baa0122c1d381ce",
+      "git_mode": "100644",
+      "path": "web/var/www/.env",
+      "size": 593
+    },
+    {
+      "git_blob_sha256": "b9e7c3187ad8912c83d4f1e99fee502bfa90f451be1d27688df985dd8e5890e9",
+      "git_mode": "100644",
+      "path": ".npmrc",
+      "size": 222
+    },
+    {
+      "git_blob_sha256": "8fae3ad63fc0df75ac24c11dc6a7162628343b50c52a1ac01f8be07f2195687d",
+      "git_mode": "100644",
+      "path": "web/var/www/public_html/wp-config.php",
+      "size": 1931
+    },
+    {
+      "git_blob_sha256": "9e1eb645ad063a75d52fb29d8fe402750cd227adda5dea38129fc13350d21b61",
+      "git_mode": "100644",
+      "path": "web/var/www/public_html/.htpasswd",
+      "size": 43
+    },
+    {
+      "git_blob_sha256": "150374806a5df6d54eca362ee1cd310930d71a8d7d3f92163ecadcb7f02f26a3",
+      "git_mode": "100644",
+      "path": ".git-credentials",
+      "size": 50
+    },
+    {
+      "git_blob_sha256": "4a30afe4d41087f181fe1f038363598613c435ad08b9fa5da520c45b16566df9",
+      "git_mode": "100644",
+      "path": "db/robomongo.json",
+      "size": 1119
+    },
+    {
+      "git_blob_sha256": "614b32aff3cd049b0d0cbdd952c577959168f696557a2f5536a0bc9689207d4c",
+      "git_mode": "100644",
+      "path": "web/js/salesforce.js",
+      "size": 560
+    },
+    {
+      "git_blob_sha256": "dd6591ce894528433810e3a11822e1883eca04d5da3a09e228443bd1e44e3d3f",
+      "git_mode": "100644",
+      "path": ".netrc",
+      "size": 127
+    },
+    {
+      "git_blob_sha256": "29f36567347b569b8fd49bfb4f0f9be732279678ec7ebb5f810520a1cedda933",
+      "git_mode": "100644",
+      "path": "hub",
+      "size": 90
+    },
+    {
+      "git_blob_sha256": "add13740020aec8c3a2238d695b67596cb50388e06fe3ad29af6fc1170378a8a",
+      "git_mode": "100644",
+      "path": "config",
+      "size": 152
+    },
+    {
+      "git_blob_sha256": "d6584ca8519107a83c2865714f2f792cdf164a896b121a7c7ff52415e0c32eb4",
+      "git_mode": "100644",
+      "path": "db/.pgpass",
+      "size": 79
+    },
+    {
+      "git_blob_sha256": "ae909885f72b24ce3146b56b2ae28130ce6510a647df3941a76f140f73445373",
+      "git_mode": "100644",
+      "path": "ventrilo_srv.ini",
+      "size": 315
+    },
+    {
+      "git_blob_sha256": "867374b3126a716b8314659b9d9d9d6f9ef1fc8e07f7f2ada7ca86679fe8e137",
+      "git_mode": "100644",
+      "path": "web/var/www/public_html/config.php",
+      "size": 302
+    },
+    {
+      "git_blob_sha256": "522c8e2bc0322afd5873a6a3843cc398b74808a188982f5af76640f79dea2efd",
+      "git_mode": "100644",
+      "path": "db/dbeaver-data-sources.xml",
+      "size": 394
+    },
+    {
+      "git_blob_sha256": "d6ca31c35a2f54ea0fa8b3793475a0819cb866bab6fd82e3bc0862d6b1706af8",
+      "git_mode": "100644",
+      "path": ".esmtprc",
+      "size": 123
+    },
+    {
+      "git_blob_sha256": "4a4faf1134cf5c62f1db80c81098932e718249ec200af3c29929eecad231d78d",
+      "git_mode": "100644",
+      "path": "web/django/settings.py",
+      "size": 3167
+    },
+    {
+      "git_blob_sha256": "99870cf5c4df36d8f397b874f720a0b46c63764406cde29e7d05501e5773dae9",
+      "git_mode": "100644",
+      "path": "deployment-config.json",
+      "size": 173
+    },
+    {
+      "git_blob_sha256": "1d2c152100c78a8cfb075050414471ee9f1d6a92880b9ac1f296064238d61b52",
+      "git_mode": "100644",
+      "path": ".ftpconfig",
+      "size": 513
+    },
+    {
+      "git_blob_sha256": "d80c93feb7468a0e5d1dcd7c56c1ebb9e58f71e90bcc31af63fd0c61827e8662",
+      "git_mode": "100644",
+      "path": ".remote-sync.json",
+      "size": 355
+    },
+    {
+      "git_blob_sha256": "e1fd6865012f72f01f741fa97ddc94be394ccfd87e3b991cc18aa380acfd419a",
+      "git_mode": "100644",
+      "path": ".vscode/sftp.json",
+      "size": 139
+    },
+    {
+      "git_blob_sha256": "6efb4782728ff4f061c17a986ff3f41abf347f39a2562c76165fada338efea54",
+      "git_mode": "100644",
+      "path": "sftp-config.json",
+      "size": 634
+    },
+    {
+      "git_blob_sha256": "9629066fce107986cba2af596909228daf4af6593bc38a9ae7b426b4db45d396",
+      "git_mode": "100644",
+      "path": ".idea/WebServers.xml",
+      "size": 628
+    }
+  ],
+  "inventory_digest": "dbc4d9d2f766bee36a5b64b2d3e92db47075f08b40d5fa307465a15af633cc3d",
+  "license_path": "LICENSE",
+  "license_sha256": "fcba3a10b27145467a3c92560a806e09ede71977584e4627b5a33f2e42cdf66f",
+  "rows": [
+    {
+      "informative": 5,
+      "path": ".bash_profile",
+      "risk": 6,
+      "total": 11
+    },
+    {
+      "informative": 3,
+      "path": ".bashrc",
+      "risk": 3,
+      "total": 6
+    },
+    {
+      "informative": 2,
+      "path": ".docker/.dockercfg",
+      "risk": 2,
+      "total": 4
+    },
+    {
+      "informative": 2,
+      "path": ".docker/config.json",
+      "risk": 2,
+      "total": 4
+    },
+    {
+      "informative": 20,
+      "path": ".mozilla/firefox/logins.json",
+      "risk": 8,
+      "total": 28
+    },
+    {
+      "informative": 0,
+      "path": ".ssh/id_rsa",
+      "risk": 1,
+      "total": 1
+    },
+    {
+      "informative": 1,
+      "path": ".ssh/id_rsa.pub",
+      "risk": 0,
+      "total": 1
+    },
+    {
+      "informative": 2,
+      "path": "cloud/.credentials",
+      "risk": 2,
+      "total": 4
+    },
+    {
+      "informative": 2,
+      "path": "cloud/.s3cfg",
+      "risk": 1,
+      "total": 3
+    },
+    {
+      "informative": 2,
+      "path": "cloud/.tugboat",
+      "risk": 1,
+      "total": 3
+    },
+    {
+      "informative": 1,
+      "path": "cloud/heroku.json",
+      "risk": 1,
+      "total": 2
+    },
+    {
+      "informative": 0,
+      "path": "db/dump.sql",
+      "risk": 10,
+      "total": 10
+    },
+    {
+      "informative": 0,
+      "path": "db/mongoid.yml",
+      "risk": 1,
+      "total": 1
+    },
+    {
+      "informative": 0,
+      "path": "etc/shadow",
+      "risk": 1,
+      "total": 1
+    },
+    {
+      "informative": 3,
+      "path": "filezilla/recentservers.xml",
+      "risk": 3,
+      "total": 6
+    },
+    {
+      "informative": 1,
+      "path": "filezilla/filezilla.xml",
+      "risk": 2,
+      "total": 3
+    },
+    {
+      "informative": 2,
+      "path": "high-entropy-misc.txt",
+      "risk": 0,
+      "total": 2
+    },
+    {
+      "informative": 0,
+      "path": "misc-keys/cert-key.pem",
+      "risk": 1,
+      "total": 1
+    },
+    {
+      "informative": 1,
+      "path": "misc-keys/putty-example.ppk",
+      "risk": 1,
+      "total": 2
+    },
+    {
+      "informative": 0,
+      "path": "proftpdpasswd",
+      "risk": 1,
+      "total": 1
+    },
+    {
+      "informative": 0,
+      "path": "web/ruby/config/master.key",
+      "risk": 1,
+      "total": 1
+    },
+    {
+      "informative": 0,
+      "path": "web/ruby/secrets.yml",
+      "risk": 3,
+      "total": 3
+    },
+    {
+      "informative": 4,
+      "path": "web/var/www/.env",
+      "risk": 6,
+      "total": 10
+    },
+    {
+      "informative": 1,
+      "path": ".npmrc",
+      "risk": 2,
+      "total": 3
+    },
+    {
+      "informative": 3,
+      "path": "web/var/www/public_html/wp-config.php",
+      "risk": 9,
+      "total": 12
+    },
+    {
+      "informative": 0,
+      "path": "web/var/www/public_html/.htpasswd",
+      "risk": 1,
+      "total": 1
+    },
+    {
+      "informative": 0,
+      "path": ".git-credentials",
+      "risk": 1,
+      "total": 1
+    },
+    {
+      "informative": 4,
+      "path": "db/robomongo.json",
+      "risk": 3,
+      "total": 7
+    },
+    {
+      "informative": 0,
+      "path": "web/js/salesforce.js",
+      "risk": 1,
+      "total": 1
+    },
+    {
+      "informative": 0,
+      "path": ".netrc",
+      "risk": 2,
+      "total": 2
+    },
+    {
+      "informative": 1,
+      "path": "hub",
+      "risk": 1,
+      "total": 2
+    },
+    {
+      "informative": 3,
+      "path": "config",
+      "risk": 1,
+      "total": 4
+    },
+    {
+      "informative": 0,
+      "path": "db/.pgpass",
+      "risk": 1,
+      "total": 1
+    },
+    {
+      "informative": 0,
+      "path": "ventrilo_srv.ini",
+      "risk": 2,
+      "total": 2
+    },
+    {
+      "informative": 3,
+      "path": "web/var/www/public_html/config.php",
+      "risk": 1,
+      "total": 4
+    },
+    {
+      "informative": 0,
+      "path": "db/dbeaver-data-sources.xml",
+      "risk": 1,
+      "total": 1
+    },
+    {
+      "informative": 1,
+      "path": ".esmtprc",
+      "risk": 2,
+      "total": 3
+    },
+    {
+      "informative": 0,
+      "path": "web/django/settings.py",
+      "risk": 1,
+      "total": 1
+    },
+    {
+      "informative": 1,
+      "path": "deployment-config.json",
+      "risk": 3,
+      "total": 4
+    },
+    {
+      "informative": 2,
+      "path": ".ftpconfig",
+      "risk": 3,
+      "total": 5
+    },
+    {
+      "informative": 2,
+      "path": ".remote-sync.json",
+      "risk": 1,
+      "total": 3
+    },
+    {
+      "informative": 3,
+      "path": ".vscode/sftp.json",
+      "risk": 1,
+      "total": 4
+    },
+    {
+      "informative": 3,
+      "path": "sftp-config.json",
+      "risk": 1,
+      "total": 4
+    },
+    {
+      "informative": 1,
+      "path": ".idea/WebServers.xml",
+      "risk": 1,
+      "total": 2
+    }
+  ],
+  "schema_version": 1,
+  "scoring_csv_path": ".leaky-meta/secrets.csv",
+  "scoring_csv_sha256": "daeab91254b35b38a1af28e9a6903579328b28bbe29c8aef1eb1350c69622da4",
+  "source_repository": "https://github.com/Plazmaz/leaky-repo",
+  "source_revision": "2e951359cac53addbee56437da3ffb546e3dfe24"
+}

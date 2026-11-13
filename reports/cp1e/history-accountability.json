@@ -1,0 +1,170 @@
+{
+  "dataset": {
+    "additions": 62,
+    "changed_path_count": 65,
+    "commit_count": 25,
+    "current_file_count": 61,
+    "current_only_path_count": 0,
+    "current_only_paths": [],
+    "current_truth_manifest": "datasets/leaky-repo.rnc-truth.json",
+    "current_truth_scope": "pinned working tree only",
+    "dataset_id": "leaky-repo",
+    "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+    "deletions": 1,
+    "duplicate_blob_group_count": 0,
+    "duplicate_blob_groups": [],
+    "filesystem_denominator_reusable": false,
+    "first_commit": "903a9caba59d2514ca1aab7129fece6be3b9b849",
+    "head": "2e951359cac53addbee56437da3ffb546e3dfe24",
+    "historical_only_path_count": 4,
+    "historical_only_paths": [
+      ".docker/config",
+      "benchmarking/DETECT-SECRETS.md",
+      "benchmarking/TRUFFLEHOG.md",
+      "misc-keys/cert-example.pem"
+    ],
+    "history_truth_status": "BLOCKED",
+    "modifications": 52,
+    "object_count": 207,
+    "reason": "The pinned repository has no independently verified per-commit secret manifest. Git-history observations cannot be converted into recall or precision without inventing historical expectations.",
+    "renames": [
+      {
+        "commit": "9f1468c79df2cf13c66041692ca7f044a27a874b",
+        "from": "benchmarking/DETECT-SECRETS.md",
+        "to": ".leaky-meta/benchmarking/DETECT-SECRETS.md"
+      },
+      {
+        "commit": "9f1468c79df2cf13c66041692ca7f044a27a874b",
+        "from": "benchmarking/TRUFFLEHOG.md",
+        "to": ".leaky-meta/benchmarking/TRUFFLEHOG.md"
+      },
+      {
+        "commit": "38f1204b43142c13b5e9c5d08060bed8dbc1ad04",
+        "from": ".docker/config",
+        "to": "config"
+      }
+    ],
+    "scope_version": "1",
+    "unverified_history_observations": "reported separately by the Leaky Repo history mode",
+    "verified_historical_findings": 0
+  },
+  "leaky_history": {
+    "commits_scanned": 25,
+    "denominator": "none; filesystem 175-item denominator not applied",
+    "execution": "PASS",
+    "observed_findings": 26,
+    "status": "BLOCKED",
+    "unique_secret_fingerprints": 16
+  },
+  "report_type": "rnc-scan-harness/history-accountability",
+  "synthetic_history": {
+    "metrics": {
+      "occurrence_duplicates": 0,
+      "occurrence_expected": 5,
+      "occurrence_line_only": 0,
+      "occurrence_matched": 5,
+      "occurrence_missed": 0,
+      "occurrence_unexpected": 0,
+      "occurrence_value_verified": 5,
+      "unique_expected": 3,
+      "unique_matched": 3,
+      "unique_recall_percent": 100.0
+    },
+    "scope": {
+      "commit_order": [
+        "c1",
+        "c2",
+        "c3",
+        "c4",
+        "c5"
+      ],
+      "commits": {
+        "c1": "95183f4de97dda5c99aee01d8100d4f9d7722cf4",
+        "c2": "9b94863a3dd13528bf5e270e734aa2ae052384e5",
+        "c3": "a37c25ee5c0320c62d3927662f6dc4b1d1c54eb6",
+        "c4": "0efadc5cf2b5259024e5537251c7eec815357694",
+        "c5": "adf06d2a3df19578d91e943814a34c9a9105dff9"
+      },
+      "dataset_id": "rnc-synthetic-history",
+      "dataset_version": "1",
+      "occurrence_count": 5,
+      "root": "C:\\Dev\\gitleaks\\gitleaks-harness\\work\\cp1e\\20261110T220409Z\\synthetic-history\\repo",
+      "unique_secret_count": 3
+    },
+    "status": "COMPLETE",
+    "targets": {
+      "docker-linux-amd64": {
+        "occurrences": {
+          "duplicates": 0,
+          "expected": 5,
+          "line_only": 0,
+          "matched": 5,
+          "missed": 0,
+          "unexpected": 0,
+          "value_verified": 5
+        },
+        "reason": null,
+        "scoring_status": "COMPLETED",
+        "status": "PASS",
+        "unique": {
+          "expected": 3,
+          "ids": [
+            "alpha",
+            "beta",
+            "gamma"
+          ],
+          "matched": 3,
+          "recall_percent": 100.0
+        }
+      },
+      "docker-linux-arm64": {
+        "occurrences": {
+          "duplicates": 0,
+          "expected": 5,
+          "line_only": 0,
+          "matched": 5,
+          "missed": 0,
+          "unexpected": 0,
+          "value_verified": 5
+        },
+        "reason": null,
+        "scoring_status": "COMPLETED",
+        "status": "PASS",
+        "unique": {
+          "expected": 3,
+          "ids": [
+            "alpha",
+            "beta",
+            "gamma"
+          ],
+          "matched": 3,
+          "recall_percent": 100.0
+        }
+      },
+      "windows-amd64": {
+        "occurrences": {
+          "duplicates": 0,
+          "expected": 5,
+          "line_only": 0,
+          "matched": 5,
+          "missed": 0,
+          "unexpected": 0,
+          "value_verified": 5
+        },
+        "reason": null,
+        "scoring_status": "COMPLETED",
+        "status": "PASS",
+        "unique": {
+          "expected": 3,
+          "ids": [
+            "alpha",
+            "beta",
+            "gamma"
+          ],
+          "matched": 3,
+          "recall_percent": 100.0
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1320 @@
+{
+  "config": {
+    "mode": "builtin-default",
+    "path": null,
+    "sha256": null
+  },
+  "dataset": {
+    "artifact_sha256": {
+      "LICENSE": "77cc69213a9c08cbd96f731793cff881a4b40a1d0682c70c70a1846afc700043",
+      "README.md": "97f582590d45b5518b262c225394618e38404b9569c62c26427f78e480502b82",
+      "fp-corpus.json": "c71669dfae7fa73064c358060d951633554ed2590aa281ad7a3e94f957c3684f",
+      "fp-corpus.txt": "e8667a00e06a39ea650e8608bf65cb45801a66ae42a28bcb7bf1e205f6848f04",
+      "materialize.py": "80193ec15432d2eebb55f7fa1d828e39da18fcdbf032824d7f69f0fd46a0a3b4",
+      "tp-corpus.json.b64": "2548857616dcc3c8007c9ffb830eaac47e48679d926becfec8b3b503dc6d1ef1",
+      "tp-corpus.txt.b64": "c1ad1ce89267e2fca0c32f60acfbd7577af1f530937c84742b45a089ee00dc25"
+    },
+    "author_reference": "https://levain.bmac.io/false-positives.html",
+    "counting_unit": "individual labeled case: negative corpus counts sections (expected secrets are zero); positive corpus counts planted credentials",
+    "derived_sha256": {
+      "tp-corpus.json": "be98a3072b22f97be42cca9d8bbefaa7667692b2a4dfdbf3d22c138608c8eb41",
+      "tp-corpus.txt": "182be9899aa36f446e3737a766bb463210a90d88aa8c71dc00e917ad590fe2e2"
+    },
+    "license": "MIT",
+    "license_notice": "datasets/THIRD_PARTY_NOTICES.md",
+    "license_sha256": "77cc69213a9c08cbd96f731793cff881a4b40a1d0682c70c70a1846afc700043",
+    "license_url": "https://github.com/levainbot/fp-corpus/blob/c130c321aa9046af17a6c876cb97e2ed71397110/LICENSE",
+    "manifest_sha256": "c456d2a4943494dea0ac3e5161193d91a77250c700c23e5113de12b2a311af3e",
+    "name": "Levain FP Corpus (negative and positive fixtures)",
+    "negative_counts": {
+      "hard_secrets": 0,
+      "hard_sections": 0,
+      "lines": 866,
+      "personal_data": 57,
+      "secrets": 0,
+      "sections": 116
+    },
+    "positive_counts": {
+      "hard_secrets": 3,
+      "hard_sections": 3,
+      "lines": 368,
+      "personal_data": 8,
+      "secrets": 85,
+      "sections": 45
+    },
+    "revision": "c130c321aa9046af17a6c876cb97e2ed71397110",
+    "revision_date": "2026-09-10T18:05:41-04:00",
+    "source_repository": "https://github.com/levainbot/fp-corpus",
+    "tag": "v1"
+  },
+  "detection_scope": {
+    "available": true,
+    "basis": "manual annotation against the rule IDs in the pinned default config",
+    "config_mode": "builtin-default",
+    "counts": {
+      "in_scope": 16,
+      "out_of_scope": 15,
+      "unknown": 7
+    },
+    "in_scope_misses": [
+      {
+        "basis": "default rule family present",
+        "classification": "in_scope",
+        "hard": false,
+        "kind": "aws_access_key_id",
+        "partial_evidence": 0,
+        "section": "env-file"
+      },
+      {
+        "basis": "default rule family present",
+        "classification": "in_scope",
+        "hard": false,
+        "kind": "http_basic_auth",
+        "partial_evidence": 0,
+        "section": "curl-verbose-basic-auth"
+      },
+      {
+        "basis": "default rule family present",
+        "classification": "in_scope",
+        "hard": false,
+        "kind": "aws_access_key_id",
+        "partial_evidence": 0,
+        "section": "terraform-apply-output"
+      },
+      {
+        "basis": "default rule family present",
+        "classification": "in_scope",
+        "hard": false,
+        "kind": "doppler_token",
+        "partial_evidence": 0,
+        "section": "platform-cli-auth-failures"
+      },
+      {
+        "basis": "default rule family present",
+        "classification": "in_scope",
+        "hard": false,
+        "kind": "netlify_pat",
+        "partial_evidence": 0,
+        "section": "platform-cli-auth-failures"
+      },
+      {
+        "basis": "default rule family present",
+        "classification": "in_scope",
+        "hard": false,
+        "kind": "nuget_api_key",
+        "partial_evidence": 0,
+        "section": "ci-publish-step-output"
+      },
+      {
+        "basis": "default rule family present",
+        "classification": "in_scope",
+        "hard": false,
+        "kind": "sentry_org_auth_token",
+        "partial_evidence": 0,
+        "section": "ci-publish-step-output"
+      },
+      {
+        "basis": "default rule family present",
+        "classification": "in_scope",
+        "hard": false,
+        "kind": "airtable_pat",
+        "partial_evidence": 0,
+        "section": "webhook-and-oauth-callback-dump"
+      },
+      {
+        "basis": "default rule family present",
+        "classification": "in_scope",
+        "hard": false,
+        "kind": "aws_access_key_id",
+        "partial_evidence": 0,
+        "section": "edge-aws-secret-ends-in-plus"
+      },
+      {
+        "basis": "default rule family present",
+        "classification": "in_scope",
+        "hard": false,
+        "kind": "github_pat_classic",
+        "partial_evidence": 0,
+        "section": "edge-github-tokens-containing-placeholder-words"
+      },
+      {
+        "basis": "default rule family present",
+        "classification": "in_scope",
+        "hard": false,
+        "kind": "github_pat_classic",
+        "partial_evidence": 0,
+        "section": "edge-github-tokens-containing-placeholder-words"
+      },
+      {
+        "basis": "default rule family present",
+        "classification": "in_scope",
+        "hard": false,
+        "kind": "openai_project_key",
+        "partial_evidence": 1,
+        "section": "edge-openai-project-key-ends-in-hyphen"
+      },
+      {
+        "basis": "default rule family present",
+        "classification": "in_scope",
+        "hard": false,
+        "kind": "aws_access_key_id",
+        "partial_evidence": 0,
+        "section": "ansi-github-actions-raw-log"
+      },
+      {
+        "basis": "default rule family present",
+        "classification": "in_scope",
+        "hard": false,
+        "kind": "npm_token",
+        "partial_evidence": 0,
+        "section": "ansi-pytest-npm-publish-failure"
+      },
+      {
+        "basis": "default rule family present",
+        "classification": "in_scope",
+        "hard": false,
+        "kind": "sendgrid_api_key",
+        "partial_evidence": 0,
+        "section": "ansi-terraform-plan-diff"
+      },
+      {
+        "basis": "default rule family present",
+        "classification": "in_scope",
+        "hard": false,
+        "kind": "generic_assignment",
+        "partial_evidence": 0,
+        "section": "ansi-terraform-plan-diff"
+      }
+    ],
+    "out_of_scope": [
+      {
+        "basis": "no default seed-phrase rule",
+        "classification": "out_of_scope",
+        "hard": false,
+        "kind": "wallet_seed_phrase",
+        "partial_evidence": 0,
+        "section": "hardhat-deploy-failure"
+      },
+      {
+        "basis": "no default seed-phrase rule",
+        "classification": "out_of_scope",
+        "hard": false,
+        "kind": "wallet_seed_phrase",
+        "partial_evidence": 0,
+        "section": "wallet-restore-env"
+      },
+      {
+        "basis": "not a secret; no default email rule",
+        "classification": "out_of_scope",
+        "hard": false,
+        "kind": "email",
+        "partial_evidence": 0,
+        "section": "cloudsql-iam-dsn"
+      },
+      {
+        "basis": "no default payment-card rule",
+        "classification": "out_of_scope",
+        "hard": false,
+        "kind": "payment_card",
+        "partial_evidence": 0,
+        "section": "payment-processing-log"
+      },
+      {
+        "basis": "no default payment-card rule",
+        "classification": "out_of_scope",
+        "hard": false,
+        "kind": "payment_card",
+        "partial_evidence": 0,
+        "section": "payment-processing-log"
+      },
+      {
+        "basis": "no default xAI rule",
+        "classification": "out_of_scope",
+        "hard": false,
+        "kind": "xai_api_key",
+        "partial_evidence": 0,
+        "section": "ai-gateway-upstream-errors"
+      },
+      {
+        "basis": "no default Supabase rule",
+        "classification": "out_of_scope",
+        "hard": false,
+        "kind": "supabase_access_token",
+        "partial_evidence": 0,
+        "section": "platform-cli-auth-failures"
+      },
+      {
+        "basis": "no default Tailscale rule",
+        "classification": "out_of_scope",
+        "hard": false,
+        "kind": "tailscale_auth_key",
+        "partial_evidence": 0,
+        "section": "platform-cli-auth-failures"
+      },
+      {
+        "basis": "no default Discord webhook rule",
+        "classification": "out_of_scope",
+        "hard": false,
+        "kind": "discord_webhook_url",
+        "partial_evidence": 0,
+        "section": "webhook-and-oauth-callback-dump"
+      },
+      {
+        "basis": "no default Google OAuth client-secret rule",
+        "classification": "out_of_scope",
+        "hard": false,
+        "kind": "google_oauth_client_secret",
+        "partial_evidence": 0,
+        "section": "webhook-and-oauth-callback-dump"
+      },
+      {
+        "basis": "no default Resend rule",
+        "classification": "out_of_scope",
+        "hard": false,
+        "kind": "resend_api_key",
+        "partial_evidence": 0,
+        "section": "webhook-and-oauth-callback-dump"
+      },
+      {
+        "basis": "no default rule for the paired secret key",
+        "classification": "out_of_scope",
+        "hard": false,
+        "kind": "aws_secret_access_key",
+        "partial_evidence": 0,
+        "section": "ansi-github-actions-raw-log"
+      },
+      {
+        "basis": "hard tier; no shape-based rule",
+        "classification": "out_of_scope",
+        "hard": true,
+        "kind": "shapeless_password",
+        "partial_evidence": 0,
+        "section": "hard-shapeless-password"
+      },
+      {
+        "basis": "hard tier; no shape-based rule",
+        "classification": "out_of_scope",
+        "hard": true,
+        "kind": "capability_url_segment",
+        "partial_evidence": 0,
+        "section": "hard-capability-url"
+      },
+      {
+        "basis": "hard tier; token is split across lines",
+        "classification": "out_of_scope",
+        "hard": true,
+        "kind": "wrapped_token",
+        "partial_evidence": 0,
+        "section": "hard-token-split-across-lines"
+      }
+    ],
+    "unknown": [
+      {
+        "basis": "no direct bearer rule; generic or JWT rules may apply",
+        "classification": "unknown",
+        "hard": false,
+        "kind": "bearer_token",
+        "partial_evidence": 0,
+        "section": "axios-error-dump"
+      },
+      {
+        "basis": "no direct rule; generic or curl rules may apply",
+        "classification": "unknown",
+        "hard": false,
+        "kind": "url_password",
+        "partial_evidence": 0,
+        "section": "postgres-connection-failure"
+      },
+      {
+        "basis": "no direct rule; generic or curl rules may apply",
+        "classification": "unknown",
+        "hard": false,
+        "kind": "url_password",
+        "partial_evidence": 0,
+        "section": "mongodb-uri"
+      },
+      {
+        "basis": "no direct rule; generic or curl rules may apply",
+        "classification": "unknown",
+        "hard": false,
+        "kind": "url_password",
+        "partial_evidence": 0,
+        "section": "cloudsql-iam-dsn"
+      },
+      {
+        "basis": "no direct rule; generic or curl rules may apply",
+        "classification": "unknown",
+        "hard": false,
+        "kind": "url_password",
+        "partial_evidence": 0,
+        "section": "pip-index-url-with-password"
+      },
+      {
+        "basis": "no direct rule; generic or curl rules may apply",
+        "classification": "unknown",
+        "hard": false,
+        "kind": "url_password",
+        "partial_evidence": 0,
+        "section": "ansi-docker-compose-logs"
+      },
+      {
+        "basis": "no direct bearer rule; generic or JWT rules may apply",
+        "classification": "unknown",
+        "hard": false,
+        "kind": "bearer_token",
+        "partial_evidence": 0,
+        "section": "ansi-docker-compose-logs"
+      }
+    ]
+  },
+  "environment": {
+    "machine": "AMD64",
+    "python": "3.13.5",
+    "release": "11",
+    "system": "Windows"
+  },
+  "generated_at": "2026-11-09T20:54:57Z",
+  "harness_version": "0.2.0",
+  "limitations": [
+    "Only the CP1 detection lane is implemented; functional conformance, performance, and Go race testing are not part of this report.",
+    "The corpus is synthetic and finite; it does not measure real-world repository or credential prevalence.",
+    "Negative-corpus true negatives are not inferred from line counts; the oracle is 'expected secrets are zero'.",
+    "Three hard-tier credentials are reported separately and are not included in the core recall percentage.",
+    "Partial, ambiguous, and line-only findings are not credited as true positives; they are reported separately.",
+    "The real Gitleaks CLI and JSON parser were exercised at the pinned source revision; other versions and configurations are untested.",
+    "Detection-scope annotation is a conservative manual mapping to the pinned default rule IDs, not a scanner result; it does not alter TP/FN counts."
+  ],
+  "redaction": {
+    "expected_secret_values_omitted": true,
+    "raw_matches_omitted": true,
+    "raw_scanner_report_retained": false
+  },
+  "report_type": "gitleaks-scan-harness/detection",
+  "runs": [
+    {
+      "control": {
+        "credential_findings": 2,
+        "file": "000-control.log",
+        "file_encountered": true,
+        "findings_on_file": 2,
+        "kinds_detected": [
+          "aws-access-key-id",
+          "github-token"
+        ],
+        "kinds_echoed": [
+          "aws-access-key-id",
+          "github-token"
+        ],
+        "notes": [],
+        "planted": [
+          "aws-access-key-id",
+          "github-token",
+          "private-key"
+        ],
+        "reported": true,
+        "unmatched_findings": 0
+      },
+      "corpus": "negative",
+      "invocation": {
+        "argv": [
+          "C:\\Dev\\gitleaks-cp1a-build\\bin\\gitleaks.exe",
+          "dir",
+          "<corpus-dir>",
+          "--report-format",
+          "json",
+          "--report-path",
+          "<report>",
+          "--no-banner"
+        ],
+        "duration_seconds": 0.237,
+        "error_code": null,
+        "error_message": "",
+        "exit_code": 1,
+        "mode": "dir",
+        "report_bytes": 3786,
+        "report_sha256": "c22f47491ab73bf8aa71f6762f3b8976be86e36ede8c5aad79ca32b0234d5422",
+        "stderr_bytes": 204,
+        "stderr_sha256": "a8063ec3f897a32e8f0eb5b76d3dfbca3c27dcf7a5dce72fa9ffe810a1e6fb65",
+        "stderr_summary": "[stderr present; raw content withheld]",
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "timeout_seconds": 300.0
+      },
+      "notes": [],
+      "results": {
+        "clean": false,
+        "counting_unit": "section/format; expected credentials are zero",
+        "duplicates": 0,
+        "examples": [
+          {
+            "line": 4,
+            "rule_id": "generic-api-key",
+            "section": "tailscale and wireguard status"
+          },
+          {
+            "line": 5,
+            "rule_id": "generic-api-key",
+            "section": "tailscale and wireguard status"
+          },
+          {
+            "line": 8,
+            "rule_id": "generic-api-key",
+            "section": "tailscale and wireguard status"
+          }
+        ],
+        "expected_secrets": 0,
+        "false_positives": 3,
+        "findings_total": 3,
+        "findings_without_evidence": 0,
+        "lines_scanned": 866,
+        "personal_data_matches": 0,
+        "sections_scanned": 116,
+        "sections_tripped": 1,
+        "true_negatives": null,
+        "true_negatives_note": "not inferred from lines; this corpus has no per-line oracle",
+        "worst_sections": [
+          {
+            "findings": 3,
+            "section": "tailscale and wireguard status"
+          }
+        ]
+      },
+      "scored": true,
+      "status": "COMPLETED",
+      "unattributed_files": []
+    },
+    {
+      "control": {
+        "credential_findings": 2,
+        "file": "000-control.log",
+        "file_encountered": true,
+        "findings_on_file": 2,
+        "kinds_detected": [
+          "github-token",
+          "aws-access-key-id"
+        ],
+        "kinds_echoed": [
+          "aws-access-key-id",
+          "github-token"
+        ],
+        "notes": [],
+        "planted": [
+          "aws-access-key-id",
+          "github-token",
+          "private-key"
+        ],
+        "reported": true,
+        "unmatched_findings": 0
+      },
+      "corpus": "positive",
+      "invocation": {
+        "argv": [
+          "C:\\Dev\\gitleaks-cp1a-build\\bin\\gitleaks.exe",
+          "dir",
+          "<corpus-dir>",
+          "--report-format",
+          "json",
+          "--report-path",
+          "<report>",
+          "--no-banner"
+        ],
+        "duration_seconds": 0.186,
+        "error_code": null,
+        "error_message": "",
+        "exit_code": 1,
+        "mode": "dir",
+        "report_bytes": 42650,
+        "report_sha256": "b39cff6e9199863aea814fe254f3598337ade4844f9a2c162a320ef8d71427db",
+        "stderr_bytes": 208,
+        "stderr_sha256": "b49f0c5b39f61de55599eb3f5e678a27aa1200c429af8036484149a61f6eb93d",
+        "stderr_summary": "[stderr present; raw content withheld]",
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "timeout_seconds": 300.0
+      },
+      "notes": [],
+      "results": {
+        "ambiguous_findings": 0,
+        "ambiguous_match_details": [],
+        "core_false_negatives": 35,
+        "core_recall_percent": 57.32,
+        "core_true_positives": 47,
+        "counting_unit": "planted credential; one expected secret is one case",
+        "duplicates": 2,
+        "examples": [],
+        "expected_core": 82,
+        "expected_hard": 3,
+        "expected_secrets": 85,
+        "false_negatives": 38,
+        "false_positives": 1,
+        "findings_total": 50,
+        "findings_without_evidence": 0,
+        "hard_false_negatives": 3,
+        "hard_recall_percent": 0.0,
+        "hard_true_positives": 0,
+        "lines_scanned": 368,
+        "match_classification": {
+          "ambiguous": 0,
+          "complete": 46,
+          "miss": 38,
+          "normalized": 1,
+          "partial": 1
+        },
+        "matched_secrets": [
+          {
+            "hard": false,
+            "kind": "aws_secret_access_key",
+            "line": 6,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "generic-api-key",
+            "section": "env-file"
+          },
+          {
+            "hard": false,
+            "kind": "stripe_secret_key",
+            "line": 7,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "stripe-access-token",
+            "section": "env-file"
+          },
+          {
+            "hard": false,
+            "kind": "generic_assignment",
+            "line": 8,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "generic-api-key",
+            "section": "env-file"
+          },
+          {
+            "hard": false,
+            "kind": "github_pat_classic",
+            "line": 3,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "github-pat",
+            "section": "docker-run-command"
+          },
+          {
+            "hard": false,
+            "kind": "generic_assignment",
+            "line": 4,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "generic-api-key",
+            "section": "docker-run-command"
+          },
+          {
+            "hard": false,
+            "kind": "github_pat_fine_grained",
+            "line": 4,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "github-fine-grained-pat",
+            "section": "github-actions-log"
+          },
+          {
+            "hard": false,
+            "kind": "pgp_private_key_block",
+            "line": 4,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "private-key",
+            "section": "gpg-secret-key-export"
+          },
+          {
+            "hard": false,
+            "kind": "generic_assignment",
+            "line": 8,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "generic-api-key",
+            "section": "wallet-restore-env"
+          },
+          {
+            "hard": false,
+            "kind": "generic_assignment",
+            "line": 9,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "generic-api-key",
+            "section": "kubectl-describe-pod"
+          },
+          {
+            "hard": false,
+            "kind": "sendgrid_api_key",
+            "line": 10,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "sendgrid-api-token",
+            "section": "kubectl-describe-pod"
+          },
+          {
+            "hard": false,
+            "kind": "slack_bot_token",
+            "line": 2,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "slack-bot-token",
+            "section": "slack-integration-error"
+          },
+          {
+            "hard": false,
+            "kind": "slack_webhook_url",
+            "line": 3,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "slack-webhook-url",
+            "section": "slack-integration-error"
+          },
+          {
+            "hard": false,
+            "kind": "google_api_key",
+            "line": 1,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "gcp-api-key",
+            "section": "google-api-error"
+          },
+          {
+            "hard": false,
+            "kind": "twilio_api_key_sid",
+            "line": 8,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "twilio-api-key",
+            "section": "twilio-sdk-error"
+          },
+          {
+            "hard": false,
+            "kind": "npm_token",
+            "line": 2,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "npm-access-token",
+            "section": "npmrc-and-publish"
+          },
+          {
+            "hard": false,
+            "kind": "mailgun_api_key",
+            "line": 2,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "generic-api-key",
+            "section": "mailgun-delivery-log"
+          },
+          {
+            "hard": false,
+            "kind": "azure_storage_key",
+            "line": 5,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "generic-api-key",
+            "section": "azure-storage-connection-string"
+          },
+          {
+            "hard": false,
+            "kind": "jwt",
+            "line": 3,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "jwt",
+            "section": "jwt-in-request-log"
+          },
+          {
+            "hard": false,
+            "kind": "private_key_pem",
+            "line": 5,
+            "match_field": "secret",
+            "match_type": "normalized",
+            "rule_id": "private-key",
+            "section": "ssh-private-key-in-log"
+          },
+          {
+            "hard": false,
+            "kind": "private_key_escaped_json",
+            "line": 5,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "private-key",
+            "section": "gcp-service-account-json"
+          },
+          {
+            "hard": false,
+            "kind": "github_oauth_token",
+            "line": 3,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "github-oauth",
+            "section": "github-oauth-callback"
+          },
+          {
+            "hard": false,
+            "kind": "aws_secret_access_key",
+            "line": 6,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "generic-api-key",
+            "section": "terraform-apply-output"
+          },
+          {
+            "hard": false,
+            "kind": "stripe_secret_key",
+            "line": 4,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "stripe-access-token",
+            "section": "jenkins-console-mixed"
+          },
+          {
+            "hard": false,
+            "kind": "npm_token",
+            "line": 5,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "npm-access-token",
+            "section": "jenkins-console-mixed"
+          },
+          {
+            "hard": false,
+            "kind": "groq_api_key",
+            "line": 2,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "generic-api-key",
+            "section": "ai-gateway-upstream-errors"
+          },
+          {
+            "hard": false,
+            "kind": "perplexity_api_key",
+            "line": 4,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "perplexity-api-key",
+            "section": "ai-gateway-upstream-errors"
+          },
+          {
+            "hard": false,
+            "kind": "fireworks_api_key",
+            "line": 5,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "generic-api-key",
+            "section": "ai-gateway-upstream-errors"
+          },
+          {
+            "hard": false,
+            "kind": "replicate_api_token",
+            "line": 3,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "generic-api-key",
+            "section": "inference-worker-traceback"
+          },
+          {
+            "hard": false,
+            "kind": "pinecone_api_key",
+            "line": 5,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "generic-api-key",
+            "section": "inference-worker-traceback"
+          },
+          {
+            "hard": false,
+            "kind": "elevenlabs_api_key",
+            "line": 7,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "generic-api-key",
+            "section": "inference-worker-traceback"
+          },
+          {
+            "hard": false,
+            "kind": "databricks_pat",
+            "line": 3,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "databricks-api-token",
+            "section": "platform-cli-auth-failures"
+          },
+          {
+            "hard": false,
+            "kind": "grafana_service_account_token",
+            "line": 4,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "grafana-service-account-token",
+            "section": "platform-cli-auth-failures"
+          },
+          {
+            "hard": false,
+            "kind": "planetscale_token",
+            "line": 5,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "planetscale-api-token",
+            "section": "platform-cli-auth-failures"
+          },
+          {
+            "hard": false,
+            "kind": "rubygems_api_key",
+            "line": 2,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "rubygems-api-token",
+            "section": "ci-publish-step-output"
+          },
+          {
+            "hard": false,
+            "kind": "sonarqube_token",
+            "line": 6,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "sonar-api-token",
+            "section": "ci-publish-step-output"
+          },
+          {
+            "hard": false,
+            "kind": "newrelic_user_key",
+            "line": 10,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "curl-auth-header",
+            "section": "ci-publish-step-output"
+          },
+          {
+            "hard": false,
+            "kind": "dynatrace_api_token",
+            "line": 12,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "curl-auth-header",
+            "section": "ci-publish-step-output"
+          },
+          {
+            "hard": false,
+            "kind": "terraform_cloud_token",
+            "line": 14,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "hashicorp-tf-api-token",
+            "section": "ci-publish-step-output"
+          },
+          {
+            "hard": false,
+            "kind": "slack_app_level_token",
+            "line": 3,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "slack-app-token",
+            "section": "webhook-and-oauth-callback-dump"
+          },
+          {
+            "hard": false,
+            "kind": "postman_api_key",
+            "line": 6,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "postman-api-token",
+            "section": "webhook-and-oauth-callback-dump"
+          },
+          {
+            "hard": false,
+            "kind": "aws_secret_access_key",
+            "line": 10,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "generic-api-key",
+            "section": "edge-aws-secret-ends-in-plus"
+          },
+          {
+            "hard": false,
+            "kind": "gitlab_pat",
+            "line": 3,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "gitlab-pat",
+            "section": "edge-gitlab-pat-ends-in-hyphen"
+          },
+          {
+            "hard": false,
+            "kind": "confluent_cloud_key",
+            "line": 5,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "confluent-access-token",
+            "section": "edge-confluent-secret-ends-in-slash"
+          },
+          {
+            "hard": false,
+            "kind": "confluent_cloud_secret",
+            "line": 6,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "generic-api-key",
+            "section": "edge-confluent-secret-ends-in-slash"
+          },
+          {
+            "hard": false,
+            "kind": "vault_service_token",
+            "line": 2,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "generic-api-key",
+            "section": "edge-vault-token-with-letter-prefixed-body"
+          },
+          {
+            "hard": false,
+            "kind": "custom_internal_format",
+            "line": 2,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "generic-api-key",
+            "section": "custom-vendor-prefix-convention"
+          },
+          {
+            "hard": false,
+            "kind": "github_pat_classic",
+            "line": 9,
+            "match_field": "secret",
+            "match_type": "complete",
+            "rule_id": "github-pat",
+            "section": "ansi-github-actions-raw-log"
+          }
+        ],
+        "missed_secrets": [
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "aws_access_key_id",
+            "partial_evidence": 0,
+            "section": "env-file"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "http_basic_auth",
+            "partial_evidence": 0,
+            "section": "curl-verbose-basic-auth"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "wallet_seed_phrase",
+            "partial_evidence": 0,
+            "section": "hardhat-deploy-failure"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "wallet_seed_phrase",
+            "partial_evidence": 0,
+            "section": "wallet-restore-env"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "bearer_token",
+            "partial_evidence": 0,
+            "section": "axios-error-dump"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "url_password",
+            "partial_evidence": 0,
+            "section": "postgres-connection-failure"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "url_password",
+            "partial_evidence": 0,
+            "section": "mongodb-uri"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "url_password",
+            "partial_evidence": 0,
+            "section": "cloudsql-iam-dsn"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "email",
+            "partial_evidence": 0,
+            "section": "cloudsql-iam-dsn"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "payment_card",
+            "partial_evidence": 0,
+            "section": "payment-processing-log"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "payment_card",
+            "partial_evidence": 0,
+            "section": "payment-processing-log"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "aws_access_key_id",
+            "partial_evidence": 0,
+            "section": "terraform-apply-output"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "url_password",
+            "partial_evidence": 0,
+            "section": "pip-index-url-with-password"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "xai_api_key",
+            "partial_evidence": 0,
+            "section": "ai-gateway-upstream-errors"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "doppler_token",
+            "partial_evidence": 0,
+            "section": "platform-cli-auth-failures"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "supabase_access_token",
+            "partial_evidence": 0,
+            "section": "platform-cli-auth-failures"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "netlify_pat",
+            "partial_evidence": 0,
+            "section": "platform-cli-auth-failures"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "tailscale_auth_key",
+            "partial_evidence": 0,
+            "section": "platform-cli-auth-failures"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "nuget_api_key",
+            "partial_evidence": 0,
+            "section": "ci-publish-step-output"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "sentry_org_auth_token",
+            "partial_evidence": 0,
+            "section": "ci-publish-step-output"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "discord_webhook_url",
+            "partial_evidence": 0,
+            "section": "webhook-and-oauth-callback-dump"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "google_oauth_client_secret",
+            "partial_evidence": 0,
+            "section": "webhook-and-oauth-callback-dump"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "resend_api_key",
+            "partial_evidence": 0,
+            "section": "webhook-and-oauth-callback-dump"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "airtable_pat",
+            "partial_evidence": 0,
+            "section": "webhook-and-oauth-callback-dump"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "aws_access_key_id",
+            "partial_evidence": 0,
+            "section": "edge-aws-secret-ends-in-plus"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "github_pat_classic",
+            "partial_evidence": 0,
+            "section": "edge-github-tokens-containing-placeholder-words"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "github_pat_classic",
+            "partial_evidence": 0,
+            "section": "edge-github-tokens-containing-placeholder-words"
+          },
+          {
+            "classification": "partial",
+            "hard": false,
+            "kind": "openai_project_key",
+            "partial_evidence": 1,
+            "section": "edge-openai-project-key-ends-in-hyphen"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "aws_access_key_id",
+            "partial_evidence": 0,
+            "section": "ansi-github-actions-raw-log"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "aws_secret_access_key",
+            "partial_evidence": 0,
+            "section": "ansi-github-actions-raw-log"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "url_password",
+            "partial_evidence": 0,
+            "section": "ansi-docker-compose-logs"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "bearer_token",
+            "partial_evidence": 0,
+            "section": "ansi-docker-compose-logs"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "npm_token",
+            "partial_evidence": 0,
+            "section": "ansi-pytest-npm-publish-failure"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "sendgrid_api_key",
+            "partial_evidence": 0,
+            "section": "ansi-terraform-plan-diff"
+          },
+          {
+            "classification": "miss",
+            "hard": false,
+            "kind": "generic_assignment",
+            "partial_evidence": 0,
+            "section": "ansi-terraform-plan-diff"
+          },
+          {
+            "classification": "miss",
+            "hard": true,
+            "kind": "shapeless_password",
+            "partial_evidence": 0,
+            "section": "hard-shapeless-password"
+          },
+          {
+            "classification": "miss",
+            "hard": true,
+            "kind": "capability_url_segment",
+            "partial_evidence": 0,
+            "section": "hard-capability-url"
+          },
+          {
+            "classification": "miss",
+            "hard": true,
+            "kind": "wrapped_token",
+            "partial_evidence": 0,
+            "section": "hard-token-split-across-lines"
+          }
+        ],
+        "overall_recall_percent": 55.29,
+        "partial_match_details": [
+          {
+            "candidate_kinds": [
+              "openai_project_key"
+            ],
+            "line": 4,
+            "match_fields": [
+              "secret"
+            ],
+            "relations": [
+              "finding_contains_expected"
+            ],
+            "rule_id": "generic-api-key",
+            "section": "edge-openai-project-key-ends-in-hyphen"
+          }
+        ],
+        "partial_matches": 1,
+        "personal_data_matches": 0,
+        "sections_scanned": 45,
+        "sections_tripped": 1,
+        "true_positives": 47,
+        "unexpected_findings": 0,
+        "worst_sections": [
+          {
+            "findings": 1,
+            "section": "edge-openai-project-key-ends-in-hyphen"
+          }
+        ]
+      },
+      "scored": true,
+      "status": "COMPLETED",
+      "unattributed_files": []
+    }
+  ],
+  "scenario_version": "cp1a-v1",
+  "schema_version": 1,
+  "scope": {
+    "functional_conformance": "NOT_RUN",
+    "lane": "detection_accuracy",
+    "performance": "NOT_RUN",
+    "race_stability": "NOT_TESTED"
+  },
+  "summary": {
+    "detection_accuracy": "MEASURED",
+    "failed_or_unscored_runs": 0,
+    "gitleaks_execution": "EXECUTED",
+    "gitleaks_integration": "EXECUTED",
+    "overall_status": "COMPLETED",
+    "runs": 2,
+    "scanner_kind": "gitleaks",
+    "scored_runs": 2
+  },
+  "target": {
+    "binary_path": "C:\\Dev\\gitleaks-cp1a-build\\bin\\gitleaks.exe",
+    "binary_sha256": "54dd670dda5f6a84b9b195a2fab33a766ed5976b60dbd73e4b15eb6ffc2aff8a",
+    "gitleaks_execution": "EXECUTED",
+    "integration_status": "EXECUTED",
+    "mode": "dir",
+    "scanner_kind": "gitleaks",
+    "source_revision": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c"
+  }
+}

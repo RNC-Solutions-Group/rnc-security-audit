@@ -1,0 +1,60 @@
+# Example harness configuration. Copy to harness.toml (Git-ignored) and edit.
+# The source commit is always supplied per experiment or pinned explicitly here.
+schema_version = 1
+
+[source]
+# repository = "https://github.com/RNC-Solutions-Group/gitleaks"
+# commit = "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c"
+
+[scanner]
+default = "gitleaks"
+
+[targets]
+# Active products: Windows AMD64 native, Docker Linux AMD64, Docker Linux ARM64.
+platforms = ["host"]
+
+[suites]
+# Baseline "all" = Levain + Leaky Repo only; other suites are explicit.
+# `rnclab` is the standalone certified RNC Synthetic Secrets Lab v3 and is
+# never included in `all`.
+default = ["levain", "leaky-repo"]
+
+[performance]
+warmups = 1
+measured_runs = 5
+# DEV: contended developer host (default; functional/preliminary only)
+# CONTROLLED: reduced contention, documented host conditions
+# RELEASE: pinned artifacts, default scanner config, controlled hardware
+environment = "DEV"
+# Reserved optional stress dimensions: none, cpu, memory, io, network.
+stress_profile = "none"
+
+[reports]
+formats = ["markdown", "json"]
+naming = "{timestamp}-{scanner}-{commit}-{profile}"
+
+[reports.sanitized]
+enabled = true
+location = "reports/experiments/"
+
+[reports.unsanitized]
+enabled = false
+location = "reports/unsanitized/"
+
+[reports.summary]
+enabled = true
+console = true
+
+[reports.exceptions]
+enabled = true
+mode = "exceptions-only"
+include_coverage_gaps = true
+include_skipped = true
+include_not_applicable = false
+include_baseline_deltas = true
+
+[execution]
+timeout = 1200
+
+[cache]
+dir = "datasets/cache"

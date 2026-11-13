@@ -1,0 +1,1408 @@
+{
+  "builds": {
+    "darwin-amd64": {
+      "artifact_path": "C:\\Dev\\gitleaks\\gitleaks-harness\\work\\cp1c\\20261110T021936Z\\builds\\darwin-amd64\\gitleaks-darwin-amd64",
+      "artifact_sha256": "be8e348d93711ea832f0cb4ada06ff2dfc2aebd63aeb26952cea788aae2b16d5",
+      "command": [
+        "go",
+        "build",
+        "-mod=readonly",
+        "-trimpath",
+        "-buildvcs=true",
+        "-o",
+        "C:\\Dev\\gitleaks\\gitleaks-harness\\work\\cp1c\\20261110T021936Z\\builds\\darwin-amd64\\gitleaks-darwin-amd64",
+        "."
+      ],
+      "duration_seconds": 1.721,
+      "error": null,
+      "exit_code": 0,
+      "image_id": null,
+      "image_tag": null,
+      "platform": {
+        "arch": "amd64",
+        "docker_platform": null,
+        "goarch": "amd64",
+        "goos": "darwin",
+        "key": "darwin-amd64",
+        "kind": "executable",
+        "os_name": "darwin"
+      },
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": null,
+      "version_status": "NOT_RUN"
+    },
+    "darwin-arm64": {
+      "artifact_path": "C:\\Dev\\gitleaks\\gitleaks-harness\\work\\cp1c\\20261110T021936Z\\builds\\darwin-arm64\\gitleaks-darwin-arm64",
+      "artifact_sha256": "2e4e5922114126dd13c16007ebea36f5947616b68d9ce54640bda62834ca10c5",
+      "command": [
+        "go",
+        "build",
+        "-mod=readonly",
+        "-trimpath",
+        "-buildvcs=true",
+        "-o",
+        "C:\\Dev\\gitleaks\\gitleaks-harness\\work\\cp1c\\20261110T021936Z\\builds\\darwin-arm64\\gitleaks-darwin-arm64",
+        "."
+      ],
+      "duration_seconds": 1.602,
+      "error": null,
+      "exit_code": 0,
+      "image_id": null,
+      "image_tag": null,
+      "platform": {
+        "arch": "arm64",
+        "docker_platform": null,
+        "goarch": "arm64",
+        "goos": "darwin",
+        "key": "darwin-arm64",
+        "kind": "executable",
+        "os_name": "darwin"
+      },
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": null,
+      "version_status": "NOT_RUN"
+    },
+    "docker-linux-amd64": {
+      "artifact_path": null,
+      "artifact_sha256": null,
+      "command": [
+        "docker",
+        "build",
+        "--quiet",
+        "--platform",
+        "linux/amd64",
+        "-t",
+        "gitleaks-cp1c:5f6ec56cfa6f-docker-linux-amd64",
+        "C:\\Dev\\gitleaks\\gitleaks-harness\\datasets\\cache\\targets\\4aa50df824a6f830\\5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c\\source"
+      ],
+      "duration_seconds": 1.443,
+      "error": null,
+      "exit_code": 0,
+      "image_id": "sha256:6032a8a47d83aac2520e473127fcc202ca2b3b43a1d9630899b6ed51bc0ca09d",
+      "image_tag": "gitleaks-cp1c:5f6ec56cfa6f-docker-linux-amd64",
+      "platform": {
+        "arch": "amd64",
+        "docker_platform": "linux/amd64",
+        "goarch": "amd64",
+        "goos": "linux",
+        "key": "docker-linux-amd64",
+        "kind": "docker",
+        "os_name": "linux"
+      },
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "4e1a5f10af7ce9969fa4cfe4938d74ee4dd9fdc25c5f96598b25cf6986e088be",
+      "version": "v8.0.0-rnc.5f6ec56cfa6f",
+      "version_status": "PASS"
+    },
+    "docker-linux-arm64": {
+      "artifact_path": null,
+      "artifact_sha256": null,
+      "command": [
+        "docker",
+        "build",
+        "--quiet",
+        "--platform",
+        "linux/arm64",
+        "-t",
+        "gitleaks-cp1c:5f6ec56cfa6f-docker-linux-arm64",
+        "C:\\Dev\\gitleaks\\gitleaks-harness\\datasets\\cache\\targets\\4aa50df824a6f830\\5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c\\source"
+      ],
+      "duration_seconds": 1.506,
+      "error": null,
+      "exit_code": 0,
+      "image_id": "sha256:b4044d5814a0285f907a40eb6eaa910b89f36eea18b991b9cf7f74607710287c",
+      "image_tag": "gitleaks-cp1c:5f6ec56cfa6f-docker-linux-arm64",
+      "platform": {
+        "arch": "arm64",
+        "docker_platform": "linux/arm64",
+        "goarch": "arm64",
+        "goos": "linux",
+        "key": "docker-linux-arm64",
+        "kind": "docker",
+        "os_name": "linux"
+      },
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "b5702b3e97dadc39edafc1beda95f914e11a5c27d2867e3cdec9cf29777ca7f8",
+      "version": "v8.0.0-rnc.5f6ec56cfa6f",
+      "version_status": "PASS"
+    },
+    "linux-amd64": {
+      "artifact_path": "C:\\Dev\\gitleaks\\gitleaks-harness\\work\\cp1c\\20261110T021936Z\\builds\\linux-amd64\\gitleaks-linux-amd64",
+      "artifact_sha256": "427efeb69ca00dce6185b58c4637d5dd5568c1a61cbdabae9f73302741b1ae25",
+      "command": [
+        "go",
+        "build",
+        "-mod=readonly",
+        "-trimpath",
+        "-buildvcs=true",
+        "-o",
+        "C:\\Dev\\gitleaks\\gitleaks-harness\\work\\cp1c\\20261110T021936Z\\builds\\linux-amd64\\gitleaks-linux-amd64",
+        "."
+      ],
+      "duration_seconds": 1.666,
+      "error": null,
+      "exit_code": 0,
+      "image_id": null,
+      "image_tag": null,
+      "platform": {
+        "arch": "amd64",
+        "docker_platform": null,
+        "goarch": "amd64",
+        "goos": "linux",
+        "key": "linux-amd64",
+        "kind": "executable",
+        "os_name": "linux"
+      },
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": null,
+      "version_status": "NOT_RUN"
+    },
+    "linux-arm64": {
+      "artifact_path": "C:\\Dev\\gitleaks\\gitleaks-harness\\work\\cp1c\\20261110T021936Z\\builds\\linux-arm64\\gitleaks-linux-arm64",
+      "artifact_sha256": "e77c0ffecd642670b25bf2aceecd608e7f6f997557d4f0073fd6ef442573c090",
+      "command": [
+        "go",
+        "build",
+        "-mod=readonly",
+        "-trimpath",
+        "-buildvcs=true",
+        "-o",
+        "C:\\Dev\\gitleaks\\gitleaks-harness\\work\\cp1c\\20261110T021936Z\\builds\\linux-arm64\\gitleaks-linux-arm64",
+        "."
+      ],
+      "duration_seconds": 1.377,
+      "error": null,
+      "exit_code": 0,
+      "image_id": null,
+      "image_tag": null,
+      "platform": {
+        "arch": "arm64",
+        "docker_platform": null,
+        "goarch": "arm64",
+        "goos": "linux",
+        "key": "linux-arm64",
+        "kind": "executable",
+        "os_name": "linux"
+      },
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": null,
+      "version_status": "NOT_RUN"
+    },
+    "windows-amd64": {
+      "artifact_path": "C:\\Dev\\gitleaks\\gitleaks-harness\\work\\cp1c\\20261110T021936Z\\builds\\windows-amd64\\gitleaks-windows-amd64.exe",
+      "artifact_sha256": "e0831964099a20be3edaa5187f4f11a802821c2eea66a37acc6c09e0587724f2",
+      "command": [
+        "go",
+        "build",
+        "-mod=readonly",
+        "-trimpath",
+        "-buildvcs=true",
+        "-o",
+        "C:\\Dev\\gitleaks\\gitleaks-harness\\work\\cp1c\\20261110T021936Z\\builds\\windows-amd64\\gitleaks-windows-amd64.exe",
+        "."
+      ],
+      "duration_seconds": 3.096,
+      "error": null,
+      "exit_code": 0,
+      "image_id": null,
+      "image_tag": null,
+      "platform": {
+        "arch": "amd64",
+        "docker_platform": null,
+        "goarch": "amd64",
+        "goos": "windows",
+        "key": "windows-amd64",
+        "kind": "executable",
+        "os_name": "windows"
+      },
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "version": "v8.0.0-rnc.5f6ec56cfa6f",
+      "version_status": "PASS"
+    }
+  },
+  "comparisons": {},
+  "datasets": {
+    "gitleaks-fixtures": {
+      "inventory_digest": "cd7f05e76b4590ee738d4573f3ddb3c493142ecd1204bc15754a21d0e66f7345",
+      "manifest_sha256": "e39a1c491b36571c86cd43bf489e975bbf5990a1288b129e0dc1f9d62b45d36a",
+      "name": "Gitleaks pinned functional fixtures",
+      "revision": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c"
+    }
+  },
+  "generated_at": "2026-11-10T02:20:14Z",
+  "harness_version": "0.3.0",
+  "limitations": [
+    "A successfully built artifact is not counted as tested unless an applicable suite executed it.",
+    "Raw reports are opt-in and never printed in ordinary console summaries.",
+    "4 INTERNAL_GO contracts are unmapped; 16 mapped contracts were skipped."
+  ],
+  "platforms": [
+    {
+      "arch": "amd64",
+      "docker_platform": null,
+      "goarch": "amd64",
+      "goos": "windows",
+      "key": "windows-amd64",
+      "kind": "executable",
+      "os_name": "windows"
+    },
+    {
+      "arch": "amd64",
+      "docker_platform": null,
+      "goarch": "amd64",
+      "goos": "linux",
+      "key": "linux-amd64",
+      "kind": "executable",
+      "os_name": "linux"
+    },
+    {
+      "arch": "arm64",
+      "docker_platform": null,
+      "goarch": "arm64",
+      "goos": "linux",
+      "key": "linux-arm64",
+      "kind": "executable",
+      "os_name": "linux"
+    },
+    {
+      "arch": "amd64",
+      "docker_platform": null,
+      "goarch": "amd64",
+      "goos": "darwin",
+      "key": "darwin-amd64",
+      "kind": "executable",
+      "os_name": "darwin"
+    },
+    {
+      "arch": "arm64",
+      "docker_platform": null,
+      "goarch": "arm64",
+      "goos": "darwin",
+      "key": "darwin-arm64",
+      "kind": "executable",
+      "os_name": "darwin"
+    },
+    {
+      "arch": "amd64",
+      "docker_platform": "linux/amd64",
+      "goarch": "amd64",
+      "goos": "linux",
+      "key": "docker-linux-amd64",
+      "kind": "docker",
+      "os_name": "linux"
+    },
+    {
+      "arch": "arm64",
+      "docker_platform": "linux/arm64",
+      "goarch": "arm64",
+      "goos": "linux",
+      "key": "docker-linux-arm64",
+      "kind": "docker",
+      "os_name": "linux"
+    }
+  ],
+  "report_type": "scanner-harness/matrix",
+  "reports": {
+    "raw": null,
+    "sanitized": [
+      "reports\\cp1c\\cp1c-all-builds.json",
+      "reports\\cp1c\\cp1c-all-builds.md"
+    ]
+  },
+  "run_id": "20261110T021936Z",
+  "scanner": {
+    "key": "gitleaks",
+    "name": "Gitleaks",
+    "version": "v8.0.0-rnc.5f6ec56cfa6f"
+  },
+  "schema_version": 1,
+  "source": {
+    "branch": "master",
+    "commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+    "path": "C:\\Dev\\gitleaks\\gitleaks-harness\\datasets\\cache\\targets\\4aa50df824a6f830\\5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c\\source",
+    "repository": "https://github.com/RNC-Solutions-Group/gitleaks"
+  },
+  "suites": {
+    "go": {
+      "applicable": true,
+      "comparisons": {},
+      "details": {
+        "datasets": {
+          "gitleaks-fixtures": {
+            "inventory_digest": "cd7f05e76b4590ee738d4573f3ddb3c493142ecd1204bc15754a21d0e66f7345",
+            "manifest_sha256": "e39a1c491b36571c86cd43bf489e975bbf5990a1288b129e0dc1f9d62b45d36a",
+            "name": "Gitleaks pinned functional fixtures",
+            "revision": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c"
+          }
+        },
+        "evidence": {
+          "contracts": [
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "detect.TestFileLoadBaseline",
+              "fixture_id": "upstream:testdata/baseline/baseline.csv",
+              "inventory_tests": [
+                "detect.TestLoadBaseline",
+                "detect.TestAddBaseline"
+              ],
+              "note": null,
+              "path": "testdata/baseline/baseline.csv"
+            },
+            {
+              "evidence_kind": null,
+              "evidence_status": "UNMAPPED",
+              "evidence_test": null,
+              "fixture_id": "upstream:testdata/baseline/baseline.json",
+              "inventory_tests": [
+                "detect.TestLoadBaseline",
+                "detect.TestAddBaseline"
+              ],
+              "note": "No executing Go test loads this file; TestFileLoadBaseline covers the CSV and SARIF rejection paths.",
+              "path": "testdata/baseline/baseline.json"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "detect.TestFileLoadBaseline",
+              "fixture_id": "upstream:testdata/baseline/baseline.sarif",
+              "inventory_tests": [
+                "detect.TestLoadBaseline",
+                "detect.TestAddBaseline"
+              ],
+              "note": null,
+              "path": "testdata/baseline/baseline.sarif"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateAllowlists/invalid/allowlist_global_old_and_new",
+              "fixture_id": "upstream:testdata/config/invalid/allowlist_global_old_and_new.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/invalid/allowlist_global_old_and_new.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateAllowlists/invalid/allowlist_global_regextarget",
+              "fixture_id": "upstream:testdata/config/invalid/allowlist_global_regextarget.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/invalid/allowlist_global_regextarget.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateAllowlists/invalid/allowlist_global_target_rule_id",
+              "fixture_id": "upstream:testdata/config/invalid/allowlist_global_target_rule_id.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/invalid/allowlist_global_target_rule_id.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateAllowlists/invalid/allowlist_rule_empty",
+              "fixture_id": "upstream:testdata/config/invalid/allowlist_rule_empty.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/invalid/allowlist_rule_empty.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateAllowlists/invalid/allowlist_rule_old_and_new",
+              "fixture_id": "upstream:testdata/config/invalid/allowlist_rule_old_and_new.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/invalid/allowlist_rule_old_and_new.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateAllowlists/invalid/allowlist_rule_regextarget",
+              "fixture_id": "upstream:testdata/config/invalid/allowlist_rule_regextarget.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/invalid/allowlist_rule_regextarget.toml"
+            },
+            {
+              "evidence_kind": null,
+              "evidence_status": "UNMAPPED",
+              "evidence_test": null,
+              "fixture_id": "upstream:testdata/config/invalid/extend_invalid_base.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/invalid/extend_invalid_base.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateExtend/invalid/extend_invalid_ruleid",
+              "fixture_id": "upstream:testdata/config/invalid/extend_invalid_ruleid.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/invalid/extend_invalid_ruleid.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslate/invalid/rule_bad_entropy_group",
+              "fixture_id": "upstream:testdata/config/invalid/rule_bad_entropy_group.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/invalid/rule_bad_entropy_group.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslate/invalid/rule_missing_id",
+              "fixture_id": "upstream:testdata/config/invalid/rule_missing_id.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/invalid/rule_missing_id.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslate/invalid/rule_no_regex_or_path",
+              "fixture_id": "upstream:testdata/config/invalid/rule_no_regex_or_path.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/invalid/rule_no_regex_or_path.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateAllowlists/valid/allowlist_global_multiple",
+              "fixture_id": "upstream:testdata/config/valid/allowlist_global_multiple.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/allowlist_global_multiple.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateAllowlists/valid/allowlist_global_old_compat",
+              "fixture_id": "upstream:testdata/config/valid/allowlist_global_old_compat.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/allowlist_global_old_compat.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateAllowlists/valid/allowlist_global_regex",
+              "fixture_id": "upstream:testdata/config/valid/allowlist_global_regex.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/allowlist_global_regex.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateAllowlists/valid/allowlist_global_target_rules",
+              "fixture_id": "upstream:testdata/config/valid/allowlist_global_target_rules.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/allowlist_global_target_rules.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateAllowlists/valid/allowlist_rule_commit",
+              "fixture_id": "upstream:testdata/config/valid/allowlist_rule_commit.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/allowlist_rule_commit.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "detect.TestDetect/allowlist_-_ignore_path_when_extending",
+              "fixture_id": "upstream:testdata/config/valid/allowlist_rule_extend_default.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/allowlist_rule_extend_default.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateAllowlists/valid/allowlist_rule_old_compat",
+              "fixture_id": "upstream:testdata/config/valid/allowlist_rule_old_compat.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/allowlist_rule_old_compat.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateAllowlists/valid/allowlist_rule_path",
+              "fixture_id": "upstream:testdata/config/valid/allowlist_rule_path.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/allowlist_rule_path.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateAllowlists/valid/allowlist_rule_regex",
+              "fixture_id": "upstream:testdata/config/valid/allowlist_rule_regex.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/allowlist_rule_regex.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateExtend/valid/extend",
+              "fixture_id": "upstream:testdata/config/valid/extend.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend.toml"
+            },
+            {
+              "evidence_kind": "indirect",
+              "evidence_status": "GO_TEST_VALIDATED_INDIRECT",
+              "evidence_test": "config.TestTranslateExtend/valid/extend",
+              "fixture_id": "upstream:testdata/config/valid/extend_base_1.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend_base_1.toml"
+            },
+            {
+              "evidence_kind": "indirect",
+              "evidence_status": "GO_TEST_VALIDATED_INDIRECT",
+              "evidence_test": "config.TestTranslateExtend/valid/extend",
+              "fixture_id": "upstream:testdata/config/valid/extend_base_2.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend_base_2.toml"
+            },
+            {
+              "evidence_kind": "indirect",
+              "evidence_status": "GO_TEST_VALIDATED_INDIRECT",
+              "evidence_test": "config.TestTranslateExtend/valid/extend_rule_no_regexpath",
+              "fixture_id": "upstream:testdata/config/valid/extend_base_3.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend_base_3.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestExtendedRuleKeywordsAreDowncase/Extend_base_rule_that_includes_AWS_keyword_with_new_attribute",
+              "fixture_id": "upstream:testdata/config/valid/extend_base_rule_including_keywords_with_attribute.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend_base_rule_including_keywords_with_attribute.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateExtend/valid/extend_disabled",
+              "fixture_id": "upstream:testdata/config/valid/extend_disabled.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend_disabled.toml"
+            },
+            {
+              "evidence_kind": "indirect",
+              "evidence_status": "GO_TEST_VALIDATED_INDIRECT",
+              "evidence_test": "config.TestTranslateExtend/valid/extend_disabled",
+              "fixture_id": "upstream:testdata/config/valid/extend_disabled_base.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend_disabled_base.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateExtend/valid/extend_rule_allowlist_and",
+              "fixture_id": "upstream:testdata/config/valid/extend_rule_allowlist_and.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend_rule_allowlist_and.toml"
+            },
+            {
+              "evidence_kind": "indirect",
+              "evidence_status": "GO_TEST_VALIDATED_INDIRECT",
+              "evidence_test": "config.TestTranslateExtend/valid/extend_rule_allowlist_and",
+              "fixture_id": "upstream:testdata/config/valid/extend_rule_allowlist_base.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend_rule_allowlist_base.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateExtend/valid/extend_rule_allowlist_or",
+              "fixture_id": "upstream:testdata/config/valid/extend_rule_allowlist_or.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend_rule_allowlist_or.toml"
+            },
+            {
+              "evidence_kind": "indirect",
+              "evidence_status": "GO_TEST_VALIDATED_INDIRECT",
+              "evidence_test": "config.TestExtendedRuleKeywordsAreDowncase/Extend_base_with_a_new_rule_with_CMS_keyword",
+              "fixture_id": "upstream:testdata/config/valid/extend_rule_keywords_base.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend_rule_keywords_base.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestExtendedRuleKeywordsAreDowncase/Extend_base_with_a_new_rule_with_CMS_keyword",
+              "fixture_id": "upstream:testdata/config/valid/extend_rule_new.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend_rule_new.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateExtend/valid/extend_rule_no_regexpath",
+              "fixture_id": "upstream:testdata/config/valid/extend_rule_no_regexpath.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend_rule_no_regexpath.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateExtend/valid/extend_rule_override_description",
+              "fixture_id": "upstream:testdata/config/valid/extend_rule_override_description.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend_rule_override_description.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateExtend/valid/extend_rule_override_entropy",
+              "fixture_id": "upstream:testdata/config/valid/extend_rule_override_entropy.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend_rule_override_entropy.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateExtend/valid/extend_rule_override_keywords",
+              "fixture_id": "upstream:testdata/config/valid/extend_rule_override_keywords.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend_rule_override_keywords.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateExtend/valid/extend_rule_override_path",
+              "fixture_id": "upstream:testdata/config/valid/extend_rule_override_path.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend_rule_override_path.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateExtend/valid/extend_rule_override_regex",
+              "fixture_id": "upstream:testdata/config/valid/extend_rule_override_regex.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend_rule_override_regex.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateExtend/valid/extend_rule_override_secret_group",
+              "fixture_id": "upstream:testdata/config/valid/extend_rule_override_secret_group.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend_rule_override_secret_group.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslateExtend/valid/extend_rule_override_tags",
+              "fixture_id": "upstream:testdata/config/valid/extend_rule_override_tags.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/extend_rule_override_tags.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslate/valid/rule_entropy_group",
+              "fixture_id": "upstream:testdata/config/valid/rule_entropy_group.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/rule_entropy_group.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslate/valid/rule_path_only",
+              "fixture_id": "upstream:testdata/config/valid/rule_path_only.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/rule_path_only.toml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "config.TestTranslate/valid/rule_regex_escaped_character_group",
+              "fixture_id": "upstream:testdata/config/valid/rule_regex_escaped_character_group.toml",
+              "inventory_tests": [
+                "config.TestTranslate",
+                "config.TestTranslateAllowlists",
+                "config.TestTranslateExtend"
+              ],
+              "note": null,
+              "path": "testdata/config/valid/rule_regex_escaped_character_group.toml"
+            },
+            {
+              "evidence_kind": null,
+              "evidence_status": "UNMAPPED",
+              "evidence_test": null,
+              "fixture_id": "upstream:testdata/expected/git/small-branch-foo.txt",
+              "inventory_tests": [
+                "detect.TestFromGit"
+              ],
+              "note": "The only upstream reference is a commented-out test in sources/git_test.go.",
+              "path": "testdata/expected/git/small-branch-foo.txt"
+            },
+            {
+              "evidence_kind": null,
+              "evidence_status": "UNMAPPED",
+              "evidence_test": null,
+              "fixture_id": "upstream:testdata/expected/git/small.txt",
+              "inventory_tests": [
+                "detect.TestFromGit"
+              ],
+              "note": "The only upstream reference is a commented-out test in sources/git_test.go.",
+              "path": "testdata/expected/git/small.txt"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "report.TestWriteCSV/simple",
+              "fixture_id": "upstream:testdata/expected/report/csv_simple.csv",
+              "inventory_tests": [
+                "report.TestWriteJSON",
+                "report.TestWriteCSV",
+                "report.TestWriteJunit",
+                "report.TestWriteSarif",
+                "report.TestWriteTemplate"
+              ],
+              "note": null,
+              "path": "testdata/expected/report/csv_simple.csv"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "report.TestWriteJSON/empty",
+              "fixture_id": "upstream:testdata/expected/report/empty.json",
+              "inventory_tests": [
+                "report.TestWriteJSON",
+                "report.TestWriteCSV",
+                "report.TestWriteJunit",
+                "report.TestWriteSarif",
+                "report.TestWriteTemplate"
+              ],
+              "note": null,
+              "path": "testdata/expected/report/empty.json"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "report.TestWriteJSON/simple",
+              "fixture_id": "upstream:testdata/expected/report/json_simple.json",
+              "inventory_tests": [
+                "report.TestWriteJSON",
+                "report.TestWriteCSV",
+                "report.TestWriteJunit",
+                "report.TestWriteSarif",
+                "report.TestWriteTemplate"
+              ],
+              "note": null,
+              "path": "testdata/expected/report/json_simple.json"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "report.TestWriteJunit",
+              "fixture_id": "upstream:testdata/expected/report/junit_empty.xml",
+              "inventory_tests": [
+                "report.TestWriteJSON",
+                "report.TestWriteCSV",
+                "report.TestWriteJunit",
+                "report.TestWriteSarif",
+                "report.TestWriteTemplate"
+              ],
+              "note": null,
+              "path": "testdata/expected/report/junit_empty.xml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "report.TestWriteJunit",
+              "fixture_id": "upstream:testdata/expected/report/junit_simple.xml",
+              "inventory_tests": [
+                "report.TestWriteJSON",
+                "report.TestWriteCSV",
+                "report.TestWriteJunit",
+                "report.TestWriteSarif",
+                "report.TestWriteTemplate"
+              ],
+              "note": null,
+              "path": "testdata/expected/report/junit_simple.xml"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "report.TestWriteSarif/simple",
+              "fixture_id": "upstream:testdata/expected/report/sarif_simple.sarif",
+              "inventory_tests": [
+                "report.TestWriteJSON",
+                "report.TestWriteCSV",
+                "report.TestWriteJunit",
+                "report.TestWriteSarif",
+                "report.TestWriteTemplate"
+              ],
+              "note": null,
+              "path": "testdata/expected/report/sarif_simple.sarif"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "report.TestWriteTemplate/jsonextra",
+              "fixture_id": "upstream:testdata/expected/report/template_jsonextra.json",
+              "inventory_tests": [
+                "report.TestWriteJSON",
+                "report.TestWriteCSV",
+                "report.TestWriteJunit",
+                "report.TestWriteSarif",
+                "report.TestWriteTemplate"
+              ],
+              "note": null,
+              "path": "testdata/expected/report/template_jsonextra.json"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "report.TestWriteTemplate/markdown",
+              "fixture_id": "upstream:testdata/expected/report/template_markdown.md",
+              "inventory_tests": [
+                "report.TestWriteJSON",
+                "report.TestWriteCSV",
+                "report.TestWriteJunit",
+                "report.TestWriteSarif",
+                "report.TestWriteTemplate"
+              ],
+              "note": null,
+              "path": "testdata/expected/report/template_markdown.md"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "detect.TestNormalizeGitleaksIgnorePaths",
+              "fixture_id": "upstream:testdata/gitleaksignore/.windowspaths",
+              "inventory_tests": [
+                "detect.TestNormalizeGitleaksIgnorePaths"
+              ],
+              "note": null,
+              "path": "testdata/gitleaksignore/.windowspaths"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "report.TestWriteTemplate/jsonextra",
+              "fixture_id": "upstream:testdata/report/jsonextra.tmpl",
+              "inventory_tests": [
+                "report.TestWriteJSON",
+                "report.TestWriteCSV",
+                "report.TestWriteJunit",
+                "report.TestWriteSarif",
+                "report.TestWriteTemplate"
+              ],
+              "note": null,
+              "path": "testdata/report/jsonextra.tmpl"
+            },
+            {
+              "evidence_kind": "direct",
+              "evidence_status": "GO_TEST_VALIDATED",
+              "evidence_test": "report.TestWriteTemplate/markdown",
+              "fixture_id": "upstream:testdata/report/markdown.tmpl",
+              "inventory_tests": [
+                "report.TestWriteJSON",
+                "report.TestWriteCSV",
+                "report.TestWriteJunit",
+                "report.TestWriteSarif",
+                "report.TestWriteTemplate"
+              ],
+              "note": null,
+              "path": "testdata/report/markdown.tmpl"
+            },
+            {
+              "evidence_kind": "parent",
+              "evidence_status": "SKIPPED",
+              "evidence_test": "detect.TestFromGit",
+              "fixture_id": "upstream:testdata/repos/archives/README.md",
+              "inventory_tests": [
+                "detect.TestFromGit"
+              ],
+              "note": null,
+              "path": "testdata/repos/archives/README.md"
+            },
+            {
+              "evidence_kind": "parent",
+              "evidence_status": "SKIPPED",
+              "evidence_test": "detect.TestFromGit",
+              "fixture_id": "upstream:testdata/repos/archives/dotGit/HEAD",
+              "inventory_tests": [
+                "detect.TestFromGit"
+              ],
+              "note": null,
+              "path": "testdata/repos/archives/dotGit/HEAD"
+            },
+            {
+              "evidence_kind": "parent",
+              "evidence_status": "SKIPPED",
+              "evidence_test": "detect.TestFromGit",
+              "fixture_id": "upstream:testdata/repos/archives/dotGit/ORIG_HEAD",
+              "inventory_tests": [
+                "detect.TestFromGit"
+              ],
+              "note": null,
+              "path": "testdata/repos/archives/dotGit/ORIG_HEAD"
+            },
+            {
+              "evidence_kind": "parent",
+              "evidence_status": "SKIPPED",
+              "evidence_test": "detect.TestFromGit",
+              "fixture_id": "upstream:testdata/repos/archives/dotGit/config",
+              "inventory_tests": [
+                "detect.TestFromGit"
+              ],
+              "note": null,
+              "path": "testdata/repos/archives/dotGit/config"
+            },
+            {
+              "evidence_kind": "parent",
+              "evidence_status": "SKIPPED",
+              "evidence_test": "detect.TestFromGit",
+              "fixture_id": "upstream:testdata/repos/archives/dotGit/description",
+              "inventory_tests": [
+                "detect.TestFromGit"
+              ],
+              "note": null,
+              "path": "testdata/repos/archives/dotGit/description"
+            },
+            {
+              "evidence_kind": "parent",
+              "evidence_status": "SKIPPED",
+              "evidence_test": "detect.TestFromGit",
+              "fixture_id": "upstream:testdata/repos/archives/dotGit/index",
+              "inventory_tests": [
+                "detect.TestFromGit"
+              ],
+              "note": null,
+              "path": "testdata/repos/archives/dotGit/index"
+            },
+            {
+              "evidence_kind": "parent",
+              "evidence_status": "SKIPPED",
+              "evidence_test": "detect.TestFromGit",
+              "fixture_id": "upstream:testdata/repos/archives/dotGit/info/exclude",
+              "inventory_tests": [
+                "detect.TestFromGit"
+              ],
+              "note": null,
+              "path": "testdata/repos/archives/dotGit/info/exclude"
+            },
+            {
+              "evidence_kind": "parent",
+              "evidence_status": "SKIPPED",
+              "evidence_test": "detect.TestFromGit",
+              "fixture_id": "upstream:testdata/repos/archives/dotGit/info/refs",
+              "inventory_tests": [
+                "detect.TestFromGit"
+              ],
+              "note": null,
+              "path": "testdata/repos/archives/dotGit/info/refs"
+            },
+            {
+              "evidence_kind": "parent",
+              "evidence_status": "SKIPPED",
+              "evidence_test": "detect.TestFromGit",
+              "fixture_id": "upstream:testdata/repos/archives/dotGit/objects/info/commit-graph",
+              "inventory_tests": [
+                "detect.TestFromGit"
+              ],
+              "note": null,
+              "path": "testdata/repos/archives/dotGit/objects/info/commit-graph"
+            },
+            {
+              "evidence_kind": "parent",
+              "evidence_status": "SKIPPED",
+              "evidence_test": "detect.TestFromGit",
+              "fixture_id": "upstream:testdata/repos/archives/dotGit/objects/info/packs",
+              "inventory_tests": [
+                "detect.TestFromGit"
+              ],
+              "note": null,
+              "path": "testdata/repos/archives/dotGit/objects/info/packs"
+            },
+            {
+              "evidence_kind": "parent",
+              "evidence_status": "SKIPPED",
+              "evidence_test": "detect.TestFromGit",
+              "fixture_id": "upstream:testdata/repos/archives/dotGit/objects/pack/pack-9d774732f0e985d717a26e126e6574d089375b0d.idx",
+              "inventory_tests": [
+                "detect.TestFromGit"
+              ],
+              "note": null,
+              "path": "testdata/repos/archives/dotGit/objects/pack/pack-9d774732f0e985d717a26e126e6574d089375b0d.idx"
+            },
+            {
+              "evidence_kind": "parent",
+              "evidence_status": "SKIPPED",
+              "evidence_test": "detect.TestFromGit",
+              "fixture_id": "upstream:testdata/repos/archives/dotGit/objects/pack/pack-9d774732f0e985d717a26e126e6574d089375b0d.pack",
+              "inventory_tests": [
+                "detect.TestFromGit"
+              ],
+              "note": null,
+              "path": "testdata/repos/archives/dotGit/objects/pack/pack-9d774732f0e985d717a26e126e6574d089375b0d.pack"
+            },
+            {
+              "evidence_kind": "parent",
+              "evidence_status": "SKIPPED",
+              "evidence_test": "detect.TestFromGit",
+              "fixture_id": "upstream:testdata/repos/archives/dotGit/objects/pack/pack-9d774732f0e985d717a26e126e6574d089375b0d.rev",
+              "inventory_tests": [
+                "detect.TestFromGit"
+              ],
+              "note": null,
+              "path": "testdata/repos/archives/dotGit/objects/pack/pack-9d774732f0e985d717a26e126e6574d089375b0d.rev"
+            },
+            {
+              "evidence_kind": "parent",
+              "evidence_status": "SKIPPED",
+              "evidence_test": "detect.TestFromGit",
+              "fixture_id": "upstream:testdata/repos/archives/dotGit/packed-refs",
+              "inventory_tests": [
+                "detect.TestFromGit"
+              ],
+              "note": null,
+              "path": "testdata/repos/archives/dotGit/packed-refs"
+            },
+            {
+              "evidence_kind": "parent",
+              "evidence_status": "SKIPPED",
+              "evidence_test": "detect.TestFromGit",
+              "fixture_id": "upstream:testdata/repos/archives/dotGit/refs/.gitkeep",
+              "inventory_tests": [
+                "detect.TestFromGit"
+              ],
+              "note": null,
+              "path": "testdata/repos/archives/dotGit/refs/.gitkeep"
+            },
+            {
+              "evidence_kind": "parent",
+              "evidence_status": "SKIPPED",
+              "evidence_test": "detect.TestFromGit",
+              "fixture_id": "upstream:testdata/repos/archives/main.go.zst",
+              "inventory_tests": [
+                "detect.TestFromGit"
+              ],
+              "note": null,
+              "path": "testdata/repos/archives/main.go.zst"
+            }
+          ],
+          "coverage_complete": false,
+          "direct_contracts": 49,
+          "failed_contracts": 0,
+          "indirect_contracts": 6,
+          "inventory_aliases": {
+            "detect.TestLoadBaseline": "detect.TestFileLoadBaseline"
+          },
+          "mapped_contracts": 71,
+          "notes": [
+            "Only named Go tests or subtests observed in this run are credited.",
+            "Package-level pass events are not used as fixture evidence.",
+            "Indirect extension-base contracts are credited only through the named parent test that loads them."
+          ],
+          "parent_contracts": 16,
+          "skipped_contracts": 16,
+          "status": "NOT_RUN",
+          "total_contracts": 75,
+          "unmapped_contracts": 4,
+          "validated_contracts": 55
+        },
+        "go_tests": {
+          "command": [
+            "go",
+            "test",
+            "-mod=readonly",
+            "-json",
+            "./..."
+          ],
+          "duration_seconds": 2.606,
+          "error": null,
+          "exit_code": 0,
+          "failed_tests": [],
+          "packages_failed": 0,
+          "packages_passed": 7,
+          "status": "PASS",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_sha256": "45d92f6d25a69ac1f7cad4be35db001af292b00ce93b02e2b99ccc6eadd03364",
+          "tests_failed": 0,
+          "tests_passed": 270,
+          "tests_skipped": 2
+        }
+      },
+      "key": "go",
+      "limitations": [
+        "4 INTERNAL_GO contracts are unmapped; 16 mapped contracts were skipped."
+      ],
+      "metrics": {
+        "internal_go_mapped": 71,
+        "internal_go_skipped": 16,
+        "internal_go_total": 75,
+        "internal_go_unmapped": 4,
+        "internal_go_validated": 55,
+        "packages_failed": 0,
+        "packages_passed": 7,
+        "tests_failed": 0,
+        "tests_passed": 270,
+        "tests_skipped": 2
+      },
+      "reason": null,
+      "status": "PASS",
+      "summary": {
+        "evidence_status": "NOT_RUN"
+      },
+      "targets": {
+        "source": {
+          "reason": null,
+          "status": "PASS",
+          "tests_failed": 0,
+          "tests_passed": 270
+        }
+      },
+      "title": "Branch Go tests and fixture evidence"
+    }
+  },
+  "summary": {
+    "builds": {
+      "darwin-amd64": "PASS",
+      "darwin-arm64": "PASS",
+      "docker-linux-amd64": "PASS",
+      "docker-linux-arm64": "PASS",
+      "linux-amd64": "PASS",
+      "linux-arm64": "PASS",
+      "windows-amd64": "PASS"
+    },
+    "counts": {
+      "blocked": 0,
+      "fail": 0,
+      "not_applicable": 0,
+      "not_run": 0,
+      "pass": 1
+    },
+    "coverage_complete": false,
+    "matrix_status": "PASS",
+    "overall": "COMPLETE_WITH_LIMITATIONS",
+    "suites": {
+      "go": "PASS"
+    },
+    "tested_platforms": [
+      "source"
+    ]
+  }
+}

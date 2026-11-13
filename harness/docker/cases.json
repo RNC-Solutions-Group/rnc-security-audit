@@ -1,0 +1,428 @@
+{
+  "manifest_version": 2,
+  "description": "Curated container acceptance cases backed by upstream regression expectations and one explicitly synthetic format corpus.",
+  "limitations": [
+    "The Docker acceptance manifest is curated; 75 fixtures have named upstream Go-test contracts that are recorded separately and are not claimed as executed by these runs.",
+    "CLI archive scenarios cover ordinary/compressed files, TAR, 7z, tar.xz, tar.zst, ZIP, and 15 nested archive members; archive-bearing Git history remains INTERNAL_GO.",
+    "Git staged-diff behavior is exercised through detect.TestFromGitStaged expectations; the complete configuration translation matrix remains INTERNAL_GO.",
+    "Symlink testing requires the Docker helper image alpine:3.24; if it cannot be made available, that required fixture is reported UNSUPPORTED rather than passed.",
+    "testdata/repos/nogit/api.go contains the same AWS finding as main.go, but the upstream fingerprint in .gitleaksignore suppresses api.go. Relative in-container paths preserve that fingerprint and main.go remains the positive control.",
+    "The small Git fixtures contain stale origin/main remote-tracking metadata. Only those remote refs are removed from disposable staged copies; upstream fixture data and commit objects are unchanged.",
+    "These runs use Windows 11 with Docker Desktop/WSL2 Linux containers. Native Linux Docker Engine validation remains a separate follow-up; the harness does not build the Gitleaks image."
+  ],
+  "inventory": [
+    {"glob": "testdata/repos/nogit/main.go", "root": "repo", "disposition": "COVERED", "reason": "Positive file-scan expectation is verified in detect.TestFromFiles.", "tests": ["nogit-positive", "ignorefile-api-suppression"]},
+    {"glob": "testdata/repos/nogit/api.go", "root": "repo", "disposition": "COVERED", "reason": "The AWS finding is suppressed by the fixture's fingerprint entry, as verified by detect.TestFromFiles.", "tests": ["ignorefile-api-suppression"]},
+    {"glob": "testdata/repos/nogit/.env.prod", "root": "repo", "disposition": "COVERED", "reason": "Hidden environment-file expectation and config allowlist are verified against upstream fixture tests.", "tests": ["hidden-env", "allowlist-path"]},
+    {"glob": "testdata/repos/nogit/.gitleaksignore", "root": "repo", "disposition": "COVERED", "reason": "Its api.go fingerprint is loaded by the CLI ignore-suppression scenario and asserted against both positive and forbidden findings.", "tests": ["ignorefile-api-suppression"]},
+    {"glob": "testdata/repos/small/**", "root": "repo", "disposition": "COVERED", "reason": "Read-only staged copies support full history plus independently filtered per-file Git assertions from detect.TestFromGit.", "tests": ["git-history", "git-api-clean", "git-ignore-global", "git-ignore-commit", "git-readme-clean"], "scenario_fixtures": {"testdata/repos/small/main.go": ["git-history"], "testdata/repos/small/api/api.go": ["git-api-clean"], "testdata/repos/small/api/ignoreGlobal.go": ["git-ignore-global"], "testdata/repos/small/api/ignoreCommit.go": ["git-ignore-commit"], "testdata/repos/small/README.md": ["git-readme-clean"]}},
+    {"glob": "testdata/repos/archives/**", "root": "repo", "disposition": "INTERNAL GO TEST ONLY", "reason": "Git history containing archive cases is asserted by detect.TestFromGit; this harness does not yet include its larger archive-history matrix.", "tests": []},
+    {"glob": "testdata/repos/staged/**", "root": "repo", "disposition": "COVERED", "reason": "The staged Git CLI case asserts the one expected staged API finding from detect.TestFromGitStaged.", "tests": ["git-staged"]},
+    {"glob": "testdata/repos/symlinks/**", "root": "repo", "disposition": "COVERED", "reason": "The CLI case checks --follow-symlinks; host symlink availability is evaluated per run.", "tests": ["symlink-file"]},
+    {"glob": "testdata/archives/files/**", "root": "repo", "disposition": "COVERED", "reason": "Plain and compressed file expectations are verified in detect.TestDetectWithArchives.", "tests": ["archive-directory"]},
+    {"glob": "testdata/archives/files.tar", "root": "repo", "disposition": "COVERED", "reason": "Two archive member findings are verified in detect.TestDetectWithArchives.", "tests": ["archive-tar"]},
+    {"glob": "testdata/archives/files.7z", "root": "repo", "disposition": "COVERED", "reason": "Two archive-member findings are asserted in detect.TestDetectWithArchives.", "tests": ["archive-7z"]},
+    {"glob": "testdata/archives/files.tar.xz", "root": "repo", "disposition": "COVERED", "reason": "Two archive-member findings are asserted in detect.TestDetectWithArchives.", "tests": ["archive-tar-xz"]},
+    {"glob": "testdata/archives/files.tar.zst", "root": "repo", "disposition": "COVERED", "reason": "Two archive-member findings are asserted in detect.TestDetectWithArchives.", "tests": ["archive-tar-zstd"]},
+    {"glob": "testdata/archives/files.zip", "root": "repo", "disposition": "COVERED", "reason": "Two archive-member findings are asserted in detect.TestDetectWithArchives.", "tests": ["archive-zip"]},
+    {"glob": "testdata/archives/nested.tar.gz", "root": "repo", "disposition": "COVERED", "reason": "Fifteen nested and compressed member findings are asserted in detect.TestDetectWithArchives.", "tests": ["archive-nested"]},
+    {"glob": "testdata/config/simple.toml", "root": "repo", "disposition": "COVERED", "reason": "Explicit CLI rule selection and positive/negative file scans.", "tests": ["nogit-positive", "ignorefile-api-suppression", "git-history", "symlink-file", "formats"]},
+    {"glob": "testdata/config/generic.toml", "root": "repo", "disposition": "COVERED", "reason": "CLI scan of the existing hidden .env.prod fixture.", "tests": ["hidden-env"]},
+    {"glob": "testdata/config/generic_with_py_path.toml", "root": "repo", "disposition": "INTERNAL GO TEST ONLY", "reason": "Path-sensitive generic-rule behavior is asserted using in-memory fragments in detect.TestDetect.", "tests": []},
+    {"glob": "testdata/config/archives.toml", "root": "repo", "disposition": "COVERED", "reason": "CLI archive traversal and path allowlist cases.", "tests": ["archive-directory", "archive-tar", "allowlist-path"]},
+    {"glob": "testdata/config/encoded.toml", "root": "repo", "disposition": "COVERED", "reason": "CLI scan of a minimal base64-encoded private-key value adapted from detect_test.go.", "tests": ["encoded-private-key"]},
+    {"glob": "testdata/config/composite.toml", "root": "repo", "disposition": "INTERNAL GO TEST ONLY", "reason": "Composite multi-rule behavior is asserted through in-memory Go fragments.", "tests": []},
+    {"glob": "testdata/config/invalid/**", "root": "repo", "disposition": "INTERNAL GO TEST ONLY", "reason": "The Go suite checks detailed translation errors; most invalid configs are not separate CLI acceptance cases.", "tests": []},
+    {"glob": "testdata/config/invalid/allowlist_global_empty.toml", "root": "repo", "override": true, "disposition": "COVERED", "reason": "The empty global allowlist config is explicitly rejected by the CLI in invalid-config.", "tests": ["invalid-config"]},
+    {"glob": "testdata/config/valid/**", "root": "repo", "disposition": "INTERNAL GO TEST ONLY", "reason": "Config translation and extension expectations depend on internal Go assertions.", "tests": []},
+    {"glob": "testdata/baseline/**", "root": "repo", "disposition": "INTERNAL GO TEST ONLY", "reason": "Baseline matching and format parsing are package-level tests.", "tests": []},
+    {"glob": "testdata/expected/**", "root": "repo", "disposition": "INTERNAL GO TEST ONLY", "reason": "Expected report snapshots validate Go report writers; they are not CLI findings manifests.", "tests": []},
+    {"glob": "testdata/report/**", "root": "repo", "disposition": "INTERNAL GO TEST ONLY", "reason": "Custom template rendering is asserted by report package tests.", "tests": []},
+    {"glob": "testdata/gitleaksignore/**", "root": "repo", "disposition": "INTERNAL GO TEST ONLY", "reason": "Windows path normalization fixture is exercised by a detector unit test.", "tests": []},
+    {"glob": "fixtures/formats/**", "root": "build", "disposition": "COVERED", "reason": "Synthetic common-format and hidden-directory inputs use the verified upstream AWS rule.", "tests": ["formats"]},
+    {"glob": "fixtures/encoded.txt", "root": "build", "disposition": "COVERED", "reason": "Minimal encoded-value fixture adapted from detect_test.go; contains synthetic key material only.", "tests": ["encoded-private-key"]},
+    {"glob": "fixtures/clean/**", "root": "build", "disposition": "COVERED", "reason": "Synthetic clean input validates the no-finding exit code with trace-level traversal evidence.", "tests": ["clean-negative"]},
+    {"glob": "fixtures/baseline/baseline.json", "root": "build", "disposition": "COVERED", "reason": "Synthetic baseline report uses the independently asserted AWS finding fields from detect.TestFromFiles.", "tests": ["baseline-suppression"]}
+  ],
+  "cases": [
+    {
+      "id": "nogit-positive",
+      "scenario_group": "files",
+      "name": "Known AWS key in a plain source file",
+      "fixture": "testdata/repos/nogit/main.go",
+      "source": "testdata/repos/nogit/main.go",
+      "command": "dir",
+      "config": "testdata/config/simple.toml",
+      "options": [["--enable-rule", "aws-access-key"]],
+      "expectation": "One aws-access-key finding at line 20; exit 1.",
+      "expected_exit_code": 1,
+      "expected_findings": [
+        {"rule_id": "aws-access-key", "file": "testdata/repos/nogit/main.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"}
+      ]
+    },
+    {
+      "id": "ignorefile-api-suppression",
+      "scenario_group": "files",
+      "name": "Ignore fingerprint suppresses API fixture finding",
+      "fixture": "testdata/repos/nogit/api.go",
+      "source": "testdata/repos/nogit",
+      "relative_source": true,
+      "gitleaks_ignore_path": "testdata/repos/nogit",
+      "command": "dir",
+      "config": "testdata/config/simple.toml",
+      "options": [["--enable-rule", "aws-access-key"]],
+      "expectation": "One finding from main.go remains; the fixture's api.go fingerprint is suppressed; exit 1, as asserted in detect.TestFromFiles.",
+      "expected_exit_code": 1,
+      "expected_findings": [
+        {"rule_id": "aws-access-key", "file": "testdata/repos/nogit/main.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"}
+      ],
+      "forbidden_findings": [
+        {"rule_id": "aws-access-key", "file": "testdata/repos/nogit/api.go"}
+      ]
+    },
+    {
+      "id": "hidden-env",
+      "scenario_group": "files",
+      "name": "Hidden environment file with generic key",
+      "fixture": "testdata/repos/nogit/.env.prod",
+      "source": "testdata/repos/nogit/.env.prod",
+      "command": "dir",
+      "config": "testdata/config/generic.toml",
+      "options": [],
+      "expectation": "One generic-api-key finding at line 4; exit 1, based on detect.TestFromFiles.",
+      "expected_exit_code": 1,
+      "expected_findings": [
+        {"rule_id": "generic-api-key", "file": "testdata/repos/nogit/.env.prod", "start_line": 4, "secret_sha256": "1960a9ab0a36b0052ee75204a904d1a84ab6760be1deceebc521c78834e65ad8"}
+      ]
+    },
+    {
+      "id": "formats",
+      "scenario_group": "files",
+      "name": "Common formats, nested paths, and hidden directory",
+      "fixture": "fixtures/formats/",
+      "source": "fixtures/formats",
+      "command": "dir",
+      "config": "testdata/config/simple.toml",
+      "options": [["--enable-rule", "aws-access-key"]],
+      "expectation": "One known AWS finding in each synthetic text/config format; exit 1.",
+      "expected_exit_code": 1,
+      "expected_findings": [
+        {"rule_id": "aws-access-key", "file": "local/formats/.private/credentials.ini", "start_line": 1, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "local/formats/app.json", "start_line": 1, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "local/formats/app.yaml", "start_line": 1, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "local/formats/settings.properties", "start_line": 1, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "local/formats/start.sh", "start_line": 2, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"}
+      ]
+    },
+    {
+      "id": "clean-negative",
+      "scenario_group": "files",
+      "name": "Synthetic clean text file",
+      "fixture": "fixtures/clean/clean.txt",
+      "source": "fixtures/clean/clean.txt",
+      "command": "dir",
+      "config": "testdata/config/simple.toml",
+      "options": [["--enable-rule", "aws-access-key"], ["--log-level", "trace"]],
+      "assert_stderr_contains": ["scanning path path=/rnc/local/clean/clean.txt"],
+      "expectation": "No findings; exit 0.",
+      "expected_exit_code": 0,
+      "expected_findings": []
+    },
+    {
+      "id": "archive-directory",
+      "scenario_group": "archives",
+      "name": "Compressed and ordinary files in archive fixture directory",
+      "fixture": "testdata/archives/files/",
+      "source": "testdata/archives/files",
+      "command": "dir",
+      "config": "testdata/config/archives.toml",
+      "options": [["--max-archive-depth", "8"]],
+      "expectation": "Five aws-access-key findings across ordinary and compressed files, from detect.TestDetectWithArchives.",
+      "expected_exit_code": 1,
+      "expected_findings": [
+        {"rule_id": "aws-access-key", "file": "testdata/archives/files/api.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/files/main.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/files/main.go.gz", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/files/main.go.xz", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/files/main.go.zst", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"}
+      ],
+      "forbidden_findings": [
+        {"rule_id": "password", "file": "testdata/archives/files/.env.prod"}
+      ]
+    },
+    {
+      "id": "archive-tar",
+      "scenario_group": "archives",
+      "name": "Tar archive member detection",
+      "fixture": "testdata/archives/files.tar",
+      "source": "testdata/archives/files.tar",
+      "command": "dir",
+      "config": "testdata/config/archives.toml",
+      "options": [["--max-archive-depth", "2"]],
+      "expectation": "Two aws-access-key findings in archive members, from detect.TestDetectWithArchives.",
+      "expected_exit_code": 1,
+      "expected_findings": [
+        {"rule_id": "aws-access-key", "file": "testdata/archives/files.tar!files/api.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/files.tar!files/main.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"}
+      ]
+    },
+    {
+      "id": "archive-7z",
+      "scenario_group": "archives",
+      "name": "7z archive member detection",
+      "fixture": "testdata/archives/files.7z",
+      "source": "testdata/archives/files.7z",
+      "command": "dir",
+      "config": "testdata/config/archives.toml",
+      "options": [["--max-archive-depth", "2"]],
+      "expectation": "Two AWS findings in the .7z members, from detect.TestDetectWithArchives.",
+      "expected_exit_code": 1,
+      "expected_findings": [
+        {"rule_id": "aws-access-key", "file": "testdata/archives/files.7z!files/api.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/files.7z!files/main.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"}
+      ]
+    },
+    {
+      "id": "archive-tar-xz",
+      "scenario_group": "archives",
+      "name": "tar.xz archive member detection",
+      "fixture": "testdata/archives/files.tar.xz",
+      "source": "testdata/archives/files.tar.xz",
+      "command": "dir",
+      "config": "testdata/config/archives.toml",
+      "options": [["--max-archive-depth", "2"]],
+      "expectation": "Two AWS findings in the tar.xz members, from detect.TestDetectWithArchives.",
+      "expected_exit_code": 1,
+      "expected_findings": [
+        {"rule_id": "aws-access-key", "file": "testdata/archives/files.tar.xz!files/api.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/files.tar.xz!files/main.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"}
+      ]
+    },
+    {
+      "id": "archive-tar-zstd",
+      "scenario_group": "archives",
+      "name": "tar.zst archive member detection",
+      "fixture": "testdata/archives/files.tar.zst",
+      "source": "testdata/archives/files.tar.zst",
+      "command": "dir",
+      "config": "testdata/config/archives.toml",
+      "options": [["--max-archive-depth", "2"]],
+      "expectation": "Two AWS findings in the tar.zst members, from detect.TestDetectWithArchives.",
+      "expected_exit_code": 1,
+      "expected_findings": [
+        {"rule_id": "aws-access-key", "file": "testdata/archives/files.tar.zst!files/api.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/files.tar.zst!files/main.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"}
+      ]
+    },
+    {
+      "id": "archive-zip",
+      "scenario_group": "archives",
+      "name": "ZIP archive member detection",
+      "fixture": "testdata/archives/files.zip",
+      "source": "testdata/archives/files.zip",
+      "command": "dir",
+      "config": "testdata/config/archives.toml",
+      "options": [["--max-archive-depth", "2"]],
+      "expectation": "Two AWS findings in ZIP members, from detect.TestDetectWithArchives.",
+      "expected_exit_code": 1,
+      "expected_findings": [
+        {"rule_id": "aws-access-key", "file": "testdata/archives/files.zip!files/api.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/files.zip!files/main.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"}
+      ]
+    },
+    {
+      "id": "archive-nested",
+      "scenario_group": "archives",
+      "name": "Nested archive and compression matrix",
+      "fixture": "testdata/archives/nested.tar.gz",
+      "source": "testdata/archives/nested.tar.gz",
+      "command": "dir",
+      "config": "testdata/config/archives.toml",
+      "options": [["--max-archive-depth", "8"]],
+      "expectation": "Fifteen AWS findings across nested tar, ZIP, 7z, zstd, gzip, xz, and plain members, from detect.TestDetectWithArchives.",
+      "expected_exit_code": 1,
+      "expected_findings": [
+        {"rule_id": "aws-access-key", "file": "testdata/archives/nested.tar.gz!archives/files.tar!files/api.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/nested.tar.gz!archives/files.tar!files/main.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/nested.tar.gz!archives/files.zip!files/api.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/nested.tar.gz!archives/files.zip!files/main.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/nested.tar.gz!archives/files.7z!files/api.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/nested.tar.gz!archives/files.7z!files/main.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/nested.tar.gz!archives/files.tar.zst!files/api.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/nested.tar.gz!archives/files.tar.zst!files/main.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/nested.tar.gz!archives/files/api.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/nested.tar.gz!archives/files/main.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/nested.tar.gz!archives/files/main.go.xz", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/nested.tar.gz!archives/files/main.go.zst", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/nested.tar.gz!archives/files/main.go.gz", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/nested.tar.gz!archives/files.tar.xz!files/api.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "testdata/archives/nested.tar.gz!archives/files.tar.xz!files/main.go", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"}
+      ]
+    },
+    {
+      "id": "allowlist-path",
+      "scenario_group": "configuration",
+      "name": "Archive config path allowlist suppresses .env finding",
+      "fixture": "testdata/repos/nogit/.env.prod",
+      "source": "testdata/repos/nogit/.env.prod",
+      "command": "dir",
+      "config": "testdata/config/archives.toml",
+      "options": [],
+      "expectation": "No findings; archives config globally allowlists .env.prod.",
+      "expected_exit_code": 0,
+      "expected_findings": []
+    },
+    {
+      "id": "encoded-private-key",
+      "scenario_group": "files",
+      "name": "Encoded private key value",
+      "fixture": "fixtures/encoded.txt",
+      "source": "fixtures/encoded.txt",
+      "command": "dir",
+      "config": "testdata/config/encoded.toml",
+      "options": [["--enable-rule", "private-key"]],
+      "expectation": "A decoded private-key rule finding; exit 1, adapted from detect.TestDetect encoded cases.",
+      "expected_exit_code": 1,
+      "expected_findings": [
+        {"rule_id": "private-key", "file": "local/encoded.txt"}
+      ]
+    },
+    {
+      "id": "baseline-suppression",
+      "scenario_group": "configuration",
+      "name": "Explicit baseline suppresses a known finding",
+      "fixture": "testdata/repos/nogit/main.go",
+      "source": "testdata/repos/nogit/main.go",
+      "relative_source": true,
+      "baseline_path": "fixtures/baseline/baseline.json",
+      "command": "dir",
+      "config": "testdata/config/simple.toml",
+      "options": [["--enable-rule", "aws-access-key"]],
+      "expectation": "The upstream-asserted main.go AWS finding is ignored by an independently specified JSON baseline; exit 0.",
+      "expected_exit_code": 0,
+      "expected_findings": []
+    },
+    {
+      "id": "git-history",
+      "scenario_group": "git",
+      "name": "Committed Git history scan",
+      "fixture": "testdata/repos/small/",
+      "source": "testdata/repos/small",
+      "prepare_git_copy": true,
+      "command": "git",
+      "config": "testdata/config/simple.toml",
+      "options": [],
+      "expectation": "Two AWS findings at the upstream-asserted commits and paths; exit 1.",
+      "expected_exit_code": 1,
+      "expected_findings": [
+        {"rule_id": "aws-access-key", "file": "main.go", "fixture_id": "upstream:testdata/repos/small/main.go", "commit": "1b6da43b82b22e4eaa10bcf8ee591e91abbfc587", "start_line": 20, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"},
+        {"rule_id": "aws-access-key", "file": "foo/foo.go", "commit": "491504d5a31946ce75e22554cc34203d8e5ff3ca", "start_line": 9, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"}
+      ]
+    },
+    {
+      "id": "git-staged",
+      "scenario_group": "git",
+      "name": "Staged Git diff detection",
+      "fixture": "testdata/repos/staged/",
+      "source": "testdata/repos/staged",
+      "prepare_git_copy": true,
+      "command": "git",
+      "config": "testdata/config/simple.toml",
+      "options": [["--staged"]],
+      "expectation": "One staged AWS finding in api/api.go line 7, as asserted in detect.TestFromGitStaged.",
+      "expected_exit_code": 1,
+      "expected_findings": [
+        {"rule_id": "aws-access-key", "file": "api/api.go", "fixture_id": "upstream:testdata/repos/staged/api/api.go", "start_line": 7, "secret_sha256": "a833f87ec2d3eac383f36705e94cb9e080ef98a3c7f199f85ffd9290cf964716"}
+      ]
+    },
+    {
+      "id": "git-api-clean",
+      "scenario_group": "git",
+      "name": "Clean API file traversed in Git history",
+      "fixture": "testdata/repos/small/api/api.go",
+      "source": "testdata/repos/small",
+      "prepare_git_copy": true,
+      "command": "git",
+      "config": "testdata/config/simple.toml",
+      "options": [["--log-opts", "--all -- api/api.go"], ["--enable-rule", "aws-access-key"], ["--log-level", "trace"]],
+      "assert_stderr_contains": ["-- api/api.go", "1 commits scanned."],
+      "expectation": "The Git CLI scans the one API-file commit and finds no AWS key; zero findings are paired with path-filter and commit-scan evidence.",
+      "expected_exit_code": 0,
+      "expected_findings": []
+    },
+    {
+      "id": "git-ignore-global",
+      "scenario_group": "git",
+      "name": "Global fingerprint suppresses ignoreGlobal.go",
+      "fixture": "testdata/repos/small/api/ignoreGlobal.go",
+      "source": "testdata/repos/small",
+      "prepare_git_copy": true,
+      "command": "git",
+      "config": "testdata/config/simple.toml",
+      "options": [["--log-opts", "--all -- api/ignoreGlobal.go"], ["--enable-rule", "aws-access-key"], ["--log-level", "trace"]],
+      "assert_stderr_contains": ["skipping finding: global fingerprint", "api/ignoreGlobal.go:aws-access-key:20", "1 commits scanned."],
+      "expectation": "The key-shaped value is explicitly suppressed by the fixture path fingerprint and the filtered Git commit is scanned.",
+      "expected_exit_code": 0,
+      "expected_findings": []
+    },
+    {
+      "id": "git-ignore-commit",
+      "scenario_group": "git",
+      "name": "Commit fingerprint suppresses ignoreCommit.go",
+      "fixture": "testdata/repos/small/api/ignoreCommit.go",
+      "source": "testdata/repos/small",
+      "prepare_git_copy": true,
+      "command": "git",
+      "config": "testdata/config/simple.toml",
+      "options": [["--log-opts", "--all -- api/ignoreCommit.go"], ["--enable-rule", "aws-access-key"], ["--log-level", "trace"]],
+      "assert_stderr_contains": ["skipping finding: fingerprint", "53cd7a3c6eb4937f413e3c25e4a9f39289afa69e:api/ignoreCommit.go:aws-access-key:20", "1 commits scanned."],
+      "expectation": "The key-shaped value is explicitly suppressed only for the fixture's known commit fingerprint; the filtered Git commit is scanned.",
+      "expected_exit_code": 0,
+      "expected_findings": []
+    },
+    {
+      "id": "git-readme-clean",
+      "scenario_group": "git",
+      "name": "README documentation traversed in Git history",
+      "fixture": "testdata/repos/small/README.md",
+      "source": "testdata/repos/small",
+      "prepare_git_copy": true,
+      "command": "git",
+      "config": "testdata/config/simple.toml",
+      "options": [["--log-opts", "--all -- README.md"], ["--enable-rule", "aws-access-key"], ["--log-level", "trace"]],
+      "assert_stderr_contains": ["-- README.md", "1 commits scanned."],
+      "expectation": "The Git CLI scans the README commit and finds no AWS key; zero findings are paired with path-filter and commit-scan evidence.",
+      "expected_exit_code": 0,
+      "expected_findings": []
+    },
+    {
+      "id": "symlink-file",
+      "scenario_group": "symlinks",
+      "name": "Follow symlink to private-key fixture",
+      "fixture": "testdata/repos/symlinks/",
+      "source": "testdata/repos/symlinks/file_symlink",
+      "symlink_path": "repos/symlinks/file_symlink/symlinked_id_ed25519",
+      "requires_linux_symlink": true,
+      "command": "dir",
+      "config": "testdata/config/simple.toml",
+      "options": [["--follow-symlinks"], ["--enable-rule", "apkey"]],
+      "expectation": "One apkey finding through the verified relative symlink, as asserted in detect.TestDetectWithSymlinks.",
+      "expected_exit_code": 1,
+      "expected_findings": [
+        {"rule_id": "apkey", "file": "testdata/repos/symlinks/source_file/id_ed25519", "symlink_file": "testdata/repos/symlinks/file_symlink/symlinked_id_ed25519"}
+      ]
+    },
+    {
+      "id": "invalid-config",
+      "scenario_group": "configuration",
+      "name": "Invalid config is rejected by CLI",
+      "fixture": "testdata/config/invalid/allowlist_global_empty.toml",
+      "source": "testdata/repos/nogit/api.go",
+      "command": "dir",
+      "config": "testdata/config/invalid/allowlist_global_empty.toml",
+      "expectation": "Exit 1 and the verified invalid-empty-allowlist diagnostic; no report is expected.",
+      "expected_exit_code": 1,
+      "expect_config_error": "[[allowlists]] must contain at least one check for: commits, paths, regexes, or stopwords"
+    }
+  ]
+}

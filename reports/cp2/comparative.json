@@ -1,0 +1,1044 @@
+{
+  "capability_matrix": {
+    "betterleaks": {
+      "git-history": "PASS",
+      "gitleaks": "NOT_APPLICABLE",
+      "leaky-repo": "PASS",
+      "levain": "PASS",
+      "synthetic-filesystem": "PASS"
+    },
+    "gitleaks": {
+      "git-history": "PASS",
+      "gitleaks": "PASS",
+      "leaky-repo": "PASS",
+      "levain": "PASS",
+      "synthetic-filesystem": "PASS"
+    }
+  },
+  "compact": true,
+  "compaction": {
+    "exception_limit": 20,
+    "omitted": [
+      "rich evaluations",
+      "per-finding history dumps",
+      "full fixture tests/assertions"
+    ]
+  },
+  "cross_scanner": {
+    "git-history": {
+      "expected_count": 5,
+      "pairwise": {
+        "gitleaks_vs_betterleaks": {
+          "both": [
+            "rnc-synthetic-history:occ-alpha-c1",
+            "rnc-synthetic-history:occ-alpha-c2",
+            "rnc-synthetic-history:occ-beta-c3a",
+            "rnc-synthetic-history:occ-beta-c3b",
+            "rnc-synthetic-history:occ-gamma-c4"
+          ],
+          "left_only": [],
+          "right_only": [],
+          "summary": "0 only gitleaks; 0 only betterleaks; 5 both"
+        }
+      },
+      "scanners": {
+        "betterleaks": {
+          "duplicates": 0,
+          "expected": 5,
+          "found_ids": [
+            "rnc-synthetic-history:occ-alpha-c1",
+            "rnc-synthetic-history:occ-alpha-c2",
+            "rnc-synthetic-history:occ-beta-c3a",
+            "rnc-synthetic-history:occ-beta-c3b",
+            "rnc-synthetic-history:occ-gamma-c4"
+          ],
+          "matched": 5,
+          "missed": 0,
+          "missed_ids": [],
+          "recall_percent": 100.0,
+          "unexpected": 0
+        },
+        "gitleaks": {
+          "duplicates": 0,
+          "expected": 5,
+          "found_ids": [
+            "rnc-synthetic-history:occ-alpha-c1",
+            "rnc-synthetic-history:occ-alpha-c2",
+            "rnc-synthetic-history:occ-beta-c3a",
+            "rnc-synthetic-history:occ-beta-c3b",
+            "rnc-synthetic-history:occ-gamma-c4"
+          ],
+          "matched": 5,
+          "missed": 0,
+          "missed_ids": [],
+          "recall_percent": 100.0,
+          "unexpected": 0
+        }
+      }
+    },
+    "leaky-repo": {
+      "expected_count": 175,
+      "pairwise": {
+        "gitleaks_vs_betterleaks": {
+          "both": [
+            "leaky-repo:.bash_profile:12:risk",
+            "leaky-repo:.bash_profile:22:risk",
+            "leaky-repo:.bash_profile:23:risk",
+            "leaky-repo:.bashrc:106:risk",
+            "leaky-repo:.bashrc:109:risk",
+            "leaky-repo:.docker/.dockercfg:4:risk",
+            "leaky-repo:.docker/.dockercfg:8:risk",
+            "leaky-repo:.docker/config.json:5:risk",
+            "leaky-repo:.docker/config.json:9:risk",
+            "leaky-repo:.npmrc:9:risk",
+            "leaky-repo:.ssh/id_rsa:1:risk",
+            "leaky-repo:cloud/.credentials:4:risk",
+            "leaky-repo:cloud/.credentials:7:risk",
+            "leaky-repo:cloud/.s3cfg:1:risk",
+            "leaky-repo:cloud/.s3cfg:2:informative",
+            "leaky-repo:cloud/.tugboat:4:risk",
+            "leaky-repo:cloud/heroku.json:4:risk",
+            "leaky-repo:hub:4:risk",
+            "leaky-repo:misc-keys/cert-key.pem:1:risk",
+            "leaky-repo:web/ruby/secrets.yml:14:risk",
+            "leaky-repo:web/ruby/secrets.yml:17:risk",
+            "leaky-repo:web/ruby/secrets.yml:22:risk"
+          ],
+          "left_only": [],
+          "right_only": [
+            "leaky-repo:.bash_profile:20:risk",
+            "leaky-repo:.bashrc:105:risk",
+            "leaky-repo:.remote-sync.json:17:risk",
+            "leaky-repo:.vscode/sftp.json:6:risk",
+            "leaky-repo:db/mongoid.yml:4:risk",
+            "leaky-repo:db/robomongo.json:14:risk",
+            "leaky-repo:db/robomongo.json:27:risk",
+            "leaky-repo:deployment-config.json:5:risk",
+            "leaky-repo:sftp-config.json:15:risk",
+            "leaky-repo:ventrilo_srv.ini:7:risk",
+            "leaky-repo:ventrilo_srv.ini:8:risk",
+            "leaky-repo:web/var/www/.env:14:risk",
+            "leaky-repo:web/var/www/.env:23:risk",
+            "leaky-repo:web/var/www/.env:33:risk",
+            "leaky-repo:web/var/www/public_html/config.php:11:risk"
+          ],
+          "summary": "0 only gitleaks; 15 only betterleaks; 22 both"
+        }
+      },
+      "scanners": {
+        "betterleaks": {
+          "duplicates": 0,
+          "expected": 175,
+          "found_ids": [
+            "leaky-repo:.bash_profile:12:risk",
+            "leaky-repo:.bash_profile:20:risk",
+            "leaky-repo:.bash_profile:22:risk",
+            "leaky-repo:.bash_profile:23:risk",
+            "leaky-repo:.bashrc:105:risk",
+            "leaky-repo:.bashrc:106:risk",
+            "leaky-repo:.bashrc:109:risk",
+            "leaky-repo:.docker/.dockercfg:4:risk",
+            "leaky-repo:.docker/.dockercfg:8:risk",
+            "leaky-repo:.docker/config.json:5:risk",
+            "leaky-repo:.docker/config.json:9:risk",
+            "leaky-repo:.npmrc:9:risk",
+            "leaky-repo:.remote-sync.json:17:risk",
+            "leaky-repo:.ssh/id_rsa:1:risk",
+            "leaky-repo:.vscode/sftp.json:6:risk",
+            "leaky-repo:cloud/.credentials:4:risk",
+            "leaky-repo:cloud/.credentials:7:risk",
+            "leaky-repo:cloud/.s3cfg:1:risk",
+            "leaky-repo:cloud/.s3cfg:2:informative",
+            "leaky-repo:cloud/.tugboat:4:risk",
+            "leaky-repo:cloud/heroku.json:4:risk",
+            "leaky-repo:db/mongoid.yml:4:risk",
+            "leaky-repo:db/robomongo.json:14:risk",
+            "leaky-repo:db/robomongo.json:27:risk",
+            "leaky-repo:deployment-config.json:5:risk",
+            "leaky-repo:hub:4:risk",
+            "leaky-repo:misc-keys/cert-key.pem:1:risk",
+            "leaky-repo:sftp-config.json:15:risk",
+            "leaky-repo:ventrilo_srv.ini:7:risk",
+            "leaky-repo:ventrilo_srv.ini:8:risk",
+            "leaky-repo:web/ruby/secrets.yml:14:risk",
+            "leaky-repo:web/ruby/secrets.yml:17:risk",
+            "leaky-repo:web/ruby/secrets.yml:22:risk",
+            "leaky-repo:web/var/www/.env:14:risk",
+            "leaky-repo:web/var/www/.env:23:risk",
+            "leaky-repo:web/var/www/.env:33:risk",
+            "leaky-repo:web/var/www/public_html/config.php:11:risk"
+          ],
+          "matched": 37,
+          "missed": 138,
+          "missed_ids": [
+            "leaky-repo:.bash_profile:11:informative",
+            "leaky-repo:.bash_profile:13:informative",
+            "leaky-repo:.bash_profile:18:informative",
+            "leaky-repo:.bash_profile:19:informative",
+            "leaky-repo:.bash_profile:21:risk",
+            "leaky-repo:.bash_profile:24:risk",
+            "leaky-repo:.bash_profile:25:informative",
+            "leaky-repo:.bashrc:104:informative",
+            "leaky-repo:.bashrc:107:informative",
+            "leaky-repo:.bashrc:108:informative",
+            "leaky-repo:.docker/.dockercfg:3:informative",
+            "leaky-repo:.docker/.dockercfg:7:informative",
+            "leaky-repo:.docker/config.json:4:informative",
+            "leaky-repo:.docker/config.json:8:informative",
+            "leaky-repo:.esmtprc:2:informative",
+            "leaky-repo:.esmtprc:3:informative",
+            "leaky-repo:.esmtprc:4:risk",
+            "leaky-repo:.ftpconfig:12:risk",
+            "leaky-repo:.ftpconfig:3:informative",
+            "leaky-repo:.ftpconfig:5:informative",
+            "leaky-repo:.ftpconfig:6:risk",
+            "leaky-repo:.ftpconfig:8:informative",
+            "leaky-repo:.git-credentials:1:risk",
+            "leaky-repo:.idea/WebServers.xml:5:informative",
+            "leaky-repo:.idea/WebServers.xml:6:risk",
+            "leaky-repo:.mozilla/firefox/logins.json:11:risk",
+            "leaky-repo:.mozilla/firefox/logins.json:12:risk",
+            "leaky-repo:.mozilla/firefox/logins.json:15:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:16:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:17:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:18:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:22:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:27:risk",
+            "leaky-repo:.mozilla/firefox/logins.json:28:risk",
+            "leaky-repo:.mozilla/firefox/logins.json:31:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:32:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:33:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:34:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:38:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:43:risk",
+            "leaky-repo:.mozilla/firefox/logins.json:44:risk",
+            "leaky-repo:.mozilla/firefox/logins.json:47:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:48:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:49:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:50:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:54:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:59:risk",
+            "leaky-repo:.mozilla/firefox/logins.json:60:risk",
+            "leaky-repo:.mozilla/firefox/logins.json:63:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:64:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:65:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:66:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:6:informative",
+            "leaky-repo:.netrc:1:risk",
+            "leaky-repo:.netrc:2:risk",
+            "leaky-repo:.npmrc:5:informative",
+            "leaky-repo:.npmrc:7:risk",
+            "leaky-repo:.remote-sync.json:16:informative",
+            "leaky-repo:.remote-sync.json:9:informative",
+            "leaky-repo:.ssh/id_rsa.pub:1:informative",
+            "leaky-repo:.vscode/sftp.json:3:informative",
+            "leaky-repo:.vscode/sftp.json:4:informative",
+            "leaky-repo:.vscode/sftp.json:5:informative",
+            "leaky-repo:cloud/.credentials:3:informative",
+            "leaky-repo:cloud/.credentials:6:informative",
+            "leaky-repo:cloud/.s3cfg:4:informative",
+            "leaky-repo:cloud/.tugboat:3:informative",
+            "leaky-repo:cloud/.tugboat:6:informative",
+            "leaky-repo:cloud/heroku.json:3:informative",
+            "leaky-repo:config:10:risk",
+            "leaky-repo:config:3:informative",
+            "leaky-repo:config:5:informative",
+            "leaky-repo:config:8:informative",
+            "leaky-repo:db/.pgpass:2:risk",
+            "leaky-repo:db/dbeaver-data-sources.xml:4:risk",
+            "leaky-repo:db/dump.sql:32:risk",
+            "leaky-repo:db/dump.sql:33:risk",
+            "leaky-repo:db/dump.sql:34:risk",
+            "leaky-repo:db/dump.sql:35:risk",
+            "leaky-repo:db/dump.sql:36:risk",
+            "leaky-repo:db/dump.sql:37:risk",
+            "leaky-repo:db/dump.sql:38:risk",
+            "leaky-repo:db/dump.sql:39:risk",
+            "leaky-repo:db/dump.sql:40:risk",
+            "leaky-repo:db/dump.sql:41:risk",
+            "leaky-repo:db/robomongo.json:13:informative",
+            "leaky-repo:db/robomongo.json:18:informative",
+            "leaky-repo:db/robomongo.json:21:informative",
+            "leaky-repo:db/robomongo.json:22:risk",
+            "leaky-repo:db/robomongo.json:26:informative",
+            "leaky-repo:deployment-config.json:3:informative",
+            "leaky-repo:deployment-config.json:4:informative",
+            "leaky-repo:deployment-config.json:7:informative",
+            "leaky-repo:etc/shadow:20:risk",
+            "leaky-repo:filezilla/filezilla.xml:11:informative",
+            "leaky-repo:filezilla/filezilla.xml:13:risk",
+            "leaky-repo:filezilla/filezilla.xml:6:informative",
+            "leaky-repo:filezilla/recentservers.xml:11:informative",
+            "leaky-repo:filezilla/recentservers.xml:13:risk",
+            "leaky-repo:filezilla/recentservers.xml:23:informative",
+            "leaky-repo:filezilla/recentservers.xml:28:informative",
+            "leaky-repo:filezilla/recentservers.xml:30:risk",
+            "leaky-repo:filezilla/recentservers.xml:6:informative",
+            "leaky-repo:high-entropy-misc.txt:1:informative",
+            "leaky-repo:high-entropy-misc.txt:2:informative",
+            "leaky-repo:hub:3:informative",
+            "leaky-repo:misc-keys/putty-example.ppk:11:risk",
+            "leaky-repo:misc-keys/putty-example.ppk:4:informative",
+            "leaky-repo:proftpdpasswd:1:risk",
+            "leaky-repo:sftp-config.json:13:informative",
+            "leaky-repo:sftp-config.json:14:informative",
+            "leaky-repo:sftp-config.json:18:informative",
+            "leaky-repo:web/django/settings.py:24:risk",
+            "leaky-repo:web/js/salesforce.js:7:risk",
+            "leaky-repo:web/ruby/config/master.key:1:risk",
+            "leaky-repo:web/var/www/.env:10:informative",
+            "leaky-repo:web/var/www/.env:12:informative",
+            "leaky-repo:web/var/www/.env:21:informative",
+            "leaky-repo:web/var/www/.env:28:informative",
+            "leaky-repo:web/var/www/.env:31:informative",
+            "leaky-repo:web/var/www/.env:5:risk",
+            "leaky-repo:web/var/www/.env:8:informative",
+            "leaky-repo:web/var/www/public_html/.htpasswd:1:risk",
+            "leaky-repo:web/var/www/public_html/config.php:4:informative",
+            "leaky-repo:web/var/www/public_html/config.php:7:informative",
+            "leaky-repo:web/var/www/public_html/config.php:9:informative",
+            "leaky-repo:web/var/www/public_html/wp-config.php:16:informative",
+            "leaky-repo:web/var/www/public_html/wp-config.php:18:informative",
+            "leaky-repo:web/var/www/public_html/wp-config.php:20:risk",
+            "leaky-repo:web/var/www/public_html/wp-config.php:22:informative",
+            "leaky-repo:web/var/www/public_html/wp-config.php:33:risk",
+            "leaky-repo:web/var/www/public_html/wp-config.php:35:risk",
+            "leaky-repo:web/var/www/public_html/wp-config.php:37:risk",
+            "leaky-repo:web/var/www/public_html/wp-config.php:39:risk",
+            "leaky-repo:web/var/www/public_html/wp-config.php:41:risk",
+            "leaky-repo:web/var/www/public_html/wp-config.php:43:risk",
+            "leaky-repo:web/var/www/public_html/wp-config.php:45:risk",
+            "leaky-repo:web/var/www/public_html/wp-config.php:47:risk"
+          ],
+          "recall_percent": 21.14,
+          "unexpected": 0
+        },
+        "gitleaks": {
+          "duplicates": 0,
+          "expected": 175,
+          "found_ids": [
+            "leaky-repo:.bash_profile:12:risk",
+            "leaky-repo:.bash_profile:22:risk",
+            "leaky-repo:.bash_profile:23:risk",
+            "leaky-repo:.bashrc:106:risk",
+            "leaky-repo:.bashrc:109:risk",
+            "leaky-repo:.docker/.dockercfg:4:risk",
+            "leaky-repo:.docker/.dockercfg:8:risk",
+            "leaky-repo:.docker/config.json:5:risk",
+            "leaky-repo:.docker/config.json:9:risk",
+            "leaky-repo:.npmrc:9:risk",
+            "leaky-repo:.ssh/id_rsa:1:risk",
+            "leaky-repo:cloud/.credentials:4:risk",
+            "leaky-repo:cloud/.credentials:7:risk",
+            "leaky-repo:cloud/.s3cfg:1:risk",
+            "leaky-repo:cloud/.s3cfg:2:informative",
+            "leaky-repo:cloud/.tugboat:4:risk",
+            "leaky-repo:cloud/heroku.json:4:risk",
+            "leaky-repo:hub:4:risk",
+            "leaky-repo:misc-keys/cert-key.pem:1:risk",
+            "leaky-repo:web/ruby/secrets.yml:14:risk",
+            "leaky-repo:web/ruby/secrets.yml:17:risk",
+            "leaky-repo:web/ruby/secrets.yml:22:risk"
+          ],
+          "matched": 22,
+          "missed": 153,
+          "missed_ids": [
+            "leaky-repo:.bash_profile:11:informative",
+            "leaky-repo:.bash_profile:13:informative",
+            "leaky-repo:.bash_profile:18:informative",
+            "leaky-repo:.bash_profile:19:informative",
+            "leaky-repo:.bash_profile:20:risk",
+            "leaky-repo:.bash_profile:21:risk",
+            "leaky-repo:.bash_profile:24:risk",
+            "leaky-repo:.bash_profile:25:informative",
+            "leaky-repo:.bashrc:104:informative",
+            "leaky-repo:.bashrc:105:risk",
+            "leaky-repo:.bashrc:107:informative",
+            "leaky-repo:.bashrc:108:informative",
+            "leaky-repo:.docker/.dockercfg:3:informative",
+            "leaky-repo:.docker/.dockercfg:7:informative",
+            "leaky-repo:.docker/config.json:4:informative",
+            "leaky-repo:.docker/config.json:8:informative",
+            "leaky-repo:.esmtprc:2:informative",
+            "leaky-repo:.esmtprc:3:informative",
+            "leaky-repo:.esmtprc:4:risk",
+            "leaky-repo:.ftpconfig:12:risk",
+            "leaky-repo:.ftpconfig:3:informative",
+            "leaky-repo:.ftpconfig:5:informative",
+            "leaky-repo:.ftpconfig:6:risk",
+            "leaky-repo:.ftpconfig:8:informative",
+            "leaky-repo:.git-credentials:1:risk",
+            "leaky-repo:.idea/WebServers.xml:5:informative",
+            "leaky-repo:.idea/WebServers.xml:6:risk",
+            "leaky-repo:.mozilla/firefox/logins.json:11:risk",
+            "leaky-repo:.mozilla/firefox/logins.json:12:risk",
+            "leaky-repo:.mozilla/firefox/logins.json:15:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:16:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:17:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:18:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:22:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:27:risk",
+            "leaky-repo:.mozilla/firefox/logins.json:28:risk",
+            "leaky-repo:.mozilla/firefox/logins.json:31:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:32:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:33:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:34:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:38:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:43:risk",
+            "leaky-repo:.mozilla/firefox/logins.json:44:risk",
+            "leaky-repo:.mozilla/firefox/logins.json:47:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:48:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:49:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:50:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:54:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:59:risk",
+            "leaky-repo:.mozilla/firefox/logins.json:60:risk",
+            "leaky-repo:.mozilla/firefox/logins.json:63:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:64:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:65:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:66:informative",
+            "leaky-repo:.mozilla/firefox/logins.json:6:informative",
+            "leaky-repo:.netrc:1:risk",
+            "leaky-repo:.netrc:2:risk",
+            "leaky-repo:.npmrc:5:informative",
+            "leaky-repo:.npmrc:7:risk",
+            "leaky-repo:.remote-sync.json:16:informative",
+            "leaky-repo:.remote-sync.json:17:risk",
+            "leaky-repo:.remote-sync.json:9:informative",
+            "leaky-repo:.ssh/id_rsa.pub:1:informative",
+            "leaky-repo:.vscode/sftp.json:3:informative",
+            "leaky-repo:.vscode/sftp.json:4:informative",
+            "leaky-repo:.vscode/sftp.json:5:informative",
+            "leaky-repo:.vscode/sftp.json:6:risk",
+            "leaky-repo:cloud/.credentials:3:informative",
+            "leaky-repo:cloud/.credentials:6:informative",
+            "leaky-repo:cloud/.s3cfg:4:informative",
+            "leaky-repo:cloud/.tugboat:3:informative",
+            "leaky-repo:cloud/.tugboat:6:informative",
+            "leaky-repo:cloud/heroku.json:3:informative",
+            "leaky-repo:config:10:risk",
+            "leaky-repo:config:3:informative",
+            "leaky-repo:config:5:informative",
+            "leaky-repo:config:8:informative",
+            "leaky-repo:db/.pgpass:2:risk",
+            "leaky-repo:db/dbeaver-data-sources.xml:4:risk",
+            "leaky-repo:db/dump.sql:32:risk",
+            "leaky-repo:db/dump.sql:33:risk",
+            "leaky-repo:db/dump.sql:34:risk",
+            "leaky-repo:db/dump.sql:35:risk",
+            "leaky-repo:db/dump.sql:36:risk",
+            "leaky-repo:db/dump.sql:37:risk",
+            "leaky-repo:db/dump.sql:38:risk",
+            "leaky-repo:db/dump.sql:39:risk",
+            "leaky-repo:db/dump.sql:40:risk",
+            "leaky-repo:db/dump.sql:41:risk",
+            "leaky-repo:db/mongoid.yml:4:risk",
+            "leaky-repo:db/robomongo.json:13:informative",
+            "leaky-repo:db/robomongo.json:14:risk",
+            "leaky-repo:db/robomongo.json:18:informative",
+            "leaky-repo:db/robomongo.json:21:informative",
+            "leaky-repo:db/robomongo.json:22:risk",
+            "leaky-repo:db/robomongo.json:26:informative",
+            "leaky-repo:db/robomongo.json:27:risk",
+            "leaky-repo:deployment-config.json:3:informative",
+            "leaky-repo:deployment-config.json:4:informative",
+            "leaky-repo:deployment-config.json:5:risk",
+            "leaky-repo:deployment-config.json:7:informative",
+            "leaky-repo:etc/shadow:20:risk",
+            "leaky-repo:filezilla/filezilla.xml:11:informative",
+            "leaky-repo:filezilla/filezilla.xml:13:risk",
+            "leaky-repo:filezilla/filezilla.xml:6:informative",
+            "leaky-repo:filezilla/recentservers.xml:11:informative",
+            "leaky-repo:filezilla/recentservers.xml:13:risk",
+            "leaky-repo:filezilla/recentservers.xml:23:informative",
+            "leaky-repo:filezilla/recentservers.xml:28:informative",
+            "leaky-repo:filezilla/recentservers.xml:30:risk",
+            "leaky-repo:filezilla/recentservers.xml:6:informative",
+            "leaky-repo:high-entropy-misc.txt:1:informative",
+            "leaky-repo:high-entropy-misc.txt:2:informative",
+            "leaky-repo:hub:3:informative",
+            "leaky-repo:misc-keys/putty-example.ppk:11:risk",
+            "leaky-repo:misc-keys/putty-example.ppk:4:informative",
+            "leaky-repo:proftpdpasswd:1:risk",
+            "leaky-repo:sftp-config.json:13:informative",
+            "leaky-repo:sftp-config.json:14:informative",
+            "leaky-repo:sftp-config.json:15:risk",
+            "leaky-repo:sftp-config.json:18:informative",
+            "leaky-repo:ventrilo_srv.ini:7:risk",
+            "leaky-repo:ventrilo_srv.ini:8:risk",
+            "leaky-repo:web/django/settings.py:24:risk",
+            "leaky-repo:web/js/salesforce.js:7:risk",
+            "leaky-repo:web/ruby/config/master.key:1:risk",
+            "leaky-repo:web/var/www/.env:10:informative",
+            "leaky-repo:web/var/www/.env:12:informative",
+            "leaky-repo:web/var/www/.env:14:risk",
+            "leaky-repo:web/var/www/.env:21:informative",
+            "leaky-repo:web/var/www/.env:23:risk",
+            "leaky-repo:web/var/www/.env:28:informative",
+            "leaky-repo:web/var/www/.env:31:informative",
+            "leaky-repo:web/var/www/.env:33:risk",
+            "leaky-repo:web/var/www/.env:5:risk",
+            "leaky-repo:web/var/www/.env:8:informative",
+            "leaky-repo:web/var/www/public_html/.htpasswd:1:risk",
+            "leaky-repo:web/var/www/public_html/config.php:11:risk",
+            "leaky-repo:web/var/www/public_html/config.php:4:informative",
+            "leaky-repo:web/var/www/public_html/config.php:7:informative",
+            "leaky-repo:web/var/www/public_html/config.php:9:informative",
+            "leaky-repo:web/var/www/public_html/wp-config.php:16:informative",
+            "leaky-repo:web/var/www/public_html/wp-config.php:18:informative",
+            "leaky-repo:web/var/www/public_html/wp-config.php:20:risk",
+            "leaky-repo:web/var/www/public_html/wp-config.php:22:informative",
+            "leaky-repo:web/var/www/public_html/wp-config.php:33:risk",
+            "leaky-repo:web/var/www/public_html/wp-config.php:35:risk",
+            "leaky-repo:web/var/www/public_html/wp-config.php:37:risk",
+            "leaky-repo:web/var/www/public_html/wp-config.php:39:risk",
+            "leaky-repo:web/var/www/public_html/wp-config.php:41:risk",
+            "leaky-repo:web/var/www/public_html/wp-config.php:43:risk",
+            "leaky-repo:web/var/www/public_html/wp-config.php:45:risk",
+            "leaky-repo:web/var/www/public_html/wp-config.php:47:risk"
+          ],
+          "recall_percent": 12.57,
+          "unexpected": 0
+        }
+      }
+    },
+    "synthetic-filesystem": {
+      "expected_count": 4,
+      "pairwise": {
+        "gitleaks_vs_betterleaks": {
+          "both": [
+            "rnc-synthetic-filesystem:app-alpha",
+            "rnc-synthetic-filesystem:db-beta",
+            "rnc-synthetic-filesystem:multi-delta",
+            "rnc-synthetic-filesystem:multi-gamma"
+          ],
+          "left_only": [],
+          "right_only": [],
+          "summary": "0 only gitleaks; 0 only betterleaks; 4 both"
+        }
+      },
+      "scanners": {
+        "betterleaks": {
+          "duplicates": 0,
+          "expected": 4,
+          "found_ids": [
+            "rnc-synthetic-filesystem:app-alpha",
+            "rnc-synthetic-filesystem:db-beta",
+            "rnc-synthetic-filesystem:multi-delta",
+            "rnc-synthetic-filesystem:multi-gamma"
+          ],
+          "matched": 4,
+          "missed": 0,
+          "missed_ids": [],
+          "recall_percent": 100.0,
+          "unexpected": 0
+        },
+        "gitleaks": {
+          "duplicates": 0,
+          "expected": 4,
+          "found_ids": [
+            "rnc-synthetic-filesystem:app-alpha",
+            "rnc-synthetic-filesystem:db-beta",
+            "rnc-synthetic-filesystem:multi-delta",
+            "rnc-synthetic-filesystem:multi-gamma"
+          ],
+          "matched": 4,
+          "missed": 0,
+          "missed_ids": [],
+          "recall_percent": 100.0,
+          "unexpected": 0
+        }
+      }
+    }
+  },
+  "detection": {
+    "betterleaks": {
+      "gitleaks_fixtures": {},
+      "leaky_filesystem_legacy": {
+        "count_coverage_percent": 21.14,
+        "covered_count": 37,
+        "excess_findings": 0,
+        "expected_count": 175,
+        "files_covered": 22,
+        "unlisted_findings": 0
+      },
+      "leaky_filesystem_rich": {
+        "line_only_count": 2,
+        "rich_category_conflict_items": 31,
+        "rich_detection_recall_percent": 21.14,
+        "rich_duplicate_count": 0,
+        "rich_expected_count": 175,
+        "rich_matched_count": 37,
+        "rich_missed_count": 138,
+        "rich_unexpected_count": 0,
+        "value_verified_count": 35
+      },
+      "leaky_history": {
+        "commits_scanned": 25,
+        "execution_status": "PASS",
+        "observed_findings": 41,
+        "truth_status": "BLOCKED"
+      },
+      "levain": {
+        "duplicates": 2,
+        "expected_secrets": 85,
+        "f1_percent": 69.57,
+        "false_positives": 5,
+        "negative_oracle": true,
+        "partial_matches": 3,
+        "precision_percent": 90.57,
+        "recall_percent": 56.47,
+        "true_positives": 48
+      },
+      "synthetic_filesystem": {
+        "ambiguous_count": 0,
+        "blocked_count": 0,
+        "category_conflict_items": 0,
+        "category_metrics": {
+          "risk": {
+            "expected": 4,
+            "matched": 4,
+            "missed": 0
+          }
+        },
+        "count_coverage_percent": 100.0,
+        "detection_recall_percent": 100.0,
+        "duplicate_count": 0,
+        "execution_error_count": 0,
+        "execution_status": "PASS",
+        "expected_count": 4,
+        "f1_percent": 100.0,
+        "false_positive_count": 0,
+        "line_only_count": 0,
+        "matched_count": 4,
+        "missed_count": 0,
+        "negative_oracle": true,
+        "not_applicable_count": 0,
+        "observed_count": 4,
+        "partial_count": 0,
+        "precision_percent": 100.0,
+        "skipped_count": 0,
+        "unexpected_count": 0,
+        "unmapped_count": 0,
+        "value_verified_count": 4
+      },
+      "synthetic_history": {
+        "occurrence_duplicates": 0,
+        "occurrence_expected": 5,
+        "occurrence_line_only": 0,
+        "occurrence_matched": 5,
+        "occurrence_missed": 0,
+        "occurrence_unexpected": 0,
+        "occurrence_value_verified": 5,
+        "unique_expected": 3,
+        "unique_matched": 3,
+        "unique_recall_percent": 100.0
+      }
+    },
+    "gitleaks": {
+      "gitleaks_fixtures": {
+        "assertion_failed": 0,
+        "assertion_passed": 435,
+        "assertion_total": 435,
+        "docker_parity": true,
+        "scenario_passed": 68,
+        "scenario_total": 69
+      },
+      "leaky_filesystem_legacy": {
+        "count_coverage_percent": 12.57,
+        "covered_count": 22,
+        "excess_findings": 0,
+        "expected_count": 175,
+        "files_covered": 13,
+        "unlisted_findings": 0
+      },
+      "leaky_filesystem_rich": {
+        "line_only_count": 2,
+        "rich_category_conflict_items": 31,
+        "rich_detection_recall_percent": 12.57,
+        "rich_duplicate_count": 0,
+        "rich_expected_count": 175,
+        "rich_matched_count": 22,
+        "rich_missed_count": 153,
+        "rich_unexpected_count": 0,
+        "value_verified_count": 20
+      },
+      "leaky_history": {
+        "commits_scanned": 25,
+        "execution_status": "PASS",
+        "observed_findings": 26,
+        "truth_status": "BLOCKED"
+      },
+      "levain": {
+        "duplicates": 2,
+        "expected_secrets": 85,
+        "f1_percent": 69.63,
+        "false_positives": 3,
+        "negative_oracle": true,
+        "partial_matches": 1,
+        "precision_percent": 94.0,
+        "recall_percent": 55.29,
+        "true_positives": 47
+      },
+      "synthetic_filesystem": {
+        "ambiguous_count": 0,
+        "blocked_count": 0,
+        "category_conflict_items": 0,
+        "category_metrics": {
+          "risk": {
+            "expected": 4,
+            "matched": 4,
+            "missed": 0
+          }
+        },
+        "count_coverage_percent": 100.0,
+        "detection_recall_percent": 100.0,
+        "duplicate_count": 0,
+        "execution_error_count": 0,
+        "execution_status": "PASS",
+        "expected_count": 4,
+        "f1_percent": 100.0,
+        "false_positive_count": 0,
+        "line_only_count": 0,
+        "matched_count": 4,
+        "missed_count": 0,
+        "negative_oracle": true,
+        "not_applicable_count": 0,
+        "observed_count": 4,
+        "partial_count": 0,
+        "precision_percent": 100.0,
+        "skipped_count": 0,
+        "unexpected_count": 0,
+        "unmapped_count": 0,
+        "value_verified_count": 4
+      },
+      "synthetic_history": {
+        "occurrence_duplicates": 0,
+        "occurrence_expected": 5,
+        "occurrence_line_only": 0,
+        "occurrence_matched": 5,
+        "occurrence_missed": 0,
+        "occurrence_unexpected": 0,
+        "occurrence_value_verified": 5,
+        "unique_expected": 3,
+        "unique_matched": 3,
+        "unique_recall_percent": 100.0
+      }
+    }
+  },
+  "generated_at": "2026-11-11T03:04:28Z",
+  "product_parity": {
+    "betterleaks": {
+      "git-history": {
+        "docker-linux-amd64_vs_docker-linux-arm64": {
+          "differences": [],
+          "status": "PASS",
+          "summary": "0 finding-classification differences"
+        },
+        "windows-amd64_vs_docker-linux-amd64": {
+          "differences": [],
+          "status": "PASS",
+          "summary": "0 finding-classification differences"
+        },
+        "windows-amd64_vs_docker-linux-arm64": {
+          "differences": [],
+          "status": "PASS",
+          "summary": "0 finding-classification differences"
+        }
+      },
+      "leaky-repo": {
+        "docker-linux-amd64_vs_docker-linux-arm64": {
+          "legacy_differences": [],
+          "per_file_differences": [],
+          "rich_differences": [],
+          "rich_status": "PASS",
+          "status": "PASS",
+          "summary": "0 legacy metric differences; 0 per-file differences; 0 rich finding differences"
+        },
+        "windows-amd64_vs_docker-linux-amd64": {
+          "legacy_differences": [],
+          "per_file_differences": [],
+          "rich_differences": [],
+          "rich_status": "PASS",
+          "status": "PASS",
+          "summary": "0 legacy metric differences; 0 per-file differences; 0 rich finding differences"
+        },
+        "windows-amd64_vs_docker-linux-arm64": {
+          "legacy_differences": [],
+          "per_file_differences": [],
+          "rich_differences": [],
+          "rich_status": "PASS",
+          "status": "PASS",
+          "summary": "0 legacy metric differences; 0 per-file differences; 0 rich finding differences"
+        }
+      },
+      "levain": {
+        "docker-linux-amd64_vs_docker-linux-arm64": {
+          "differences": [],
+          "reason": null,
+          "status": "PASS"
+        },
+        "windows-amd64_vs_docker-linux-amd64": {
+          "differences": [],
+          "reason": null,
+          "status": "PASS"
+        },
+        "windows-amd64_vs_docker-linux-arm64": {
+          "differences": [],
+          "reason": null,
+          "status": "PASS"
+        }
+      },
+      "synthetic-filesystem": {
+        "docker-linux-amd64_vs_docker-linux-arm64": {
+          "differences": [],
+          "status": "PASS",
+          "summary": "0 finding-classification differences"
+        },
+        "windows-amd64_vs_docker-linux-amd64": {
+          "differences": [],
+          "status": "PASS",
+          "summary": "0 finding-classification differences"
+        },
+        "windows-amd64_vs_docker-linux-arm64": {
+          "differences": [],
+          "status": "PASS",
+          "summary": "0 finding-classification differences"
+        }
+      }
+    },
+    "gitleaks": {
+      "git-history": {
+        "docker-linux-amd64_vs_docker-linux-arm64": {
+          "differences": [],
+          "status": "PASS",
+          "summary": "0 finding-classification differences"
+        },
+        "windows-amd64_vs_docker-linux-amd64": {
+          "differences": [],
+          "status": "PASS",
+          "summary": "0 finding-classification differences"
+        },
+        "windows-amd64_vs_docker-linux-arm64": {
+          "differences": [],
+          "status": "PASS",
+          "summary": "0 finding-classification differences"
+        }
+      },
+      "gitleaks": {
+        "docker-linux-amd64_vs_docker-linux-arm64": {
+          "assertions_compared": 147,
+          "differences": [],
+          "different_scenarios": 0,
+          "identical_scenarios": 23,
+          "not_comparable_scenarios": 0,
+          "reason": null,
+          "shared_scenarios": 23,
+          "status": "PASS"
+        },
+        "windows-amd64_vs_docker-linux-amd64": {
+          "assertions_compared": 141,
+          "differences": [],
+          "different_scenarios": 0,
+          "identical_scenarios": 22,
+          "not_comparable_scenarios": 1,
+          "reason": null,
+          "shared_scenarios": 22,
+          "status": "PASS"
+        },
+        "windows-amd64_vs_docker-linux-arm64": {
+          "assertions_compared": 141,
+          "differences": [],
+          "different_scenarios": 0,
+          "identical_scenarios": 22,
+          "not_comparable_scenarios": 1,
+          "reason": null,
+          "shared_scenarios": 22,
+          "status": "PASS"
+        }
+      },
+      "leaky-repo": {
+        "docker-linux-amd64_vs_docker-linux-arm64": {
+          "legacy_differences": [],
+          "per_file_differences": [],
+          "rich_differences": [],
+          "rich_status": "PASS",
+          "status": "PASS",
+          "summary": "0 legacy metric differences; 0 per-file differences; 0 rich finding differences"
+        },
+        "windows-amd64_vs_docker-linux-amd64": {
+          "legacy_differences": [],
+          "per_file_differences": [],
+          "rich_differences": [],
+          "rich_status": "PASS",
+          "status": "PASS",
+          "summary": "0 legacy metric differences; 0 per-file differences; 0 rich finding differences"
+        },
+        "windows-amd64_vs_docker-linux-arm64": {
+          "legacy_differences": [],
+          "per_file_differences": [],
+          "rich_differences": [],
+          "rich_status": "PASS",
+          "status": "PASS",
+          "summary": "0 legacy metric differences; 0 per-file differences; 0 rich finding differences"
+        }
+      },
+      "levain": {
+        "docker-linux-amd64_vs_docker-linux-arm64": {
+          "differences": [],
+          "reason": null,
+          "status": "PASS"
+        },
+        "windows-amd64_vs_docker-linux-amd64": {
+          "differences": [],
+          "reason": null,
+          "status": "PASS"
+        },
+        "windows-amd64_vs_docker-linux-arm64": {
+          "differences": [],
+          "reason": null,
+          "status": "PASS"
+        }
+      },
+      "synthetic-filesystem": {
+        "docker-linux-amd64_vs_docker-linux-arm64": {
+          "differences": [],
+          "status": "PASS",
+          "summary": "0 finding-classification differences"
+        },
+        "windows-amd64_vs_docker-linux-amd64": {
+          "differences": [],
+          "status": "PASS",
+          "summary": "0 finding-classification differences"
+        },
+        "windows-amd64_vs_docker-linux-arm64": {
+          "differences": [],
+          "status": "PASS",
+          "summary": "0 finding-classification differences"
+        }
+      }
+    }
+  },
+  "report_type": "rnc-scan-harness/comparative",
+  "run_id": "cp2-comparative-20261111T025947Z",
+  "scanners": {
+    "betterleaks": {
+      "builds": {
+        "docker-linux-amd64": {
+          "artifact_sha256": null,
+          "image_id": "sha256:8b9d12db5e11ca798029da44923503de5d8cfff6992cffaaa6722fbeb9fc7797",
+          "metadata": {
+            "architecture_verified": true,
+            "emulated": false,
+            "execution_method": "docker",
+            "expected_os_architecture": "linux/amd64",
+            "host_architecture": "amd64",
+            "image_os_architecture": "linux/amd64",
+            "license": "MIT",
+            "source_commit": "5eab48332cc48565864514e3bc6de89df091a7c4"
+          },
+          "status": "PASS",
+          "version": "1.8.1"
+        },
+        "docker-linux-arm64": {
+          "artifact_sha256": null,
+          "image_id": "sha256:12175773aede5b775478f8eb04dffc64ed1f6c29b8f3fd61851bcf2757d1e874",
+          "metadata": {
+            "architecture_verified": true,
+            "emulated": true,
+            "execution_method": "docker",
+            "expected_os_architecture": "linux/arm64",
+            "host_architecture": "amd64",
+            "image_os_architecture": "linux/arm64",
+            "license": "MIT",
+            "source_commit": "5eab48332cc48565864514e3bc6de89df091a7c4"
+          },
+          "status": "PASS",
+          "version": "1.8.1"
+        },
+        "windows-amd64": {
+          "artifact_sha256": "727820f1a9f9264319cc50458b99f01acbb93e93df7a39b8eaa2715a7b1aaed5",
+          "image_id": null,
+          "metadata": {
+            "execution_method": "native",
+            "license": "MIT",
+            "release_url": "https://github.com/betterleaks/betterleaks/releases/download/v1.8.1/betterleaks_1.8.1_windows_x64.zip",
+            "source_commit": "5eab48332cc48565864514e3bc6de89df091a7c4"
+          },
+          "status": "PASS",
+          "version": "1.8.1"
+        }
+      },
+      "key": "betterleaks",
+      "name": "Betterleaks",
+      "source": {
+        "branch": "main",
+        "commit": "5eab48332cc48565864514e3bc6de89df091a7c4",
+        "path": ".",
+        "repository": "https://github.com/betterleaks/betterleaks"
+      },
+      "version": "1.8.1"
+    },
+    "gitleaks": {
+      "builds": {
+        "docker-linux-amd64": {
+          "artifact_sha256": null,
+          "image_id": "sha256:ae5f6c7e865c3123381775c8fc815e51dd5e1d3ac685f63e7269aa1f4160a096",
+          "metadata": {
+            "architecture_verified": true,
+            "emulated": false,
+            "execution_method": "docker",
+            "expected_os_architecture": "linux/amd64",
+            "host_architecture": "amd64",
+            "image_os_architecture": "linux/amd64"
+          },
+          "status": "PASS",
+          "version": "v8.0.0-rnc.5f6ec56cfa6f"
+        },
+        "docker-linux-arm64": {
+          "artifact_sha256": null,
+          "image_id": "sha256:6d35d2b94822ddef97dee6e4b2574a884932575438de62258757c4fcebd8d9a2",
+          "metadata": {
+            "architecture_verified": true,
+            "emulated": true,
+            "execution_method": "docker",
+            "expected_os_architecture": "linux/arm64",
+            "host_architecture": "amd64",
+            "image_os_architecture": "linux/arm64"
+          },
+          "status": "PASS",
+          "version": "v8.0.0-rnc.5f6ec56cfa6f"
+        },
+        "windows-amd64": {
+          "artifact_sha256": "e0831964099a20be3edaa5187f4f11a802821c2eea66a37acc6c09e0587724f2",
+          "image_id": null,
+          "metadata": {
+            "execution_method": "native",
+            "goarch": "amd64",
+            "goos": "windows"
+          },
+          "status": "PASS",
+          "version": "v8.0.0-rnc.5f6ec56cfa6f"
+        }
+      },
+      "key": "gitleaks",
+      "name": "Gitleaks",
+      "source": {
+        "branch": "master",
+        "commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+        "path": "C:\\Dev\\gitleaks\\gitleaks-harness\\datasets\\cache\\targets\\4aa50df824a6f830\\5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c\\source",
+        "repository": "https://github.com/RNC-Solutions-Group/gitleaks"
+      },
+      "version": "v8.0.0-rnc.5f6ec56cfa6f"
+    }
+  },
+  "summary": {
+    "detection_and_capability_only": true,
+    "performance_note": "Performance is a separate benchmark; no weighted combined score is produced.",
+    "scanner_count": 2,
+    "scanners": [
+      "gitleaks",
+      "betterleaks"
+    ]
+  }
+}

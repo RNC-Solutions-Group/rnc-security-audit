@@ -1,0 +1,25 @@
+# Pinned external Gitleaks fixture source.
+# The fixture checkout is separate from any target branch under evaluation.
+schema_version = 1
+
+[dataset]
+name = "Gitleaks pinned functional fixtures"
+source_repository = "https://github.com/RNC-Solutions-Group/gitleaks"
+source_revision = "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c"
+license = "MIT"
+license_url = "https://github.com/RNC-Solutions-Group/gitleaks/blob/5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c/LICENSE"
+license_sha256 = "e3884b252b3bfc045e55be43a34d1e80da070bc6f804ac95bf4660e97d62ebc6"
+manifest_path = "harness/docker/cases.json"
+manifest_sha256 = "e39a1c491b36571c86cd43bf489e975bbf5990a1288b129e0dc1f9d62b45d36a"
+inventory_lock_path = "harness/docker/fixture-inventory.lock.json"
+inventory_lock_sha256 = "1c902f60c3c0aeee43fc32e55e61475362e87467673d20ed460cab236724c507"
+inventory_digest = "cd7f05e76b4590ee738d4573f3ddb3c493142ecd1204bc15754a21d0e66f7345"
+manifest_digest = "18ec2eb7858fca496c239464d113cc6ab1284e1d7e7fce35b285ca8085608088"
+
+[expected]
+scenarios = 23
+assertions = 147
+docker_applicable_fixtures = 33
+inventory_entries = 228
+physical_entries = 223
+symlinks = 1

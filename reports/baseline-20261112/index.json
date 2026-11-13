@@ -1,0 +1,2013 @@
+{
+  "baseline": "CP10 baseline-20261112",
+  "branch": "test/scan-harness",
+  "environment": "DEV (contended; performance preliminary)",
+  "generated_on": "2026-11-12",
+  "lab": {
+    "build": "v3",
+    "corpus_sha256": "161cb863f22b817982d26113b3981bec24b30bc37dd881fc10e9e8cc48ac91f3",
+    "filesystem_items": 1282,
+    "git_items": 320,
+    "manifest_sha256": "691548588679f4a1e5e41ecd5d253d7137693337c1ddef2c6e8943bbb7cd7d0b",
+    "oracle_sha256": "83dea16b343ff7a9340ff463513f4bdb454cea6faaf3234696a78fe8e6b85214",
+    "positives": 800,
+    "unique_identities": 496,
+    "version": "rnc-synthetic-secrets-lab/1.2.0"
+  },
+  "oracle": {
+    "leaky_repo": {
+      "informative": 30,
+      "negatives": 89,
+      "positives": 65,
+      "sha256": "bb6d24bfecd53c7208c2915c105a5b501cbb3af3390fac7a4e5fcf92e50a078c",
+      "total": 184,
+      "unique_groups": 53,
+      "version": "2026-11-12.3"
+    }
+  },
+  "reports": [
+    {
+      "file": "betterleaks-5eab483-blocked.json",
+      "reason": "No local Betterleaks source checkout or source archive exists at the pinned 5eab48332cc48565864514e3bc6de89df091a7c4. The local Go module cache contains only v1.8.1.info for github.com/betterleaks/betterleaks; no .zip, extracted module, bare clone, worktree, or source checkout was found. Network acquisition is prohibited by CP10.0, so no product was built or executed.",
+      "reason_code": "MISSING_LOCAL_SOURCE",
+      "scanner": {
+        "key": "betterleaks",
+        "name": "Betterleaks",
+        "repository": "betterleaks/betterleaks",
+        "source_commit": "5eab48332cc48565864514e3bc6de89df091a7c4"
+      },
+      "status": "BLOCKED",
+      "type": "blocked"
+    },
+    {
+      "builds": {
+        "docker-linux-amd64": {
+          "artifact_sha256": null,
+          "error": null,
+          "image_id": "sha256:c2b722d86da811e20990b4de2e39a89cc065a40e539e4c877dc81a4e16757c8d",
+          "status": "PASS",
+          "strategy": "adapter-source-dockerfile-local-base",
+          "version": "v8.0.0-rnc.5f6ec56cfa6f"
+        }
+      },
+      "cleanup": "PASS",
+      "commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+      "detection": {
+        "leaky_filesystem": {
+          "legacy_count_coverage": {
+            "coverage_percent": 12.57,
+            "covered_count": 22,
+            "excess_findings": 0,
+            "expected_count": 175,
+            "expected_files": 44,
+            "files_covered": 13,
+            "label": "LEGACY COUNT COVERAGE",
+            "unlisted_findings": 0
+          },
+          "methodology": "legacy_count_plus_rich_line_truth",
+          "rich_line_truth": {
+            "category_conflict_items": 31,
+            "detection_recall_percent": 12.57,
+            "duplicate_count": 0,
+            "expected_count": 175,
+            "f1_percent": null,
+            "line_only_count": 2,
+            "matched_count": 22,
+            "missed_count": 153,
+            "negative_oracle": false,
+            "precision_percent": null,
+            "unexpected_count": 0,
+            "value_verified_count": 20
+          }
+        },
+        "leaky_history": {
+          "commits_scanned": 25,
+          "coverage_verified": null,
+          "denominator": "65 source occurrences / 53 unique groups",
+          "duplicate_count": 3,
+          "execution_status": "PASS",
+          "expected_commits": 25,
+          "expected_occurrences": 65,
+          "f1_percent": null,
+          "informative_match_count": 2,
+          "matched_occurrences": 21,
+          "missed_occurrences": 44,
+          "observed_findings": 26,
+          "occurrence_recall_percent": 32.31,
+          "precision_certification_status": "BLOCKED_INCOMPLETE_NEGATIVE_ORACLE",
+          "precision_percent": null,
+          "scope_matches": true,
+          "score_status": "COMPLETED",
+          "scored": true,
+          "truth_status": "APPROVED_SOURCE_ORACLE",
+          "unique_expected": 53,
+          "unique_matched": 15,
+          "unique_recall_percent": 28.3,
+          "unique_secret_fingerprints": 16,
+          "unmatched_pending_review_count": 0,
+          "unverified_evidence_count": 0,
+          "verified_false_positive_count": 0
+        },
+        "levain": {
+          "control_reported": true,
+          "coverage_verified": false,
+          "duplicates": 2,
+          "expected_secrets": 85,
+          "f1_percent": 69.63,
+          "false_positives": 3,
+          "negative_oracle": true,
+          "partial_matches": 1,
+          "precision_percent": 94.0,
+          "recall_percent": 55.29,
+          "true_positives": 47,
+          "unexpected_findings": 0
+        },
+        "rnclab": {
+          "build": null,
+          "denominators": {
+            "filesystem_total_items": 1282,
+            "git_total_items": 320,
+            "positive_occurrences": 800,
+            "unique_credential_identities": 496
+          },
+          "filesystem": {
+            "duplicate_count": null,
+            "expected_positives": null,
+            "expected_unique_groups": null,
+            "f1_percent": null,
+            "false_negative_occurrences": null,
+            "informative_match_count": null,
+            "occurrence_recall_percent": null,
+            "precision_certification_status": null,
+            "precision_percent": null,
+            "true_positive_occurrences": null,
+            "unique_groups_matched": null,
+            "unique_recall_percent": null,
+            "unmatched_pending_review_count": null,
+            "unverified_evidence_count": null,
+            "verified_false_positive_alert_count": null
+          },
+          "git": {
+            "lanes": {},
+            "supported": null
+          },
+          "lab": null
+        }
+      },
+      "file": "gitleaks-5f6ec56-docker-amd64-all-5f6ec56cfa6f-default.json",
+      "head_verified": true,
+      "limitations": [
+        "Source commit is the primary experiment identity; artifact hashes and image IDs are supporting provenance.",
+        "A successfully built artifact is not counted as tested unless an applicable suite executed it.",
+        "LEGACY COUNT COVERAGE for Leaky Repo is 12.57% (13/44 files); this is an upstream count metric, not verified detection recall.",
+        "Levain is a synthetic corpus; counts are not real-world prevalence.",
+        "Legacy Leaky Repo score preserves the upstream line-count methodology.",
+        "RNC rich score uses the line-level truth manifest and does not claim precision or F1 without a negative oracle.",
+        "Upstream risk/informative aggregate categories conflict with source-line review for 6 rows; categories were not reassigned to force the upstream totals.",
+        "Leaky Repo history uses the owner-approved 65-occurrence / 53-group source oracle; the filesystem 175-item denominator is not applied.",
+        "Reviewed negative references are not exhaustive; history precision and F1 are NOT CERTIFIED.",
+        "Informative history references are excluded from primary recall.",
+        "Every observed history finding is retained; unmatched and unverified findings require review.",
+        "DEFAULT isolation is enforced by omitting --config, clearing known scanner-config environment variables, and executing from an empty run-owned working directory.",
+        "The scanner does not expose a machine-readable digest of its embedded default rule set; the harness therefore verifies invocation isolation rather than the rule-file bytes.",
+        "Performance measurements used the DEV environment profile; the host was contended/uncontrolled and these timings are not release evidence."
+      ],
+      "overall": "COMPLETE_WITH_LIMITATIONS",
+      "performance": [
+        {
+          "coverage_caveat_count": null,
+          "files_eligible": 163,
+          "files_inspected": 163,
+          "files_per_second": 289.007,
+          "load_profile": null,
+          "median_seconds": 0.564,
+          "peak_memory_bytes": null,
+          "scaling": null,
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 151739.362,
+          "workload": "levain-filesystem"
+        },
+        {
+          "coverage_caveat_count": null,
+          "files_eligible": 610,
+          "files_inspected": 610,
+          "files_per_second": 234.075,
+          "load_profile": null,
+          "median_seconds": 2.606,
+          "peak_memory_bytes": null,
+          "scaling": null,
+          "stability": "UNSTABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 2259409.056,
+          "workload": "leaky-repo-filesystem"
+        },
+        {
+          "coverage_caveat_count": null,
+          "files_eligible": null,
+          "files_inspected": null,
+          "files_per_second": null,
+          "load_profile": null,
+          "median_seconds": 0.643,
+          "peak_memory_bytes": null,
+          "scaling": null,
+          "stability": "UNSTABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": null,
+          "workload": "leaky-repo-git"
+        }
+      ],
+      "scanner": "gitleaks",
+      "suites": {
+        "leaky-repo": {
+          "outcome": "COMPLETED_AND_SCORED",
+          "status": "PASS"
+        },
+        "levain": {
+          "outcome": "COMPLETED_AND_SCORED",
+          "status": "PASS"
+        }
+      },
+      "type": "experiment"
+    },
+    {
+      "builds": {
+        "docker-linux-amd64": {
+          "artifact_sha256": null,
+          "error": null,
+          "image_id": "sha256:33fc2eabcedd903fa843798d1d1dcbb1cc6a8f31cd6df41998c4d31bfe2104fe",
+          "status": "PASS",
+          "strategy": "adapter-source-dockerfile-local-base",
+          "version": "v8.0.0-rnc.5f6ec56cfa6f"
+        }
+      },
+      "cleanup": "PASS",
+      "commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+      "detection": {
+        "leaky_filesystem": {
+          "legacy_count_coverage": {
+            "coverage_percent": null,
+            "covered_count": null,
+            "excess_findings": null,
+            "expected_count": null,
+            "expected_files": null,
+            "files_covered": null,
+            "label": "LEGACY COUNT COVERAGE",
+            "unlisted_findings": null
+          },
+          "methodology": "legacy_count_plus_rich_line_truth",
+          "rich_line_truth": {
+            "category_conflict_items": null,
+            "detection_recall_percent": null,
+            "duplicate_count": null,
+            "expected_count": null,
+            "f1_percent": null,
+            "line_only_count": null,
+            "matched_count": null,
+            "missed_count": null,
+            "negative_oracle": false,
+            "precision_percent": null,
+            "unexpected_count": null,
+            "value_verified_count": null
+          }
+        },
+        "leaky_history": {
+          "commits_scanned": null,
+          "coverage_verified": null,
+          "denominator": "65 source occurrences / 53 unique groups",
+          "duplicate_count": null,
+          "execution_status": null,
+          "expected_commits": null,
+          "expected_occurrences": null,
+          "f1_percent": null,
+          "informative_match_count": null,
+          "matched_occurrences": null,
+          "missed_occurrences": null,
+          "observed_findings": null,
+          "occurrence_recall_percent": null,
+          "precision_certification_status": null,
+          "precision_percent": null,
+          "scope_matches": null,
+          "score_status": null,
+          "scored": false,
+          "truth_status": null,
+          "unique_expected": null,
+          "unique_matched": null,
+          "unique_recall_percent": null,
+          "unique_secret_fingerprints": null,
+          "unmatched_pending_review_count": null,
+          "unverified_evidence_count": null,
+          "verified_false_positive_count": null
+        },
+        "levain": {},
+        "rnclab": {
+          "build": null,
+          "denominators": {
+            "filesystem_total_items": 1282,
+            "git_total_items": 320,
+            "positive_occurrences": 800,
+            "unique_credential_identities": 496
+          },
+          "filesystem": {
+            "duplicate_count": null,
+            "expected_positives": null,
+            "expected_unique_groups": null,
+            "f1_percent": null,
+            "false_negative_occurrences": null,
+            "informative_match_count": null,
+            "occurrence_recall_percent": null,
+            "precision_certification_status": null,
+            "precision_percent": null,
+            "true_positive_occurrences": null,
+            "unique_groups_matched": null,
+            "unique_recall_percent": null,
+            "unmatched_pending_review_count": null,
+            "unverified_evidence_count": null,
+            "verified_false_positive_alert_count": null
+          },
+          "git": {
+            "lanes": {},
+            "supported": null
+          },
+          "lab": null
+        }
+      },
+      "file": "gitleaks-5f6ec56-docker-amd64-fixtures-5f6ec56cfa6f-default.json",
+      "head_verified": true,
+      "limitations": [
+        "Source commit is the primary experiment identity; artifact hashes and image IDs are supporting provenance.",
+        "A successfully built artifact is not counted as tested unless an applicable suite executed it.",
+        "One Linux-only symlink scenario is NOT_APPLICABLE on Windows native execution.",
+        "The legacy fixture lane retains hashed reports rather than raw scanner report bytes.",
+        "DEFAULT isolation is enforced by omitting --config, clearing known scanner-config environment variables, and executing from an empty run-owned working directory.",
+        "The scanner does not expose a machine-readable digest of its embedded default rule set; the harness therefore verifies invocation isolation rather than the rule-file bytes."
+      ],
+      "overall": "COMPLETE_WITH_LIMITATIONS",
+      "performance": [],
+      "scanner": "gitleaks",
+      "suites": {
+        "gitleaks": {
+          "outcome": "COMPLETED_AND_SCORED",
+          "status": "PASS"
+        }
+      },
+      "type": "experiment"
+    },
+    {
+      "builds": {
+        "docker-linux-amd64": {
+          "artifact_sha256": null,
+          "error": null,
+          "image_id": "sha256:75c1e5b39acbe0611b92c939427294f9710f623080778f8d9aa12bbb4e896907",
+          "status": "PASS",
+          "strategy": "adapter-source-dockerfile-local-base",
+          "version": "v8.0.0-rnc.5f6ec56cfa6f"
+        }
+      },
+      "cleanup": "PASS",
+      "commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+      "detection": {
+        "leaky_filesystem": {
+          "legacy_count_coverage": {
+            "coverage_percent": null,
+            "covered_count": null,
+            "excess_findings": null,
+            "expected_count": null,
+            "expected_files": null,
+            "files_covered": null,
+            "label": "LEGACY COUNT COVERAGE",
+            "unlisted_findings": null
+          },
+          "methodology": "legacy_count_plus_rich_line_truth",
+          "rich_line_truth": {
+            "category_conflict_items": null,
+            "detection_recall_percent": null,
+            "duplicate_count": null,
+            "expected_count": null,
+            "f1_percent": null,
+            "line_only_count": null,
+            "matched_count": null,
+            "missed_count": null,
+            "negative_oracle": false,
+            "precision_percent": null,
+            "unexpected_count": null,
+            "value_verified_count": null
+          }
+        },
+        "leaky_history": {
+          "commits_scanned": null,
+          "coverage_verified": null,
+          "denominator": "65 source occurrences / 53 unique groups",
+          "duplicate_count": null,
+          "execution_status": null,
+          "expected_commits": null,
+          "expected_occurrences": null,
+          "f1_percent": null,
+          "informative_match_count": null,
+          "matched_occurrences": null,
+          "missed_occurrences": null,
+          "observed_findings": null,
+          "occurrence_recall_percent": null,
+          "precision_certification_status": null,
+          "precision_percent": null,
+          "scope_matches": null,
+          "score_status": null,
+          "scored": false,
+          "truth_status": null,
+          "unique_expected": null,
+          "unique_matched": null,
+          "unique_recall_percent": null,
+          "unique_secret_fingerprints": null,
+          "unmatched_pending_review_count": null,
+          "unverified_evidence_count": null,
+          "verified_false_positive_count": null
+        },
+        "levain": {},
+        "rnclab": {
+          "build": "v3",
+          "denominators": {
+            "filesystem_total_items": 1282,
+            "git_total_items": 320,
+            "positive_occurrences": 800,
+            "unique_credential_identities": 496
+          },
+          "filesystem": {
+            "duplicate_count": 80,
+            "expected_positives": 640,
+            "expected_unique_groups": 366,
+            "f1_percent": null,
+            "false_negative_occurrences": 283,
+            "informative_match_count": 5,
+            "occurrence_recall_percent": 55.78,
+            "precision_certification_status": "BLOCKED_INCOMPLETE_NEGATIVE_ORACLE",
+            "precision_percent": null,
+            "true_positive_occurrences": 357,
+            "unique_groups_matched": 220,
+            "unique_recall_percent": 60.11,
+            "unmatched_pending_review_count": 34,
+            "unsupported_capability_count": 0,
+            "unverified_evidence_count": 0,
+            "verified_false_positive_alert_count": 4
+          },
+          "git": {
+            "lanes": {
+              "docker-linux-amd64": {
+                "capability": {
+                  "assessment": "executed and source-scored",
+                  "mode": "git",
+                  "supported": true
+                },
+                "metrics": {
+                  "accounted_finding_count": 138,
+                  "accounted_percent": 100.0,
+                  "duplicate_count": 0,
+                  "expected_positives": 160,
+                  "expected_unique_groups": 130,
+                  "f1_percent": null,
+                  "false_negative_occurrences": 40,
+                  "informative_match_count": 0,
+                  "informative_unique_item_count": 0,
+                  "invocation": {
+                    "duration_seconds": 4.378,
+                    "exit_code": 1,
+                    "mode": "git",
+                    "timed_out": false
+                  },
+                  "negative_oracle": true,
+                  "observed_findings": 138,
+                  "occurrence_recall_percent": 75.0,
+                  "precision_certification_status": "BLOCKED_INCOMPLETE_NEGATIVE_ORACLE",
+                  "precision_percent": null,
+                  "true_positive_occurrences": 120,
+                  "unique_groups_matched": 102,
+                  "unique_recall_percent": 78.46,
+                  "unique_verified_nonsecret_exposures": 7,
+                  "unmatched_pending_review_count": 11,
+                  "unmatched_positive_container_counts": {
+                    "git": 40
+                  },
+                  "unsupported_capability_count": 0,
+                  "unverified_evidence_count": 0,
+                  "verified_false_positive_alert_count": 7
+                },
+                "outcome": "COMPLETED_AND_SCORED",
+                "reason": null,
+                "status": "PASS"
+              }
+            },
+            "supported": true
+          },
+          "lab": "rnc-synthetic-secrets-lab/1.2.0"
+        }
+      },
+      "file": "gitleaks-5f6ec56-docker-amd64-rnclab-5f6ec56cfa6f-default.json",
+      "head_verified": true,
+      "limitations": [
+        "Source commit is the primary experiment identity; artifact hashes and image IDs are supporting provenance.",
+        "A successfully built artifact is not counted as tested unless an applicable suite executed it.",
+        "RNC Lab negative references are source-adjudicated within the frozen corpus; findings not present in the oracle remain pending review and precision/F1 are not certified.",
+        "Filesystem (1,282) and Git-history (320) denominators are separate and are never combined.",
+        "Private-key credit requires private-key material; public-key-only, SPKI-only, filename-only and encrypted-container-only evidence is not a true positive.",
+        "The frozen lab is verified before and after scanning; a hash change blocks the run.",
+        "DEFAULT isolation is enforced by omitting --config, clearing known scanner-config environment variables, and executing from an empty run-owned working directory.",
+        "The scanner does not expose a machine-readable digest of its embedded default rule set; the harness therefore verifies invocation isolation rather than the rule-file bytes.",
+        "Performance measurements used the DEV environment profile; the host was contended/uncontrolled and these timings are not release evidence."
+      ],
+      "overall": "COMPLETE",
+      "performance": [
+        {
+          "coverage_caveat_count": 0,
+          "files_eligible": 371,
+          "files_inspected": 360,
+          "files_per_second": 227.468,
+          "load_profile": null,
+          "median_seconds": 1.631,
+          "peak_memory_bytes": null,
+          "scaling": null,
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 158537.094,
+          "workload": "rnclab-filesystem"
+        },
+        {
+          "coverage_caveat_count": 0,
+          "files_eligible": 102,
+          "files_inspected": 102,
+          "files_per_second": 22.911,
+          "load_profile": null,
+          "median_seconds": 4.452,
+          "peak_memory_bytes": null,
+          "scaling": null,
+          "stability": "UNSTABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 9311.545,
+          "workload": "rnclab-git"
+        },
+        {
+          "coverage_caveat_count": 0,
+          "files_eligible": 1810,
+          "files_inspected": 1810,
+          "files_per_second": 242.855,
+          "load_profile": "legacy-5x",
+          "median_seconds": 7.453,
+          "peak_memory_bytes": null,
+          "scaling": {
+            "actual_file_multiplier": 4.879,
+            "canonical_median_seconds": 1.631,
+            "canonical_peak_memory_bytes": null,
+            "canonical_throughput_bytes_per_second": 158537.094,
+            "load_median_seconds": 7.453,
+            "load_peak_memory_bytes": null,
+            "load_throughput_bytes_per_second": 9177820.341,
+            "memory_scaling": null,
+            "runtime_scaling": 4.569589
+          },
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 9177820.341,
+          "workload": "rnclab-legacy-5x"
+        },
+        {
+          "coverage_caveat_count": 0,
+          "files_eligible": 3610,
+          "files_inspected": 3610,
+          "files_per_second": 271.817,
+          "load_profile": "legacy-10x",
+          "median_seconds": 13.281,
+          "peak_memory_bytes": null,
+          "scaling": {
+            "actual_file_multiplier": 9.73,
+            "canonical_median_seconds": 1.631,
+            "canonical_peak_memory_bytes": null,
+            "canonical_throughput_bytes_per_second": 158537.094,
+            "load_median_seconds": 13.281,
+            "load_peak_memory_bytes": null,
+            "load_throughput_bytes_per_second": 5247734.884,
+            "memory_scaling": null,
+            "runtime_scaling": 8.142857
+          },
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 5247734.884,
+          "workload": "rnclab-legacy-10x"
+        }
+      ],
+      "scanner": "gitleaks",
+      "suites": {
+        "rnclab": {
+          "outcome": "COMPLETED_AND_SCORED",
+          "status": "PASS"
+        }
+      },
+      "type": "experiment"
+    },
+    {
+      "builds": {
+        "windows-amd64": {
+          "artifact_sha256": "c68865ea9cd5645e21c6bef2cfdc16a49b4d693b24028b5e4badfda593a913d1",
+          "error": null,
+          "image_id": null,
+          "status": "PASS",
+          "strategy": null,
+          "version": "v8.0.0-rnc.5f6ec56cfa6f"
+        }
+      },
+      "cleanup": "PASS",
+      "commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+      "detection": {
+        "leaky_filesystem": {
+          "legacy_count_coverage": {
+            "coverage_percent": 12.57,
+            "covered_count": 22,
+            "excess_findings": 0,
+            "expected_count": 175,
+            "expected_files": 44,
+            "files_covered": 13,
+            "label": "LEGACY COUNT COVERAGE",
+            "unlisted_findings": 0
+          },
+          "methodology": "legacy_count_plus_rich_line_truth",
+          "rich_line_truth": {
+            "category_conflict_items": 31,
+            "detection_recall_percent": 12.57,
+            "duplicate_count": 0,
+            "expected_count": 175,
+            "f1_percent": null,
+            "line_only_count": 2,
+            "matched_count": 22,
+            "missed_count": 153,
+            "negative_oracle": false,
+            "precision_percent": null,
+            "unexpected_count": 0,
+            "value_verified_count": 20
+          }
+        },
+        "leaky_history": {
+          "commits_scanned": 25,
+          "coverage_verified": null,
+          "denominator": "65 source occurrences / 53 unique groups",
+          "duplicate_count": 3,
+          "execution_status": "PASS",
+          "expected_commits": 25,
+          "expected_occurrences": 65,
+          "f1_percent": null,
+          "informative_match_count": 2,
+          "matched_occurrences": 21,
+          "missed_occurrences": 44,
+          "observed_findings": 26,
+          "occurrence_recall_percent": 32.31,
+          "precision_certification_status": "BLOCKED_INCOMPLETE_NEGATIVE_ORACLE",
+          "precision_percent": null,
+          "scope_matches": true,
+          "score_status": "COMPLETED",
+          "scored": true,
+          "truth_status": "APPROVED_SOURCE_ORACLE",
+          "unique_expected": 53,
+          "unique_matched": 15,
+          "unique_recall_percent": 28.3,
+          "unique_secret_fingerprints": 16,
+          "unmatched_pending_review_count": 0,
+          "unverified_evidence_count": 0,
+          "verified_false_positive_count": 0
+        },
+        "levain": {
+          "control_reported": true,
+          "coverage_verified": false,
+          "duplicates": 2,
+          "expected_secrets": 85,
+          "f1_percent": 69.63,
+          "false_positives": 3,
+          "negative_oracle": true,
+          "partial_matches": 1,
+          "precision_percent": 94.0,
+          "recall_percent": 55.29,
+          "true_positives": 47,
+          "unexpected_findings": 0
+        },
+        "rnclab": {
+          "build": null,
+          "denominators": {
+            "filesystem_total_items": 1282,
+            "git_total_items": 320,
+            "positive_occurrences": 800,
+            "unique_credential_identities": 496
+          },
+          "filesystem": {
+            "duplicate_count": null,
+            "expected_positives": null,
+            "expected_unique_groups": null,
+            "f1_percent": null,
+            "false_negative_occurrences": null,
+            "informative_match_count": null,
+            "occurrence_recall_percent": null,
+            "precision_certification_status": null,
+            "precision_percent": null,
+            "true_positive_occurrences": null,
+            "unique_groups_matched": null,
+            "unique_recall_percent": null,
+            "unmatched_pending_review_count": null,
+            "unverified_evidence_count": null,
+            "verified_false_positive_alert_count": null
+          },
+          "git": {
+            "lanes": {},
+            "supported": null
+          },
+          "lab": null
+        }
+      },
+      "file": "gitleaks-5f6ec56-native-all-5f6ec56cfa6f-default.json",
+      "head_verified": true,
+      "limitations": [
+        "Source commit is the primary experiment identity; artifact hashes and image IDs are supporting provenance.",
+        "A successfully built artifact is not counted as tested unless an applicable suite executed it.",
+        "LEGACY COUNT COVERAGE for Leaky Repo is 12.57% (13/44 files); this is an upstream count metric, not verified detection recall.",
+        "Levain is a synthetic corpus; counts are not real-world prevalence.",
+        "Legacy Leaky Repo score preserves the upstream line-count methodology.",
+        "RNC rich score uses the line-level truth manifest and does not claim precision or F1 without a negative oracle.",
+        "Upstream risk/informative aggregate categories conflict with source-line review for 6 rows; categories were not reassigned to force the upstream totals.",
+        "Leaky Repo history uses the owner-approved 65-occurrence / 53-group source oracle; the filesystem 175-item denominator is not applied.",
+        "Reviewed negative references are not exhaustive; history precision and F1 are NOT CERTIFIED.",
+        "Informative history references are excluded from primary recall.",
+        "Every observed history finding is retained; unmatched and unverified findings require review.",
+        "DEFAULT isolation is enforced by omitting --config, clearing known scanner-config environment variables, and executing from an empty run-owned working directory.",
+        "The scanner does not expose a machine-readable digest of its embedded default rule set; the harness therefore verifies invocation isolation rather than the rule-file bytes.",
+        "Performance measurements used the DEV environment profile; the host was contended/uncontrolled and these timings are not release evidence."
+      ],
+      "overall": "COMPLETE_WITH_LIMITATIONS",
+      "performance": [
+        {
+          "coverage_caveat_count": null,
+          "files_eligible": 163,
+          "files_inspected": 163,
+          "files_per_second": 1598.039,
+          "load_profile": null,
+          "median_seconds": 0.102,
+          "peak_memory_bytes": 51634176,
+          "scaling": null,
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 839029.412,
+          "workload": "levain-filesystem"
+        },
+        {
+          "coverage_caveat_count": null,
+          "files_eligible": 610,
+          "files_inspected": 610,
+          "files_per_second": 1810.089,
+          "load_profile": null,
+          "median_seconds": 0.337,
+          "peak_memory_bytes": 57503744,
+          "scaling": null,
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 17471869.436,
+          "workload": "leaky-repo-filesystem"
+        },
+        {
+          "coverage_caveat_count": null,
+          "files_eligible": null,
+          "files_inspected": null,
+          "files_per_second": null,
+          "load_profile": null,
+          "median_seconds": 0.155,
+          "peak_memory_bytes": 40759296,
+          "scaling": null,
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": null,
+          "workload": "leaky-repo-git"
+        }
+      ],
+      "scanner": "gitleaks",
+      "suites": {
+        "leaky-repo": {
+          "outcome": "COMPLETED_AND_SCORED",
+          "status": "PASS"
+        },
+        "levain": {
+          "outcome": "COMPLETED_AND_SCORED",
+          "status": "PASS"
+        }
+      },
+      "type": "experiment"
+    },
+    {
+      "builds": {
+        "windows-amd64": {
+          "artifact_sha256": "c68865ea9cd5645e21c6bef2cfdc16a49b4d693b24028b5e4badfda593a913d1",
+          "error": null,
+          "image_id": null,
+          "status": "PASS",
+          "strategy": null,
+          "version": "v8.0.0-rnc.5f6ec56cfa6f"
+        }
+      },
+      "cleanup": "PASS",
+      "commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+      "detection": {
+        "leaky_filesystem": {
+          "legacy_count_coverage": {
+            "coverage_percent": null,
+            "covered_count": null,
+            "excess_findings": null,
+            "expected_count": null,
+            "expected_files": null,
+            "files_covered": null,
+            "label": "LEGACY COUNT COVERAGE",
+            "unlisted_findings": null
+          },
+          "methodology": "legacy_count_plus_rich_line_truth",
+          "rich_line_truth": {
+            "category_conflict_items": null,
+            "detection_recall_percent": null,
+            "duplicate_count": null,
+            "expected_count": null,
+            "f1_percent": null,
+            "line_only_count": null,
+            "matched_count": null,
+            "missed_count": null,
+            "negative_oracle": false,
+            "precision_percent": null,
+            "unexpected_count": null,
+            "value_verified_count": null
+          }
+        },
+        "leaky_history": {
+          "commits_scanned": null,
+          "coverage_verified": null,
+          "denominator": "65 source occurrences / 53 unique groups",
+          "duplicate_count": null,
+          "execution_status": null,
+          "expected_commits": null,
+          "expected_occurrences": null,
+          "f1_percent": null,
+          "informative_match_count": null,
+          "matched_occurrences": null,
+          "missed_occurrences": null,
+          "observed_findings": null,
+          "occurrence_recall_percent": null,
+          "precision_certification_status": null,
+          "precision_percent": null,
+          "scope_matches": null,
+          "score_status": null,
+          "scored": false,
+          "truth_status": null,
+          "unique_expected": null,
+          "unique_matched": null,
+          "unique_recall_percent": null,
+          "unique_secret_fingerprints": null,
+          "unmatched_pending_review_count": null,
+          "unverified_evidence_count": null,
+          "verified_false_positive_count": null
+        },
+        "levain": {},
+        "rnclab": {
+          "build": null,
+          "denominators": {
+            "filesystem_total_items": 1282,
+            "git_total_items": 320,
+            "positive_occurrences": 800,
+            "unique_credential_identities": 496
+          },
+          "filesystem": {
+            "duplicate_count": null,
+            "expected_positives": null,
+            "expected_unique_groups": null,
+            "f1_percent": null,
+            "false_negative_occurrences": null,
+            "informative_match_count": null,
+            "occurrence_recall_percent": null,
+            "precision_certification_status": null,
+            "precision_percent": null,
+            "true_positive_occurrences": null,
+            "unique_groups_matched": null,
+            "unique_recall_percent": null,
+            "unmatched_pending_review_count": null,
+            "unverified_evidence_count": null,
+            "verified_false_positive_alert_count": null
+          },
+          "git": {
+            "lanes": {},
+            "supported": null
+          },
+          "lab": null
+        }
+      },
+      "file": "gitleaks-5f6ec56-native-fixtures-5f6ec56cfa6f-default.json",
+      "head_verified": true,
+      "limitations": [
+        "Source commit is the primary experiment identity; artifact hashes and image IDs are supporting provenance.",
+        "A successfully built artifact is not counted as tested unless an applicable suite executed it.",
+        "One Linux-only symlink scenario is NOT_APPLICABLE on Windows native execution.",
+        "The legacy fixture lane retains hashed reports rather than raw scanner report bytes.",
+        "DEFAULT isolation is enforced by omitting --config, clearing known scanner-config environment variables, and executing from an empty run-owned working directory.",
+        "The scanner does not expose a machine-readable digest of its embedded default rule set; the harness therefore verifies invocation isolation rather than the rule-file bytes."
+      ],
+      "overall": "COMPLETE_WITH_LIMITATIONS",
+      "performance": [],
+      "scanner": "gitleaks",
+      "suites": {
+        "gitleaks": {
+          "outcome": "COMPLETED_AND_SCORED",
+          "status": "PASS"
+        }
+      },
+      "type": "experiment"
+    },
+    {
+      "builds": {
+        "windows-amd64": {
+          "artifact_sha256": "c68865ea9cd5645e21c6bef2cfdc16a49b4d693b24028b5e4badfda593a913d1",
+          "error": null,
+          "image_id": null,
+          "status": "PASS",
+          "strategy": null,
+          "version": "v8.0.0-rnc.5f6ec56cfa6f"
+        }
+      },
+      "cleanup": "PASS",
+      "commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+      "detection": {
+        "leaky_filesystem": {
+          "legacy_count_coverage": {
+            "coverage_percent": null,
+            "covered_count": null,
+            "excess_findings": null,
+            "expected_count": null,
+            "expected_files": null,
+            "files_covered": null,
+            "label": "LEGACY COUNT COVERAGE",
+            "unlisted_findings": null
+          },
+          "methodology": "legacy_count_plus_rich_line_truth",
+          "rich_line_truth": {
+            "category_conflict_items": null,
+            "detection_recall_percent": null,
+            "duplicate_count": null,
+            "expected_count": null,
+            "f1_percent": null,
+            "line_only_count": null,
+            "matched_count": null,
+            "missed_count": null,
+            "negative_oracle": false,
+            "precision_percent": null,
+            "unexpected_count": null,
+            "value_verified_count": null
+          }
+        },
+        "leaky_history": {
+          "commits_scanned": null,
+          "coverage_verified": null,
+          "denominator": "65 source occurrences / 53 unique groups",
+          "duplicate_count": null,
+          "execution_status": null,
+          "expected_commits": null,
+          "expected_occurrences": null,
+          "f1_percent": null,
+          "informative_match_count": null,
+          "matched_occurrences": null,
+          "missed_occurrences": null,
+          "observed_findings": null,
+          "occurrence_recall_percent": null,
+          "precision_certification_status": null,
+          "precision_percent": null,
+          "scope_matches": null,
+          "score_status": null,
+          "scored": false,
+          "truth_status": null,
+          "unique_expected": null,
+          "unique_matched": null,
+          "unique_recall_percent": null,
+          "unique_secret_fingerprints": null,
+          "unmatched_pending_review_count": null,
+          "unverified_evidence_count": null,
+          "verified_false_positive_count": null
+        },
+        "levain": {},
+        "rnclab": {
+          "build": "v3",
+          "denominators": {
+            "filesystem_total_items": 1282,
+            "git_total_items": 320,
+            "positive_occurrences": 800,
+            "unique_credential_identities": 496
+          },
+          "filesystem": {
+            "duplicate_count": 80,
+            "expected_positives": 640,
+            "expected_unique_groups": 366,
+            "f1_percent": null,
+            "false_negative_occurrences": 283,
+            "informative_match_count": 5,
+            "occurrence_recall_percent": 55.78,
+            "precision_certification_status": "BLOCKED_INCOMPLETE_NEGATIVE_ORACLE",
+            "precision_percent": null,
+            "true_positive_occurrences": 357,
+            "unique_groups_matched": 220,
+            "unique_recall_percent": 60.11,
+            "unmatched_pending_review_count": 34,
+            "unverified_evidence_count": 0,
+            "verified_false_positive_alert_count": 4
+          },
+          "git": {
+            "lanes": {
+              "windows-amd64": {
+                "capability": {
+                  "assessment": "executed and source-scored",
+                  "mode": "git",
+                  "supported": true
+                },
+                "metrics": {
+                  "accounted_finding_count": 138,
+                  "accounted_percent": 100.0,
+                  "duplicate_count": 0,
+                  "expected_positives": 160,
+                  "expected_unique_groups": 130,
+                  "f1_percent": null,
+                  "false_negative_occurrences": 40,
+                  "informative_match_count": 0,
+                  "informative_unique_item_count": 0,
+                  "invocation": {
+                    "duration_seconds": 0.2,
+                    "exit_code": 1,
+                    "mode": "git",
+                    "timed_out": false
+                  },
+                  "negative_oracle": true,
+                  "observed_findings": 138,
+                  "occurrence_recall_percent": 75.0,
+                  "precision_certification_status": "BLOCKED_INCOMPLETE_NEGATIVE_ORACLE",
+                  "precision_percent": null,
+                  "true_positive_occurrences": 120,
+                  "unique_groups_matched": 102,
+                  "unique_recall_percent": 78.46,
+                  "unique_verified_nonsecret_exposures": 7,
+                  "unmatched_pending_review_count": 11,
+                  "unmatched_positive_container_counts": {
+                    "git": 40
+                  },
+                  "unsupported_capability_count": 0,
+                  "unverified_evidence_count": 0,
+                  "verified_false_positive_alert_count": 7
+                },
+                "outcome": "COMPLETED_AND_SCORED",
+                "reason": null,
+                "status": "PASS"
+              }
+            },
+            "supported": true
+          },
+          "lab": "rnc-synthetic-secrets-lab/1.2.0"
+        }
+      },
+      "file": "gitleaks-5f6ec56-native-rnclab-5f6ec56cfa6f-default.json",
+      "head_verified": true,
+      "limitations": [
+        "Source commit is the primary experiment identity; artifact hashes and image IDs are supporting provenance.",
+        "A successfully built artifact is not counted as tested unless an applicable suite executed it.",
+        "RNC Lab negative references are source-adjudicated within the frozen corpus; findings not present in the oracle remain pending review and precision/F1 are not certified.",
+        "Filesystem (1,282) and Git-history (320) denominators are separate and are never combined.",
+        "Private-key credit requires private-key material; public-key-only, SPKI-only, filename-only and encrypted-container-only evidence is not a true positive.",
+        "The frozen lab is verified before and after scanning; a hash change blocks the run.",
+        "DEFAULT isolation is enforced by omitting --config, clearing known scanner-config environment variables, and executing from an empty run-owned working directory.",
+        "The scanner does not expose a machine-readable digest of its embedded default rule set; the harness therefore verifies invocation isolation rather than the rule-file bytes.",
+        "Performance measurements used the DEV environment profile; the host was contended/uncontrolled and these timings are not release evidence."
+      ],
+      "overall": "COMPLETE",
+      "performance": [
+        {
+          "coverage_caveat_count": 0,
+          "files_eligible": 371,
+          "files_inspected": 360,
+          "files_per_second": 1613.043,
+          "load_profile": null,
+          "median_seconds": 0.23,
+          "peak_memory_bytes": 55578624,
+          "scaling": null,
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 1124234.783,
+          "workload": "rnclab-filesystem"
+        },
+        {
+          "coverage_caveat_count": 0,
+          "files_eligible": 102,
+          "files_inspected": 102,
+          "files_per_second": 481.132,
+          "load_profile": null,
+          "median_seconds": 0.212,
+          "peak_memory_bytes": 41467904,
+          "scaling": null,
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 195542.453,
+          "workload": "rnclab-git"
+        },
+        {
+          "coverage_caveat_count": 0,
+          "files_eligible": 1810,
+          "files_inspected": 1810,
+          "files_per_second": 1219.677,
+          "load_profile": "legacy-5x",
+          "median_seconds": 1.484,
+          "peak_memory_bytes": 61382656,
+          "scaling": {
+            "actual_file_multiplier": 4.879,
+            "canonical_median_seconds": 0.23,
+            "canonical_peak_memory_bytes": 55578624,
+            "canonical_throughput_bytes_per_second": 1124234.783,
+            "load_median_seconds": 1.484,
+            "load_peak_memory_bytes": 61382656,
+            "load_throughput_bytes_per_second": 46093190.701,
+            "memory_scaling": 1.104429,
+            "runtime_scaling": 6.452174
+          },
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 46093190.701,
+          "workload": "rnclab-legacy-5x"
+        },
+        {
+          "coverage_caveat_count": 0,
+          "files_eligible": 3610,
+          "files_inspected": 3610,
+          "files_per_second": 1331.612,
+          "load_profile": "legacy-10x",
+          "median_seconds": 2.711,
+          "peak_memory_bytes": 78532608,
+          "scaling": {
+            "actual_file_multiplier": 9.73,
+            "canonical_median_seconds": 0.23,
+            "canonical_peak_memory_bytes": 55578624,
+            "canonical_throughput_bytes_per_second": 1124234.783,
+            "load_median_seconds": 2.711,
+            "load_peak_memory_bytes": 78532608,
+            "load_throughput_bytes_per_second": 25708287.348,
+            "memory_scaling": 1.413,
+            "runtime_scaling": 11.786957
+          },
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 25708287.348,
+          "workload": "rnclab-legacy-10x"
+        }
+      ],
+      "scanner": "gitleaks",
+      "suites": {
+        "rnclab": {
+          "outcome": "COMPLETED_AND_SCORED",
+          "status": "PASS"
+        }
+      },
+      "type": "experiment"
+    },
+    {
+      "file": "rnc-5391d84-docker-amd64-blocked.json",
+      "reason": "Docker Linux AMD64 source build was not attempted to completion: the local Rust/Docker dependency set is insufficient for an offline build. The pinned Cargo.lock requires bitflags 2.13.2, which is absent from the local Cargo registry cache (only 2.6.0 is present); cargo vendor --offline therefore fails before a Docker build. The adapter runtime base debian:bookworm-slim is also absent locally. Network acquisition is prohibited by CP10.0. The native AMD64 source build and native benchmarks completed.",
+      "reason_code": "MISSING_LOCAL_DEPENDENCY",
+      "scanner": {
+        "key": "rnc",
+        "name": "RNC Scanner",
+        "repository": "RNC-Solutions-Group/rnc-security-audit",
+        "source_commit": "5391d8457ea091c45733920078a7f714ec61f678"
+      },
+      "status": "BLOCKED",
+      "type": "blocked"
+    },
+    {
+      "builds": {
+        "windows-amd64": {
+          "artifact_sha256": "40b7e2e1e4f50dc2c346dce22f3dda8404330fa70f95c22f0b78a6d407a660a6",
+          "error": null,
+          "image_id": null,
+          "status": "PASS",
+          "strategy": null,
+          "version": "0.1.0"
+        }
+      },
+      "cleanup": "PASS",
+      "commit": "5391d8457ea091c45733920078a7f714ec61f678",
+      "detection": {
+        "leaky_filesystem": {
+          "legacy_count_coverage": {
+            "coverage_percent": 18.86,
+            "covered_count": 33,
+            "excess_findings": 0,
+            "expected_count": 175,
+            "expected_files": 44,
+            "files_covered": 18,
+            "label": "LEGACY COUNT COVERAGE",
+            "unlisted_findings": 0
+          },
+          "methodology": "legacy_count_plus_rich_line_truth",
+          "rich_line_truth": {
+            "category_conflict_items": 31,
+            "detection_recall_percent": 18.29,
+            "duplicate_count": 0,
+            "expected_count": 175,
+            "f1_percent": null,
+            "line_only_count": 2,
+            "matched_count": 32,
+            "missed_count": 143,
+            "negative_oracle": false,
+            "precision_percent": null,
+            "unexpected_count": 0,
+            "value_verified_count": 30
+          }
+        },
+        "leaky_history": {
+          "commits_scanned": null,
+          "coverage_verified": null,
+          "denominator": "65 source occurrences / 53 unique groups",
+          "duplicate_count": null,
+          "execution_status": "NOT_APPLICABLE",
+          "expected_commits": null,
+          "expected_occurrences": null,
+          "f1_percent": null,
+          "informative_match_count": null,
+          "matched_occurrences": null,
+          "missed_occurrences": null,
+          "observed_findings": null,
+          "occurrence_recall_percent": null,
+          "precision_certification_status": null,
+          "precision_percent": null,
+          "scope_matches": null,
+          "score_status": "NOT_APPLICABLE",
+          "scored": false,
+          "truth_status": "NOT_APPLICABLE",
+          "unique_expected": null,
+          "unique_matched": null,
+          "unique_recall_percent": null,
+          "unique_secret_fingerprints": null,
+          "unmatched_pending_review_count": null,
+          "unverified_evidence_count": null,
+          "verified_false_positive_count": null
+        },
+        "levain": {
+          "control_reported": true,
+          "coverage_verified": true,
+          "duplicates": 0,
+          "expected_secrets": 85,
+          "f1_percent": 54.7,
+          "false_positives": 0,
+          "negative_oracle": true,
+          "partial_matches": 0,
+          "precision_percent": 100.0,
+          "recall_percent": 37.65,
+          "true_positives": 32,
+          "unexpected_findings": 3
+        },
+        "rnclab": {
+          "build": null,
+          "denominators": {
+            "filesystem_total_items": 1282,
+            "git_total_items": 320,
+            "positive_occurrences": 800,
+            "unique_credential_identities": 496
+          },
+          "filesystem": {
+            "duplicate_count": null,
+            "expected_positives": null,
+            "expected_unique_groups": null,
+            "f1_percent": null,
+            "false_negative_occurrences": null,
+            "informative_match_count": null,
+            "occurrence_recall_percent": null,
+            "precision_certification_status": null,
+            "precision_percent": null,
+            "true_positive_occurrences": null,
+            "unique_groups_matched": null,
+            "unique_recall_percent": null,
+            "unmatched_pending_review_count": null,
+            "unsupported_capability_count": null,
+            "unverified_evidence_count": null,
+            "verified_false_positive_alert_count": null
+          },
+          "git": {
+            "lanes": {},
+            "supported": null
+          },
+          "lab": null
+        }
+      },
+      "file": "rnc-5391d84-native-all-5391d8457ea0-default.json",
+      "head_verified": true,
+      "limitations": [
+        "Source commit is the primary experiment identity; artifact hashes and image IDs are supporting provenance.",
+        "A successfully built artifact is not counted as tested unless an applicable suite executed it.",
+        "LEGACY COUNT COVERAGE for Leaky Repo is 18.86% (18/44 files); this is an upstream count metric, not verified detection recall.",
+        "Levain is a synthetic corpus; counts are not real-world prevalence.",
+        "Legacy Leaky Repo score preserves the upstream line-count methodology.",
+        "RNC rich score uses the line-level truth manifest and does not claim precision or F1 without a negative oracle.",
+        "Upstream risk/informative aggregate categories conflict with source-line review for 6 rows; categories were not reassigned to force the upstream totals.",
+        "Leaky Repo Git-history capability is NOT_APPLICABLE for this scanner.",
+        "The rule bundle is read from the pinned source checkout and hashed after the source build.",
+        "The empty repository configuration suppresses target auto-discovery; it does not alter the provider rule bundle.",
+        "Git-history capability is verified from the pinned CLI source after build; unsupported source commits are reported rather than assumed.",
+        "Performance measurements used the DEV environment profile; the host was contended/uncontrolled and these timings are not release evidence."
+      ],
+      "overall": "COMPLETE_WITH_LIMITATIONS",
+      "performance": [
+        {
+          "coverage_caveat_count": 0,
+          "files_eligible": 163,
+          "files_inspected": 163,
+          "files_per_second": 1244.275,
+          "load_profile": null,
+          "median_seconds": 0.131,
+          "peak_memory_bytes": 28377088,
+          "scaling": null,
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 653290.076,
+          "workload": "levain-filesystem"
+        },
+        {
+          "coverage_caveat_count": 0,
+          "files_eligible": 610,
+          "files_inspected": 610,
+          "files_per_second": 1540.404,
+          "load_profile": null,
+          "median_seconds": 0.396,
+          "peak_memory_bytes": 30408704,
+          "scaling": null,
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 14868737.374,
+          "workload": "leaky-repo-filesystem"
+        }
+      ],
+      "scanner": "rnc",
+      "suites": {
+        "leaky-repo": {
+          "outcome": "COMPLETED_AND_SCORED",
+          "status": "PASS"
+        },
+        "levain": {
+          "outcome": "COMPLETED_AND_SCORED",
+          "status": "PASS"
+        }
+      },
+      "type": "experiment"
+    },
+    {
+      "builds": {
+        "windows-amd64": {
+          "artifact_sha256": "635924e5137463b98c0657a0998dcc734c413e461b0e1878a2f599e2e34e9fc6",
+          "error": null,
+          "image_id": null,
+          "status": "PASS",
+          "strategy": null,
+          "version": "0.1.0"
+        }
+      },
+      "cleanup": "PASS",
+      "commit": "5391d8457ea091c45733920078a7f714ec61f678",
+      "detection": {
+        "leaky_filesystem": {
+          "legacy_count_coverage": {
+            "coverage_percent": null,
+            "covered_count": null,
+            "excess_findings": null,
+            "expected_count": null,
+            "expected_files": null,
+            "files_covered": null,
+            "label": "LEGACY COUNT COVERAGE",
+            "unlisted_findings": null
+          },
+          "methodology": "legacy_count_plus_rich_line_truth",
+          "rich_line_truth": {
+            "category_conflict_items": null,
+            "detection_recall_percent": null,
+            "duplicate_count": null,
+            "expected_count": null,
+            "f1_percent": null,
+            "line_only_count": null,
+            "matched_count": null,
+            "missed_count": null,
+            "negative_oracle": false,
+            "precision_percent": null,
+            "unexpected_count": null,
+            "value_verified_count": null
+          }
+        },
+        "leaky_history": {
+          "commits_scanned": null,
+          "coverage_verified": null,
+          "denominator": "65 source occurrences / 53 unique groups",
+          "duplicate_count": null,
+          "execution_status": null,
+          "expected_commits": null,
+          "expected_occurrences": null,
+          "f1_percent": null,
+          "informative_match_count": null,
+          "matched_occurrences": null,
+          "missed_occurrences": null,
+          "observed_findings": null,
+          "occurrence_recall_percent": null,
+          "precision_certification_status": null,
+          "precision_percent": null,
+          "scope_matches": null,
+          "score_status": null,
+          "scored": false,
+          "truth_status": null,
+          "unique_expected": null,
+          "unique_matched": null,
+          "unique_recall_percent": null,
+          "unique_secret_fingerprints": null,
+          "unmatched_pending_review_count": null,
+          "unverified_evidence_count": null,
+          "verified_false_positive_count": null
+        },
+        "levain": {},
+        "rnclab": {
+          "build": "v3",
+          "denominators": {
+            "filesystem_total_items": 1282,
+            "git_total_items": 320,
+            "positive_occurrences": 800,
+            "unique_credential_identities": 496
+          },
+          "filesystem": {
+            "duplicate_count": 0,
+            "expected_positives": 640,
+            "expected_unique_groups": 366,
+            "f1_percent": null,
+            "false_negative_occurrences": 380,
+            "informative_match_count": 1,
+            "occurrence_recall_percent": 40.62,
+            "precision_certification_status": "BLOCKED_INCOMPLETE_NEGATIVE_ORACLE",
+            "precision_percent": null,
+            "true_positive_occurrences": 260,
+            "unique_groups_matched": 171,
+            "unique_recall_percent": 46.72,
+            "unmatched_pending_review_count": 56,
+            "unverified_evidence_count": 0,
+            "verified_false_positive_alert_count": 23
+          },
+          "git": {
+            "lanes": {
+              "windows-amd64": {
+                "capability": {
+                  "assessment": "adapter/source capability inspection",
+                  "mode": "git",
+                  "supported": false
+                },
+                "metrics": {},
+                "outcome": "NOT_APPLICABLE",
+                "reason": "the pinned scanner source revision does not expose Git-history scanning",
+                "status": "NOT_APPLICABLE"
+              }
+            },
+            "supported": false
+          },
+          "lab": "rnc-synthetic-secrets-lab/1.2.0"
+        }
+      },
+      "file": "rnc-5391d84-native-rnclab-5391d8457ea0-default.json",
+      "head_verified": true,
+      "limitations": [
+        "Source commit is the primary experiment identity; artifact hashes and image IDs are supporting provenance.",
+        "A successfully built artifact is not counted as tested unless an applicable suite executed it.",
+        "RNC Lab negative references are source-adjudicated within the frozen corpus; findings not present in the oracle remain pending review and precision/F1 are not certified.",
+        "Filesystem (1,282) and Git-history (320) denominators are separate and are never combined.",
+        "Private-key credit requires private-key material; public-key-only, SPKI-only, filename-only and encrypted-container-only evidence is not a true positive.",
+        "The frozen lab is verified before and after scanning; a hash change blocks the run.",
+        "Git-history mode is NOT_APPLICABLE for this pinned scanner source revision; no zero score or fabricated occurrences were emitted.",
+        "The rule bundle is read from the pinned source checkout and hashed after the source build.",
+        "The empty repository configuration suppresses target auto-discovery; it does not alter the provider rule bundle.",
+        "Git-history capability is verified from the pinned CLI source after build; unsupported source commits are reported rather than assumed.",
+        "Performance measurements used the DEV environment profile; the host was contended/uncontrolled and these timings are not release evidence."
+      ],
+      "overall": "COMPLETE",
+      "performance": [
+        {
+          "coverage_caveat_count": 5,
+          "files_eligible": 371,
+          "files_inspected": 360,
+          "files_per_second": 1185.304,
+          "load_profile": null,
+          "median_seconds": 0.313,
+          "peak_memory_bytes": 29622272,
+          "scaling": null,
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 826115.016,
+          "workload": "rnclab-filesystem"
+        },
+        {
+          "coverage_caveat_count": 3,
+          "files_eligible": 1810,
+          "files_inspected": 1809,
+          "files_per_second": 871.449,
+          "load_profile": "legacy-5x",
+          "median_seconds": 2.077,
+          "peak_memory_bytes": 46415872,
+          "scaling": {
+            "actual_file_multiplier": 4.879,
+            "canonical_median_seconds": 0.313,
+            "canonical_peak_memory_bytes": 29622272,
+            "canonical_throughput_bytes_per_second": 826115.016,
+            "load_median_seconds": 2.077,
+            "load_peak_memory_bytes": 46415872,
+            "load_throughput_bytes_per_second": 32933218.584,
+            "memory_scaling": 1.566925,
+            "runtime_scaling": 6.635783
+          },
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 32933218.584,
+          "workload": "rnclab-legacy-5x"
+        },
+        {
+          "coverage_caveat_count": 3,
+          "files_eligible": 3610,
+          "files_inspected": 3609,
+          "files_per_second": 1124.611,
+          "load_profile": "legacy-10x",
+          "median_seconds": 3.21,
+          "peak_memory_bytes": 65380352,
+          "scaling": {
+            "actual_file_multiplier": 9.73,
+            "canonical_median_seconds": 0.313,
+            "canonical_peak_memory_bytes": 29622272,
+            "canonical_throughput_bytes_per_second": 826115.016,
+            "load_median_seconds": 3.21,
+            "load_peak_memory_bytes": 65380352,
+            "load_throughput_bytes_per_second": 21711889.72,
+            "memory_scaling": 2.207135,
+            "runtime_scaling": 10.255591
+          },
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 21711889.72,
+          "workload": "rnclab-legacy-10x"
+        }
+      ],
+      "scanner": "rnc",
+      "suites": {
+        "rnclab": {
+          "outcome": "COMPLETED_AND_SCORED",
+          "status": "PASS"
+        }
+      },
+      "type": "experiment"
+    },
+    {
+      "file": "rnc-93b4dda-docker-amd64-blocked.json",
+      "reason": "Docker Linux AMD64 source build was not attempted to completion: the local Rust/Docker dependency set is insufficient for an offline build. The pinned Cargo.lock requires bitflags 2.13.2, which is absent from the local Cargo registry cache (only 2.6.0 is present); cargo vendor --offline therefore fails before a Docker build. The adapter runtime base debian:bookworm-slim is also absent locally. Network acquisition is prohibited by CP10.0. The native AMD64 source build and native benchmarks completed.",
+      "reason_code": "MISSING_LOCAL_DEPENDENCY",
+      "scanner": {
+        "key": "rnc",
+        "name": "RNC Scanner",
+        "repository": "RNC-Solutions-Group/rnc-security-audit",
+        "source_commit": "93b4dda909cb3b41606a4d0f36c8ef9d06b77fde"
+      },
+      "status": "BLOCKED",
+      "type": "blocked"
+    },
+    {
+      "builds": {
+        "windows-amd64": {
+          "artifact_sha256": "5c2642e226bac1d63aef19ece2a100e3cbc7325b0e857a3858fbef5a220214dc",
+          "error": null,
+          "image_id": null,
+          "status": "PASS",
+          "strategy": null,
+          "version": "0.1.0"
+        }
+      },
+      "cleanup": "PASS",
+      "commit": "93b4dda909cb3b41606a4d0f36c8ef9d06b77fde",
+      "detection": {
+        "leaky_filesystem": {
+          "legacy_count_coverage": {
+            "coverage_percent": 15.43,
+            "covered_count": 27,
+            "excess_findings": 0,
+            "expected_count": 175,
+            "expected_files": 44,
+            "files_covered": 18,
+            "label": "LEGACY COUNT COVERAGE",
+            "unlisted_findings": 2
+          },
+          "methodology": "legacy_count_plus_rich_line_truth",
+          "rich_line_truth": {
+            "category_conflict_items": 31,
+            "detection_recall_percent": 14.29,
+            "duplicate_count": 0,
+            "expected_count": 175,
+            "f1_percent": null,
+            "line_only_count": 2,
+            "matched_count": 25,
+            "missed_count": 150,
+            "negative_oracle": false,
+            "precision_percent": null,
+            "unexpected_count": 2,
+            "value_verified_count": 23
+          }
+        },
+        "leaky_history": {
+          "commits_scanned": 25,
+          "coverage_verified": true,
+          "denominator": "65 source occurrences / 53 unique groups",
+          "duplicate_count": 21,
+          "execution_status": "PASS",
+          "expected_commits": 25,
+          "expected_occurrences": 65,
+          "f1_percent": null,
+          "informative_match_count": 7,
+          "matched_occurrences": 21,
+          "missed_occurrences": 44,
+          "observed_findings": 61,
+          "occurrence_recall_percent": 32.31,
+          "precision_certification_status": "BLOCKED_INCOMPLETE_NEGATIVE_ORACLE",
+          "precision_percent": null,
+          "scope_matches": true,
+          "score_status": "COMPLETED",
+          "scored": true,
+          "truth_status": "APPROVED_SOURCE_ORACLE",
+          "unique_expected": 53,
+          "unique_matched": 19,
+          "unique_recall_percent": 35.85,
+          "unique_secret_fingerprints": 28,
+          "unmatched_pending_review_count": 0,
+          "unverified_evidence_count": 0,
+          "verified_false_positive_count": 12
+        },
+        "levain": {
+          "control_reported": true,
+          "coverage_verified": true,
+          "duplicates": 0,
+          "expected_secrets": 85,
+          "f1_percent": 66.16,
+          "false_positives": 2,
+          "negative_oracle": true,
+          "partial_matches": 0,
+          "precision_percent": 95.56,
+          "recall_percent": 50.59,
+          "true_positives": 43,
+          "unexpected_findings": 2
+        },
+        "rnclab": {
+          "build": null,
+          "denominators": {
+            "filesystem_total_items": 1282,
+            "git_total_items": 320,
+            "positive_occurrences": 800,
+            "unique_credential_identities": 496
+          },
+          "filesystem": {
+            "duplicate_count": null,
+            "expected_positives": null,
+            "expected_unique_groups": null,
+            "f1_percent": null,
+            "false_negative_occurrences": null,
+            "informative_match_count": null,
+            "occurrence_recall_percent": null,
+            "precision_certification_status": null,
+            "precision_percent": null,
+            "true_positive_occurrences": null,
+            "unique_groups_matched": null,
+            "unique_recall_percent": null,
+            "unmatched_pending_review_count": null,
+            "unverified_evidence_count": null,
+            "verified_false_positive_alert_count": null
+          },
+          "git": {
+            "lanes": {},
+            "supported": null
+          },
+          "lab": null
+        }
+      },
+      "file": "rnc-93b4dda-native-all-93b4dda909cb-default.json",
+      "head_verified": true,
+      "limitations": [
+        "Source commit is the primary experiment identity; artifact hashes and image IDs are supporting provenance.",
+        "A successfully built artifact is not counted as tested unless an applicable suite executed it.",
+        "LEGACY COUNT COVERAGE for Leaky Repo is 15.43% (18/44 files); this is an upstream count metric, not verified detection recall.",
+        "Levain is a synthetic corpus; counts are not real-world prevalence.",
+        "Legacy Leaky Repo score preserves the upstream line-count methodology.",
+        "RNC rich score uses the line-level truth manifest and does not claim precision or F1 without a negative oracle.",
+        "Upstream risk/informative aggregate categories conflict with source-line review for 6 rows; categories were not reassigned to force the upstream totals.",
+        "Leaky Repo history uses the owner-approved 65-occurrence / 53-group source oracle; the filesystem 175-item denominator is not applied.",
+        "Reviewed negative references are not exhaustive; history precision and F1 are NOT CERTIFIED.",
+        "Informative history references are excluded from primary recall.",
+        "Every observed history finding is retained; unmatched and unverified findings require review.",
+        "The rule bundle is read from the pinned source checkout and hashed after the source build.",
+        "The empty repository configuration suppresses target auto-discovery; it does not alter the provider rule bundle.",
+        "Git-history capability is verified from the pinned CLI source after build; unsupported source commits are reported rather than assumed.",
+        "Performance measurements used the DEV environment profile; the host was contended/uncontrolled and these timings are not release evidence."
+      ],
+      "overall": "COMPLETE_WITH_LIMITATIONS",
+      "performance": [
+        {
+          "coverage_caveat_count": null,
+          "files_eligible": 163,
+          "files_inspected": 163,
+          "files_per_second": 573.944,
+          "load_profile": null,
+          "median_seconds": 0.284,
+          "peak_memory_bytes": 99758080,
+          "scaling": null,
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 301341.549,
+          "workload": "levain-filesystem"
+        },
+        {
+          "coverage_caveat_count": null,
+          "files_eligible": 610,
+          "files_inspected": 610,
+          "files_per_second": 587.669,
+          "load_profile": null,
+          "median_seconds": 1.038,
+          "peak_memory_bytes": 92889088,
+          "scaling": null,
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 5672466.281,
+          "workload": "leaky-repo-filesystem"
+        },
+        {
+          "coverage_caveat_count": null,
+          "files_eligible": null,
+          "files_inspected": null,
+          "files_per_second": null,
+          "load_profile": null,
+          "median_seconds": 7.127,
+          "peak_memory_bytes": 89972736,
+          "scaling": null,
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": null,
+          "workload": "leaky-repo-git"
+        }
+      ],
+      "scanner": "rnc",
+      "suites": {
+        "leaky-repo": {
+          "outcome": "COMPLETED_AND_SCORED",
+          "status": "PASS"
+        },
+        "levain": {
+          "outcome": "COMPLETED_AND_SCORED",
+          "status": "PASS"
+        }
+      },
+      "type": "experiment"
+    },
+    {
+      "builds": {
+        "windows-amd64": {
+          "artifact_sha256": "fcaf448887484176ce712a15479fe848a2f397ee09df9de1a18590f730107e3a",
+          "error": null,
+          "image_id": null,
+          "status": "PASS",
+          "strategy": null,
+          "version": "0.1.0"
+        }
+      },
+      "cleanup": "PASS",
+      "commit": "93b4dda909cb3b41606a4d0f36c8ef9d06b77fde",
+      "detection": {
+        "leaky_filesystem": {
+          "legacy_count_coverage": {
+            "coverage_percent": null,
+            "covered_count": null,
+            "excess_findings": null,
+            "expected_count": null,
+            "expected_files": null,
+            "files_covered": null,
+            "label": "LEGACY COUNT COVERAGE",
+            "unlisted_findings": null
+          },
+          "methodology": "legacy_count_plus_rich_line_truth",
+          "rich_line_truth": {
+            "category_conflict_items": null,
+            "detection_recall_percent": null,
+            "duplicate_count": null,
+            "expected_count": null,
+            "f1_percent": null,
+            "line_only_count": null,
+            "matched_count": null,
+            "missed_count": null,
+            "negative_oracle": false,
+            "precision_percent": null,
+            "unexpected_count": null,
+            "value_verified_count": null
+          }
+        },
+        "leaky_history": {
+          "commits_scanned": null,
+          "coverage_verified": null,
+          "denominator": "65 source occurrences / 53 unique groups",
+          "duplicate_count": null,
+          "execution_status": null,
+          "expected_commits": null,
+          "expected_occurrences": null,
+          "f1_percent": null,
+          "informative_match_count": null,
+          "matched_occurrences": null,
+          "missed_occurrences": null,
+          "observed_findings": null,
+          "occurrence_recall_percent": null,
+          "precision_certification_status": null,
+          "precision_percent": null,
+          "scope_matches": null,
+          "score_status": null,
+          "scored": false,
+          "truth_status": null,
+          "unique_expected": null,
+          "unique_matched": null,
+          "unique_recall_percent": null,
+          "unique_secret_fingerprints": null,
+          "unmatched_pending_review_count": null,
+          "unverified_evidence_count": null,
+          "verified_false_positive_count": null
+        },
+        "levain": {},
+        "rnclab": {
+          "build": "v3",
+          "denominators": {
+            "filesystem_total_items": 1282,
+            "git_total_items": 320,
+            "positive_occurrences": 800,
+            "unique_credential_identities": 496
+          },
+          "filesystem": {
+            "duplicate_count": 0,
+            "expected_positives": 640,
+            "expected_unique_groups": 366,
+            "f1_percent": null,
+            "false_negative_occurrences": 343,
+            "informative_match_count": 0,
+            "occurrence_recall_percent": 46.41,
+            "precision_certification_status": "BLOCKED_INCOMPLETE_NEGATIVE_ORACLE",
+            "precision_percent": null,
+            "true_positive_occurrences": 297,
+            "unique_groups_matched": 194,
+            "unique_recall_percent": 53.01,
+            "unmatched_pending_review_count": 66,
+            "unverified_evidence_count": 3,
+            "verified_false_positive_alert_count": 23
+          },
+          "git": {
+            "lanes": {
+              "windows-amd64": {
+                "capability": {
+                  "assessment": "executed and source-scored",
+                  "mode": "git",
+                  "supported": true
+                },
+                "metrics": {
+                  "accounted_finding_count": 121,
+                  "accounted_percent": 100.0,
+                  "duplicate_count": 1,
+                  "expected_positives": 160,
+                  "expected_unique_groups": 130,
+                  "f1_percent": null,
+                  "false_negative_occurrences": 55,
+                  "informative_match_count": 0,
+                  "informative_unique_item_count": 0,
+                  "invocation": {
+                    "duration_seconds": 6.823,
+                    "exit_code": 10,
+                    "mode": "git",
+                    "timed_out": false
+                  },
+                  "negative_oracle": true,
+                  "observed_findings": 121,
+                  "occurrence_recall_percent": 65.62,
+                  "precision_certification_status": "BLOCKED_INCOMPLETE_NEGATIVE_ORACLE",
+                  "precision_percent": null,
+                  "true_positive_occurrences": 105,
+                  "unique_groups_matched": 78,
+                  "unique_recall_percent": 60.0,
+                  "unique_verified_nonsecret_exposures": 3,
+                  "unmatched_pending_review_count": 12,
+                  "unmatched_positive_container_counts": {
+                    "git": 55
+                  },
+                  "unsupported_capability_count": 0,
+                  "unverified_evidence_count": 0,
+                  "verified_false_positive_alert_count": 3
+                },
+                "outcome": "COMPLETED_AND_SCORED",
+                "reason": null,
+                "status": "PASS"
+              }
+            },
+            "supported": true
+          },
+          "lab": "rnc-synthetic-secrets-lab/1.2.0"
+        }
+      },
+      "file": "rnc-93b4dda-native-rnclab-93b4dda909cb-default.json",
+      "head_verified": true,
+      "limitations": [
+        "Source commit is the primary experiment identity; artifact hashes and image IDs are supporting provenance.",
+        "A successfully built artifact is not counted as tested unless an applicable suite executed it.",
+        "RNC Lab negative references are source-adjudicated within the frozen corpus; findings not present in the oracle remain pending review and precision/F1 are not certified.",
+        "Filesystem (1,282) and Git-history (320) denominators are separate and are never combined.",
+        "Private-key credit requires private-key material; public-key-only, SPKI-only, filename-only and encrypted-container-only evidence is not a true positive.",
+        "The frozen lab is verified before and after scanning; a hash change blocks the run.",
+        "The rule bundle is read from the pinned source checkout and hashed after the source build.",
+        "The empty repository configuration suppresses target auto-discovery; it does not alter the provider rule bundle.",
+        "Git-history capability is verified from the pinned CLI source after build; unsupported source commits are reported rather than assumed.",
+        "Performance measurements used the DEV environment profile; the host was contended/uncontrolled and these timings are not release evidence."
+      ],
+      "overall": "COMPLETE",
+      "performance": [
+        {
+          "coverage_caveat_count": 5,
+          "files_eligible": 371,
+          "files_inspected": 360,
+          "files_per_second": 709.369,
+          "load_profile": null,
+          "median_seconds": 0.523,
+          "peak_memory_bytes": 93720576,
+          "scaling": null,
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 494405.354,
+          "workload": "rnclab-filesystem"
+        },
+        {
+          "coverage_caveat_count": 0,
+          "files_eligible": 102,
+          "files_inspected": 102,
+          "files_per_second": 14.624,
+          "load_profile": null,
+          "median_seconds": 6.975,
+          "peak_memory_bytes": 88580096,
+          "scaling": null,
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 5943.369,
+          "workload": "rnclab-git"
+        },
+        {
+          "coverage_caveat_count": 3,
+          "files_eligible": 1810,
+          "files_inspected": 1809,
+          "files_per_second": 155.032,
+          "load_profile": "legacy-5x",
+          "median_seconds": 11.675,
+          "peak_memory_bytes": 109469696,
+          "scaling": {
+            "actual_file_multiplier": 4.879,
+            "canonical_median_seconds": 0.523,
+            "canonical_peak_memory_bytes": 93720576,
+            "canonical_throughput_bytes_per_second": 494405.354,
+            "load_median_seconds": 11.675,
+            "load_peak_memory_bytes": 109469696,
+            "load_throughput_bytes_per_second": 5858868.865,
+            "memory_scaling": 1.168043,
+            "runtime_scaling": 22.323136
+          },
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 5858868.865,
+          "workload": "rnclab-legacy-5x"
+        },
+        {
+          "coverage_caveat_count": 3,
+          "files_eligible": 3610,
+          "files_inspected": 3609,
+          "files_per_second": 279.023,
+          "load_profile": "legacy-10x",
+          "median_seconds": 12.938,
+          "peak_memory_bytes": 130097152,
+          "scaling": {
+            "actual_file_multiplier": 9.73,
+            "canonical_median_seconds": 0.523,
+            "canonical_peak_memory_bytes": 93720576,
+            "canonical_throughput_bytes_per_second": 494405.354,
+            "load_median_seconds": 12.938,
+            "load_peak_memory_bytes": 130097152,
+            "load_throughput_bytes_per_second": 5386857.861,
+            "memory_scaling": 1.388139,
+            "runtime_scaling": 24.73805
+          },
+          "stability": "STABLE",
+          "status": "PASS",
+          "throughput_bytes_per_second": 5386857.861,
+          "workload": "rnclab-legacy-10x"
+        }
+      ],
+      "scanner": "rnc",
+      "suites": {
+        "rnclab": {
+          "outcome": "COMPLETED_AND_SCORED",
+          "status": "PASS"
+        }
+      },
+      "type": "experiment"
+    }
+  ],
+  "repository": "RNC-Solutions-Group/gitleaks",
+  "starting_head": "034feff1ac5444221e2d32ff5b959d5dcb1ed75f"
+}

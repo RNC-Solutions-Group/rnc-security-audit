@@ -1,0 +1,965 @@
+{
+  "comparisons": {
+    "docker-linux-amd64_vs_docker-linux-arm64": {
+      "comparison_version": "1",
+      "detection": {
+        "filesystem_legacy": {
+          "left": {
+            "count_coverage_percent": 12.57,
+            "covered_count": 22,
+            "excess_findings": 0,
+            "expected_count": 175,
+            "files_covered": 13
+          },
+          "right": {
+            "count_coverage_percent": 12.57,
+            "covered_count": 22,
+            "excess_findings": 0,
+            "expected_count": 175,
+            "files_covered": 13
+          }
+        },
+        "filesystem_rich": {
+          "left": {
+            "rich_detection_recall_percent": 12.57,
+            "rich_expected_count": 175,
+            "rich_matched_count": 22,
+            "rich_missed_count": 153
+          },
+          "right": {
+            "rich_detection_recall_percent": 12.57,
+            "rich_expected_count": 175,
+            "rich_matched_count": 22,
+            "rich_missed_count": 153
+          }
+        },
+        "history": {
+          "left": {
+            "occurrence_duplicates": 0,
+            "occurrence_expected": 5,
+            "occurrence_line_only": 0,
+            "occurrence_matched": 5,
+            "occurrence_missed": 0,
+            "occurrence_unexpected": 0,
+            "occurrence_value_verified": 5,
+            "unique_expected": 3,
+            "unique_matched": 3,
+            "unique_recall_percent": 100.0
+          },
+          "right": {
+            "occurrence_duplicates": 0,
+            "occurrence_expected": 5,
+            "occurrence_line_only": 0,
+            "occurrence_matched": 5,
+            "occurrence_missed": 0,
+            "occurrence_unexpected": 0,
+            "occurrence_value_verified": 5,
+            "unique_expected": 3,
+            "unique_matched": 3,
+            "unique_recall_percent": 100.0
+          }
+        }
+      },
+      "environment": {
+        "left_cpu_count": 8,
+        "left_platform": "Windows-11-10.0.26300-SP0",
+        "right_cpu_count": 8,
+        "right_platform": "Windows-11-10.0.26300-SP0"
+      },
+      "left": {
+        "architecture": "amd64",
+        "artifact_sha256": null,
+        "emulated": false,
+        "execution_method": "docker",
+        "image_id": "sha256:cb55afcdd2da337dc027d7ad1dd0f35a89cf32525b0c4c65df6d1f98f546fad6",
+        "platform": "docker-linux-amd64",
+        "scanner_version": "v8.0.0-rnc.5f6ec56cfa6f"
+      },
+      "note": "Detection quality and performance remain separate measurements; no weighted combined score is produced.",
+      "performance": {
+        "cpu_total_median_seconds": {
+          "delta_percent": null,
+          "left": null,
+          "right": null
+        },
+        "peak_memory_bytes": {
+          "delta_percent": null,
+          "left": null,
+          "right": null
+        },
+        "runtime_median_seconds": {
+          "delta_percent": 152.56,
+          "left": 2.129,
+          "right": 5.377
+        },
+        "stability": {
+          "left": "STABLE",
+          "right": "STABLE"
+        },
+        "throughput_bytes_per_second": {
+          "left": 2765627.055,
+          "right": 1095038.125
+        }
+      },
+      "reasons": [
+        "architectures differ",
+        "one product is emulated and the other is not"
+      ],
+      "right": {
+        "architecture": "arm64",
+        "artifact_sha256": null,
+        "emulated": true,
+        "execution_method": "docker",
+        "image_id": "sha256:fcb71d9c5877bf48ea03e4cc10443834535d74a44e4da5be814c21840f6b0e4d",
+        "platform": "docker-linux-arm64",
+        "scanner_version": "v8.0.0-rnc.5f6ec56cfa6f"
+      },
+      "status": "NOT_DIRECTLY_COMPARABLE"
+    },
+    "windows-amd64_vs_docker-linux-amd64": {
+      "comparison_version": "1",
+      "detection": {
+        "filesystem_legacy": {
+          "left": {
+            "count_coverage_percent": 12.57,
+            "covered_count": 22,
+            "excess_findings": 0,
+            "expected_count": 175,
+            "files_covered": 13
+          },
+          "right": {
+            "count_coverage_percent": 12.57,
+            "covered_count": 22,
+            "excess_findings": 0,
+            "expected_count": 175,
+            "files_covered": 13
+          }
+        },
+        "filesystem_rich": {
+          "left": {
+            "rich_detection_recall_percent": 12.57,
+            "rich_expected_count": 175,
+            "rich_matched_count": 22,
+            "rich_missed_count": 153
+          },
+          "right": {
+            "rich_detection_recall_percent": 12.57,
+            "rich_expected_count": 175,
+            "rich_matched_count": 22,
+            "rich_missed_count": 153
+          }
+        },
+        "history": {
+          "left": {
+            "occurrence_duplicates": 0,
+            "occurrence_expected": 5,
+            "occurrence_line_only": 0,
+            "occurrence_matched": 5,
+            "occurrence_missed": 0,
+            "occurrence_unexpected": 0,
+            "occurrence_value_verified": 5,
+            "unique_expected": 3,
+            "unique_matched": 3,
+            "unique_recall_percent": 100.0
+          },
+          "right": {
+            "occurrence_duplicates": 0,
+            "occurrence_expected": 5,
+            "occurrence_line_only": 0,
+            "occurrence_matched": 5,
+            "occurrence_missed": 0,
+            "occurrence_unexpected": 0,
+            "occurrence_value_verified": 5,
+            "unique_expected": 3,
+            "unique_matched": 3,
+            "unique_recall_percent": 100.0
+          }
+        }
+      },
+      "environment": {
+        "left_cpu_count": 8,
+        "left_platform": "Windows-11-10.0.26300-SP0",
+        "right_cpu_count": 8,
+        "right_platform": "Windows-11-10.0.26300-SP0"
+      },
+      "left": {
+        "architecture": "amd64",
+        "artifact_sha256": "e0831964099a20be3edaa5187f4f11a802821c2eea66a37acc6c09e0587724f2",
+        "emulated": false,
+        "execution_method": "native",
+        "image_id": null,
+        "platform": "windows-amd64",
+        "scanner_version": "v8.0.0-rnc.5f6ec56cfa6f"
+      },
+      "note": "Detection quality and performance remain separate measurements; no weighted combined score is produced.",
+      "performance": {
+        "cpu_total_median_seconds": {
+          "delta_percent": null,
+          "left": 2.09375,
+          "right": null
+        },
+        "peak_memory_bytes": {
+          "delta_percent": null,
+          "left": 76365824,
+          "right": null
+        },
+        "runtime_median_seconds": {
+          "delta_percent": 215.407,
+          "left": 0.675,
+          "right": 2.129
+        },
+        "stability": {
+          "left": "STABLE",
+          "right": "STABLE"
+        },
+        "throughput_bytes_per_second": {
+          "left": 8722992.593,
+          "right": 2765627.055
+        }
+      },
+      "reasons": [
+        "native and container execution differ"
+      ],
+      "right": {
+        "architecture": "amd64",
+        "artifact_sha256": null,
+        "emulated": false,
+        "execution_method": "docker",
+        "image_id": "sha256:cb55afcdd2da337dc027d7ad1dd0f35a89cf32525b0c4c65df6d1f98f546fad6",
+        "platform": "docker-linux-amd64",
+        "scanner_version": "v8.0.0-rnc.5f6ec56cfa6f"
+      },
+      "status": "NOT_DIRECTLY_COMPARABLE"
+    },
+    "windows-amd64_vs_docker-linux-arm64": {
+      "comparison_version": "1",
+      "detection": {
+        "filesystem_legacy": {
+          "left": {
+            "count_coverage_percent": 12.57,
+            "covered_count": 22,
+            "excess_findings": 0,
+            "expected_count": 175,
+            "files_covered": 13
+          },
+          "right": {
+            "count_coverage_percent": 12.57,
+            "covered_count": 22,
+            "excess_findings": 0,
+            "expected_count": 175,
+            "files_covered": 13
+          }
+        },
+        "filesystem_rich": {
+          "left": {
+            "rich_detection_recall_percent": 12.57,
+            "rich_expected_count": 175,
+            "rich_matched_count": 22,
+            "rich_missed_count": 153
+          },
+          "right": {
+            "rich_detection_recall_percent": 12.57,
+            "rich_expected_count": 175,
+            "rich_matched_count": 22,
+            "rich_missed_count": 153
+          }
+        },
+        "history": {
+          "left": {
+            "occurrence_duplicates": 0,
+            "occurrence_expected": 5,
+            "occurrence_line_only": 0,
+            "occurrence_matched": 5,
+            "occurrence_missed": 0,
+            "occurrence_unexpected": 0,
+            "occurrence_value_verified": 5,
+            "unique_expected": 3,
+            "unique_matched": 3,
+            "unique_recall_percent": 100.0
+          },
+          "right": {
+            "occurrence_duplicates": 0,
+            "occurrence_expected": 5,
+            "occurrence_line_only": 0,
+            "occurrence_matched": 5,
+            "occurrence_missed": 0,
+            "occurrence_unexpected": 0,
+            "occurrence_value_verified": 5,
+            "unique_expected": 3,
+            "unique_matched": 3,
+            "unique_recall_percent": 100.0
+          }
+        }
+      },
+      "environment": {
+        "left_cpu_count": 8,
+        "left_platform": "Windows-11-10.0.26300-SP0",
+        "right_cpu_count": 8,
+        "right_platform": "Windows-11-10.0.26300-SP0"
+      },
+      "left": {
+        "architecture": "amd64",
+        "artifact_sha256": "e0831964099a20be3edaa5187f4f11a802821c2eea66a37acc6c09e0587724f2",
+        "emulated": false,
+        "execution_method": "native",
+        "image_id": null,
+        "platform": "windows-amd64",
+        "scanner_version": "v8.0.0-rnc.5f6ec56cfa6f"
+      },
+      "note": "Detection quality and performance remain separate measurements; no weighted combined score is produced.",
+      "performance": {
+        "cpu_total_median_seconds": {
+          "delta_percent": null,
+          "left": 2.09375,
+          "right": null
+        },
+        "peak_memory_bytes": {
+          "delta_percent": null,
+          "left": 76365824,
+          "right": null
+        },
+        "runtime_median_seconds": {
+          "delta_percent": 696.593,
+          "left": 0.675,
+          "right": 5.377
+        },
+        "stability": {
+          "left": "STABLE",
+          "right": "STABLE"
+        },
+        "throughput_bytes_per_second": {
+          "left": 8722992.593,
+          "right": 1095038.125
+        }
+      },
+      "reasons": [
+        "architectures differ",
+        "one product is emulated and the other is not",
+        "native and container execution differ"
+      ],
+      "right": {
+        "architecture": "arm64",
+        "artifact_sha256": null,
+        "emulated": true,
+        "execution_method": "docker",
+        "image_id": "sha256:fcb71d9c5877bf48ea03e4cc10443834535d74a44e4da5be814c21840f6b0e4d",
+        "platform": "docker-linux-arm64",
+        "scanner_version": "v8.0.0-rnc.5f6ec56cfa6f"
+      },
+      "status": "NOT_DIRECTLY_COMPARABLE"
+    }
+  },
+  "generated_at": "2026-11-10T21:48:32Z",
+  "methodology": {
+    "detection_scoring": "separate; performance scans do not alter detection results",
+    "measured_runs": 5,
+    "sequential": true,
+    "version": "1",
+    "warmups": 1
+  },
+  "performance_version": "1",
+  "products": [
+    {
+      "benchmark": {
+        "measured_runs": 5,
+        "mode": "dir",
+        "sequential": true,
+        "timeout_seconds": 1200,
+        "version": "1",
+        "warmups": 1
+      },
+      "dataset": {
+        "dataset_id": "leaky-repo",
+        "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+        "inventory_sha256": "146df5e25fa987a0b5c5610a958941e5416a29c9f72eadaa3677abc620b281ce",
+        "truth_manifest_version": "rnc-leaky-truth-v1"
+      },
+      "detection": {
+        "filesystem_legacy": {
+          "count_coverage_percent": 12.57,
+          "covered_count": 22,
+          "excess_findings": 0,
+          "expected_count": 175,
+          "files_covered": 13
+        },
+        "filesystem_rich": {
+          "rich_detection_recall_percent": 12.57,
+          "rich_expected_count": 175,
+          "rich_matched_count": 22,
+          "rich_missed_count": 153
+        },
+        "history": {
+          "occurrence_duplicates": 0,
+          "occurrence_expected": 5,
+          "occurrence_line_only": 0,
+          "occurrence_matched": 5,
+          "occurrence_missed": 0,
+          "occurrence_unexpected": 0,
+          "occurrence_value_verified": 5,
+          "unique_expected": 3,
+          "unique_matched": 3,
+          "unique_recall_percent": 100.0
+        }
+      },
+      "environment": {
+        "cpu_count": 8,
+        "hostname_kind": "redacted",
+        "machine": "AMD64",
+        "platform": "Windows-11-10.0.26300-SP0",
+        "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+        "python": "3.13.5",
+        "system": "Windows"
+      },
+      "harness_version": "0.4.0",
+      "performance_version": "1",
+      "product": {
+        "architecture": "amd64",
+        "artifact_sha256": "e0831964099a20be3edaa5187f4f11a802821c2eea66a37acc6c09e0587724f2",
+        "emulated": false,
+        "execution_method": "native",
+        "image_id": null,
+        "image_tag": null,
+        "kind": "executable",
+        "platform": "windows-amd64"
+      },
+      "report_type": "rnc-scan-harness/performance",
+      "runs": [
+        {
+          "cpu_total_seconds": 1.53125,
+          "cpu_utilization_percent": 214.805,
+          "duration_seconds": 0.713,
+          "error": null,
+          "exit_code": 1,
+          "peak_memory_bytes": 62935040,
+          "phase": "warmup",
+          "run_index": 0,
+          "telemetry_method": "windows_process_times",
+          "telemetry_unavailable_reason": null,
+          "timed_out": false
+        },
+        {
+          "cpu_total_seconds": 2.078125,
+          "cpu_utilization_percent": 307.873,
+          "duration_seconds": 0.675,
+          "error": null,
+          "exit_code": 1,
+          "peak_memory_bytes": 67735552,
+          "phase": "measured",
+          "run_index": 0,
+          "telemetry_method": "windows_process_times",
+          "telemetry_unavailable_reason": null,
+          "timed_out": false
+        },
+        {
+          "cpu_total_seconds": 2.09375,
+          "cpu_utilization_percent": 337.021,
+          "duration_seconds": 0.621,
+          "error": null,
+          "exit_code": 1,
+          "peak_memory_bytes": 68399104,
+          "phase": "measured",
+          "run_index": 1,
+          "telemetry_method": "windows_process_times",
+          "telemetry_unavailable_reason": null,
+          "timed_out": false
+        },
+        {
+          "cpu_total_seconds": 2.640625,
+          "cpu_utilization_percent": 320.868,
+          "duration_seconds": 0.823,
+          "error": null,
+          "exit_code": 1,
+          "peak_memory_bytes": 76365824,
+          "phase": "measured",
+          "run_index": 2,
+          "telemetry_method": "windows_process_times",
+          "telemetry_unavailable_reason": null,
+          "timed_out": false
+        },
+        {
+          "cpu_total_seconds": 2.015625,
+          "cpu_utilization_percent": 284.447,
+          "duration_seconds": 0.709,
+          "error": null,
+          "exit_code": 1,
+          "peak_memory_bytes": 67895296,
+          "phase": "measured",
+          "run_index": 3,
+          "telemetry_method": "windows_process_times",
+          "telemetry_unavailable_reason": null,
+          "timed_out": false
+        },
+        {
+          "cpu_total_seconds": 2.171875,
+          "cpu_utilization_percent": 351.866,
+          "duration_seconds": 0.617,
+          "error": null,
+          "exit_code": 1,
+          "peak_memory_bytes": 66764800,
+          "phase": "measured",
+          "run_index": 4,
+          "telemetry_method": "windows_process_times",
+          "telemetry_unavailable_reason": null,
+          "timed_out": false
+        }
+      ],
+      "scanner": {
+        "key": "gitleaks",
+        "version": "v8.0.0-rnc.5f6ec56cfa6f"
+      },
+      "summary": {
+        "cpu_total_seconds": {
+          "coefficient_of_variation": 0.102667,
+          "count": 5,
+          "maximum": 2.640625,
+          "median": 2.09375,
+          "minimum": 2.015625,
+          "stdev": 0.225866
+        },
+        "cpu_utilization_percent": {
+          "coefficient_of_variation": 0.072741,
+          "count": 5,
+          "maximum": 351.866,
+          "median": 320.868,
+          "minimum": 284.447,
+          "stdev": 23.307203
+        },
+        "failures": 0,
+        "peak_memory_bytes": {
+          "available_samples": 5,
+          "max": 76365824,
+          "median": 67895296
+        },
+        "runtime_seconds": {
+          "coefficient_of_variation": 0.109307,
+          "count": 5,
+          "maximum": 0.823,
+          "median": 0.675,
+          "minimum": 0.617,
+          "stdev": 0.075313
+        },
+        "stability": "STABLE",
+        "telemetry_methods": [
+          "windows_process_times"
+        ],
+        "throughput_bytes_per_second": 8722992.593,
+        "timeouts": 0
+      },
+      "workload": {
+        "bytes": 5888020,
+        "dataset": "leaky-repo",
+        "dataset_revision": "2e951359cac53addbee56437da3ffb546e3dfe24",
+        "files": 610,
+        "replicas": 10,
+        "target": "leaky-repo-filesystem-replicated-x10"
+      }
+    },
+    {
+      "benchmark": {
+        "measured_runs": 5,
+        "mode": "dir",
+        "sequential": true,
+        "timeout_seconds": 1200,
+        "version": "1",
+        "warmups": 1
+      },
+      "dataset": {
+        "dataset_id": "leaky-repo",
+        "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+        "inventory_sha256": "146df5e25fa987a0b5c5610a958941e5416a29c9f72eadaa3677abc620b281ce",
+        "truth_manifest_version": "rnc-leaky-truth-v1"
+      },
+      "detection": {
+        "filesystem_legacy": {
+          "count_coverage_percent": 12.57,
+          "covered_count": 22,
+          "excess_findings": 0,
+          "expected_count": 175,
+          "files_covered": 13
+        },
+        "filesystem_rich": {
+          "rich_detection_recall_percent": 12.57,
+          "rich_expected_count": 175,
+          "rich_matched_count": 22,
+          "rich_missed_count": 153
+        },
+        "history": {
+          "occurrence_duplicates": 0,
+          "occurrence_expected": 5,
+          "occurrence_line_only": 0,
+          "occurrence_matched": 5,
+          "occurrence_missed": 0,
+          "occurrence_unexpected": 0,
+          "occurrence_value_verified": 5,
+          "unique_expected": 3,
+          "unique_matched": 3,
+          "unique_recall_percent": 100.0
+        }
+      },
+      "environment": {
+        "cpu_count": 8,
+        "hostname_kind": "redacted",
+        "machine": "AMD64",
+        "platform": "Windows-11-10.0.26300-SP0",
+        "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+        "python": "3.13.5",
+        "system": "Windows"
+      },
+      "harness_version": "0.4.0",
+      "performance_version": "1",
+      "product": {
+        "architecture": "amd64",
+        "artifact_sha256": null,
+        "emulated": false,
+        "execution_method": "docker",
+        "image_id": "sha256:cb55afcdd2da337dc027d7ad1dd0f35a89cf32525b0c4c65df6d1f98f546fad6",
+        "image_tag": "gitleaks-cp1c:5f6ec56cfa6f-docker-linux-amd64",
+        "kind": "docker",
+        "platform": "docker-linux-amd64"
+      },
+      "report_type": "rnc-scan-harness/performance",
+      "runs": [
+        {
+          "cpu_total_seconds": null,
+          "cpu_utilization_percent": 95.07,
+          "duration_seconds": 2.547,
+          "error": null,
+          "exit_code": 1,
+          "peak_memory_bytes": null,
+          "phase": "warmup",
+          "run_index": 0,
+          "telemetry_method": "docker_stats",
+          "telemetry_unavailable_reason": null,
+          "timed_out": false
+        },
+        {
+          "cpu_total_seconds": null,
+          "cpu_utilization_percent": 94.12,
+          "duration_seconds": 2.257,
+          "error": null,
+          "exit_code": 1,
+          "peak_memory_bytes": null,
+          "phase": "measured",
+          "run_index": 0,
+          "telemetry_method": "docker_stats",
+          "telemetry_unavailable_reason": null,
+          "timed_out": false
+        },
+        {
+          "cpu_total_seconds": null,
+          "cpu_utilization_percent": 101.74,
+          "duration_seconds": 2.401,
+          "error": null,
+          "exit_code": 1,
+          "peak_memory_bytes": null,
+          "phase": "measured",
+          "run_index": 1,
+          "telemetry_method": "docker_stats",
+          "telemetry_unavailable_reason": null,
+          "timed_out": false
+        },
+        {
+          "cpu_total_seconds": null,
+          "cpu_utilization_percent": 100.19,
+          "duration_seconds": 1.878,
+          "error": null,
+          "exit_code": 1,
+          "peak_memory_bytes": null,
+          "phase": "measured",
+          "run_index": 2,
+          "telemetry_method": "docker_stats",
+          "telemetry_unavailable_reason": null,
+          "timed_out": false
+        },
+        {
+          "cpu_total_seconds": null,
+          "cpu_utilization_percent": 104.99,
+          "duration_seconds": 2.129,
+          "error": null,
+          "exit_code": 1,
+          "peak_memory_bytes": null,
+          "phase": "measured",
+          "run_index": 3,
+          "telemetry_method": "docker_stats",
+          "telemetry_unavailable_reason": null,
+          "timed_out": false
+        },
+        {
+          "cpu_total_seconds": null,
+          "cpu_utilization_percent": 98.36,
+          "duration_seconds": 2.082,
+          "error": null,
+          "exit_code": 1,
+          "peak_memory_bytes": null,
+          "phase": "measured",
+          "run_index": 4,
+          "telemetry_method": "docker_stats",
+          "telemetry_unavailable_reason": null,
+          "timed_out": false
+        }
+      ],
+      "scanner": {
+        "key": "gitleaks",
+        "version": "v8.0.0-rnc.5f6ec56cfa6f"
+      },
+      "summary": {
+        "cpu_total_seconds": {
+          "coefficient_of_variation": null,
+          "count": 0,
+          "maximum": null,
+          "median": null,
+          "minimum": null,
+          "stdev": null
+        },
+        "cpu_utilization_percent": {
+          "coefficient_of_variation": 0.036142,
+          "count": 5,
+          "maximum": 104.99,
+          "median": 100.19,
+          "minimum": 94.12,
+          "stdev": 3.60987
+        },
+        "failures": 0,
+        "peak_memory_bytes": {
+          "available_samples": 0,
+          "max": null,
+          "median": null
+        },
+        "runtime_seconds": {
+          "coefficient_of_variation": 0.081517,
+          "count": 5,
+          "maximum": 2.401,
+          "median": 2.129,
+          "minimum": 1.878,
+          "stdev": 0.175213
+        },
+        "stability": "STABLE",
+        "telemetry_methods": [
+          "docker_stats"
+        ],
+        "throughput_bytes_per_second": 2765627.055,
+        "timeouts": 0
+      },
+      "workload": {
+        "bytes": 5888020,
+        "dataset": "leaky-repo",
+        "dataset_revision": "2e951359cac53addbee56437da3ffb546e3dfe24",
+        "files": 610,
+        "replicas": 10,
+        "target": "leaky-repo-filesystem-replicated-x10"
+      }
+    },
+    {
+      "benchmark": {
+        "measured_runs": 5,
+        "mode": "dir",
+        "sequential": true,
+        "timeout_seconds": 1200,
+        "version": "1",
+        "warmups": 1
+      },
+      "dataset": {
+        "dataset_id": "leaky-repo",
+        "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+        "inventory_sha256": "146df5e25fa987a0b5c5610a958941e5416a29c9f72eadaa3677abc620b281ce",
+        "truth_manifest_version": "rnc-leaky-truth-v1"
+      },
+      "detection": {
+        "filesystem_legacy": {
+          "count_coverage_percent": 12.57,
+          "covered_count": 22,
+          "excess_findings": 0,
+          "expected_count": 175,
+          "files_covered": 13
+        },
+        "filesystem_rich": {
+          "rich_detection_recall_percent": 12.57,
+          "rich_expected_count": 175,
+          "rich_matched_count": 22,
+          "rich_missed_count": 153
+        },
+        "history": {
+          "occurrence_duplicates": 0,
+          "occurrence_expected": 5,
+          "occurrence_line_only": 0,
+          "occurrence_matched": 5,
+          "occurrence_missed": 0,
+          "occurrence_unexpected": 0,
+          "occurrence_value_verified": 5,
+          "unique_expected": 3,
+          "unique_matched": 3,
+          "unique_recall_percent": 100.0
+        }
+      },
+      "environment": {
+        "cpu_count": 8,
+        "hostname_kind": "redacted",
+        "machine": "AMD64",
+        "platform": "Windows-11-10.0.26300-SP0",
+        "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+        "python": "3.13.5",
+        "system": "Windows"
+      },
+      "harness_version": "0.4.0",
+      "performance_version": "1",
+      "product": {
+        "architecture": "arm64",
+        "artifact_sha256": null,
+        "emulated": true,
+        "execution_method": "docker",
+        "image_id": "sha256:fcb71d9c5877bf48ea03e4cc10443834535d74a44e4da5be814c21840f6b0e4d",
+        "image_tag": "gitleaks-cp1c:5f6ec56cfa6f-docker-linux-arm64",
+        "kind": "docker",
+        "platform": "docker-linux-arm64"
+      },
+      "report_type": "rnc-scan-harness/performance",
+      "runs": [
+        {
+          "cpu_total_seconds": null,
+          "cpu_utilization_percent": 494.99,
+          "duration_seconds": 5.111,
+          "error": null,
+          "exit_code": 1,
+          "peak_memory_bytes": null,
+          "phase": "warmup",
+          "run_index": 0,
+          "telemetry_method": "docker_stats",
+          "telemetry_unavailable_reason": null,
+          "timed_out": false
+        },
+        {
+          "cpu_total_seconds": null,
+          "cpu_utilization_percent": 457.14,
+          "duration_seconds": 4.985,
+          "error": null,
+          "exit_code": 1,
+          "peak_memory_bytes": null,
+          "phase": "measured",
+          "run_index": 0,
+          "telemetry_method": "docker_stats",
+          "telemetry_unavailable_reason": null,
+          "timed_out": false
+        },
+        {
+          "cpu_total_seconds": null,
+          "cpu_utilization_percent": 452.98,
+          "duration_seconds": 7.286,
+          "error": null,
+          "exit_code": 1,
+          "peak_memory_bytes": null,
+          "phase": "measured",
+          "run_index": 1,
+          "telemetry_method": "docker_stats",
+          "telemetry_unavailable_reason": null,
+          "timed_out": false
+        },
+        {
+          "cpu_total_seconds": null,
+          "cpu_utilization_percent": 523.13,
+          "duration_seconds": 5.377,
+          "error": null,
+          "exit_code": 1,
+          "peak_memory_bytes": null,
+          "phase": "measured",
+          "run_index": 2,
+          "telemetry_method": "docker_stats",
+          "telemetry_unavailable_reason": null,
+          "timed_out": false
+        },
+        {
+          "cpu_total_seconds": null,
+          "cpu_utilization_percent": 559.93,
+          "duration_seconds": 5.046,
+          "error": null,
+          "exit_code": 1,
+          "peak_memory_bytes": null,
+          "phase": "measured",
+          "run_index": 3,
+          "telemetry_method": "docker_stats",
+          "telemetry_unavailable_reason": null,
+          "timed_out": false
+        },
+        {
+          "cpu_total_seconds": null,
+          "cpu_utilization_percent": 402.79,
+          "duration_seconds": 6.171,
+          "error": null,
+          "exit_code": 1,
+          "peak_memory_bytes": null,
+          "phase": "measured",
+          "run_index": 4,
+          "telemetry_method": "docker_stats",
+          "telemetry_unavailable_reason": null,
+          "timed_out": false
+        }
+      ],
+      "scanner": {
+        "key": "gitleaks",
+        "version": "v8.0.0-rnc.5f6ec56cfa6f"
+      },
+      "summary": {
+        "cpu_total_seconds": {
+          "coefficient_of_variation": null,
+          "count": 0,
+          "maximum": null,
+          "median": null,
+          "minimum": null,
+          "stdev": null
+        },
+        "cpu_utilization_percent": {
+          "coefficient_of_variation": 0.116039,
+          "count": 5,
+          "maximum": 559.93,
+          "median": 457.14,
+          "minimum": 402.79,
+          "stdev": 55.605391
+        },
+        "failures": 0,
+        "peak_memory_bytes": {
+          "available_samples": 0,
+          "max": null,
+          "median": null
+        },
+        "runtime_seconds": {
+          "coefficient_of_variation": 0.15009,
+          "count": 5,
+          "maximum": 7.286,
+          "median": 5.377,
+          "minimum": 4.985,
+          "stdev": 0.866471
+        },
+        "stability": "STABLE",
+        "telemetry_methods": [
+          "docker_stats"
+        ],
+        "throughput_bytes_per_second": 1095038.125,
+        "timeouts": 0
+      },
+      "workload": {
+        "bytes": 5888020,
+        "dataset": "leaky-repo",
+        "dataset_revision": "2e951359cac53addbee56437da3ffb546e3dfe24",
+        "files": 610,
+        "replicas": 10,
+        "target": "leaky-repo-filesystem-replicated-x10"
+      }
+    }
+  ],
+  "report_type": "rnc-scan-harness/performance-matrix",
+  "scanner": {
+    "key": "gitleaks",
+    "source": {
+      "branch": "master",
+      "commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+      "repository": "https://github.com/RNC-Solutions-Group/gitleaks"
+    }
+  },
+  "workload": {
+    "bytes": 5888020,
+    "dataset": "leaky-repo",
+    "dataset_revision": "2e951359cac53addbee56437da3ffb546e3dfe24",
+    "files": 610,
+    "replicas": 10,
+    "target": "leaky-repo-filesystem-replicated-x10"
+  }
+}

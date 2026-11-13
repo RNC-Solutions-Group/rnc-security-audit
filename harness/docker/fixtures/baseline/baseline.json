@@ -1,0 +1,19 @@
+[
+ {
+  "RuleID": "aws-access-key",
+  "Description": "AWS Access Key",
+  "StartLine": 20,
+  "EndLine": 20,
+  "StartColumn": 16,
+  "EndColumn": 35,
+  "Match": "AKIALALEMEL33243OLIA",
+  "Secret": "AKIALALEMEL33243OLIA",
+  "File": "../testdata/repos/nogit/main.go",
+  "Entropy": 3.0841837,
+  "Author": "",
+  "Email": "",
+  "Date": "",
+  "Message": "",
+  "Commit": ""
+ }
+]

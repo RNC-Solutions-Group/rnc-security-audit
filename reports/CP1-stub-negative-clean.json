@@ -1,0 +1,163 @@
+{
+  "config": {
+    "path": null,
+    "sha256": null
+  },
+  "dataset": {
+    "artifact_sha256": {
+      "LICENSE": "77cc69213a9c08cbd96f731793cff881a4b40a1d0682c70c70a1846afc700043",
+      "README.md": "97f582590d45b5518b262c225394618e38404b9569c62c26427f78e480502b82",
+      "fp-corpus.json": "c71669dfae7fa73064c358060d951633554ed2590aa281ad7a3e94f957c3684f",
+      "fp-corpus.txt": "e8667a00e06a39ea650e8608bf65cb45801a66ae42a28bcb7bf1e205f6848f04",
+      "materialize.py": "80193ec15432d2eebb55f7fa1d828e39da18fcdbf032824d7f69f0fd46a0a3b4",
+      "tp-corpus.json.b64": "2548857616dcc3c8007c9ffb830eaac47e48679d926becfec8b3b503dc6d1ef1",
+      "tp-corpus.txt.b64": "c1ad1ce89267e2fca0c32f60acfbd7577af1f530937c84742b45a089ee00dc25"
+    },
+    "author_reference": "https://levain.bmac.io/false-positives.html",
+    "counting_unit": "individual labeled case: negative corpus counts sections (expected secrets are zero); positive corpus counts planted credentials",
+    "derived_sha256": {
+      "tp-corpus.json": "be98a3072b22f97be42cca9d8bbefaa7667692b2a4dfdbf3d22c138608c8eb41",
+      "tp-corpus.txt": "182be9899aa36f446e3737a766bb463210a90d88aa8c71dc00e917ad590fe2e2"
+    },
+    "license": "MIT",
+    "license_notice": "datasets/THIRD_PARTY_NOTICES.md",
+    "license_sha256": "77cc69213a9c08cbd96f731793cff881a4b40a1d0682c70c70a1846afc700043",
+    "license_url": "https://github.com/levainbot/fp-corpus/blob/c130c321aa9046af17a6c876cb97e2ed71397110/LICENSE",
+    "manifest_sha256": "c456d2a4943494dea0ac3e5161193d91a77250c700c23e5113de12b2a311af3e",
+    "name": "Levain FP Corpus (negative and positive fixtures)",
+    "negative_counts": {
+      "hard_secrets": 0,
+      "hard_sections": 0,
+      "lines": 866,
+      "personal_data": 57,
+      "secrets": 0,
+      "sections": 116
+    },
+    "positive_counts": {
+      "hard_secrets": 3,
+      "hard_sections": 3,
+      "lines": 368,
+      "personal_data": 8,
+      "secrets": 85,
+      "sections": 45
+    },
+    "revision": "c130c321aa9046af17a6c876cb97e2ed71397110",
+    "revision_date": "2026-09-10T18:05:41-04:00",
+    "source_repository": "https://github.com/levainbot/fp-corpus",
+    "tag": "v1"
+  },
+  "environment": {
+    "machine": "AMD64",
+    "python": "3.13.5",
+    "release": "11",
+    "system": "Windows"
+  },
+  "generated_at": "2026-11-09T19:18:53Z",
+  "harness_version": "0.1.0",
+  "limitations": [
+    "The scanner used for this report is a controlled test double, not Gitleaks. The counts below validate the harness and must not be read as Gitleaks detection accuracy.",
+    "Only the CP1 detection lane is implemented; functional conformance, performance, and Go race testing are not part of this report.",
+    "The corpus is synthetic and finite; it does not measure real-world repository or credential prevalence.",
+    "Negative-corpus true negatives are not inferred from line counts; the oracle is 'expected secrets are zero'.",
+    "Three hard-tier credentials are reported separately and are not included in the core recall percentage.",
+    "The Gitleaks JSON report parser is written to the documented shape but has not been exercised against a real Gitleaks executable in this checkpoint.",
+    "No target Gitleaks source revision was supplied."
+  ],
+  "redaction": {
+    "expected_secret_values_omitted": true,
+    "raw_matches_omitted": true,
+    "raw_scanner_report_retained": false
+  },
+  "report_type": "gitleaks-scan-harness/detection",
+  "runs": [
+    {
+      "control": {
+        "file": "000-control.log",
+        "findings": 1,
+        "kinds_echoed": [
+          "aws-access-key-id"
+        ],
+        "planted": [
+          "aws-access-key-id",
+          "github-token",
+          "private-key"
+        ],
+        "reported": true
+      },
+      "corpus": "negative",
+      "invocation": {
+        "argv": [
+          "tests/fixtures/stub-gitleaks.cmd",
+          "dir",
+          "<corpus-dir>",
+          "--report-format",
+          "json",
+          "--report-path",
+          "<report>",
+          "--no-banner"
+        ],
+        "duration_seconds": 0.167,
+        "error_code": null,
+        "error_message": "",
+        "exit_code": 0,
+        "mode": "dir",
+        "report_bytes": 317,
+        "report_sha256": "c4bfa9bbfec772e82ffa935d049b532d4a3fe0cdfc36f33c00a5051fdc1db832",
+        "stderr_bytes": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_summary": "",
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "timed_out": false,
+        "timeout_seconds": 300.0
+      },
+      "notes": [],
+      "results": {
+        "clean": true,
+        "counting_unit": "section/format; expected credentials are zero",
+        "duplicates": 0,
+        "examples": [],
+        "expected_secrets": 0,
+        "false_positives": 0,
+        "findings_total": 0,
+        "lines_scanned": 866,
+        "personal_data_matches": 0,
+        "sections_scanned": 116,
+        "sections_tripped": 0,
+        "true_negatives": null,
+        "true_negatives_note": "not inferred from lines; this corpus has no per-line oracle",
+        "worst_sections": []
+      },
+      "scored": true,
+      "status": "COMPLETED",
+      "unattributed_files": []
+    }
+  ],
+  "scenario_version": "cp1-v1",
+  "schema_version": 1,
+  "scope": {
+    "functional_conformance": "NOT_RUN",
+    "lane": "detection_accuracy",
+    "performance": "NOT_RUN",
+    "race_stability": "NOT_TESTED"
+  },
+  "summary": {
+    "detection_accuracy": "NOT_A_GITLEAKS_MEASUREMENT",
+    "failed_or_unscored_runs": 0,
+    "gitleaks_execution": "BLOCKED",
+    "gitleaks_integration": "STUB_VALIDATION_ONLY",
+    "overall_status": "COMPLETED",
+    "runs": 1,
+    "scanner_kind": "stub",
+    "scored_runs": 1
+  },
+  "target": {
+    "binary_path": "tests/fixtures/stub-gitleaks.cmd",
+    "binary_sha256": "56cd2b9dd324602b8a26ff2253c22b3ad936201e7bcabe6adb5785240c3e256a",
+    "gitleaks_execution": "BLOCKED",
+    "integration_status": "STUB_VALIDATION_ONLY",
+    "mode": "dir",
+    "scanner_kind": "stub",
+    "source_revision": null
+  }
+}

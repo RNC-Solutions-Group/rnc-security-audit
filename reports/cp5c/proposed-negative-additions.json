@@ -1,0 +1,222 @@
+{
+  "items": [
+    {
+      "category": "NON_SECRET_REFERENCE",
+      "disposition": "NEGATIVE",
+      "id": "PN-001",
+      "identity": {
+        "repetition": "NOT_APPLICABLE",
+        "secret_sha256": null,
+        "unique_group": null
+      },
+      "proposal": {
+        "expected_observations": [
+          {
+            "commit": "9f1468c79df2cf13c66041692ca7f044a27a874b",
+            "line": 46,
+            "path": ".leaky-meta/secrets.csv"
+          },
+          {
+            "commit": "226fcb481daf5914c121d87372875955fe4fedfb",
+            "line": 48,
+            "path": ".leaky-meta/secrets.csv"
+          },
+          {
+            "commit": "2e951359cac53addbee56437da3ffb546e3dfe24",
+            "line": 48,
+            "path": ".leaky-meta/secrets.csv"
+          }
+        ],
+        "extracted_value": "sshPassphrase",
+        "scope_note": "One source comment per branch/merge revision family. Later line shifts are covered by unchanged-line lineage."
+      },
+      "review": {
+        "note": "Benchmark risk-category comment; the extracted bytes are prose vocabulary, not a credential. Owner approval required.",
+        "status": "PROPOSED_NOT_APPLIED"
+      },
+      "scoring": {
+        "expected_occurrence": false,
+        "informative_only": false,
+        "lineage_only": false,
+        "negative_reference": true,
+        "unique_group_first": false
+      },
+      "source": {
+        "change_event": "Added",
+        "current_path": ".leaky-meta/secrets.csv",
+        "current_presence": "Current",
+        "evidence_url": "https://github.com/Plazmaz/leaky-repo/blob/9f1468c79df2cf13c66041692ca7f044a27a874b/.leaky-meta/secrets.csv#L46",
+        "git_blob_sha": "8886c8fa10b2152a552d2d719b60fa4f68709adf",
+        "introduced_at": "9f1468c79df2cf13c66041692ca7f044a27a874b",
+        "line_end": 46,
+        "line_start": 46,
+        "observed_commit": "9f1468c79df2cf13c66041692ca7f044a27a874b",
+        "path": ".leaky-meta/secrets.csv"
+      }
+    },
+    {
+      "category": "NON_SECRET_REFERENCE",
+      "disposition": "NEGATIVE",
+      "id": "PN-002",
+      "identity": {
+        "repetition": "NOT_APPLICABLE",
+        "secret_sha256": null,
+        "unique_group": null
+      },
+      "proposal": {
+        "expected_observations": [
+          {
+            "commit": "4ad3f90463c8b7de38a71a0b077ac34824f1707a",
+            "line": 46,
+            "path": ".leaky-meta/secrets.csv"
+          },
+          {
+            "commit": "2e951359cac53addbee56437da3ffb546e3dfe24",
+            "line": 48,
+            "path": ".leaky-meta/secrets.csv"
+          }
+        ],
+        "extracted_value": "sshPassphrase",
+        "scope_note": "One source comment per branch/merge revision family. Later line shifts are covered by unchanged-line lineage."
+      },
+      "review": {
+        "note": "Benchmark risk-category comment; the extracted bytes are prose vocabulary, not a credential. Owner approval required.",
+        "status": "PROPOSED_NOT_APPLIED"
+      },
+      "scoring": {
+        "expected_occurrence": false,
+        "informative_only": false,
+        "lineage_only": false,
+        "negative_reference": true,
+        "unique_group_first": false
+      },
+      "source": {
+        "change_event": "Added",
+        "current_path": ".leaky-meta/secrets.csv",
+        "current_presence": "Current",
+        "evidence_url": "https://github.com/Plazmaz/leaky-repo/blob/4ad3f90463c8b7de38a71a0b077ac34824f1707a/.leaky-meta/secrets.csv#L46",
+        "git_blob_sha": "8886c8fa10b2152a552d2d719b60fa4f68709adf",
+        "introduced_at": "4ad3f90463c8b7de38a71a0b077ac34824f1707a",
+        "line_end": 46,
+        "line_start": 46,
+        "observed_commit": "4ad3f90463c8b7de38a71a0b077ac34824f1707a",
+        "path": ".leaky-meta/secrets.csv"
+      }
+    },
+    {
+      "category": "NON_SECRET_REFERENCE",
+      "disposition": "NEGATIVE",
+      "id": "PN-003",
+      "identity": {
+        "repetition": "NOT_APPLICABLE",
+        "secret_sha256": null,
+        "unique_group": null
+      },
+      "proposal": {
+        "expected_observations": [
+          {
+            "commit": "9f1468c79df2cf13c66041692ca7f044a27a874b",
+            "line": 67,
+            "path": ".leaky-meta/secrets.csv"
+          },
+          {
+            "commit": "226fcb481daf5914c121d87372875955fe4fedfb",
+            "line": 69,
+            "path": ".leaky-meta/secrets.csv"
+          },
+          {
+            "commit": "2e951359cac53addbee56437da3ffb546e3dfe24",
+            "line": 69,
+            "path": ".leaky-meta/secrets.csv"
+          }
+        ],
+        "extracted_value": "passphrase",
+        "scope_note": "One source comment per branch/merge revision family. Later line shifts are covered by unchanged-line lineage."
+      },
+      "review": {
+        "note": "Benchmark risk-category comment; the extracted bytes are prose vocabulary, not a credential. Owner approval required.",
+        "status": "PROPOSED_NOT_APPLIED"
+      },
+      "scoring": {
+        "expected_occurrence": false,
+        "informative_only": false,
+        "lineage_only": false,
+        "negative_reference": true,
+        "unique_group_first": false
+      },
+      "source": {
+        "change_event": "Added",
+        "current_path": ".leaky-meta/secrets.csv",
+        "current_presence": "Current",
+        "evidence_url": "https://github.com/Plazmaz/leaky-repo/blob/9f1468c79df2cf13c66041692ca7f044a27a874b/.leaky-meta/secrets.csv#L67",
+        "git_blob_sha": "8886c8fa10b2152a552d2d719b60fa4f68709adf",
+        "introduced_at": "9f1468c79df2cf13c66041692ca7f044a27a874b",
+        "line_end": 67,
+        "line_start": 67,
+        "observed_commit": "9f1468c79df2cf13c66041692ca7f044a27a874b",
+        "path": ".leaky-meta/secrets.csv"
+      }
+    },
+    {
+      "category": "NON_SECRET_REFERENCE",
+      "disposition": "NEGATIVE",
+      "id": "PN-004",
+      "identity": {
+        "repetition": "NOT_APPLICABLE",
+        "secret_sha256": null,
+        "unique_group": null
+      },
+      "proposal": {
+        "expected_observations": [
+          {
+            "commit": "4ad3f90463c8b7de38a71a0b077ac34824f1707a",
+            "line": 67,
+            "path": ".leaky-meta/secrets.csv"
+          },
+          {
+            "commit": "2e951359cac53addbee56437da3ffb546e3dfe24",
+            "line": 69,
+            "path": ".leaky-meta/secrets.csv"
+          }
+        ],
+        "extracted_value": "passphrase",
+        "scope_note": "One source comment per branch/merge revision family. Later line shifts are covered by unchanged-line lineage."
+      },
+      "review": {
+        "note": "Benchmark risk-category comment; the extracted bytes are prose vocabulary, not a credential. Owner approval required.",
+        "status": "PROPOSED_NOT_APPLIED"
+      },
+      "scoring": {
+        "expected_occurrence": false,
+        "informative_only": false,
+        "lineage_only": false,
+        "negative_reference": true,
+        "unique_group_first": false
+      },
+      "source": {
+        "change_event": "Added",
+        "current_path": ".leaky-meta/secrets.csv",
+        "current_presence": "Current",
+        "evidence_url": "https://github.com/Plazmaz/leaky-repo/blob/4ad3f90463c8b7de38a71a0b077ac34824f1707a/.leaky-meta/secrets.csv#L67",
+        "git_blob_sha": "8886c8fa10b2152a552d2d719b60fa4f68709adf",
+        "introduced_at": "4ad3f90463c8b7de38a71a0b077ac34824f1707a",
+        "line_end": 67,
+        "line_start": 67,
+        "observed_commit": "4ad3f90463c8b7de38a71a0b077ac34824f1707a",
+        "path": ".leaky-meta/secrets.csv"
+      }
+    }
+  ],
+  "notes": [
+    "These items are proposals only. They were not inserted into the owner-approved oracle and did not affect CP5C scores.",
+    "PN-001/PN-002 and PN-003/PN-004 overlap on the 2e951359 merge. An owner approval must decide whether overlapping branch negatives are collapsed to one negative candidate; otherwise the finding is AMBIGUOUS, not FALSE_POSITIVE.",
+    "No negative reference is proposed for web/js/salesforce.js. That line contains the approved informative value salesforcepassword; a line-level negative would contradict the informative truth. The incorrect function(err extraction remains pending and requires a scanner/scoring correction, not a negative truth item."
+  ],
+  "oracle_modified": false,
+  "oracle_negative_count_after_if_approved": 90,
+  "oracle_negative_count_before": 86,
+  "owner_approval_required": true,
+  "report_type": "cp5c-proposed-negative-additions",
+  "schema_version": 1,
+  "status": "PROPOSED_NOT_APPLIED"
+}

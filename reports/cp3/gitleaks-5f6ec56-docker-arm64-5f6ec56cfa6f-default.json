@@ -1,0 +1,1470 @@
+{
+  "adapter": {
+    "key": "gitleaks",
+    "name": "Gitleaks",
+    "supported_suites": [
+      "gitleaks",
+      "git-history",
+      "levain",
+      "leaky-repo",
+      "synthetic-filesystem"
+    ]
+  },
+  "builds": {
+    "docker-linux-arm64": {
+      "artifact_path": null,
+      "artifact_sha256": null,
+      "command": [
+        "docker",
+        "build",
+        "--quiet",
+        "--platform",
+        "linux/arm64",
+        "-f",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261111T183137Z-3a9622e7\\source\\Dockerfile",
+        "--label",
+        "rnc-scan-harness.run=20261111T183137Z-3a9622e7",
+        "--label",
+        "rnc-scan-harness.adapter=gitleaks",
+        "-t",
+        "rnc-gitleaks-20261111t183137z-3a9622e7-5f6ec56cfa6f-docker-linux-arm64",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261111T183137Z-3a9622e7\\source"
+      ],
+      "duration_seconds": 491.361,
+      "error": null,
+      "exit_code": 0,
+      "image_id": "sha256:b767f5d50c9b9ae95e666c6d8ba29a76b891c98546fa9a47bb97c0bfeeaeb12d",
+      "image_tag": "rnc-gitleaks-20261111t183137z-3a9622e7-5f6ec56cfa6f-docker-linux-arm64",
+      "metadata": {
+        "architecture_verified": true,
+        "build_version_tag": "v8.0.0-rnc.5f6ec56cfa6f",
+        "docker_build_strategy": "upstream-source-dockerfile",
+        "emulated": true,
+        "execution_method": "docker",
+        "expected_os_architecture": "linux/arm64",
+        "host_architecture": "amd64",
+        "image_os_architecture": "linux/arm64",
+        "source_commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+        "source_repository": "https://github.com/RNC-Solutions-Group/gitleaks",
+        "toolchain": {
+          "docker": "29.9.3",
+          "git": "git version 2.45.2.windows.1",
+          "go": "go version go1.27.3 windows/amd64"
+        }
+      },
+      "platform": {
+        "arch": "arm64",
+        "docker_platform": "linux/arm64",
+        "goarch": "arm64",
+        "goos": "linux",
+        "key": "docker-linux-arm64",
+        "kind": "docker",
+        "os_name": "linux"
+      },
+      "status": "PASS",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e11bd69a4704e03d4a11101eec9bf75c60ed4b6cbe6262ed1c1f47556e7a0e6c",
+      "version": "v8.0.0-rnc.5f6ec56cfa6f",
+      "version_status": "PASS"
+    }
+  },
+  "cleanup": {
+    "actions": [
+      "No run-owned containers found.",
+      "Removed 1 run-owned image(s).",
+      "Removed image tag rnc-gitleaks-20261111t183137z-3a9622e7-5f6ec56cfa6f-docker-linux-arm64.",
+      "Removed run-owned checkout, build outputs, and evidence workspace."
+    ],
+    "containers_removed": [],
+    "failures": [],
+    "images_removed": [
+      "b767f5d50c9b",
+      "rnc-gitleaks-20261111t183137z-3a9622e7-5f6ec56cfa6f-docker-linux-arm64"
+    ],
+    "retained": false,
+    "status": "PASS",
+    "workspace": "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261111T183137Z-3a9622e7",
+    "workspace_removed": true
+  },
+  "datasets": {},
+  "detection": {
+    "leaky_filesystem": {
+      "legacy_count_coverage": {
+        "coverage_percent": null,
+        "covered_count": null,
+        "excess_findings": null,
+        "expected_count": null,
+        "expected_files": null,
+        "files_covered": null,
+        "label": "LEGACY COUNT COVERAGE",
+        "unlisted_findings": null
+      },
+      "methodology": "legacy_count_plus_rich_line_truth",
+      "rich_line_truth": {
+        "category_conflict_items": null,
+        "detection_recall_percent": null,
+        "duplicate_count": null,
+        "expected_count": null,
+        "f1_percent": null,
+        "line_only_count": null,
+        "matched_count": null,
+        "missed_count": null,
+        "negative_oracle": false,
+        "precision_percent": null,
+        "unexpected_count": null,
+        "value_verified_count": null
+      }
+    },
+    "leaky_history": {
+      "commits_scanned": null,
+      "denominator": "none",
+      "execution_status": null,
+      "observed_findings": null,
+      "scored": false,
+      "truth_status": null,
+      "unique_secret_fingerprints": null
+    },
+    "levain": {},
+    "synthetic_filesystem": {
+      "ambiguous_count": 0,
+      "blocked_count": 0,
+      "category_conflict_items": 0,
+      "category_metrics": {
+        "risk": {
+          "expected": 4,
+          "matched": 4,
+          "missed": 0
+        }
+      },
+      "detection_recall_percent": 100.0,
+      "duplicate_count": 0,
+      "execution_error_count": 0,
+      "execution_status": "PASS",
+      "expected_count": 4,
+      "f1_percent": 100.0,
+      "false_positive_count": 0,
+      "line_only_count": 0,
+      "matched_count": 4,
+      "missed_count": 0,
+      "negative_oracle": true,
+      "not_applicable_count": 0,
+      "observed_count": 4,
+      "partial_count": 0,
+      "precision_percent": 100.0,
+      "skipped_count": 0,
+      "unexpected_count": 0,
+      "unmapped_count": 0,
+      "value_verified_count": 4
+    },
+    "synthetic_history": {
+      "occurrence_duplicates": 0,
+      "occurrence_expected": 5,
+      "occurrence_line_only": 0,
+      "occurrence_matched": 5,
+      "occurrence_missed": 0,
+      "occurrence_unexpected": 0,
+      "occurrence_value_verified": 5,
+      "unique_expected": 3,
+      "unique_matched": 3,
+      "unique_recall_percent": 100.0
+    }
+  },
+  "detection_by_product": {
+    "docker-linux-arm64": {
+      "git-history": {
+        "metrics": {},
+        "outcome": null,
+        "reason": null,
+        "status": "PASS"
+      },
+      "synthetic-filesystem": {
+        "metrics": {
+          "ambiguous_count": 0,
+          "blocked_count": 0,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "risk": {
+              "expected": 4,
+              "matched": 4,
+              "missed": 0
+            }
+          },
+          "detection_recall_percent": 100.0,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 4,
+          "f1_percent": 100.0,
+          "false_positive_count": 0,
+          "line_only_count": 0,
+          "matched_count": 4,
+          "missed_count": 0,
+          "negative_oracle": true,
+          "not_applicable_count": 0,
+          "observed_count": 4,
+          "partial_count": 0,
+          "precision_percent": 100.0,
+          "skipped_count": 0,
+          "unexpected_count": 0,
+          "unmapped_count": 0,
+          "value_verified_count": 4
+        },
+        "outcome": null,
+        "reason": null,
+        "status": "PASS"
+      }
+    }
+  },
+  "generated_at": "2026-11-11T18:40:08Z",
+  "harness_version": "0.5.0",
+  "host": {
+    "cpu_count": 8,
+    "hostname_kind": "redacted",
+    "machine": "AMD64",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+    "python": "3.13.5",
+    "system": "Windows",
+    "toolchain": {
+      "docker": "29.9.3",
+      "git": "git version 2.45.2.windows.1",
+      "go": "go version go1.27.3 windows/amd64"
+    }
+  },
+  "limitations": [
+    "Source commit is the primary experiment identity; artifact hashes and image IDs are supporting provenance.",
+    "A successfully built artifact is not counted as tested unless an applicable suite executed it.",
+    "DEFAULT isolation is enforced by omitting --config, clearing known scanner-config environment variables, and executing from an empty run-owned working directory.",
+    "The scanner does not expose a machine-readable digest of its embedded default rule set; the harness therefore verifies invocation isolation rather than the rule-file bytes."
+  ],
+  "performance": {
+    "limitations": [
+      "Performance is reported separately from detection accuracy; no weighted combined score exists.",
+      "Native, container, and emulated-architecture products are not directly comparable.",
+      "Unavailable CPU or memory telemetry is null, never zero."
+    ],
+    "methodology": {
+      "build_time_separate": true,
+      "detection_and_performance_separate": true,
+      "measured_runs": 1,
+      "sequential": true,
+      "version": "1",
+      "warmups": 0
+    },
+    "products": [
+      {
+        "benchmark": {
+          "measured_runs": 1,
+          "mode": "dir",
+          "sequential": true,
+          "timeout_seconds": 1200,
+          "version": "1",
+          "warmups": 0
+        },
+        "build": {
+          "artifact_sha256": null,
+          "command": [
+            "docker",
+            "build",
+            "--quiet",
+            "--platform",
+            "linux/arm64",
+            "-f",
+            "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261111T183137Z-3a9622e7\\source\\Dockerfile",
+            "--label",
+            "rnc-scan-harness.run=20261111T183137Z-3a9622e7",
+            "--label",
+            "rnc-scan-harness.adapter=gitleaks",
+            "-t",
+            "rnc-gitleaks-20261111t183137z-3a9622e7-5f6ec56cfa6f-docker-linux-arm64",
+            "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261111T183137Z-3a9622e7\\source"
+          ],
+          "duration_seconds": 491.361,
+          "image_id": "sha256:b767f5d50c9b9ae95e666c6d8ba29a76b891c98546fa9a47bb97c0bfeeaeb12d",
+          "source_commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+          "status": "PASS"
+        },
+        "dataset": {
+          "dataset_id": "leaky-repo",
+          "dataset_version": "2e951359cac53addbee56437da3ffb546e3dfe24",
+          "inventory_sha256": "146df5e25fa987a0b5c5610a958941e5416a29c9f72eadaa3677abc620b281ce",
+          "truth_manifest_version": "rnc-leaky-truth-v1"
+        },
+        "environment": {
+          "cpu_count": 8,
+          "hostname_kind": "redacted",
+          "machine": "AMD64",
+          "platform": "Windows-11-10.0.26300-SP0",
+          "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+          "python": "3.13.5",
+          "system": "Windows"
+        },
+        "harness_version": "0.5.0",
+        "performance_version": "1",
+        "product": {
+          "architecture": "arm64",
+          "artifact_sha256": null,
+          "emulated": true,
+          "execution_method": "docker",
+          "image_id": "sha256:b767f5d50c9b9ae95e666c6d8ba29a76b891c98546fa9a47bb97c0bfeeaeb12d",
+          "image_tag": "rnc-gitleaks-20261111t183137z-3a9622e7-5f6ec56cfa6f-docker-linux-arm64",
+          "kind": "docker",
+          "platform": "docker-linux-arm64"
+        },
+        "report_type": "rnc-scan-harness/performance",
+        "runs": [
+          {
+            "cpu_total_seconds": null,
+            "cpu_utilization_percent": 198.18,
+            "duration_seconds": 1.958,
+            "error": null,
+            "exit_code": 1,
+            "peak_memory_bytes": null,
+            "phase": "measured",
+            "run_index": 0,
+            "telemetry_method": "docker_stats",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          }
+        ],
+        "scanner": {
+          "key": "gitleaks",
+          "version": "v8.0.0-rnc.5f6ec56cfa6f"
+        },
+        "summary": {
+          "cpu_total_seconds": {
+            "coefficient_of_variation": null,
+            "count": 0,
+            "maximum": null,
+            "median": null,
+            "minimum": null,
+            "stdev": null
+          },
+          "cpu_utilization_percent": {
+            "coefficient_of_variation": 0.0,
+            "count": 1,
+            "maximum": 198.18,
+            "median": 198.18,
+            "minimum": 198.18,
+            "stdev": 0.0
+          },
+          "failures": 0,
+          "peak_memory_bytes": {
+            "available_samples": 0,
+            "max": null,
+            "median": null
+          },
+          "runtime_seconds": {
+            "coefficient_of_variation": 0.0,
+            "count": 1,
+            "maximum": 1.958,
+            "median": 1.958,
+            "minimum": 1.958,
+            "stdev": 0.0
+          },
+          "stability": "STABLE",
+          "telemetry_methods": [
+            "docker_stats"
+          ],
+          "throughput_bytes_per_second": 300716.037,
+          "timeouts": 0
+        },
+        "workload": {
+          "bytes": 588802,
+          "dataset": "leaky-repo",
+          "dataset_revision": "2e951359cac53addbee56437da3ffb546e3dfe24",
+          "files": 61,
+          "replicas": 1,
+          "target": "leaky-repo-filesystem"
+        }
+      }
+    ],
+    "status": "PASS",
+    "workload": {
+      "bytes": 588802,
+      "dataset": "leaky-repo",
+      "dataset_revision": "2e951359cac53addbee56437da3ffb546e3dfe24",
+      "files": 61,
+      "replicas": 1,
+      "target": "leaky-repo-filesystem"
+    }
+  },
+  "platforms": [
+    {
+      "arch": "arm64",
+      "docker_platform": "linux/arm64",
+      "goarch": "arm64",
+      "goos": "linux",
+      "key": "docker-linux-arm64",
+      "kind": "docker",
+      "os_name": "linux"
+    }
+  ],
+  "profile": {
+    "applied_settings": {
+      "cleared_environment": [
+        "BETTERLEAKS_CONFIG",
+        "BETTERLEAKS_CONFIG_TOML",
+        "GITLEAKS_CONFIG",
+        "GITLEAKS_CONFIG_TOML"
+      ],
+      "configuration_file_required": false,
+      "profile": "DEFAULT",
+      "scanner_config_argument": null,
+      "working_directory": "empty run-owned scanner-cwd"
+    },
+    "baseline_metrics_included": true,
+    "config_path": null,
+    "config_sha256": null,
+    "config_source": "scanner bundled default rules",
+    "default_isolation": {
+      "config_argument": null,
+      "isolated_working_directory": true,
+      "limitations": [
+        "DEFAULT isolation is enforced by omitting --config, clearing known scanner-config environment variables, and executing from an empty run-owned working directory.",
+        "The scanner does not expose a machine-readable digest of its embedded default rule set; the harness therefore verifies invocation isolation rather than the rule-file bytes."
+      ],
+      "mode": "bundled-default",
+      "removed_environment": [
+        "BETTERLEAKS_CONFIG",
+        "BETTERLEAKS_CONFIG_TOML",
+        "GITLEAKS_CONFIG",
+        "GITLEAKS_CONFIG_TOML"
+      ],
+      "verifiable": true
+    },
+    "is_default": true,
+    "limitations": [
+      "DEFAULT isolation is enforced by omitting --config, clearing known scanner-config environment variables, and executing from an empty run-owned working directory.",
+      "The scanner does not expose a machine-readable digest of its embedded default rule set; the harness therefore verifies invocation isolation rather than the rule-file bytes."
+    ],
+    "name": "default"
+  },
+  "raw_policy": "discarded",
+  "report_options": {
+    "exception_mode": "exceptions-only",
+    "exceptions_enabled": true,
+    "include_baseline_deltas": true,
+    "include_coverage_gaps": true,
+    "include_not_applicable": false,
+    "include_skipped": true
+  },
+  "report_type": "rnc-scan-harness/experiment",
+  "reports": {
+    "raw": null,
+    "sanitized": [
+      "reports\\cp3\\gitleaks-5f6ec56-docker-arm64-5f6ec56cfa6f-default.json",
+      "reports\\cp3\\gitleaks-5f6ec56-docker-arm64-5f6ec56cfa6f-default.md"
+    ]
+  },
+  "run_id": "20261111T183137Z-3a9622e7",
+  "scanner": {
+    "identity": "source-commit",
+    "key": "gitleaks",
+    "name": "Gitleaks",
+    "version": "v8.0.0-rnc.5f6ec56cfa6f"
+  },
+  "schema_version": 2,
+  "source": {
+    "clone_command": [
+      "git",
+      "clone",
+      "--quiet",
+      "--filter=blob:none",
+      "--no-checkout",
+      "--",
+      "https://github.com/RNC-Solutions-Group/gitleaks",
+      "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261111T183137Z-3a9622e7\\source"
+    ],
+    "clone_duration_seconds": 1.277,
+    "clone_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "clone_stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+    "fetch_command": null,
+    "fetch_duration_seconds": null,
+    "fetch_stderr_sha256": null,
+    "fetch_stdout_sha256": null,
+    "head": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+    "head_verified": true,
+    "path": "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261111T183137Z-3a9622e7\\source",
+    "repository": "https://github.com/RNC-Solutions-Group/gitleaks",
+    "requested_commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c"
+  },
+  "started_at": "2026-11-11T18:31:37Z",
+  "suites": {
+    "git-history": {
+      "applicable": true,
+      "baseline_metric": false,
+      "comparisons": {},
+      "details": {
+        "configuration": {
+          "baseline_metric": false,
+          "config_sha256": "040d06535f19b691c00e4988c006cdb08bb57dab8317948e6e58ae7f252fd82e",
+          "config_source": "harness/history_fixture.py",
+          "note": "The controlled history rule is a fixture rule, not a scanner default.",
+          "profile": "CONTROLLED_FIXTURE"
+        },
+        "lanes": {
+          "docker-linux-arm64": {
+            "commits_scanned": {
+              "c1": "95183f4de97dda5c99aee01d8100d4f9d7722cf4",
+              "c2": "9b94863a3dd13528bf5e270e734aa2ae052384e5",
+              "c3": "a37c25ee5c0320c62d3927662f6dc4b1d1c54eb6",
+              "c4": "0efadc5cf2b5259024e5537251c7eec815357694",
+              "c5": "adf06d2a3df19578d91e943814a34c9a9105dff9"
+            },
+            "duration_seconds": 3.332,
+            "evaluations": [
+              {
+                "classification": "EXPECTED_DETECTION",
+                "expected": {
+                  "category": "risk",
+                  "category_conflict": false,
+                  "classification": "EXPECTED_DETECTION",
+                  "commit": "a37c25ee5c0320c62d3927662f6dc4b1d1c54eb6",
+                  "dataset_id": "rnc-synthetic-history",
+                  "dataset_version": "1",
+                  "finding_id": "rnc-synthetic-history:occ-beta-c3a",
+                  "fingerprint_sha256": "196d120e74c30c66b30608d79fd113004c36caedc85d464e2b750399c6f860aa",
+                  "line_end": 1,
+                  "line_start": 1,
+                  "location": "config/app.env:1@c3",
+                  "matching_policy": "line_range",
+                  "notes": "",
+                  "path": "config/app.env",
+                  "risk_bearing": true,
+                  "source_reference": "synthetic manifest c3:config/app.env:1"
+                },
+                "expected_id": "rnc-synthetic-history:occ-beta-c3a",
+                "identity_confidence": "value",
+                "line": 1,
+                "observed": {
+                  "commit": "a37c25ee5c0320c62d3927662f6dc4b1d1c54eb6",
+                  "file": "config/app.env",
+                  "finding_id": null,
+                  "index": 0,
+                  "line": 1,
+                  "match_sha256": "32b41ffe477d20b7e8b62460e69384b9c1cfe99bc66868e7ed7a98f168c17215",
+                  "metadata": {
+                    "fingerprint": "a37c25ee5c0320c62d3927662f6dc4b1d1c54eb6:config/app.env:rnc-synthetic-history-token:1"
+                  },
+                  "rule_id": "rnc-synthetic-history-token",
+                  "scanner": null,
+                  "scanner_version": null,
+                  "secret_redacted": false,
+                  "secret_sha256": "32b41ffe477d20b7e8b62460e69384b9c1cfe99bc66868e7ed7a98f168c17215",
+                  "target": null
+                },
+                "path": "config/app.env",
+                "reason": "file, line, and value fingerprint match"
+              },
+              {
+                "classification": "EXPECTED_DETECTION",
+                "expected": {
+                  "category": "risk",
+                  "category_conflict": false,
+                  "classification": "EXPECTED_DETECTION",
+                  "commit": "0efadc5cf2b5259024e5537251c7eec815357694",
+                  "dataset_id": "rnc-synthetic-history",
+                  "dataset_version": "1",
+                  "finding_id": "rnc-synthetic-history:occ-gamma-c4",
+                  "fingerprint_sha256": "270ad303c1fd6941eaeb710269fa239d5d5465eeb5ebc05faa85f6fdf8557fc5",
+                  "line_end": 1,
+                  "line_start": 1,
+                  "location": "removed/legacy.env:1@c4",
+                  "matching_policy": "line_range",
+                  "notes": "",
+                  "path": "removed/legacy.env",
+                  "risk_bearing": true,
+                  "source_reference": "synthetic manifest c4:removed/legacy.env:1"
+                },
+                "expected_id": "rnc-synthetic-history:occ-gamma-c4",
+                "identity_confidence": "value",
+                "line": 1,
+                "observed": {
+                  "commit": "0efadc5cf2b5259024e5537251c7eec815357694",
+                  "file": "removed/legacy.env",
+                  "finding_id": null,
+                  "index": 1,
+                  "line": 1,
+                  "match_sha256": "e59438e9bfeb7e21825e67f9ee6bd61737a4d5d3d3f53aab113ed10b70fde709",
+                  "metadata": {
+                    "fingerprint": "0efadc5cf2b5259024e5537251c7eec815357694:removed/legacy.env:rnc-synthetic-history-token:1"
+                  },
+                  "rule_id": "rnc-synthetic-history-token",
+                  "scanner": null,
+                  "scanner_version": null,
+                  "secret_redacted": false,
+                  "secret_sha256": "e59438e9bfeb7e21825e67f9ee6bd61737a4d5d3d3f53aab113ed10b70fde709",
+                  "target": null
+                },
+                "path": "removed/legacy.env",
+                "reason": "file, line, and value fingerprint match"
+              },
+              {
+                "classification": "EXPECTED_DETECTION",
+                "expected": {
+                  "category": "risk",
+                  "category_conflict": false,
+                  "classification": "EXPECTED_DETECTION",
+                  "commit": "a37c25ee5c0320c62d3927662f6dc4b1d1c54eb6",
+                  "dataset_id": "rnc-synthetic-history",
+                  "dataset_version": "1",
+                  "finding_id": "rnc-synthetic-history:occ-beta-c3b",
+                  "fingerprint_sha256": "e57f75ec5a14b417732f1c3179d27f2685c995bfa8df531e18e7f5ab8c7dddbb",
+                  "line_end": 1,
+                  "line_start": 1,
+                  "location": "deploy/prod.env:1@c3",
+                  "matching_policy": "line_range",
+                  "notes": "",
+                  "path": "deploy/prod.env",
+                  "risk_bearing": true,
+                  "source_reference": "synthetic manifest c3:deploy/prod.env:1"
+                },
+                "expected_id": "rnc-synthetic-history:occ-beta-c3b",
+                "identity_confidence": "value",
+                "line": 1,
+                "observed": {
+                  "commit": "a37c25ee5c0320c62d3927662f6dc4b1d1c54eb6",
+                  "file": "deploy/prod.env",
+                  "finding_id": null,
+                  "index": 2,
+                  "line": 1,
+                  "match_sha256": "32b41ffe477d20b7e8b62460e69384b9c1cfe99bc66868e7ed7a98f168c17215",
+                  "metadata": {
+                    "fingerprint": "a37c25ee5c0320c62d3927662f6dc4b1d1c54eb6:deploy/prod.env:rnc-synthetic-history-token:1"
+                  },
+                  "rule_id": "rnc-synthetic-history-token",
+                  "scanner": null,
+                  "scanner_version": null,
+                  "secret_redacted": false,
+                  "secret_sha256": "32b41ffe477d20b7e8b62460e69384b9c1cfe99bc66868e7ed7a98f168c17215",
+                  "target": null
+                },
+                "path": "deploy/prod.env",
+                "reason": "file, line, and value fingerprint match"
+              },
+              {
+                "classification": "EXPECTED_DETECTION",
+                "expected": {
+                  "category": "risk",
+                  "category_conflict": false,
+                  "classification": "EXPECTED_DETECTION",
+                  "commit": "9b94863a3dd13528bf5e270e734aa2ae052384e5",
+                  "dataset_id": "rnc-synthetic-history",
+                  "dataset_version": "1",
+                  "finding_id": "rnc-synthetic-history:occ-alpha-c2",
+                  "fingerprint_sha256": "d18facd1b31f52f61c33c611a28595034d837e7bb530c6eab829844e07e6d3a0",
+                  "line_end": 1,
+                  "line_start": 1,
+                  "location": "config/duplicate.env:1@c2",
+                  "matching_policy": "line_range",
+                  "notes": "",
+                  "path": "config/duplicate.env",
+                  "risk_bearing": true,
+                  "source_reference": "synthetic manifest c2:config/duplicate.env:1"
+                },
+                "expected_id": "rnc-synthetic-history:occ-alpha-c2",
+                "identity_confidence": "value",
+                "line": 1,
+                "observed": {
+                  "commit": "9b94863a3dd13528bf5e270e734aa2ae052384e5",
+                  "file": "config/duplicate.env",
+                  "finding_id": null,
+                  "index": 3,
+                  "line": 1,
+                  "match_sha256": "2fb9cd2d33acd2b4c0ea7218b1c240ce1b51544c646b40b5729cb4c6df87ac8a",
+                  "metadata": {
+                    "fingerprint": "9b94863a3dd13528bf5e270e734aa2ae052384e5:config/duplicate.env:rnc-synthetic-history-token:1"
+                  },
+                  "rule_id": "rnc-synthetic-history-token",
+                  "scanner": null,
+                  "scanner_version": null,
+                  "secret_redacted": false,
+                  "secret_sha256": "2fb9cd2d33acd2b4c0ea7218b1c240ce1b51544c646b40b5729cb4c6df87ac8a",
+                  "target": null
+                },
+                "path": "config/duplicate.env",
+                "reason": "file, line, and value fingerprint match"
+              },
+              {
+                "classification": "EXPECTED_DETECTION",
+                "expected": {
+                  "category": "risk",
+                  "category_conflict": false,
+                  "classification": "EXPECTED_DETECTION",
+                  "commit": "95183f4de97dda5c99aee01d8100d4f9d7722cf4",
+                  "dataset_id": "rnc-synthetic-history",
+                  "dataset_version": "1",
+                  "finding_id": "rnc-synthetic-history:occ-alpha-c1",
+                  "fingerprint_sha256": "f65f6516d8ebcc5201d625dd7c064cd0ed8f1458a06b9aef99ee1308b84ecf80",
+                  "line_end": 1,
+                  "line_start": 1,
+                  "location": "config/app.env:1@c1",
+                  "matching_policy": "line_range",
+                  "notes": "",
+                  "path": "config/app.env",
+                  "risk_bearing": true,
+                  "source_reference": "synthetic manifest c1:config/app.env:1"
+                },
+                "expected_id": "rnc-synthetic-history:occ-alpha-c1",
+                "identity_confidence": "value",
+                "line": 1,
+                "observed": {
+                  "commit": "95183f4de97dda5c99aee01d8100d4f9d7722cf4",
+                  "file": "config/app.env",
+                  "finding_id": null,
+                  "index": 4,
+                  "line": 1,
+                  "match_sha256": "2fb9cd2d33acd2b4c0ea7218b1c240ce1b51544c646b40b5729cb4c6df87ac8a",
+                  "metadata": {
+                    "fingerprint": "95183f4de97dda5c99aee01d8100d4f9d7722cf4:config/app.env:rnc-synthetic-history-token:1"
+                  },
+                  "rule_id": "rnc-synthetic-history-token",
+                  "scanner": null,
+                  "scanner_version": null,
+                  "secret_redacted": false,
+                  "secret_sha256": "2fb9cd2d33acd2b4c0ea7218b1c240ce1b51544c646b40b5729cb4c6df87ac8a",
+                  "target": null
+                },
+                "path": "config/app.env",
+                "reason": "file, line, and value fingerprint match"
+              }
+            ],
+            "execution_status": "PASS",
+            "exit_code": 1,
+            "findings": [
+              {
+                "commit": "a37c25ee5c0320c62d3927662f6dc4b1d1c54eb6",
+                "file": "config/app.env",
+                "finding_id": null,
+                "line": 1,
+                "match_sha256": "32b41ffe477d20b7e8b62460e69384b9c1cfe99bc66868e7ed7a98f168c17215",
+                "metadata": {
+                  "fingerprint": "a37c25ee5c0320c62d3927662f6dc4b1d1c54eb6:config/app.env:rnc-synthetic-history-token:1"
+                },
+                "rule_id": "rnc-synthetic-history-token",
+                "scanner": null,
+                "scanner_version": null,
+                "secret_redacted": false,
+                "secret_sha256": "32b41ffe477d20b7e8b62460e69384b9c1cfe99bc66868e7ed7a98f168c17215",
+                "target": null
+              },
+              {
+                "commit": "0efadc5cf2b5259024e5537251c7eec815357694",
+                "file": "removed/legacy.env",
+                "finding_id": null,
+                "line": 1,
+                "match_sha256": "e59438e9bfeb7e21825e67f9ee6bd61737a4d5d3d3f53aab113ed10b70fde709",
+                "metadata": {
+                  "fingerprint": "0efadc5cf2b5259024e5537251c7eec815357694:removed/legacy.env:rnc-synthetic-history-token:1"
+                },
+                "rule_id": "rnc-synthetic-history-token",
+                "scanner": null,
+                "scanner_version": null,
+                "secret_redacted": false,
+                "secret_sha256": "e59438e9bfeb7e21825e67f9ee6bd61737a4d5d3d3f53aab113ed10b70fde709",
+                "target": null
+              },
+              {
+                "commit": "a37c25ee5c0320c62d3927662f6dc4b1d1c54eb6",
+                "file": "deploy/prod.env",
+                "finding_id": null,
+                "line": 1,
+                "match_sha256": "32b41ffe477d20b7e8b62460e69384b9c1cfe99bc66868e7ed7a98f168c17215",
+                "metadata": {
+                  "fingerprint": "a37c25ee5c0320c62d3927662f6dc4b1d1c54eb6:deploy/prod.env:rnc-synthetic-history-token:1"
+                },
+                "rule_id": "rnc-synthetic-history-token",
+                "scanner": null,
+                "scanner_version": null,
+                "secret_redacted": false,
+                "secret_sha256": "32b41ffe477d20b7e8b62460e69384b9c1cfe99bc66868e7ed7a98f168c17215",
+                "target": null
+              },
+              {
+                "commit": "9b94863a3dd13528bf5e270e734aa2ae052384e5",
+                "file": "config/duplicate.env",
+                "finding_id": null,
+                "line": 1,
+                "match_sha256": "2fb9cd2d33acd2b4c0ea7218b1c240ce1b51544c646b40b5729cb4c6df87ac8a",
+                "metadata": {
+                  "fingerprint": "9b94863a3dd13528bf5e270e734aa2ae052384e5:config/duplicate.env:rnc-synthetic-history-token:1"
+                },
+                "rule_id": "rnc-synthetic-history-token",
+                "scanner": null,
+                "scanner_version": null,
+                "secret_redacted": false,
+                "secret_sha256": "2fb9cd2d33acd2b4c0ea7218b1c240ce1b51544c646b40b5729cb4c6df87ac8a",
+                "target": null
+              },
+              {
+                "commit": "95183f4de97dda5c99aee01d8100d4f9d7722cf4",
+                "file": "config/app.env",
+                "finding_id": null,
+                "line": 1,
+                "match_sha256": "2fb9cd2d33acd2b4c0ea7218b1c240ce1b51544c646b40b5729cb4c6df87ac8a",
+                "metadata": {
+                  "fingerprint": "95183f4de97dda5c99aee01d8100d4f9d7722cf4:config/app.env:rnc-synthetic-history-token:1"
+                },
+                "rule_id": "rnc-synthetic-history-token",
+                "scanner": null,
+                "scanner_version": null,
+                "secret_redacted": false,
+                "secret_sha256": "2fb9cd2d33acd2b4c0ea7218b1c240ce1b51544c646b40b5729cb4c6df87ac8a",
+                "target": null
+              }
+            ],
+            "occurrences": {
+              "duplicates": 0,
+              "expected": 5,
+              "line_only": 0,
+              "matched": 5,
+              "missed": 0,
+              "unexpected": 0,
+              "value_verified": 5
+            },
+            "report": "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261111T183137Z-3a9622e7\\evidence\\synthetic-history\\lanes\\docker-linux-arm64\\report.json",
+            "scoring_status": "COMPLETED",
+            "status": "PASS",
+            "unique": {
+              "expected": 3,
+              "ids": [
+                "alpha",
+                "beta",
+                "gamma"
+              ],
+              "matched": 3,
+              "recall_percent": 100.0
+            }
+          }
+        },
+        "truth": {
+          "dataset_id": "rnc-synthetic-history",
+          "dataset_version": "1",
+          "items": [
+            {
+              "category": "risk",
+              "category_conflict": false,
+              "classification": "EXPECTED_DETECTION",
+              "commit": "95183f4de97dda5c99aee01d8100d4f9d7722cf4",
+              "dataset_id": "rnc-synthetic-history",
+              "dataset_version": "1",
+              "finding_id": "rnc-synthetic-history:occ-alpha-c1",
+              "fingerprint_sha256": "f65f6516d8ebcc5201d625dd7c064cd0ed8f1458a06b9aef99ee1308b84ecf80",
+              "line_end": 1,
+              "line_start": 1,
+              "location": "config/app.env:1@c1",
+              "matching_policy": "line_range",
+              "notes": "",
+              "path": "config/app.env",
+              "risk_bearing": true,
+              "source_reference": "synthetic manifest c1:config/app.env:1"
+            },
+            {
+              "category": "risk",
+              "category_conflict": false,
+              "classification": "EXPECTED_DETECTION",
+              "commit": "9b94863a3dd13528bf5e270e734aa2ae052384e5",
+              "dataset_id": "rnc-synthetic-history",
+              "dataset_version": "1",
+              "finding_id": "rnc-synthetic-history:occ-alpha-c2",
+              "fingerprint_sha256": "d18facd1b31f52f61c33c611a28595034d837e7bb530c6eab829844e07e6d3a0",
+              "line_end": 1,
+              "line_start": 1,
+              "location": "config/duplicate.env:1@c2",
+              "matching_policy": "line_range",
+              "notes": "",
+              "path": "config/duplicate.env",
+              "risk_bearing": true,
+              "source_reference": "synthetic manifest c2:config/duplicate.env:1"
+            },
+            {
+              "category": "risk",
+              "category_conflict": false,
+              "classification": "EXPECTED_DETECTION",
+              "commit": "a37c25ee5c0320c62d3927662f6dc4b1d1c54eb6",
+              "dataset_id": "rnc-synthetic-history",
+              "dataset_version": "1",
+              "finding_id": "rnc-synthetic-history:occ-beta-c3a",
+              "fingerprint_sha256": "196d120e74c30c66b30608d79fd113004c36caedc85d464e2b750399c6f860aa",
+              "line_end": 1,
+              "line_start": 1,
+              "location": "config/app.env:1@c3",
+              "matching_policy": "line_range",
+              "notes": "",
+              "path": "config/app.env",
+              "risk_bearing": true,
+              "source_reference": "synthetic manifest c3:config/app.env:1"
+            },
+            {
+              "category": "risk",
+              "category_conflict": false,
+              "classification": "EXPECTED_DETECTION",
+              "commit": "a37c25ee5c0320c62d3927662f6dc4b1d1c54eb6",
+              "dataset_id": "rnc-synthetic-history",
+              "dataset_version": "1",
+              "finding_id": "rnc-synthetic-history:occ-beta-c3b",
+              "fingerprint_sha256": "e57f75ec5a14b417732f1c3179d27f2685c995bfa8df531e18e7f5ab8c7dddbb",
+              "line_end": 1,
+              "line_start": 1,
+              "location": "deploy/prod.env:1@c3",
+              "matching_policy": "line_range",
+              "notes": "",
+              "path": "deploy/prod.env",
+              "risk_bearing": true,
+              "source_reference": "synthetic manifest c3:deploy/prod.env:1"
+            },
+            {
+              "category": "risk",
+              "category_conflict": false,
+              "classification": "EXPECTED_DETECTION",
+              "commit": "0efadc5cf2b5259024e5537251c7eec815357694",
+              "dataset_id": "rnc-synthetic-history",
+              "dataset_version": "1",
+              "finding_id": "rnc-synthetic-history:occ-gamma-c4",
+              "fingerprint_sha256": "270ad303c1fd6941eaeb710269fa239d5d5465eeb5ebc05faa85f6fdf8557fc5",
+              "line_end": 1,
+              "line_start": 1,
+              "location": "removed/legacy.env:1@c4",
+              "matching_policy": "line_range",
+              "notes": "",
+              "path": "removed/legacy.env",
+              "risk_bearing": true,
+              "source_reference": "synthetic manifest c4:removed/legacy.env:1"
+            }
+          ],
+          "manifest_id": "rnc-synthetic-history-truth",
+          "manifest_version": "1",
+          "unique_secret_ids": [
+            "alpha",
+            "beta",
+            "gamma"
+          ],
+          "verification_status": "VERIFIED_CONTROLLED_CORPUS"
+        }
+      },
+      "key": "git-history",
+      "limitations": [],
+      "metrics": {
+        "occurrence_duplicates": 0,
+        "occurrence_expected": 5,
+        "occurrence_line_only": 0,
+        "occurrence_matched": 5,
+        "occurrence_missed": 0,
+        "occurrence_unexpected": 0,
+        "occurrence_value_verified": 5,
+        "unique_expected": 3,
+        "unique_matched": 3,
+        "unique_recall_percent": 100.0
+      },
+      "outcome": "COMPLETED_AND_SCORED",
+      "reason": null,
+      "results": [
+        {
+          "baseline_metric": false,
+          "configuration_profile": "CONTROLLED_FIXTURE",
+          "dimension": "controlled-history",
+          "outcome": "COMPLETED_AND_SCORED",
+          "platform": "docker-linux-arm64",
+          "scoring_status": "COMPLETED",
+          "status": "PASS"
+        }
+      ],
+      "status": "PASS",
+      "summary": {
+        "baseline_metric": false,
+        "configuration_profile": "CONTROLLED_FIXTURE",
+        "expected_occurrences": 5,
+        "history_scope": {
+          "commit_order": [
+            "c1",
+            "c2",
+            "c3",
+            "c4",
+            "c5"
+          ],
+          "commits": {
+            "c1": "95183f4de97dda5c99aee01d8100d4f9d7722cf4",
+            "c2": "9b94863a3dd13528bf5e270e734aa2ae052384e5",
+            "c3": "a37c25ee5c0320c62d3927662f6dc4b1d1c54eb6",
+            "c4": "0efadc5cf2b5259024e5537251c7eec815357694",
+            "c5": "adf06d2a3df19578d91e943814a34c9a9105dff9"
+          },
+          "dataset_id": "rnc-synthetic-history",
+          "dataset_version": "1",
+          "occurrence_count": 5,
+          "root": "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261111T183137Z-3a9622e7\\evidence\\synthetic-history\\repo",
+          "unique_secret_count": 3
+        },
+        "history_status": "COMPLETE",
+        "unique_expected_secrets": 3
+      },
+      "targets": {
+        "docker-linux-arm64": {
+          "occurrences": {
+            "duplicates": 0,
+            "expected": 5,
+            "line_only": 0,
+            "matched": 5,
+            "missed": 0,
+            "unexpected": 0,
+            "value_verified": 5
+          },
+          "reason": null,
+          "scoring_status": "COMPLETED",
+          "status": "PASS",
+          "unique": {
+            "expected": 3,
+            "ids": [
+              "alpha",
+              "beta",
+              "gamma"
+            ],
+            "matched": 3,
+            "recall_percent": 100.0
+          }
+        }
+      },
+      "title": "Synthetic Git History"
+    },
+    "synthetic-filesystem": {
+      "applicable": true,
+      "baseline_metric": false,
+      "comparisons": {},
+      "details": {
+        "configuration": {
+          "baseline_metric": false,
+          "config_sha256": "ed93842e730a39cd5b60c2147d27f59ea417b783b4bce971a456e2452b6a54dc",
+          "config_source": "harness/filesystem_fixture.py",
+          "note": "The controlled RNC-token rule is a fixture rule, not a scanner default and not a real-world benchmark configuration.",
+          "profile": "CONTROLLED_FIXTURE"
+        },
+        "lanes": {
+          "docker-linux-arm64": {
+            "duration_seconds": 1.648,
+            "evaluations": [
+              {
+                "classification": "EXPECTED_DETECTION",
+                "expected": {
+                  "category": "risk",
+                  "category_conflict": false,
+                  "classification": "EXPECTED_DETECTION",
+                  "commit": null,
+                  "dataset_id": "rnc-synthetic-filesystem",
+                  "dataset_version": "1",
+                  "finding_id": "rnc-synthetic-filesystem:multi-gamma",
+                  "fingerprint_sha256": "e66e071e6b16ffdca8734f74b6980d22750f4e1699437288d676758dda3ca9fd",
+                  "line_end": 1,
+                  "line_start": 1,
+                  "location": "multi.env:1",
+                  "matching_policy": "line_range",
+                  "notes": "",
+                  "path": "multi.env",
+                  "risk_bearing": true,
+                  "source_reference": "synthetic manifest multi.env:1"
+                },
+                "expected_id": "rnc-synthetic-filesystem:multi-gamma",
+                "identity_confidence": "value",
+                "line": 1,
+                "observed": {
+                  "commit": null,
+                  "file": "/scan/multi.env",
+                  "finding_id": null,
+                  "index": 0,
+                  "line": 1,
+                  "match_sha256": "e59438e9bfeb7e21825e67f9ee6bd61737a4d5d3d3f53aab113ed10b70fde709",
+                  "metadata": {
+                    "fingerprint": "/scan/multi.env:rnc-synthetic-filesystem-token:1"
+                  },
+                  "rule_id": "rnc-synthetic-filesystem-token",
+                  "scanner": null,
+                  "scanner_version": null,
+                  "secret_redacted": false,
+                  "secret_sha256": "e59438e9bfeb7e21825e67f9ee6bd61737a4d5d3d3f53aab113ed10b70fde709",
+                  "target": null
+                },
+                "path": "multi.env",
+                "reason": "file, line, and value fingerprint match"
+              },
+              {
+                "classification": "EXPECTED_DETECTION",
+                "expected": {
+                  "category": "risk",
+                  "category_conflict": false,
+                  "classification": "EXPECTED_DETECTION",
+                  "commit": null,
+                  "dataset_id": "rnc-synthetic-filesystem",
+                  "dataset_version": "1",
+                  "finding_id": "rnc-synthetic-filesystem:multi-delta",
+                  "fingerprint_sha256": "6c86e68c033d3bef7999d3f7b0822f129c35e9a9df34b62e1fda50ab5f6c8b89",
+                  "line_end": 2,
+                  "line_start": 2,
+                  "location": "multi.env:2",
+                  "matching_policy": "line_range",
+                  "notes": "",
+                  "path": "multi.env",
+                  "risk_bearing": true,
+                  "source_reference": "synthetic manifest multi.env:2"
+                },
+                "expected_id": "rnc-synthetic-filesystem:multi-delta",
+                "identity_confidence": "value",
+                "line": 2,
+                "observed": {
+                  "commit": null,
+                  "file": "/scan/multi.env",
+                  "finding_id": null,
+                  "index": 1,
+                  "line": 2,
+                  "match_sha256": "9dbd72247e4c31bf53129abda1404cc2f8fae7e20d16a3353faca923f640e88e",
+                  "metadata": {
+                    "fingerprint": "/scan/multi.env:rnc-synthetic-filesystem-token:2"
+                  },
+                  "rule_id": "rnc-synthetic-filesystem-token",
+                  "scanner": null,
+                  "scanner_version": null,
+                  "secret_redacted": false,
+                  "secret_sha256": "9dbd72247e4c31bf53129abda1404cc2f8fae7e20d16a3353faca923f640e88e",
+                  "target": null
+                },
+                "path": "multi.env",
+                "reason": "file, line, and value fingerprint match"
+              },
+              {
+                "classification": "EXPECTED_DETECTION",
+                "expected": {
+                  "category": "risk",
+                  "category_conflict": false,
+                  "classification": "EXPECTED_DETECTION",
+                  "commit": null,
+                  "dataset_id": "rnc-synthetic-filesystem",
+                  "dataset_version": "1",
+                  "finding_id": "rnc-synthetic-filesystem:db-beta",
+                  "fingerprint_sha256": "79be74a533afd0f4d8acd7b0649c6b744a38ebbb650e89737cfc1a0f2d2b645d",
+                  "line_end": 2,
+                  "line_start": 2,
+                  "location": "nested/db.json:2",
+                  "matching_policy": "line_range",
+                  "notes": "",
+                  "path": "nested/db.json",
+                  "risk_bearing": true,
+                  "source_reference": "synthetic manifest nested/db.json:2"
+                },
+                "expected_id": "rnc-synthetic-filesystem:db-beta",
+                "identity_confidence": "value",
+                "line": 2,
+                "observed": {
+                  "commit": null,
+                  "file": "/scan/nested/db.json",
+                  "finding_id": null,
+                  "index": 2,
+                  "line": 2,
+                  "match_sha256": "32b41ffe477d20b7e8b62460e69384b9c1cfe99bc66868e7ed7a98f168c17215",
+                  "metadata": {
+                    "fingerprint": "/scan/nested/db.json:rnc-synthetic-filesystem-token:2"
+                  },
+                  "rule_id": "rnc-synthetic-filesystem-token",
+                  "scanner": null,
+                  "scanner_version": null,
+                  "secret_redacted": false,
+                  "secret_sha256": "32b41ffe477d20b7e8b62460e69384b9c1cfe99bc66868e7ed7a98f168c17215",
+                  "target": null
+                },
+                "path": "nested/db.json",
+                "reason": "file, line, and value fingerprint match"
+              },
+              {
+                "classification": "EXPECTED_DETECTION",
+                "expected": {
+                  "category": "risk",
+                  "category_conflict": false,
+                  "classification": "EXPECTED_DETECTION",
+                  "commit": null,
+                  "dataset_id": "rnc-synthetic-filesystem",
+                  "dataset_version": "1",
+                  "finding_id": "rnc-synthetic-filesystem:app-alpha",
+                  "fingerprint_sha256": "cd8da1018efc644450586384e5777db4a4c8d5ecb1261f20c8b7de4d3ce15ef6",
+                  "line_end": 1,
+                  "line_start": 1,
+                  "location": "app.env:1",
+                  "matching_policy": "line_range",
+                  "notes": "",
+                  "path": "app.env",
+                  "risk_bearing": true,
+                  "source_reference": "synthetic manifest app.env:1"
+                },
+                "expected_id": "rnc-synthetic-filesystem:app-alpha",
+                "identity_confidence": "value",
+                "line": 1,
+                "observed": {
+                  "commit": null,
+                  "file": "/scan/app.env",
+                  "finding_id": null,
+                  "index": 3,
+                  "line": 1,
+                  "match_sha256": "2fb9cd2d33acd2b4c0ea7218b1c240ce1b51544c646b40b5729cb4c6df87ac8a",
+                  "metadata": {
+                    "fingerprint": "/scan/app.env:rnc-synthetic-filesystem-token:1"
+                  },
+                  "rule_id": "rnc-synthetic-filesystem-token",
+                  "scanner": null,
+                  "scanner_version": null,
+                  "secret_redacted": false,
+                  "secret_sha256": "2fb9cd2d33acd2b4c0ea7218b1c240ce1b51544c646b40b5729cb4c6df87ac8a",
+                  "target": null
+                },
+                "path": "app.env",
+                "reason": "file, line, and value fingerprint match"
+              }
+            ],
+            "execution_status": "PASS",
+            "exit_code": 1,
+            "metrics": {
+              "ambiguous_count": 0,
+              "blocked_count": 0,
+              "category_conflict_items": 0,
+              "category_metrics": {
+                "risk": {
+                  "expected": 4,
+                  "matched": 4,
+                  "missed": 0
+                }
+              },
+              "detection_recall_percent": 100.0,
+              "duplicate_count": 0,
+              "execution_error_count": 0,
+              "execution_status": "PASS",
+              "expected_count": 4,
+              "f1_percent": 100.0,
+              "false_positive_count": 0,
+              "line_only_count": 0,
+              "matched_count": 4,
+              "missed_count": 0,
+              "negative_oracle": true,
+              "not_applicable_count": 0,
+              "observed_count": 4,
+              "partial_count": 0,
+              "precision_percent": 100.0,
+              "skipped_count": 0,
+              "unexpected_count": 0,
+              "unmapped_count": 0,
+              "value_verified_count": 4
+            },
+            "scoring_status": "COMPLETED",
+            "status": "PASS"
+          }
+        },
+        "truth": {
+          "dataset_id": "rnc-synthetic-filesystem",
+          "dataset_version": "1",
+          "items": [
+            {
+              "category": "risk",
+              "category_conflict": false,
+              "classification": "EXPECTED_DETECTION",
+              "commit": null,
+              "dataset_id": "rnc-synthetic-filesystem",
+              "dataset_version": "1",
+              "finding_id": "rnc-synthetic-filesystem:app-alpha",
+              "fingerprint_sha256": "cd8da1018efc644450586384e5777db4a4c8d5ecb1261f20c8b7de4d3ce15ef6",
+              "line_end": 1,
+              "line_start": 1,
+              "location": "app.env:1",
+              "matching_policy": "line_range",
+              "notes": "",
+              "path": "app.env",
+              "risk_bearing": true,
+              "source_reference": "synthetic manifest app.env:1"
+            },
+            {
+              "category": "risk",
+              "category_conflict": false,
+              "classification": "EXPECTED_DETECTION",
+              "commit": null,
+              "dataset_id": "rnc-synthetic-filesystem",
+              "dataset_version": "1",
+              "finding_id": "rnc-synthetic-filesystem:db-beta",
+              "fingerprint_sha256": "79be74a533afd0f4d8acd7b0649c6b744a38ebbb650e89737cfc1a0f2d2b645d",
+              "line_end": 2,
+              "line_start": 2,
+              "location": "nested/db.json:2",
+              "matching_policy": "line_range",
+              "notes": "",
+              "path": "nested/db.json",
+              "risk_bearing": true,
+              "source_reference": "synthetic manifest nested/db.json:2"
+            },
+            {
+              "category": "risk",
+              "category_conflict": false,
+              "classification": "EXPECTED_DETECTION",
+              "commit": null,
+              "dataset_id": "rnc-synthetic-filesystem",
+              "dataset_version": "1",
+              "finding_id": "rnc-synthetic-filesystem:multi-gamma",
+              "fingerprint_sha256": "e66e071e6b16ffdca8734f74b6980d22750f4e1699437288d676758dda3ca9fd",
+              "line_end": 1,
+              "line_start": 1,
+              "location": "multi.env:1",
+              "matching_policy": "line_range",
+              "notes": "",
+              "path": "multi.env",
+              "risk_bearing": true,
+              "source_reference": "synthetic manifest multi.env:1"
+            },
+            {
+              "category": "risk",
+              "category_conflict": false,
+              "classification": "EXPECTED_DETECTION",
+              "commit": null,
+              "dataset_id": "rnc-synthetic-filesystem",
+              "dataset_version": "1",
+              "finding_id": "rnc-synthetic-filesystem:multi-delta",
+              "fingerprint_sha256": "6c86e68c033d3bef7999d3f7b0822f129c35e9a9df34b62e1fda50ab5f6c8b89",
+              "line_end": 2,
+              "line_start": 2,
+              "location": "multi.env:2",
+              "matching_policy": "line_range",
+              "notes": "",
+              "path": "multi.env",
+              "risk_bearing": true,
+              "source_reference": "synthetic manifest multi.env:2"
+            }
+          ],
+          "manifest_id": "rnc-synthetic-filesystem-truth",
+          "manifest_version": "1"
+        }
+      },
+      "key": "synthetic-filesystem",
+      "limitations": [],
+      "metrics": {
+        "ambiguous_count": 0,
+        "blocked_count": 0,
+        "category_conflict_items": 0,
+        "category_metrics": {
+          "risk": {
+            "expected": 4,
+            "matched": 4,
+            "missed": 0
+          }
+        },
+        "detection_recall_percent": 100.0,
+        "duplicate_count": 0,
+        "execution_error_count": 0,
+        "execution_status": "PASS",
+        "expected_count": 4,
+        "f1_percent": 100.0,
+        "false_positive_count": 0,
+        "line_only_count": 0,
+        "matched_count": 4,
+        "missed_count": 0,
+        "negative_oracle": true,
+        "not_applicable_count": 0,
+        "observed_count": 4,
+        "partial_count": 0,
+        "precision_percent": 100.0,
+        "skipped_count": 0,
+        "unexpected_count": 0,
+        "unmapped_count": 0,
+        "value_verified_count": 4
+      },
+      "outcome": "COMPLETED_AND_SCORED",
+      "reason": null,
+      "results": [
+        {
+          "baseline_metric": false,
+          "configuration_profile": "CONTROLLED_FIXTURE",
+          "dimension": "controlled-filesystem",
+          "outcome": "COMPLETED_AND_SCORED",
+          "platform": "docker-linux-arm64",
+          "scoring_status": "COMPLETED",
+          "status": "PASS"
+        }
+      ],
+      "status": "PASS",
+      "summary": {
+        "baseline_metric": false,
+        "configuration_profile": "CONTROLLED_FIXTURE",
+        "engine_status": "VALID",
+        "expected": 4,
+        "negative_oracle": true,
+        "note": "Synthetic fixtures test scanner/adapter/scorer integration; they are not real-world prevalence."
+      },
+      "targets": {
+        "docker-linux-arm64": {
+          "metrics": {
+            "ambiguous_count": 0,
+            "blocked_count": 0,
+            "category_conflict_items": 0,
+            "category_metrics": {
+              "risk": {
+                "expected": 4,
+                "matched": 4,
+                "missed": 0
+              }
+            },
+            "detection_recall_percent": 100.0,
+            "duplicate_count": 0,
+            "execution_error_count": 0,
+            "execution_status": "PASS",
+            "expected_count": 4,
+            "f1_percent": 100.0,
+            "false_positive_count": 0,
+            "line_only_count": 0,
+            "matched_count": 4,
+            "missed_count": 0,
+            "negative_oracle": true,
+            "not_applicable_count": 0,
+            "observed_count": 4,
+            "partial_count": 0,
+            "precision_percent": 100.0,
+            "skipped_count": 0,
+            "unexpected_count": 0,
+            "unmapped_count": 0,
+            "value_verified_count": 4
+          },
+          "reason": null,
+          "scoring_status": "COMPLETED",
+          "status": "PASS"
+        }
+      },
+      "title": "Synthetic Filesystem Controls"
+    }
+  },
+  "summary": {
+    "baseline_metrics_executed": false,
+    "baseline_metrics_included": true,
+    "builds": {
+      "docker-linux-arm64": "PASS"
+    },
+    "cleanup_status": "PASS",
+    "counts": {
+      "blocked": 0,
+      "fail": 0,
+      "not_applicable": 0,
+      "not_run": 0,
+      "pass": 2
+    },
+    "coverage_complete": true,
+    "experiment_status": "COMPLETE",
+    "fatal_error": null,
+    "matrix_status": "PASS",
+    "outcomes": {
+      "git-history": "COMPLETED_AND_SCORED",
+      "synthetic-filesystem": "COMPLETED_AND_SCORED"
+    },
+    "overall": "COMPLETE",
+    "performance_status": "PASS",
+    "profile": "default",
+    "scoring_oracle_unavailable": [],
+    "source_commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+    "source_head_verified": true,
+    "suites": {
+      "git-history": "PASS",
+      "synthetic-filesystem": "PASS"
+    },
+    "tested_platforms": [
+      "docker-linux-arm64"
+    ]
+  }
+}
