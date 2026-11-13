@@ -28,6 +28,7 @@ from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from typing import Iterable
 
+from . import evidence
 from .errors import HarnessError
 from .util import sha256_bytes, sha256_file
 
@@ -76,6 +77,8 @@ MATCH_FN = "FALSE_NEGATIVE"
 MATCH_FP = "FALSE_POSITIVE"
 MATCH_INFORMATIVE = "INFORMATIVE"
 MATCH_DUPLICATE = "DUPLICATE"
+MATCH_NEAR_MISS = "NEAR_MISS"
+MATCH_AMBIGUOUS = "AMBIGUOUS"
 MATCH_UNMATCHED = "UNMATCHED_PENDING_REVIEW"
 MATCH_UNVERIFIED = "UNVERIFIED_EVIDENCE"
 MATCH_UNSUPPORTED = "UNSUPPORTED_CAPABILITY"
@@ -756,6 +759,10 @@ class LabFinding:
     commit: str | None
     secret_sha256: str | None
     match_sha256: str | None
+    byte_start: int | None = None
+    byte_end: int | None = None
+    container_member: str | None = None
+    source_span_sha256: str | None = None
     secret_text: str = field(default="", repr=False)
     match_text: str = field(default="", repr=False)
     metadata: dict = field(default_factory=dict, repr=False)
@@ -770,6 +777,10 @@ class LabFinding:
             "commit": self.commit,
             "secret_sha256": self.secret_sha256,
             "match_sha256": self.match_sha256,
+            "byte_start": self.byte_start,
+            "byte_end": self.byte_end,
+            "container_member": self.container_member,
+            "source_span_sha256": self.source_span_sha256,
         }
 
 
@@ -781,6 +792,10 @@ class FindingOutcome:
     reason: str = ""
     group_id: str | None = None
     private_key_evidence: bool | None = None
+    evidence_kind: str | None = None
+    stage: str | None = None
+    reason_code: str | None = None
+    candidate_ids: tuple[str, ...] = ()
 
 
 def _normalize_path(value: str, root: Path) -> str:
@@ -812,25 +827,58 @@ def _normalize_path(value: str, root: Path) -> str:
     return raw
 
 
+def _canonical_member(value: str | None) -> str | None:
+    if not value:
+        return None
+    value = value.replace("!/", "!").replace("::", "!").strip("/")
+    return value or None
+
+
+def _archive_member(path: str) -> tuple[str, str | None]:
+    for marker in ("!", "::"):
+        if marker in path:
+            archive, member = path.split(marker, 1)
+            return archive, _canonical_member(member)
+    return path, None
+
+
 def _path_matches(item: LabItem, finding_file: str, root: Path) -> bool:
+    """Match path and, for archives, the reported member identity.
+
+    An enclosing archive path alone is not proof that the correct member was
+    detected.  RNC's adapter may report only the archive path; in that case the
+    finding remains eligible only when the oracle item itself has no member
+    identity.  Reports that include a member must match it exactly.
+    """
     if not finding_file:
         return False
+    finding_archive, finding_member = _archive_member(finding_file)
+    item_member = _canonical_member(item.source_member)
+    if item.container_kind == "archive":
+        if finding_archive != item.source_path:
+            return False
+        if item_member:
+            if finding_member is not None:
+                return finding_member == item_member
+            # A gzip stream has exactly one member; the enclosing path is the
+            # only available identity.  Multi-member archives require an exact
+            # member report.
+            formats = {
+                str(item.source_format or "").lower(),
+                str(((item.raw.get("container") or {}).get("format") or "")).lower(),
+            }
+            return item.source_path.lower().endswith(".gz") or bool(
+                formats & {"gz", "gzip"}
+            )
+        return finding_member is None
     if finding_file == item.source_path:
         return True
-    if item.container_kind == "archive":
-        prefix = item.source_path + "!"
-        if finding_file.startswith(prefix):
-            return True
-        if finding_file.startswith(item.source_path + "::"):
-            return True
     if item.lane == "filesystem":
         left = (root / item.source_path).resolve()
         right = (root / finding_file).resolve()
         if left == right:
             return True
     return False
-
-
 def _text_candidates(text: str) -> set[str]:
     if not text:
         return set()
@@ -881,7 +929,7 @@ def _text_candidates(text: str) -> set[str]:
 
 def _candidate_hashes(finding: LabFinding) -> dict[str, str]:
     hashes: dict[str, str] = {}
-    for digest in (finding.secret_sha256, finding.match_sha256):
+    for digest in (finding.secret_sha256, finding.match_sha256, finding.source_span_sha256):
         if digest:
             hashes[digest] = "reported"
     for text in (finding.secret_text, finding.match_text):
@@ -893,27 +941,130 @@ def _candidate_hashes(finding: LabFinding) -> dict[str, str]:
     return hashes
 
 
-def _private_material(finding: LabFinding) -> bool:
+def _private_text_complete(finding: LabFinding) -> bool:
     text = (finding.secret_text or "") + "\n" + (finding.match_text or "")
+    if "PuTTY-User-Key-File-" in text:
+        return True
     return bool(
         re.search(
-            r"-----BEGIN (?:RSA |EC |ENCRYPTED |OPENSSH )?PRIVATE KEY-----|"
-            r"PuTTY-User-Key-File-",
+            r"-----BEGIN (?:RSA |EC |DSA |ENCRYPTED |OPENSSH )?PRIVATE KEY-----[\s\S]*?"
+            r"-----END (?:RSA |EC |DSA |ENCRYPTED |OPENSSH )?PRIVATE KEY-----",
             text,
         )
     )
 
 
-def _value_evidence(
-    item: LabItem, finding: LabFinding, hashes: dict[str, str]
-) -> tuple[bool, str]:
-    identity = item.identity_sha256
-    direct = item.normalization == "identity_direct"
-    if identity and identity in hashes:
-        return True, "identity_digest"
-    if direct and item.span_sha256 in hashes:
-        return True, "span_digest"
-    return False, "value_digest_not_evidenced"
+def _source_span_bytes(
+    dataset: LabDataset,
+    item: LabItem,
+    cache: dict[str, bytes | None],
+) -> bytes | None:
+    if item.item_id in cache:
+        return cache[item.item_id]
+    value: bytes | None = None
+    try:
+        if item.lane == "filesystem" and item.container_kind == "file":
+            data = (dataset.filesystem_root / item.source_path).read_bytes()
+            value = data[item.byte_start : item.byte_end]
+        elif item.lane == "git" and item.source_blob:
+            data = _git(dataset.history_root, "cat-file", "blob", item.source_blob, binary=True)
+            value = data[item.byte_start : item.byte_end]
+    except (OSError, RncLabError):
+        value = None
+    cache[item.item_id] = value
+    return value
+
+
+def _item_aliases(
+    dataset: LabDataset,
+    item: LabItem,
+    span_cache: dict[str, bytes | None],
+) -> tuple[evidence.EvidenceAlias, ...]:
+    aliases: list[evidence.EvidenceAlias] = []
+    seen: set[str] = set()
+    for digest, kind, detail in (
+        (item.identity_sha256, evidence.IDENTITY_DIGEST, "oracle identity digest"),
+        (item.span_sha256, evidence.SOURCE_SPAN_EXACT, "exact oracle source span"),
+        (item.public_identity_sha256, evidence.PUBLIC_KEY_ONLY, "public-key identity only"),
+    ):
+        if digest and digest not in seen:
+            seen.add(digest)
+            aliases.append(evidence.EvidenceAlias(kind=kind, digest=digest, detail=detail))
+    if item.match_policy == "private_key_material_required":
+        span = _source_span_bytes(dataset, item, span_cache)
+        if span:
+            for alias in evidence.private_span_aliases(span, item.representation):
+                if alias.digest not in seen:
+                    seen.add(alias.digest)
+                    aliases.append(alias)
+    return tuple(aliases)
+
+
+def _line_matches(item: LabItem, finding: LabFinding) -> bool:
+    if item.line is None:
+        return True
+    if finding.line is None:
+        return False
+    if finding.line == item.line:
+        return True
+    # A Kubernetes secret YAML scanner may locate the enclosing data block
+    # rather than the base64 value line.  This is an explicit structured-source
+    # location policy, valid only when the value digest already matched.
+    if (
+        str(item.representation).startswith("kubernetes_")
+        and str(finding.rule_id) in ("kubernetes-secret-yaml", "pem-private-key-base64")
+        and finding.line < item.line
+    ):
+        return True
+    return False
+
+
+def _byte_matches(item: LabItem, finding: LabFinding) -> bool:
+    if item.container_kind not in ("file", "git"):
+        return True
+    if finding.byte_start is None or finding.byte_end is None:
+        return True
+    if (finding.byte_start, finding.byte_end) == (item.byte_start, item.byte_end):
+        return True
+    # A scanner may report the credential component (for example the userinfo
+    # inside a database URL) rather than the oracle's enclosing representation.
+    # An exact value identity plus a contained byte range is a valid source
+    # location; an extended or overlapping range is not.
+    return item.byte_start <= finding.byte_start and finding.byte_end <= item.byte_end
+
+
+def _location_reason(item: LabItem, finding: LabFinding) -> str | None:
+    if item.line is not None:
+        if finding.line is None:
+            return evidence.LOCATION_UNVERIFIED
+        if not _line_matches(item, finding):
+            return evidence.LOCATION_LINE_MISMATCH
+    if not _byte_matches(item, finding):
+        return evidence.LOCATION_OFFSET_MISMATCH
+    return None
+
+
+def _material_status(
+    dataset: LabDataset,
+    item: LabItem,
+    finding: LabFinding,
+    alias: evidence.EvidenceAlias,
+    hashes: dict[str, str],
+    span_cache: dict[str, bytes | None],
+) -> tuple[bool, str | None]:
+    if item.match_policy != "private_key_material_required":
+        return True, None
+    if item.public_identity_sha256 and item.public_identity_sha256 in hashes:
+        return False, evidence.PUBLIC_KEY_ONLY
+    if _private_text_complete(finding):
+        return True, None
+    if item.identity_sha256 and item.identity_sha256 in hashes:
+        return True, None
+    if alias.kind in (evidence.SOURCE_SPAN_EXACT, evidence.SOURCE_SPAN_NORMALIZED):
+        span = _source_span_bytes(dataset, item, span_cache)
+        if span and evidence.private_key_material(span, item.representation):
+            return True, None
+    return False, evidence.PRIVATE_MATERIAL_UNPROVEN
 
 
 def _line_distance(item: LabItem, finding: LabFinding) -> int:
@@ -922,6 +1073,89 @@ def _line_distance(item: LabItem, finding: LabFinding) -> int:
     return abs(item.line - finding.line)
 
 
+def _near_miss_relation(
+    dataset: LabDataset,
+    lane: str,
+    finding: LabFinding,
+    lane_items: list[LabItem],
+    alias_index: dict[str, list[tuple[LabItem, evidence.EvidenceAlias]]],
+    *,
+    source_root: Path,
+    commit_ancestors: dict[str, frozenset[str]] | None,
+    span_cache: dict[str, bytes | None],
+    used: set[str],
+) -> tuple[LabItem, str, str] | None:
+    hashes = _candidate_hashes(finding)
+    if not hashes:
+        return None
+    candidates: list[tuple[int, int, str, LabItem, str, str]] = []
+
+    def _commit_ok(item: LabItem) -> bool:
+        if lane != "git":
+            return True
+        if not finding.commit:
+            return False
+        return item.source_commit in (commit_ancestors or {}).get(finding.commit, frozenset())
+
+    # Exact/normalized value at the right path but the wrong line/offset.
+    for digest in hashes:
+        for item, alias in alias_index.get(digest, []):
+            if not item.is_positive or item.item_id in used or not _commit_ok(item):
+                continue
+            if alias.kind == evidence.PUBLIC_KEY_ONLY:
+                continue
+            if not _path_matches(item, finding.file, source_root):
+                continue
+            reason = _location_reason(item, finding)
+            if reason:
+                candidates.append((0, _line_distance(item, finding), item.item_id, item, reason, "source value matched but location did not"))
+
+    # Exact value at a different source occurrence.
+    for digest in hashes:
+        for item, alias in alias_index.get(digest, []):
+            if not item.is_positive or item.item_id in used or not _commit_ok(item):
+                continue
+            if alias.kind == evidence.PUBLIC_KEY_ONLY:
+                continue
+            if _path_matches(item, finding.file, source_root):
+                continue
+            candidates.append((1, 1_000_000, item.item_id, item, evidence.SOURCE_OCCURRENCE_MISMATCH, "exact credential value belongs to a different source occurrence"))
+
+    # Same source path and line: prove a value-level near miss from source bytes.
+    for item in lane_items:
+        if not item.is_positive or item.item_id in used or not _commit_ok(item):
+            continue
+        if not _path_matches(item, finding.file, source_root):
+            continue
+        if item.line is not None and finding.line != item.line:
+            continue
+        span = _source_span_bytes(dataset, item, span_cache)
+        if not span:
+            continue
+        relation, detail = evidence.value_relation(
+            span,
+            finding_digest=finding.secret_sha256 or finding.match_sha256,
+            finding_text=finding.secret_text or finding.match_text or None,
+        )
+        if item.match_policy == "private_key_material_required":
+            text = finding.secret_text or finding.match_text or ""
+            if "PRIVATE KEY-----" in text and not _private_text_complete(finding):
+                relation, detail = evidence.PARTIAL_MATERIAL, "incomplete private-key block"
+        if relation in (
+            evidence.VALUE_TRUNCATED,
+            evidence.VALUE_EXTENDED,
+            evidence.VALUE_MISMATCH,
+            evidence.PARTIAL_MATERIAL,
+        ):
+            if item.match_policy == "private_key_material_required" and relation == evidence.VALUE_TRUNCATED:
+                relation, detail = evidence.PARTIAL_MATERIAL, "incomplete private-key material"
+            candidates.append((2, _line_distance(item, finding), item.item_id, item, relation, detail))
+
+    if not candidates:
+        return None
+    candidates.sort(key=lambda value: (value[0], value[1], value[2]))
+    _rank, _distance, _item_id, item, reason, detail = candidates[0]
+    return item, reason, detail
 def _commit_ancestors(history_root: Path) -> dict[str, frozenset[str]]:
     text = _git(history_root, "rev-list", "--parents", "--all")
     parents: dict[str, list[str]] = {}
@@ -964,6 +1198,10 @@ def _attribute(
             commit=value.commit,
             secret_sha256=value.secret_sha256,
             match_sha256=value.match_sha256,
+            byte_start=value.byte_start,
+            byte_end=value.byte_end,
+            container_member=value.container_member,
+            source_span_sha256=value.source_span_sha256,
             secret_text=value.secret_text or "",
             match_text=value.match_text or "",
             metadata=dict(value.metadata or {}),
@@ -971,26 +1209,36 @@ def _attribute(
         for index, value in enumerate(raw_findings)
     ]
     lane_items = [item for item in dataset.items if item.lane == lane]
-    digest_index: dict[str, list[LabItem]] = defaultdict(list)
+    span_cache: dict[str, bytes | None] = {}
+    alias_index: dict[str, list[tuple[LabItem, evidence.EvidenceAlias]]] = defaultdict(list)
     for item in lane_items:
-        for digest in (
-            item.identity_sha256,
-            item.span_sha256,
-            item.public_identity_sha256,
-        ):
-            if digest:
-                digest_index[digest].append(item)
-    outcomes: list[FindingOutcome] = []
-    used: set[str] = set()
+        for alias in _item_aliases(dataset, item, span_cache):
+            alias_index[alias.digest].append((item, alias))
+
+    priority = {
+        evidence.IDENTITY_DIGEST: 5,
+        evidence.SOURCE_SPAN_EXACT: 4,
+        evidence.SOURCE_SPAN_NORMALIZED: 3,
+        evidence.DECODED_IDENTITY: 2,
+    }
+    # A finding may have candidates at several items.  Build all edges first so
+    # attribution does not depend on input order or premature short-circuiting.
+    edges: list[dict] = []
+    failures: dict[int, list[tuple[LabItem | None, str, str, str]]] = defaultdict(list)
+    candidates_by_finding: dict[int, list[dict]] = defaultdict(list)
     for finding in findings:
         hashes = _candidate_hashes(finding)
-        possible: list[LabItem] = []
-        seen: set[str] = set()
-        for digest in hashes:
-            for item in digest_index.get(digest, []):
-                if item.item_id in seen:
+        if not hashes:
+            failures[finding.index].append((None, evidence.EVIDENCE_MISSING, evidence.STAGE_VALUE, "scanner supplied no value evidence"))
+            continue
+        seen_items: set[str] = set()
+        for digest in sorted(hashes):
+            for item, alias in alias_index.get(digest, []):
+                if item.item_id in seen_items:
                     continue
-                seen.add(item.item_id)
+                if alias.kind == evidence.PUBLIC_KEY_ONLY:
+                    failures[finding.index].append((item, evidence.PUBLIC_KEY_ONLY, evidence.STAGE_MATERIAL, "only public-key identity was reported"))
+                    continue
                 if not _path_matches(item, finding.file, source_root):
                     continue
                 if lane == "git":
@@ -998,88 +1246,245 @@ def _attribute(
                         commit_ancestors or {}
                     ).get(finding.commit, frozenset()):
                         continue
-                verified, reason = _value_evidence(item, finding, hashes)
-                if item.match_policy == "private_key_material_required":
-                    private = _private_material(finding)
-                    if not private and not (item.identity_sha256 in hashes):
-                        outcomes.append(
-                            FindingOutcome(
-                                finding,
-                                MATCH_UNVERIFIED,
-                                item.item_id,
-                                "private-key material is not evidenced",
-                                item.group_id,
-                                False,
-                            )
+                location_reason = _location_reason(item, finding)
+                if location_reason:
+                    failures[finding.index].append((item, location_reason, evidence.STAGE_LOCATION, "source value and path matched but location did not"))
+                    continue
+                material_ok, material_reason = _material_status(
+                    dataset, item, finding, alias, hashes, span_cache
+                )
+                if not material_ok:
+                    failures[finding.index].append((item, material_reason or evidence.PRIVATE_MATERIAL_UNPROVEN, evidence.STAGE_MATERIAL, "private-key material could not be verified"))
+                    continue
+                seen_items.add(item.item_id)
+                candidate_priority = priority.get(alias.kind, 1)
+                candidate = {
+                    "finding_index": finding.index,
+                    "finding_key": evidence.stable_finding_key(
+                        file=finding.file,
+                        line=finding.line,
+                        commit=finding.commit,
+                        rule_id=finding.rule_id,
+                        secret_sha256=finding.secret_sha256,
+                        match_sha256=finding.match_sha256,
+                        byte_start=finding.byte_start,
+                        byte_end=finding.byte_end,
+                    ),
+                    "item": item,
+                    "alias": alias,
+                    "priority": candidate_priority,
+                    "line_distance": _line_distance(item, finding),
+                    "byte_distance": (
+                        abs((finding.byte_start or 0) - item.byte_start)
+                        if finding.byte_start is not None
+                        else 1_000_000
+                    ),
+                }
+                edges.append(candidate)
+                candidates_by_finding[finding.index].append(candidate)
+        if not candidates_by_finding.get(finding.index):
+            # Same known positive path/line but a non-matching value is
+            # unverified evidence, not a near miss (proximity alone is not a
+            # relationship).
+            for item in lane_items:
+                if not item.is_positive:
+                    continue
+                if not _path_matches(item, finding.file, source_root):
+                    continue
+                if lane == "git":
+                    if not finding.commit or item.source_commit not in (
+                        commit_ancestors or {}
+                    ).get(finding.commit, frozenset()):
+                        continue
+                if _line_matches(item, finding):
+                    failures[finding.index].append(
+                        (
+                            item,
+                            evidence.EVIDENCE_CONFLICT,
+                            evidence.STAGE_VALUE,
+                            "known positive location but value evidence did not match",
                         )
-                        possible = []
-                        break
-                    verified = verified and (
-                        private or item.identity_sha256 in hashes
                     )
-                if verified:
-                    possible.append(item)
-        if not possible:
-            if any(
-                outcome.finding.index == finding.index
-                and outcome.classification == MATCH_UNVERIFIED
-                for outcome in outcomes
-            ):
-                continue
-            if not hashes:
-                outcomes.append(
-                    FindingOutcome(
-                        finding,
-                        MATCH_UNVERIFIED,
-                        None,
-                        "scanner supplied no credential value evidence",
-                    )
-                )
-            else:
-                outcomes.append(
-                    FindingOutcome(
-                        finding,
-                        MATCH_UNMATCHED,
-                        None,
-                        "no exact source value identity at the finding path",
-                    )
-                )
-            continue
-        possible.sort(
-            key=lambda item: (
-                item.item_id in used,
-                _line_distance(item, finding),
-                item.item_id,
-            )
+                    break
+
+    # Equal-strength candidates that cannot be resolved by location are
+    # ambiguous, not a reason to pick one by oracle order.
+    ambiguous: set[int] = set()
+    for index, candidates in candidates_by_finding.items():
+        top = min((c["priority"], c["line_distance"], c["byte_distance"]) for c in candidates)
+        top_items = {
+            c["item"].item_id
+            for c in candidates
+            if (c["priority"], c["line_distance"], c["byte_distance"]) == top
+        }
+        if len(top_items) > 1:
+            ambiguous.add(index)
+
+    edges.sort(
+        key=lambda c: (
+            -c["priority"],
+            c["line_distance"],
+            c["byte_distance"],
+            c["item"].item_id,
+            c["finding_key"],
         )
-        chosen = possible[0]
-        if chosen.item_id in used:
+    )
+    assigned_finding: dict[int, dict] = {}
+    assigned_item: dict[str, int] = {}
+    for edge in edges:
+        if edge["finding_index"] in ambiguous or edge["finding_index"] in assigned_finding:
+            continue
+        item = edge["item"]
+        if item.item_id in assigned_item:
+            continue
+        assigned_finding[edge["finding_index"]] = edge
+        assigned_item[item.item_id] = edge["finding_index"]
+
+    outcomes: list[FindingOutcome] = []
+    used = set(assigned_item)
+    for finding in findings:
+        edge = assigned_finding.get(finding.index)
+        if finding.index in ambiguous:
+            candidates = candidates_by_finding[finding.index]
+            outcomes.append(
+                FindingOutcome(
+                    finding,
+                    MATCH_AMBIGUOUS,
+                    candidates[0]["item"].item_id if candidates else None,
+                    "multiple equal-strength oracle candidates could not be resolved safely",
+                    candidates[0]["item"].group_id if candidates else None,
+                    evidence_kind=candidates[0]["alias"].kind if candidates else None,
+                    stage=evidence.STAGE_ATTRIBUTION,
+                    reason_code=evidence.CANDIDATE_AMBIGUOUS,
+                    candidate_ids=tuple(sorted({c["item"].item_id for c in candidates})),
+                )
+            )
+            continue
+        if edge:
+            item = edge["item"]
+            alias = edge["alias"]
+            if item.is_positive:
+                classification = MATCH_TP
+            elif item.is_negative:
+                classification = MATCH_FP
+            else:
+                classification = MATCH_INFORMATIVE
+            outcomes.append(
+                FindingOutcome(
+                    finding,
+                    classification,
+                    item.item_id,
+                    f"verified {alias.kind} and source location",
+                    item.group_id,
+                    private_key_evidence=True if item.match_policy == "private_key_material_required" else None,
+                    evidence_kind=alias.kind,
+                    stage=evidence.STAGE_ATTRIBUTION,
+                    reason_code=None,
+                    candidate_ids=tuple(sorted({c["item"].item_id for c in candidates_by_finding[finding.index]})),
+                )
+            )
+            continue
+
+        candidates = candidates_by_finding.get(finding.index, [])
+        if candidates:
+            # The item was already credited by a stronger/earlier deterministic
+            # edge; this is a duplicate alert, not additional coverage.
+            best = sorted(
+                candidates,
+                key=lambda c: (-c["priority"], c["line_distance"], c["byte_distance"], c["item"].item_id),
+            )[0]
+            item = best["item"]
             outcomes.append(
                 FindingOutcome(
                     finding,
                     MATCH_DUPLICATE,
-                    chosen.item_id,
+                    item.item_id,
                     "additional alert for an already-credited source occurrence",
-                    chosen.group_id,
+                    item.group_id,
+                    evidence_kind=best["alias"].kind,
+                    stage=evidence.STAGE_ATTRIBUTION,
+                    reason_code=None,
+                    candidate_ids=tuple(sorted({c["item"].item_id for c in candidates})),
                 )
             )
             continue
-        used.add(chosen.item_id)
-        if chosen.is_positive:
-            classification = MATCH_TP
-        elif chosen.is_negative:
-            classification = MATCH_FP
-        else:
-            classification = MATCH_INFORMATIVE
+
+        near = _near_miss_relation(
+            dataset,
+            lane,
+            finding,
+            lane_items,
+            alias_index,
+            source_root=source_root,
+            commit_ancestors=commit_ancestors,
+            span_cache=span_cache,
+            used=used,
+        )
+        if near is not None:
+            item, reason_code, detail = near
+            outcomes.append(
+                FindingOutcome(
+                    finding,
+                    MATCH_NEAR_MISS,
+                    item.item_id,
+                    detail,
+                    item.group_id,
+                    stage=evidence.STAGE_ATTRIBUTION,
+                    reason_code=reason_code,
+                    candidate_ids=(item.item_id,),
+                )
+            )
+            continue
+
+        item_failures = failures.get(finding.index, [])
+        if item_failures:
+            item, reason_code, stage, detail = sorted(
+                item_failures,
+                key=lambda value: (
+                    0 if value[0] is not None else 1,
+                    value[1],
+                    value[0].item_id if value[0] is not None else "",
+                ),
+            )[0]
+            outcomes.append(
+                FindingOutcome(
+                    finding,
+                    MATCH_UNVERIFIED,
+                    item.item_id if item is not None else None,
+                    detail,
+                    item.group_id if item is not None else None,
+                    stage=stage,
+                    reason_code=reason_code,
+                )
+            )
+            continue
+
         outcomes.append(
             FindingOutcome(
                 finding,
-                classification,
-                chosen.item_id,
-                "exact path and value identity",
-                chosen.group_id,
+                MATCH_UNMATCHED,
+                None,
+                "no confirmed relationship to an oracle item",
+                stage=evidence.STAGE_CANDIDATE_DISCOVERY,
+                reason_code=evidence.ORACLE_COVERAGE_UNKNOWN,
             )
         )
+
+    outcomes.sort(
+        key=lambda outcome: (
+            evidence.stable_finding_key(
+                file=outcome.finding.file,
+                line=outcome.finding.line,
+                commit=outcome.finding.commit,
+                rule_id=outcome.finding.rule_id,
+                secret_sha256=outcome.finding.secret_sha256,
+                match_sha256=outcome.finding.match_sha256,
+                byte_start=outcome.finding.byte_start,
+                byte_end=outcome.finding.byte_end,
+            ),
+            outcome.finding.index,
+        )
+    )
 
     by_item = {item.item_id: item for item in lane_items}
     positives = [item for item in lane_items if item.is_positive]
@@ -1088,8 +1493,10 @@ def _attribute(
     negative_outcomes = [o for o in outcomes if o.classification == MATCH_FP]
     informative_outcomes = [o for o in outcomes if o.classification == MATCH_INFORMATIVE]
     duplicate_outcomes = [o for o in outcomes if o.classification == MATCH_DUPLICATE]
+    near_miss_outcomes = [o for o in outcomes if o.classification == MATCH_NEAR_MISS]
     unmatched_outcomes = [o for o in outcomes if o.classification == MATCH_UNMATCHED]
     unverified_outcomes = [o for o in outcomes if o.classification == MATCH_UNVERIFIED]
+    ambiguous_outcomes = [o for o in outcomes if o.classification == MATCH_AMBIGUOUS]
     tp_ids = {item.item_id for item in matched_positive}
     tp_groups = {item.group_id for item in matched_positive if item.group_id}
     expected_groups = {item.group_id for item in positives if item.group_id}
@@ -1156,10 +1563,17 @@ def _attribute(
         "unique_verified_nonsecret_exposures": len(
             {outcome.item_id for outcome in negative_outcomes}
         ),
+        "near_miss_count": len(near_miss_outcomes),
+        "near_miss_target_count": len({o.item_id for o in near_miss_outcomes if o.item_id}),
+        "near_miss_reason_counts": dict(Counter(o.reason_code for o in near_miss_outcomes if o.reason_code)),
+        "near_miss_targets": [item.item_id for item in positives if item.item_id in {o.item_id for o in near_miss_outcomes}],
         "unmatched_pending_review_count": len(unmatched_outcomes),
         "unverified_evidence_count": len(unverified_outcomes),
+        "ambiguous_count": len(ambiguous_outcomes),
         "unsupported_capability_count": 0,
         "accounted_finding_count": len(outcomes),
+        "target_accounting_reconciled": len(matched_positive) + len(missed_positive) == len(positives),
+        "finding_accounting_reconciled": len(outcomes) == len(findings),
         "accounted_percent": round(100.0 * len(outcomes) / len(findings), 2)
         if findings
         else 100.0,
@@ -1177,9 +1591,11 @@ def _attribute(
     exceptions = []
     for outcome in outcomes:
         if outcome.classification in (
+            MATCH_NEAR_MISS,
             MATCH_UNMATCHED,
             MATCH_UNVERIFIED,
             MATCH_FP,
+            MATCH_AMBIGUOUS,
         ):
             exceptions.append(
                 {
@@ -1189,6 +1605,10 @@ def _attribute(
                     "rule_id": outcome.finding.rule_id,
                     "expected_id": outcome.item_id,
                     "reason": outcome.reason,
+                    "reason_code": outcome.reason_code,
+                    "stage": outcome.stage,
+                    "evidence_kind": outcome.evidence_kind,
+                    "candidate_ids": list(outcome.candidate_ids),
                 }
             )
     exceptions.extend(
@@ -1207,8 +1627,20 @@ def _attribute(
         "representations": representation_rows,
         "exception_count": len(exceptions),
         "exceptions": exceptions[:250],
+        "exceptions_truncated": len(exceptions) > 250,
         "accounted": len(outcomes),
-        "findings": [outcome.finding.safe for outcome in outcomes],
+        "findings": [
+            {
+                **outcome.finding.safe,
+                "classification": outcome.classification,
+                "expected_id": outcome.item_id,
+                "reason_code": outcome.reason_code,
+                "stage": outcome.stage,
+                "evidence_kind": outcome.evidence_kind,
+                "candidate_ids": list(outcome.candidate_ids),
+            }
+            for outcome in outcomes
+        ],
         "matched_positive_ids": [item.item_id for item in matched_positive],
         "missed_positive_ids": [item.item_id for item in missed_positive],
     }

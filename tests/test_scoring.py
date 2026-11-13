@@ -115,8 +115,18 @@ class PositiveScoringTests(unittest.TestCase):
         results = score_positive(POS, findings)
         self.assertEqual(results["true_positives"], 0)
         self.assertEqual(results["partial_matches"], 1)
-        self.assertEqual(results["false_positives"], 1)
+        self.assertEqual(results["partial_findings"], 1)
+        self.assertEqual(results["false_positives"], 0)
         self.assertEqual(results["missed_secrets"][0]["classification"], "partial")
+        self.assertEqual(results["match_classification"]["partial"], 1)
+        self.assertEqual(
+            results["match_classification"]["complete"]
+            + results["match_classification"]["normalized"]
+            + results["match_classification"]["partial"]
+            + results["match_classification"]["miss"],
+            results["expected_secrets"],
+        )
+        self.assertTrue(results["target_accounting"]["reconciled"])
         self.assertNotIn("unit-secret-alpha", json.dumps(results))
 
     def test_line_number_alone_never_credits_a_finding(self):

@@ -390,6 +390,17 @@ class RncLabSuite(TestingSuite):
                 primary.get("false_negative_occurrences") or 0
             ),
             "duplicate_count": int(primary.get("duplicate_count") or 0),
+            "near_miss_count": int(primary.get("near_miss_count") or 0),
+            "near_miss_target_count": int(primary.get("near_miss_target_count") or 0),
+            "near_miss_reason_counts": primary.get("near_miss_reason_counts") or {},
+            "near_miss_targets": primary.get("near_miss_targets") or [],
+            "ambiguous_count": int(primary.get("ambiguous_count") or 0),
+            "target_accounting_reconciled": bool(
+                primary.get("target_accounting_reconciled")
+            ),
+            "finding_accounting_reconciled": bool(
+                primary.get("finding_accounting_reconciled")
+            ),
             "informative_match_count": int(
                 primary.get("informative_match_count") or 0
             ),

@@ -292,12 +292,17 @@ def score_positive(sections: tuple[Section, ...], findings: list[Finding]) -> di
         by_section[section.name] = by_section.get(section.name, 0) + 1
         false_positive_positions.append(position)
 
+    partial_count = sum(1 for item in missed_secrets if item.get("classification") == "partial")
+    ordinary_miss_count = len(missed_secrets) - partial_count
     core_expected = sum(1 for _case, section, _secret in cases if not section.hard)
     hard_expected = sum(1 for _case, section, _secret in cases if section.hard)
     core_found = sum(1 for item in matched_secrets if not item["hard"])
     hard_found = sum(1 for item in matched_secrets if item["hard"])
     ranked = sorted(by_section.items(), key=lambda item: (-item[1], item[0]))
-    false_positives = len(unexpected) + len(partial_entries) + len(ambiguous_entries)
+    # A partial or ambiguous finding is unresolved evidence, not a verified
+    # false positive.  The suite-level FP metric is sourced from the explicitly
+    # negative corpus; this positive-run field counts only unexpected findings.
+    false_positives = len(unexpected)
     duplicates += _duplicates([findings[position] for position in false_positive_positions])
 
     return {
@@ -321,6 +326,7 @@ def score_positive(sections: tuple[Section, ...], findings: list[Finding]) -> di
         "partial_matches": len(partial_entries),
         "ambiguous_findings": len(ambiguous_entries),
         "false_positives": false_positives,
+        "partial_findings": len(partial_entries),
         "duplicates": duplicates,
         "personal_data_matches": len(personal),
         "findings_without_evidence": no_evidence,
@@ -328,9 +334,18 @@ def score_positive(sections: tuple[Section, ...], findings: list[Finding]) -> di
         "match_classification": {
             "complete": complete_count,
             "normalized": normalized_count,
-            "partial": len(partial_entries),
+            "partial": partial_count,
             "ambiguous": len(ambiguous_entries),
-            "miss": len(missed_secrets),
+            "miss": ordinary_miss_count,
+            "partial_uncredited": partial_count,
+        },
+        "target_accounting": {
+            "expected": len(cases),
+            "true_positives": len(matched_secrets),
+            "false_negatives": len(missed_secrets),
+            "ordinary_misses": ordinary_miss_count,
+            "partial_uncredited": partial_count,
+            "reconciled": len(matched_secrets) + len(missed_secrets) == len(cases),
         },
         "matched_secrets": matched_secrets,
         "missed_secrets": missed_secrets,
