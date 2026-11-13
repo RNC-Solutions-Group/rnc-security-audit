@@ -19,7 +19,7 @@ from harness.adapters import (
     get_adapter,
     host_platform,
 )
-from harness.adapters.gitleaks import _version_from_text
+from harness.adapters.base import PLATFORMS, BuildArtifact
 from harness.errors import ReportError
 
 
@@ -174,6 +174,8 @@ class RNCAdapterTests(unittest.TestCase):
             {"synthetic-filesystem", "levain", "leaky-repo", "rnclab"},
         )
         self.assertTrue(adapter.supports_mode("dir"))
+        self.assertFalse(adapter.supports_mode("git"))
+        adapter._history_supported = True
         self.assertTrue(adapter.supports_mode("git"))
         self.assertFalse(adapter.supports_mode("stdin"))
         self.assertEqual(adapter.default_configuration()["rules_path"], "rules/rnc-providers-v1.json")
@@ -717,12 +719,24 @@ class RNCAdapterTests(unittest.TestCase):
                 self.assertIn("target=/scan,readonly", " ".join(argv))
                 self.assertIn("HOME=/tmp", argv)
 
-    def test_dockerfile_installs_git_for_history(self):
+    def test_manifest_rules_are_used_without_a_source_checkout(self):
         adapter = get_adapter("rnc")
         with tempfile.TemporaryDirectory() as tmp:
-            text = adapter._dockerfile(Path(tmp)).read_text(encoding="utf-8")
-        self.assertIn("git", text)
-        self.assertIn("safe.directory", text)
+            path = Path(tmp) / "rules.json"
+            path.write_text(
+                json.dumps(
+                    {
+                        "schema_version": "0.2.0",
+                        "ruleset_id": "rnc-providers-v1",
+                        "ruleset_version": "test",
+                        "rules": [{"rule_id": "r"}],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            adapter._rules_path = path
+            adapter._ruleset = adapter._describe_rules(path)
+            self.assertEqual(adapter._rule_and_repo_config(None, Path(tmp) / "report.json")[0], path)
 
 
 
@@ -785,10 +799,6 @@ class GitleaksAdapterTests(unittest.TestCase):
         self.assertIsNotNone(findings[0].secret_sha256)
         self.assertNotIn("super-secret-value", repr(findings[0]))
 
-    def test_version_parser(self):
-        self.assertEqual(_version_from_text("v8.1.2\n"), "v8.1.2")
-        self.assertIsNone(_version_from_text("version is set by build process"))
-
     def test_config_hash(self):
         adapter = get_adapter("gitleaks")
         with tempfile.TemporaryDirectory() as tmp:
@@ -797,6 +807,153 @@ class GitleaksAdapterTests(unittest.TestCase):
             resolved, digest = adapter.validate_config(path)
             self.assertEqual(resolved, path.resolve())
             self.assertEqual(len(digest), 64)
+
+    def _artifact(self) -> BuildArtifact:
+        return BuildArtifact(
+            platform=PLATFORMS["windows-amd64"],
+            status="PASS",
+            command=(),
+            exit_code=None,
+            duration_seconds=0.0,
+            artifact_path="run/gitleaks.exe",
+            artifact_sha256="c" * 64,
+            image_id=None,
+            image_tag=None,
+            version="test",
+            version_status="PASS",
+            stdout_sha256="",
+            stderr_sha256="",
+            error=None,
+            metadata={
+                "build_id": "gitleaks-local",
+                "source_commit": "a" * 40,
+                "manifest": {"sha256": "d" * 64},
+            },
+        )
+
+    def test_invocation_records_exact_argv_suite_type_and_artifact_identity(self):
+        adapter = get_adapter("gitleaks")
+        artifact = self._artifact()
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            executable = root / "gitleaks.exe"
+            executable.write_bytes(b"scanner")
+            target = root / "target"
+            target.mkdir()
+            report = root / "out" / "report.json"
+
+            def fake_run(argv, **kwargs):
+                return execution.Invocation(
+                    binary_path=str(executable),
+                    binary_sha256="c" * 64,
+                    argv=tuple(argv),
+                    mode=kwargs["mode"],
+                    report_path=str(report),
+                    exit_code=1,
+                    timed_out=False,
+                    duration_seconds=0.5,
+                    timeout_seconds=kwargs["timeout_seconds"],
+                    stdout=b"",
+                    stderr=b"",
+                    report_bytes=b"[]",
+                    invocation_type=kwargs["invocation_type"],
+                    suite=kwargs["suite"],
+                    workload=kwargs["workload"],
+                )
+
+            with patch("harness.adapters.gitleaks.run_process", side_effect=fake_run):
+                adapter.invoke_native(
+                    executable,
+                    target,
+                    report,
+                    artifact=artifact,
+                    invocation_type="measured",
+                    suite="levain",
+                    workload="levain-filesystem",
+                )
+        record = adapter.invocations[0]
+        self.assertEqual(record["command"][0], str(executable.resolve()))
+        self.assertEqual(record["command"][1:3], ["dir", str(target.resolve())])
+        self.assertIn("--report-path", record["command"])
+        self.assertEqual(record["build_id"], "gitleaks-local")
+        self.assertEqual(record["executable_sha256"], "c" * 64)
+        self.assertEqual(record["invocation_type"], "measured")
+        self.assertEqual(record["suite"], "levain")
+        self.assertEqual(record["workload"], "levain-filesystem")
+        self.assertEqual(record["exit_code"], 1)
+        self.assertEqual(record["status"], "PASS")
+        self.assertEqual(len(record["command_sha256"]), 64)
+
+    def test_rnc_exit_10_is_recorded_as_completed(self):
+        adapter = get_adapter("rnc")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            executable = root / "rnc.exe"
+            executable.write_bytes(b"scanner")
+            target = root / "target"
+            target.mkdir()
+            rules = root / "rules.json"
+            rules.write_text('{"rules":[{"rule_id":"r"}]}', encoding="utf-8")
+            adapter._rules_path = rules
+            adapter._ruleset = adapter._describe_rules(rules)
+            adapter._history_supported = True
+            out = root / "out"
+            out.mkdir()
+
+            def fake_run(argv, **kwargs):
+                return execution.Invocation(
+                    binary_path=str(executable),
+                    binary_sha256="c" * 64,
+                    argv=tuple(argv),
+                    mode=kwargs["mode"],
+                    report_path=str(out / "report.json"),
+                    exit_code=10,
+                    timed_out=False,
+                    duration_seconds=1.0,
+                    timeout_seconds=kwargs["timeout_seconds"],
+                    stdout=b"",
+                    stderr=b"",
+                    report_bytes=b"{}",
+                    invocation_type=kwargs["invocation_type"],
+                    suite=kwargs["suite"],
+                    workload=kwargs["workload"],
+                )
+
+            with patch("harness.adapters.rnc.run_process", side_effect=fake_run):
+                adapter.invoke_native(
+                    executable,
+                    target,
+                    out / "report.json",
+                    artifact=self._artifact(),
+                    suite="synthetic-filesystem",
+                    workload="synthetic-filesystem",
+                )
+        self.assertEqual(adapter.invocations[0]["exit_code"], 10)
+        self.assertEqual(adapter.invocations[0]["status"], "PASS")
+
+    def test_interrupted_container_invocation_removes_its_exact_container(self):
+        adapter = get_adapter("gitleaks")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            target = root / "target"
+            target.mkdir()
+            out = root / "out"
+            with (
+                patch(
+                    "harness.adapters.gitleaks.run_process",
+                    side_effect=KeyboardInterrupt,
+                ),
+                patch.object(adapter, "_remove_container") as remove,
+            ):
+                with self.assertRaises(KeyboardInterrupt):
+                    adapter.invoke_container(
+                        "example/scanner:test",
+                        "sha256:" + "a" * 64,
+                        target,
+                        out,
+                    )
+        remove.assert_called_once()
+        self.assertTrue(str(remove.call_args.args[0]).startswith("rnc-"))
 
 
 if __name__ == "__main__":

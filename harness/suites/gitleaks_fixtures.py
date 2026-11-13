@@ -47,15 +47,14 @@ class GitleaksFixtureSuite(TestingSuite):
             if artifact.platform.is_executable:
                 lane = context.adapter.run_fixture_suite_native(
                     prepared,
-                    artifact.artifact_path,
+                    artifact,
                     context.work_dir / "gitleaks-fixtures" / key,
                     context.timeout,
                 )
             else:
                 lane = context.adapter.run_fixture_suite_docker(
                     prepared,
-                    artifact.image_tag,
-                    artifact.image_id,
+                    artifact,
                     context.work_dir / "gitleaks-fixtures" / key,
                     context.timeout,
                 )

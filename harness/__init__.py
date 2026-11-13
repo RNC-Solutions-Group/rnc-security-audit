@@ -1,8 +1,9 @@
-"""Source-commit scanner benchmark harness.
+"""Registered-artifact scanner benchmark harness.
 
-Adapter-local scanner builds and parsing are paired with scanner-independent
-benchmark datasets and scoring. One experiment evaluates one source commit.
+Operator-provided local executables/images are verified through run/manifest.toml
+and paired with scanner-independent benchmark datasets and scoring. One
+experiment executes one registered scanner build.
 """
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 SCENARIO_VERSION = "cp1a-v1"

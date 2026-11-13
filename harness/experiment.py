@@ -1,23 +1,20 @@
-"""One-scanner, one-source-commit experiment orchestrator."""
+"""One-scanner, one-registered-artifact experiment orchestrator."""
 
 from __future__ import annotations
 
-import shutil
 import traceback
 from pathlib import Path
 
 from . import __version__
-from . import leaky_repo as leaky_module
 from . import performance
 from . import rnclab
 from . import status as statuses
 from .adapters import BuildArtifact, expand_platform_selection, get_adapter
-from .builds import toolchain_metadata
+from .artifacts import RegisteredBuild, load_manifest, toolchain_metadata
 from .config import HarnessConfig, load_config, validate_raw_destination
 from .errors import HarnessError
 from .profile import load_profile
 from .reporting import compact_document, render_console, write_experiment_reports
-from .source import SourceCheckout, acquire
 from .suites import resolve_suites
 from .suites.base import SuiteContext
 from .telemetry import host_metadata
@@ -25,6 +22,67 @@ from .util import utc_now
 from .workspace import RunWorkspace, new_run_id
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def _blocked_build(platform, error: str, *, build: RegisteredBuild | None = None) -> BuildArtifact:
+    return BuildArtifact(
+        platform=platform,
+        status=statuses.BLOCKED,
+        command=(),
+        exit_code=None,
+        duration_seconds=0.0,
+        artifact_path=None,
+        artifact_sha256=None,
+        image_id=None,
+        image_tag=None,
+        version=(build.version if build is not None else None),
+        version_status=(
+            statuses.PASS
+            if build is not None and build.version
+            else statuses.NOT_APPLICABLE
+        ),
+        stdout_sha256="",
+        stderr_sha256="",
+        error=error,
+        metadata={
+            "artifact_origin": "operator-provided-local-artifact",
+            "build_id": build.id if build is not None else None,
+            "scanner": build.scanner if build is not None else None,
+            "source_commit": build.source_commit if build is not None else None,
+            "source_identity": "manifest-metadata",
+            "source_commit_verified": False,
+            "manifest": (
+                {
+                    "path": str(build.manifest_path),
+                    "sha256": build.manifest_sha256,
+                }
+                if build is not None
+                else {}
+            ),
+            "artifact_verification_error": error,
+        },
+    )
+
+
+def _artifact_summary(artifact: BuildArtifact) -> dict:
+    metadata = artifact.metadata or {}
+    return {
+        "build_id": metadata.get("build_id"),
+        "scanner": metadata.get("scanner"),
+        "status": artifact.status,
+        "platform": artifact.platform.key,
+        "kind": "docker" if artifact.platform.is_docker else "executable",
+        "execution_method": "docker" if artifact.platform.is_docker else "native",
+        "executable": artifact.artifact_path,
+        "executable_sha256": artifact.artifact_sha256,
+        "docker_image": artifact.image_tag,
+        "docker_image_id": artifact.image_id,
+        "source_commit": metadata.get("source_commit"),
+        "manifest_sha256": (metadata.get("manifest") or {}).get("sha256"),
+        "rules_file": metadata.get("rules_file"),
+        "rules_sha256": metadata.get("rules_sha256"),
+        "error": artifact.error,
+    }
 
 
 def _blocked_build(platform, error: str) -> BuildArtifact:
@@ -314,7 +372,6 @@ def _performance_plan(
 
 def _run_performance(
     adapter,
-    source: SourceCheckout,
     context: SuiteContext,
     *,
     config: HarnessConfig,
@@ -384,6 +441,8 @@ def _run_performance(
                     sequence_index=sequence_index,
                     cache_state="warm_after_warmup" if warmups else "cold_target",
                     allow_partial=bool(workload.get("allow_partial")),
+                    suite=str(workload.get("suite") or ""),
+                    workload_key=str(workload.get("key") or ""),
                 )
                 result["suite"] = workload.get("suite")
                 result["workload_key"] = workload.get("key")
@@ -391,10 +450,10 @@ def _run_performance(
                 result["requested_multiplier"] = workload.get("multiplier", 1)
                 result["load_profile"] = None
                 _apply_coverage_caveats(result)
+                result["artifact"] = _artifact_summary(artifact)
                 result["build"] = {
                     "status": artifact.status,
-                    "duration_seconds": artifact.duration_seconds,
-                    "command": list(artifact.command),
+                    "build_id": (artifact.metadata or {}).get("build_id"),
                     "artifact_sha256": artifact.artifact_sha256,
                     "image_id": artifact.image_id,
                     "source_commit": (artifact.metadata or {}).get("source_commit"),
@@ -495,6 +554,8 @@ def _run_performance(
                         sequence_index=sequence_index,
                         cache_state="warm_after_warmup",
                         allow_partial=True,
+                        suite="rnclab",
+                        workload_key=f"rnclab-{profile}",
                     )
                     result["suite"] = "rnclab"
                     result["workload_key"] = f"rnclab-{profile}"
@@ -562,12 +623,12 @@ def _run_performance(
                         }
                     result["build"] = {
                         "status": artifact.status,
-                        "duration_seconds": artifact.duration_seconds,
-                        "command": list(artifact.command),
+                        "build_id": (artifact.metadata or {}).get("build_id"),
                         "artifact_sha256": artifact.artifact_sha256,
                         "image_id": artifact.image_id,
                         "source_commit": (artifact.metadata or {}).get("source_commit"),
                     }
+                    result["artifact"] = _artifact_summary(artifact)
                     products.append(result)
                 except Exception as exc:
                     products.append(
@@ -657,9 +718,9 @@ def _run_performance(
 
 def run(
     *,
+    build: str | None = None,
+    artifact_manifest: Path | str | None = None,
     scanner: str | None = None,
-    repository: str | None = None,
-    commit: str | None = None,
     platforms: str | list[str] | tuple[str, ...] | None = None,
     suites: str | list[str] | tuple[str, ...] | None = None,
     profile_name: str = "default",
@@ -677,18 +738,14 @@ def run(
     stress_profile: str | None = None,
 ) -> dict:
     config = config or load_config(config_path)
-    adapter = get_adapter(scanner or config.scanner)
-    requested_commit = commit or config.source.commit
-    if not requested_commit:
+    manifest = load_manifest(artifact_manifest or config.artifact.manifest)
+    selected = manifest.select(build if build is not None else config.artifact.build)
+    if scanner and scanner != selected.scanner:
         raise HarnessError(
-            "an exact --commit is required; source commit is the scanner identity"
+            f"registered build {selected.id!r} belongs to scanner {selected.scanner!r}, "
+            f"not {scanner!r}"
         )
-    if len(requested_commit) != 40 or any(
-        character not in "0123456789abcdef" for character in requested_commit.lower()
-    ):
-        raise HarnessError("source commit must be a full 40-character hexadecimal SHA")
-    requested_commit = requested_commit.lower()
-    requested_repository = repository or config.source.repository or adapter.default_repository
+    adapter = get_adapter(selected.scanner)
     profile = load_profile(adapter, profile_name, scanner_config)
     benchmark_environment_record = performance.environment_for(
         benchmark_environment or config.benchmark_environment,
@@ -706,7 +763,6 @@ def run(
     adapter.bind_run(run_id)
     work_dir = workspace.evidence
     started_at = utc_now()
-    source: SourceCheckout | None = None
     builds: dict[str, BuildArtifact] = {}
     suite_results: dict[str, dict] = {}
     context: SuiteContext | None = None
@@ -714,24 +770,22 @@ def run(
     fatal_error: str | None = None
     fatal_traceback: str | None = None
     try:
-        source = acquire(
-            requested_repository,
-            requested_commit,
-            workspace.source,
-            timeout=float(timeout or config.timeout),
-        )
         for platform in selected_platforms:
+            verification_dir = work_dir / "artifact-verification" / platform.key
+            verification_dir.mkdir(parents=True, exist_ok=True)
             try:
-                builds[platform.key] = adapter.build(
-                    source, platform, workspace.builds / platform.key
+                builds[platform.key] = adapter.resolve_artifact(
+                    selected, platform, verification_dir
                 )
             except Exception as exc:
                 builds[platform.key] = _blocked_build(
-                    platform, f"{type(exc).__name__}: {exc}"
+                    platform,
+                    f"{type(exc).__name__}: {exc}",
+                    build=selected,
                 )
         context = SuiteContext(
             adapter=adapter,
-            source=source,
+            build=selected,
             config=config,
             builds=builds,
             work_dir=work_dir,
@@ -761,7 +815,6 @@ def run(
             try:
                 performance_document = _run_performance(
                     adapter,
-                    source,
                     context,
                     config=config,
                     copies=copies,
@@ -801,7 +854,6 @@ def run(
                         key, f"scanner adapter {adapter.key!r} does not support suite {key!r}"
                     )
     cleanup = workspace.cleanup(
-        image_tags=[item.image_tag for item in builds.values() if item.image_tag],
         inspect_docker=any(item.platform.is_docker for item in builds.values()),
     )
 
@@ -850,8 +902,10 @@ def run(
         "not_applicable": sum(item == statuses.NOT_APPLICABLE for item in suite_statuses),
     }
     limitations = [
-        "Source commit is the primary experiment identity; artifact hashes and image IDs are supporting provenance.",
-        "A successfully built artifact is not counted as tested unless an applicable suite executed it.",
+        "Source commit is operator-supplied manifest metadata; the harness did not clone, check out, or compile scanner source.",
+        "The registered executable SHA-256 and Docker image ID are the executed artifact identities; they are verified before every run.",
+        "A verified artifact is not counted as tested unless an applicable suite executed it.",
+        "Registered Docker images and run/ executables are never deleted or modified by the harness.",
         *coverage_limits,
     ]
     for item in suite_results.values():
@@ -889,14 +943,6 @@ def run(
         if item not in seen:
             seen.add(item)
             unique_limitations.append(item)
-    scanner_version = next(
-        (
-            item.version
-            for item in builds.values()
-            if item.status == statuses.PASS and item.version
-        ),
-        None,
-    )
     datasets: dict[str, dict] = {}
     for item in suite_results.values():
         datasets.update((item.get("details") or {}).get("datasets") or {})
@@ -914,18 +960,25 @@ def run(
         profile_document.setdefault("applied_settings", {})["rules_sha256"] = (
             scanner_ruleset.get("sha256")
         )
-    source_document = (
-        source.to_dict()
-        if source is not None
-        else {
-            "repository": requested_repository,
-            "commit": requested_commit,
-            "requested_commit": requested_commit,
-            "head": None,
-            "head_verified": False,
-            "path": str(workspace.source),
-        }
-    )
+    source_document = {
+        "repository": selected.source_repository,
+        "commit": selected.source_commit,
+        "requested_commit": selected.source_commit,
+        "head": None,
+        "head_verified": False,
+        "identity": "manifest-metadata",
+        "metadata_only": True,
+        "verified": False,
+        "note": (
+            "Source commit is operator-supplied metadata. No scanner source was "
+            "cloned, checked out, or compiled."
+        ),
+        "build_id": selected.id,
+        "manifest": {
+            "path": manifest.to_dict()["path"],
+            "sha256": manifest.sha256,
+        },
+    }
     document = {
         "schema_version": 2,
         "report_type": "rnc-scan-harness/experiment",
@@ -936,8 +989,8 @@ def run(
         "scanner": {
             "key": adapter.key,
             "name": adapter.display_name,
-            "version": scanner_version,
-            "identity": "source-commit",
+            "version": selected.version,
+            "identity": "operator-provided-artifact",
             "ruleset": scanner_ruleset,
         },
         "adapter": {
@@ -946,6 +999,13 @@ def run(
             "supported_suites": list(adapter.supported_suites),
         },
         "source": source_document,
+        "registered_build": selected.to_dict(),
+        "artifact_manifest": {
+            "path": manifest.to_dict()["path"],
+            "sha256": manifest.sha256,
+            "schema_version": manifest.to_dict()["schema_version"],
+            "registered_builds": [item.id for item in manifest.builds],
+        },
         "profile": profile_document,
         "host": {
             **host_metadata(),
@@ -960,12 +1020,17 @@ def run(
         "detection_by_product": _detection_by_product(suite_results, builds),
         "performance": performance_document,
         "cleanup": cleanup,
+        "invocations": list(adapter.invocations),
         "summary": {
             "overall": overall,
             "matrix_status": matrix_status,
             "experiment_status": overall,
-            "source_commit": requested_commit,
-            "source_head_verified": bool(source and source.head == source.commit),
+            "source_commit": selected.source_commit,
+            "source_head_verified": False,
+            "source_commit_metadata_only": True,
+            "build_id": selected.id,
+            "artifact_manifest_sha256": manifest.sha256,
+            "invocation_count": len(adapter.invocations),
             "profile": profile.name,
             "baseline_metrics_included": profile.is_default,
             "suites": {key: item["status"] for key, item in suite_results.items()},
@@ -1015,7 +1080,7 @@ def run(
         config,
         run_id=run_id,
         scanner=adapter.key,
-        commit=requested_commit,
+        commit=selected.source_commit,
         profile=profile.name,
         suites=list(suite_results),
         raw_artifacts=context.raw_artifacts if context else [],
@@ -1034,10 +1099,16 @@ def run(
 def main(argv: list[str] | None = None) -> int:
     import argparse
 
-    parser = argparse.ArgumentParser(description="One-scanner source-commit experiment.")
+    parser = argparse.ArgumentParser(
+        description="One-scanner registered-artifact experiment."
+    )
+    parser.add_argument("--build", default=None, help="registered build id")
+    parser.add_argument(
+        "--artifact-manifest",
+        default=None,
+        help="local artifact manifest (default: run/manifest.toml)",
+    )
     parser.add_argument("--scanner", default=None)
-    parser.add_argument("--repo", default=None)
-    parser.add_argument("--commit", required=True)
     parser.add_argument("--platforms", default=None)
     parser.add_argument("--suites", default=None)
     parser.add_argument("--profile", choices=("default", "custom"), default="default")
@@ -1046,7 +1117,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--warmups", type=int, default=None)
     parser.add_argument("--runs", type=int, default=None)
     parser.add_argument("--copies", type=int, default=10)
-    parser.add_argument("--retain-work", action="store_true")
+    parser.add_argument(
+        "--retain-work",
+        action="store_true",
+        help="retain the run-owned benchmark workspace and Docker containers",
+    )
     parser.add_argument("--offline", action="store_true")
     parser.add_argument("--compact", action="store_true")
     parser.add_argument("--timeout", type=int, default=None)
@@ -1062,9 +1137,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
     document = run(
+        build=args.build,
+        artifact_manifest=args.artifact_manifest,
         scanner=args.scanner,
-        repository=args.repo,
-        commit=args.commit,
         platforms=args.platforms,
         suites=args.suites,
         profile_name=args.profile,

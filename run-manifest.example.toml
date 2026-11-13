@@ -1,0 +1,79 @@
+# Example local artifact manifest.
+#
+# Copy this file to run/manifest.toml, place the operator-built executables
+# and rules under run/, retain the Docker images in Docker's local image store,
+# then replace every placeholder value with the real SHA-256 / image ID.
+#
+# The harness never downloads, compiles, builds, or pulls scanner artifacts.
+# A missing file, mismatched hash, or missing/mismatched image ID is reported
+# as BLOCKED. No other registered build is substituted.
+#
+# Paths under run/ are relative to run/manifest.toml. Source commits are
+# operator metadata only; they are not cloned or checked out.
+schema_version = 1
+
+# ---------------------------------------------------------------------------
+# Gitleaks: native executable and Docker image, functional suites only.
+# ---------------------------------------------------------------------------
+[[builds]]
+id = "gitleaks-5f6ec56"
+scanner = "gitleaks"
+version = "8.28.0"
+source_repository = "https://github.com/RNC-Solutions-Group/gitleaks"
+source_commit = "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c"
+executable = "gitleaks.exe"
+executable_sha256 = "0000000000000000000000000000000000000000000000000000000000000000"
+docker_image = "rnc-gitleaks:5f6ec56"
+docker_image_id = "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+capabilities = ["filesystem", "git-history"]
+
+# ---------------------------------------------------------------------------
+# Betterleaks: native executable and Docker image.
+# ---------------------------------------------------------------------------
+[[builds]]
+id = "betterleaks-5eab483"
+scanner = "betterleaks"
+version = "1.8.1"
+source_repository = "https://github.com/betterleaks/betterleaks"
+source_commit = "5eab48332cc48565864514e3bc6de89df091a7c4"
+executable = "betterleaks.exe"
+executable_sha256 = "0000000000000000000000000000000000000000000000000000000000000000"
+docker_image = "rnc-betterleaks:5eab483"
+docker_image_id = "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+capabilities = ["filesystem", "git-history"]
+
+# ---------------------------------------------------------------------------
+# RNC CP3: filesystem-only historical revision.
+# RNC requires a rules_file; it is never read from a scanner source checkout.
+# ---------------------------------------------------------------------------
+[[builds]]
+id = "rnc-cp3"
+scanner = "rnc"
+version = "0.1.0"
+source_repository = "https://github.com/RNC-Solutions-Group/rnc-security-audit"
+source_commit = "5391d8457ea091c45733920078a7f714ec61f678"
+executable = "rnc-cp3.exe"
+executable_sha256 = "0000000000000000000000000000000000000000000000000000000000000000"
+docker_image = "rnc-scanner:cp3"
+docker_image_id = "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+rules_file = "rules/rnc-providers-v1.json"
+rules_sha256 = "0000000000000000000000000000000000000000000000000000000000000000"
+capabilities = ["filesystem"]
+
+# ---------------------------------------------------------------------------
+# RNC CP4A: filesystem plus read-only Git history.
+# Multiple builds for the same scanner are selected explicitly by --build.
+# ---------------------------------------------------------------------------
+[[builds]]
+id = "rnc-cp4a"
+scanner = "rnc"
+version = "0.1.0"
+source_repository = "https://github.com/RNC-Solutions-Group/rnc-security-audit"
+source_commit = "93b4dda909cb3b41606a4d0f36c8ef9d06b77fde"
+executable = "rnc-cp4a.exe"
+executable_sha256 = "0000000000000000000000000000000000000000000000000000000000000000"
+docker_image = "rnc-scanner:cp4a"
+docker_image_id = "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+rules_file = "rules/rnc-providers-v1.json"
+rules_sha256 = "0000000000000000000000000000000000000000000000000000000000000000"
+capabilities = ["filesystem", "git-history"]

@@ -1,14 +1,14 @@
 # Scan harness implementation roadmap
 
-**Repository:** `RNC-Solutions-Group/gitleaks`  
-**Branch:** `test/scan-harness` (orphan; never merge into an application branch)  
-**Status:** CP0, CP1, CP1A, and consolidation are accepted. CP1B–CP1E are implemented. CP2, CP3, and the RNC CP5 line are implemented and preserved as development evidence. CP3A's historical Leaky Repo oracle is owner-approved; CP10 applied the approved 184-record/89-negative migration and the official loader is strict at 184/89. The certified RNC Synthetic Secrets Lab v3 is integrated as the standalone `rnclab` suite. CP10 refreshes performance, builds, and scanner baselines; its authoritative baseline is under `reports/baseline-20261112/`. Precision/F1 remain uncertified where the negative reference set is not exhaustive. No merge, rebase, scanner-source edit, or oracle relaxation is authorized.
+**Repository:** `RNC-Solutions-Group/rnc-security-audit`
+**Branch:** `benchmark-harness` (orphan; never merge into an application branch)
+**Status:** CP0, CP1, CP1A, and consolidation are accepted. CP1B–CP1E are implemented. CP2, CP3, and the RNC CP5 line are implemented and preserved as development evidence. CP3A's historical Leaky Repo oracle is owner-approved; CP10 applied the approved 184-record/89-negative migration and the official loader is strict at 184/89. The certified RNC Synthetic Secrets Lab v3 is integrated as the standalone `rnclab` suite. CP11 replaces source acquisition/builds with operator-provided local executables and retained Docker images referenced by `run/manifest.toml`; the CP10 benchmark methodology, scoring, oracles, performance plan, and sequential execution are preserved. Precision/F1 remain uncertified where the negative reference set is not exhaustive. No merge, rebase, scanner-source edit, or oracle relaxation is authorized.
 
 ## Mission
 
-Build an independently reproducible harness that can execute and evaluate **one specified scanner source commit** against approved, pinned benchmark corpora. Test whether the program functions correctly, whether secrets are detected accurately, and how results change between source revisions. Keep Go race testing separate.
+Build an independently reproducible harness that can execute and evaluate **one operator-registered scanner build** against approved, pinned benchmark corpora. Test whether the program functions correctly, whether secrets are detected accurately, and how results change between artifact revisions. Keep Go race testing separate.
 
-The harness is a test tool, not a Gitleaks fork or a replacement for the original application tests. It must remain usable from a normal terminal without requiring an AI agent, database, hosted service, or special toolkit.
+The harness is a test tool, not a Gitleaks fork or a replacement for the original application tests. It must remain usable from a normal terminal without requiring an AI agent, database, hosted service, or special toolkit. Scanner artifacts are built and supplied by the operator; the harness verifies and executes them.
 
 ## Evaluation lanes
 
@@ -346,6 +346,25 @@ are source-only and sequential; Docker bases and dependencies are local-only.
 The baseline records every completed matrix cell and explicitly blocks cells
 that could not be executed without network acquisition or a missing local source
 revision.
+
+### CP11 — Local artifact execution refactor
+
+See the [CP11 report](checkpoints/CP11-local-artifact-execution-report.md).
+
+**State:** Implemented. Normal experiments no longer clone/fetch scanner source,
+check out commits, compile Go/Rust executables, build or pull Docker images, or
+require a scanner checkout. `run/manifest.toml` registers one or more builds per
+scanner and the operator supplies the executable and/or retains the Docker image
+locally. The harness verifies executable SHA-256, Docker image ID and
+architecture, and optional rules/configuration hashes before execution. Missing
+or mismatched artifacts are explicit `BLOCKED` products with no substitution.
+`docker run --rm --pull=never` executes local images; cleanup removes only
+run-created containers and never deletes registered images or `run/` artifacts.
+Every scanner invocation is recorded with its exact argv, build ID, artifact
+identity, suite, workload, platform, type, exit code, duration, and timeout
+status in JSON and Markdown reports. Source commits are metadata only. Existing
+benchmark suites, scoring engines, oracles, performance methodology, and
+sequential execution are unchanged.
 
 ## Shared definition of done
 

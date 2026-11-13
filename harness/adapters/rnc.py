@@ -1,10 +1,10 @@
 """RNC Scanner adapter.
 
 RNC Scanner is a Rust CLI with a byte-addressed private JSON report and a
-versioned provider rule bundle. The adapter builds both the native executable and
-Docker image from the requested source commit, uses the scanner's own bundled
-provider rules for DEFAULT, and normalizes private findings through the shared
-harness contract.
+versioned provider rule bundle. The operator supplies the executable and/or
+Docker image plus the registered rules file through ``run/manifest.toml``;
+the adapter verifies and uses those local artifacts without accessing a scanner
+source checkout.
 
 CP4 adds a read-only Git-history source mode. The adapter invokes it only when a
 suite explicitly requests Git mode; ordinary filesystem scans are unchanged.
@@ -17,20 +17,17 @@ import json
 import platform as host_platform_module
 import re
 import subprocess
+from dataclasses import replace
 from pathlib import Path, PurePosixPath
 
 from .. import status as statuses
-from ..builds import (
-    BuildResult,
-    build_cargo_executable,
-    build_docker_image,
-    inspect_image,
-    toolchain_metadata,
+from ..artifacts import (
+    RegisteredBuild,
+    verify_artifact,
 )
 from ..contracts import NormalizedFinding
 from ..errors import ReportError
 from ..execution import Invocation, run_process
-from ..source import SourceCheckout
 from ..util import sha256_file
 from .base import (
     PLATFORM_CATALOG,
@@ -327,15 +324,6 @@ class RNCAdapter(ScannerAdapter):
         self._active_ruleset: dict | None = None
         self._history_supported: bool | None = None
 
-    def _detect_history_capability(self, source: SourceCheckout) -> bool:
-        """Inspect the pinned CLI source rather than assuming every RNC commit has it."""
-        cli = source.path / "crates/rnc-cli/src/main.rs"
-        try:
-            text = cli.read_text(encoding="utf-8")
-        except OSError:
-            return False
-        return "--history" in text and "GitHistorySource" in text and "--ref" in text
-
     def _describe_rules(self, path: Path) -> dict:
         payload = Path(path)
         document = json.loads(payload.read_text(encoding="utf-8"))
@@ -365,22 +353,223 @@ class RNCAdapter(ScannerAdapter):
             "component_extractors": extractors,
         }
 
-    def _load_ruleset(self, source: SourceCheckout) -> dict:
-        path = source.path / RULES_PATH
-        if not path.is_file():
-            raise FileNotFoundError(f"RNC source has no bundled rule bundle at {RULES_PATH}")
-        described = self._describe_rules(path)
-        described["path"] = RULES_PATH
-        described["source"] = "bundled provider catalogue in the pinned source checkout"
-        return described
+    def resolve_artifact(
+        self,
+        build: RegisteredBuild,
+        target: TargetPlatform,
+        work_dir: Path | None = None,
+    ) -> BuildArtifact:
+        verified = verify_artifact(build, target)
+        if not verified.ok:
+            return self.artifact_from_verification(verified, target)
+        if not build.rules_file or not build.rules_sha256:
+            artifact = self.artifact_from_verification(verified, target)
+            return replace(
+                artifact,
+                status=statuses.BLOCKED,
+                error=(
+                    f"RNC build {build.id!r} registers no rules_file/rules_sha256; "
+                    "RNC execution requires the operator-provided provider rule bundle"
+                ),
+                metadata={
+                    **artifact.metadata,
+                    "rules_required": True,
+                    "rules_registered": False,
+                },
+            )
+        rules_path = build.rules_path
+        assert rules_path is not None
+        try:
+            ruleset = self._describe_rules(rules_path)
+        except (OSError, ValueError) as exc:
+            artifact = self.artifact_from_verification(verified, target)
+            return replace(
+                artifact,
+                status=statuses.BLOCKED,
+                error=f"registered RNC rule bundle is unusable: {exc}",
+                metadata={**artifact.metadata, "rules_validation_error": str(exc)},
+            )
+        ruleset["path"] = build.rules_file
+        ruleset["source"] = "operator-provided rules_file in run/manifest.toml"
+        self._rules_path = rules_path
+        self._ruleset = ruleset
+        self._history_supported = build.supports("git-history")
+        metadata = {
+            "ruleset": ruleset,
+            "history_capability": self._history_supported,
+            "history_capability_source": "operator-provided manifest capabilities",
+        }
+        artifact = self.artifact_from_verification(
+            verified, target, metadata=metadata
+        )
+        self._validate_rules_digest(artifact, target, rules_path, work_dir)
+        return artifact
+
+    def _validate_rules_digest(
+        self,
+        artifact: BuildArtifact,
+        target: TargetPlatform,
+        rules_path: Path,
+        work_dir: Path | None,
+    ) -> None:
+        """Record the scanner's own ruleset digest as additional provenance.
+
+        The manifest SHA-256 is authoritative for artifact identity.  Scanner
+        validation is best-effort evidence; its failure is reported and is not
+        silently converted into a successful independent validation.
+        """
+        metadata = artifact.metadata
+        ruleset = metadata.get("ruleset") or {}
+        invocation: Invocation | None = None
+        if target.is_executable:
+            if host_platform() != target:
+                ruleset["digest_validation"] = "NOT_RUN"
+                ruleset["digest_validation_note"] = (
+                    "executable platform is not executable on this host"
+                )
+                return
+            invocation = self._rules_validate_native(
+                Path(artifact.artifact_path), rules_path, work_dir, artifact
+            )
+        else:
+            invocation = self._rules_validate_docker(
+                artifact.image_tag,
+                artifact.image_id,
+                rules_path,
+                target,
+                artifact,
+                work_dir,
+            )
+        if invocation is None:
+            ruleset["digest_validation"] = "NOT_RUN"
+            return
+        digest = None
+        if invocation.exit_code == 0 and not invocation.timed_out:
+            text = invocation.stdout.decode("utf-8", "replace")
+            match = re.search(
+                r"^Digest:\s+(sha256:[0-9a-f]{64})$", text, re.MULTILINE
+            )
+            digest = match.group(1) if match else None
+        if digest:
+            ruleset["digest"] = digest
+            ruleset["digest_validation"] = "PASS"
+            ruleset["digest_validation_command"] = list(invocation.argv)
+        else:
+            ruleset["digest_validation"] = "FAIL"
+            ruleset["digest_validation_command"] = list(invocation.argv)
+            ruleset["digest_validation_error"] = (
+                invocation.error_code or "scanner did not report a ruleset digest"
+            )
+
+    def _rules_validate_native(
+        self,
+        binary: Path,
+        rules_path: Path,
+        work_dir: Path | None,
+        artifact: BuildArtifact,
+    ) -> Invocation | None:
+        if work_dir is None:
+            return None
+        report_path = Path(work_dir) / "rnc-rules-validate.json"
+        argv = [
+            str(binary),
+            "rules",
+            "validate",
+            "--rules",
+            str(rules_path),
+            "--strategy",
+            "auto",
+        ]
+        invocation = run_process(
+            argv,
+            binary_path=str(binary),
+            binary_sha256=sha256_file(binary),
+            mode="rules-validate",
+            report_path=report_path,
+            timeout_seconds=180,
+            env=self.clean_environment(),
+            unset_env=self.config_environment_keys(),
+            invocation_type="verification",
+            suite=None,
+            workload="ruleset-validation",
+        )
+        self.record_invocation(invocation, artifact)
+        return invocation
+
+    def _rules_validate_docker(
+        self,
+        image_tag: str,
+        image_id: str,
+        rules_path: Path,
+        target: TargetPlatform,
+        artifact: BuildArtifact,
+        work_dir: Path | None,
+    ) -> Invocation | None:
+        if work_dir is None:
+            return None
+        container = self.container_name("rules")
+        argv = [
+            "docker",
+            "run",
+            "--rm",
+            "--pull=never",
+            "--platform",
+            f"linux/{target.arch}",
+            "--network",
+            "none",
+            "--mount",
+            f"type=bind,source={rules_path},target=/rules.json,readonly",
+            "--entrypoint",
+            "rnc",
+        ]
+        for label in self.docker_label_args():
+            argv.extend(["--label", label])
+        argv.extend(["--name", container])
+        argv.extend(
+            [image_tag, "rules", "validate", "--rules", "/rules.json", "--strategy", "auto"]
+        )
+        try:
+            invocation = run_process(
+                argv,
+                binary_path=f"docker:{image_tag}",
+                binary_sha256=image_id.removeprefix("sha256:"),
+                mode="rules-validate",
+                report_path=Path(work_dir) / "rnc-rules-validate.json",
+                timeout_seconds=180,
+                env=self.clean_environment(),
+                unset_env=self.config_environment_keys(),
+                invocation_type="verification",
+                suite=None,
+                workload="ruleset-validation",
+            )
+        except BaseException:
+            self._remove_container(container)
+            raise
+        self.record_invocation(invocation, artifact)
+        if invocation.timed_out or invocation.error_code:
+            self._remove_container(container)
+        return invocation
+
+    @staticmethod
+    def _remove_container(name: str) -> None:
+        """Remove only this invocation's named container; never touch images."""
+        try:
+            subprocess.run(
+                ["docker", "rm", "-f", name],
+                capture_output=True,
+                timeout=60,
+            )
+        except (OSError, subprocess.TimeoutExpired):
+            return
 
     def default_configuration(self) -> dict:
         return {
-            "mode": "bundled-provider-rules",
+            "mode": "operator-registered-provider-rules",
             "config_argument": "--rules",
             "rules_path": RULES_PATH,
+            "rules_source": "operator-provided rules_file in run/manifest.toml",
             "rules_sha256": None,
-            "rules_hash_recorded_after_build": True,
+            "rules_hash_recorded_from_manifest": True,
             "config_isolation": "empty repository configuration passed as --config to suppress target auto-discovery",
             "isolated_working_directory": True,
             "removed_environment": sorted(self.config_environment_keys()),
@@ -392,15 +581,16 @@ class RNCAdapter(ScannerAdapter):
                 "scope": HISTORY_SCOPE,
                 "read_only": True,
                 "runtime_dependency": "git executable in the native host or container image",
+                "capability_source": "operator-provided manifest capabilities",
                 "limitations": [
                     "History scope is the pinned HEAD's reachable history, selected with --ref HEAD.",
                     "Submodules, symlinks and other uninspected units are never treated as covered.",
                 ],
             },
             "limitations": [
-                "The rule bundle is read from the pinned source checkout and hashed after the source build.",
+                "The rule bundle is the operator-provided rules_file registered in run/manifest.toml and hashed before execution.",
                 "The empty repository configuration suppresses target auto-discovery; it does not alter the provider rule bundle.",
-                "Git-history capability is verified from the pinned CLI source after build; unsupported source commits are reported rather than assumed.",
+                "Git-history capability is declared by the operator in the manifest; an undeclared capability is reported as NOT_APPLICABLE rather than assumed.",
             ],
         }
 
@@ -439,286 +629,15 @@ class RNCAdapter(ScannerAdapter):
         )
         return target
 
-    def _dockerfile(self, output_dir: Path) -> Path:
-        path = output_dir / "Dockerfile.rnc-scanner"
-        path.write_text(
-            "FROM rust:1.85-bookworm AS build\n"
-            "WORKDIR /src\n"
-            "COPY . .\n"
-            "RUN cargo build --release --locked --bin rnc\n"
-            "\n"
-            "FROM debian:bookworm-slim\n"
-            "RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates git "
-            "&& rm -rf /var/lib/apt/lists/*\n"
-            "# The mounted repository is owned by the host user; Git history is read-only.\n"
-            "RUN git config --system --add safe.directory '*'\n"
-            "COPY --from=build /src/target/release/rnc /usr/local/bin/rnc\n"
-            "ENTRYPOINT [\"rnc\"]\n",
-            encoding="utf-8",
-            newline="\n",
-        )
-        return path
-
-    def _artifact(
-        self,
-        target: TargetPlatform,
-        result: BuildResult,
-        *,
-        version: str | None,
-        version_status: str,
-        metadata: dict,
-        status: str | None = None,
-        error: str | None = None,
-    ) -> BuildArtifact:
-        return BuildArtifact(
-            platform=target,
-            status=status or result.status,
-            command=result.command,
-            exit_code=result.exit_code,
-            duration_seconds=result.duration_seconds,
-            artifact_path=result.output_path,
-            artifact_sha256=result.output_sha256,
-            image_id=result.image_id,
-            image_tag=result.image_tag,
-            version=version,
-            version_status=version_status,
-            stdout_sha256=result.stdout_sha256,
-            stderr_sha256=result.stderr_sha256,
-            error=error if error is not None else result.error,
-            metadata=metadata,
-        )
-
-    def _native_version(self, binary: Path) -> tuple[str | None, str]:
-        try:
-            result = subprocess.run(
-                [str(binary), "--version"], capture_output=True, text=True, timeout=60
-            )
-        except (OSError, subprocess.TimeoutExpired):
-            return None, statuses.NOT_RUN
-        if result.returncode != 0:
-            return None, statuses.FAIL
-        match = re.search(r"\brnc\s+([^\s]+)", result.stdout)
-        return (match.group(1), statuses.PASS) if match else (None, statuses.FAIL)
-
-    def _native_ruleset_digest(self, binary: Path, rules: Path) -> str | None:
-        try:
-            result = subprocess.run(
-                [
-                    str(binary),
-                    "rules",
-                    "validate",
-                    "--rules",
-                    str(rules),
-                    "--strategy",
-                    "auto",
-                ],
-                capture_output=True,
-                text=True,
-                timeout=120,
-            )
-        except (OSError, subprocess.TimeoutExpired):
-            return None
-        if result.returncode != 0:
-            return None
-        match = re.search(r"^Digest:\s+(sha256:[0-9a-f]{64})$", result.stdout, re.MULTILINE)
-        return match.group(1) if match else None
-
-    def _docker_ruleset_digest(
-        self, image: str, target: TargetPlatform, rules: Path
-    ) -> str | None:
-        try:
-            result = subprocess.run(
-                [
-                    "docker",
-                    "run",
-                    "--rm",
-                    "--pull=never",
-                    "--platform",
-                    f"linux/{target.arch}",
-                    "--network",
-                    "none",
-                    "--mount",
-                    f"type=bind,source={rules},target=/rules.json,readonly",
-                    "--entrypoint",
-                    "rnc",
-                    image,
-                    "rules",
-                    "validate",
-                    "--rules",
-                    "/rules.json",
-                    "--strategy",
-                    "auto",
-                ],
-                capture_output=True,
-                text=True,
-                timeout=180,
-            )
-        except (OSError, subprocess.TimeoutExpired):
-            return None
-        if result.returncode != 0:
-            return None
-        match = re.search(r"^Digest:\s+(sha256:[0-9a-f]{64})$", result.stdout, re.MULTILINE)
-        return match.group(1) if match else None
-
-    def _docker_version(self, image: str, target: TargetPlatform) -> tuple[str | None, str]:
-        try:
-            result = subprocess.run(
-                [
-                    "docker",
-                    "run",
-                    "--rm",
-                    "--pull=never",
-                    "--platform",
-                    f"linux/{target.arch}",
-                    "--network",
-                    "none",
-                    "--entrypoint",
-                    "rnc",
-                    image,
-                    "--version",
-                ],
-                capture_output=True,
-                text=True,
-                timeout=120,
-            )
-        except (OSError, subprocess.TimeoutExpired):
-            return None, statuses.NOT_RUN
-        if result.returncode != 0:
-            return None, statuses.FAIL
-        match = re.search(r"\brnc\s+([^\s]+)", result.stdout)
-        return (match.group(1), statuses.PASS) if match else (None, statuses.FAIL)
-
-    def build(
-        self,
-        source: SourceCheckout,
-        target: TargetPlatform,
-        output_dir: Path | str,
-    ) -> BuildArtifact:
-        output_dir = Path(output_dir).resolve()
-        output_dir.mkdir(parents=True, exist_ok=True)
-        self._ruleset = self._load_ruleset(source)
-        self._rules_path = source.path / RULES_PATH
-        self._history_supported = self._detect_history_capability(source)
-        common_metadata = {
-            "source_commit": source.commit,
-            "source_repository": source.repository,
-            "ruleset": self._ruleset,
-            "history_capability": self._history_supported,
-            "toolchain": toolchain_metadata(),
-            "implementation": "rust",
-        }
-        if target.is_executable:
-            if host_platform() != target:
-                return BuildArtifact(
-                    platform=target,
-                    status=statuses.BLOCKED,
-                    command=(),
-                    exit_code=None,
-                    duration_seconds=0.0,
-                    artifact_path=None,
-                    artifact_sha256=None,
-                    image_id=None,
-                    image_tag=None,
-                    version=None,
-                    version_status=statuses.NOT_APPLICABLE,
-                    stdout_sha256="",
-                    stderr_sha256="",
-                    error=f"{target.key} is not executable on this host",
-                    metadata=common_metadata,
-                )
-            extension = ".exe" if target.os_name == "windows" else ""
-            output_path = output_dir / f"rnc-{target.key}{extension}"
-            result = build_cargo_executable(
-                source,
-                output_path,
-                binary_name="rnc",
-                timeout=2400.0,
-            )
-            version, version_status = (
-                self._native_version(output_path)
-                if result.status == statuses.PASS
-                else (None, statuses.NOT_APPLICABLE)
-            )
-            if result.status == statuses.PASS:
-                digest = self._native_ruleset_digest(output_path, self._rules_path)
-                if digest:
-                    self._ruleset["digest"] = digest
-                    self._ruleset["digest_validation"] = "rnc rules validate --strategy auto"
-                else:
-                    self._ruleset["digest_validation"] = "FAIL"
-            return self._artifact(
-                target,
-                result,
-                version=version,
-                version_status=version_status,
-                metadata={
-                    **common_metadata,
-                    "goos": target.goos,
-                    "goarch": target.goarch,
-                    "execution_method": "native",
-                    "build_tool": "cargo",
-                },
-            )
-
-        safe_run = "".join(
-            ch if ch.isalnum() or ch in "._-" else "-" for ch in self.run_id
-        ).strip("-.").lower()
-        tag = f"rnc-scanner-{safe_run}-{source.commit[:12]}-{target.key}"
-        dockerfile = self._dockerfile(output_dir)
-        result = build_docker_image(
-            source,
-            tag,
-            platform=target.docker_platform or f"linux/{target.arch}",
-            dockerfile=str(dockerfile),
-            labels=self.docker_label_args(),
-        )
-        image_id, architecture = inspect_image(tag) if result.status == statuses.PASS else (None, None)
-        expected = f"linux/{target.arch}"
-        build_status = result.status
-        error = result.error
-        if result.status == statuses.PASS and architecture != expected:
-            build_status = statuses.FAIL
-            error = f"image architecture {architecture!r} does not match expected {expected!r}"
-        version, version_status = (
-            self._docker_version(tag, target)
-            if build_status == statuses.PASS
-            else (None, statuses.NOT_APPLICABLE)
-        )
-        if build_status == statuses.PASS:
-            digest = self._docker_ruleset_digest(tag, target, self._rules_path)
-            if digest:
-                self._ruleset["digest"] = digest
-                self._ruleset["digest_validation"] = "rnc rules validate --strategy auto"
-            else:
-                self._ruleset["digest_validation"] = "FAIL"
-        return self._artifact(
-            target,
-            result,
-            version=version,
-            version_status=version_status,
-            status=build_status,
-            error=error,
-            metadata={
-                **common_metadata,
-                "execution_method": "docker",
-                "docker_build_strategy": "adapter-source-dockerfile",
-                "dockerfile_sha256": _sha256_file(dockerfile),
-                "image_os_architecture": architecture,
-                "expected_os_architecture": expected,
-                "architecture_verified": architecture == expected,
-                "host_architecture": _host_arch(),
-                "emulated": target.arch != _host_arch(),
-            },
-        )
-
     def supports_mode(self, mode: str) -> bool:
         if mode == "dir":
             return True
         if mode == "git":
-            # Unknown before a build; the pinned CP4 source is verified during
-            # build and an older source commit is reported unsupported.
-            return self._history_supported is not False
+            return self._history_supported is True
         return False
+
+    def accepted_exit_codes(self) -> tuple[int, ...]:
+        return RNC_ACCEPTED_EXITS
 
     def _is_rule_bundle(self, path: Path) -> bool:
         if path.suffix.lower() != ".json":
@@ -739,7 +658,7 @@ class RNCAdapter(ScannerAdapter):
         self, config: Path | str | None, report_path: Path
     ) -> tuple[Path, Path]:
         if self._rules_path is None:
-            raise ValueError("RNC adapter has no built source rule bundle")
+            raise ValueError("RNC adapter has no registered rules bundle from run/manifest.toml")
         if config is None:
             rules = self._rules_path
             repo_config = self._isolation_config(report_path)
@@ -770,6 +689,10 @@ class RNCAdapter(ScannerAdapter):
         cwd: Path | None = None,
         mode: str = "dir",
         collect_telemetry: bool = False,
+        artifact: BuildArtifact | None = None,
+        invocation_type: str = "detection",
+        suite: str | None = None,
+        workload: str | None = None,
     ) -> Invocation:
         if mode not in {"dir", "git"}:
             raise ValueError(f"RNC Scanner does not support mode {mode!r}")
@@ -787,7 +710,9 @@ class RNCAdapter(ScannerAdapter):
         argv = [str(binary), "scan"]
         if mode == "git":
             if not self.supports_mode("git"):
-                raise ValueError("this RNC Scanner source commit does not support --history")
+                raise ValueError(
+                    "the registered RNC artifact does not declare git-history capability"
+                )
             argv.extend(["--history", "--ref", HISTORY_REF])
         argv.extend(
             [
@@ -806,7 +731,7 @@ class RNCAdapter(ScannerAdapter):
                 *extra_args,
             ]
         )
-        return run_process(
+        invocation = run_process(
             argv,
             binary_path=str(binary),
             binary_sha256=sha256_file(binary),
@@ -817,7 +742,12 @@ class RNCAdapter(ScannerAdapter):
             unset_env=self.config_environment_keys(),
             cwd=cwd or report_path.parent,
             collect_telemetry=collect_telemetry,
+            invocation_type=invocation_type,
+            suite=suite,
+            workload=workload,
         )
+        self.record_invocation(invocation, artifact)
+        return invocation
 
     def invoke_container(
         self,
@@ -831,6 +761,10 @@ class RNCAdapter(ScannerAdapter):
         extra_args: tuple[str, ...] = (),
         mode: str = "dir",
         collect_telemetry: bool = False,
+        artifact: BuildArtifact | None = None,
+        invocation_type: str = "detection",
+        suite: str | None = None,
+        workload: str | None = None,
     ) -> Invocation:
         if mode not in {"dir", "git"}:
             raise ValueError(f"RNC Scanner does not support mode {mode!r}")
@@ -845,7 +779,9 @@ class RNCAdapter(ScannerAdapter):
             raise ValueError("RNC container output directory must be outside the scanned root")
         report_host = out_dir / "report.json"
         rules, repo_config = self._rule_and_repo_config(config, report_host)
-        arch = "arm64" if "arm64" in image_tag else "amd64"
+        arch = artifact.platform.arch if artifact is not None else (
+            "arm64" if "arm64" in image_tag else "amd64"
+        )
         argv = [
             "docker",
             "run",
@@ -875,11 +811,14 @@ class RNCAdapter(ScannerAdapter):
         ]
         for label in self.docker_label_args():
             argv.extend(["--label", label])
-        argv.extend(["--name", self.container_name("docker")])
+        container = self.container_name("docker")
+        argv.extend(["--name", container])
         argv.extend([image_tag, "scan"])
         if mode == "git":
             if not self.supports_mode("git"):
-                raise ValueError("this RNC Scanner source commit does not support --history")
+                raise ValueError(
+                    "the registered RNC artifact does not declare git-history capability"
+                )
             argv.extend(["--history", "--ref", HISTORY_REF])
         argv.extend(
             [
@@ -898,17 +837,28 @@ class RNCAdapter(ScannerAdapter):
                 *extra_args,
             ]
         )
-        return run_process(
-            argv,
-            binary_path=f"docker:{image_tag}",
-            binary_sha256=image_id.removeprefix("sha256:"),
-            mode=mode,
-            report_path=report_host,
-            timeout_seconds=timeout_seconds,
-            env=self.clean_environment(),
-            unset_env=self.config_environment_keys(),
-            collect_telemetry=collect_telemetry,
-        )
+        try:
+            invocation = run_process(
+                argv,
+                binary_path=f"docker:{image_tag}",
+                binary_sha256=image_id.removeprefix("sha256:"),
+                mode=mode,
+                report_path=report_host,
+                timeout_seconds=timeout_seconds,
+                env=self.clean_environment(),
+                unset_env=self.config_environment_keys(),
+                collect_telemetry=collect_telemetry,
+                invocation_type=invocation_type,
+                suite=suite,
+                workload=workload,
+            )
+        except BaseException:
+            self._remove_container(container)
+            raise
+        self.record_invocation(invocation, artifact)
+        if invocation.timed_out or invocation.error_code:
+            self._remove_container(container)
+        return invocation
 
     def _history_coverage(
         self,

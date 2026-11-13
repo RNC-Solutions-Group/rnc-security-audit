@@ -13,17 +13,33 @@ class ConfigTests(unittest.TestCase):
     def test_example_config_is_valid(self):
         config = load_config("harness.toml.example")
         self.assertEqual(config.scanner, "gitleaks")
-        self.assertIsNone(config.source.repository)
+        self.assertIsNone(config.artifact.build)
+        self.assertTrue(str(config.artifact.manifest).endswith("run\\manifest.toml") or str(config.artifact.manifest).endswith("run/manifest.toml"))
         self.assertEqual(config.suites, ("levain", "leaky-repo"))
         self.assertEqual(config.reports.formats, ("markdown", "json"))
         self.assertFalse(config.reports.raw)
 
     def test_defaults_are_usable(self):
         config = load_config()
-        self.assertIsNone(config.source.repository)
+        self.assertIsNone(config.artifact.build)
         self.assertEqual(config.reports.output_dir.name, "experiments")
         self.assertTrue(config.reports.console)
         self.assertTrue(config.reports.sanitized)
+
+    def test_artifact_manifest_and_build_are_configurable(self):
+        text = Path("harness.toml.example").read_text(encoding="utf-8")
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "harness.toml"
+            path.write_text(
+                text.replace(
+                    "[artifact]\n",
+                    '[artifact]\nbuild = "rnc-cp4a"\nmanifest = "run/manifest.toml"\n',
+                ),
+                encoding="utf-8",
+            )
+            config = load_config(path)
+            self.assertEqual(config.artifact.build, "rnc-cp4a")
+            self.assertEqual(config.artifact.manifest, path.parent / "run" / "manifest.toml")
 
     def test_non_default_timeout_takes_effect(self):
         text = Path("harness.toml.example").read_text(encoding="utf-8")

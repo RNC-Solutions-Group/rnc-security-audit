@@ -188,7 +188,15 @@ def _stage_relative_layout(case: dict, prepared, case_work: Path) -> tuple[Path,
     return work, source_arg, ignore_arg, baseline_arg
 
 
-def _run_case(case: dict, executable: Path, digest: str, prepared, work_dir: Path, timeout: int) -> dict:
+def _run_case(
+    case: dict,
+    executable: Path,
+    digest: str,
+    prepared,
+    work_dir: Path,
+    timeout: int,
+    on_invocation=None,
+) -> dict:
     result = _base_case_result(case)
     if case.get("requires_linux_symlink") and os.name == "nt":
         return _not_applicable(
@@ -287,6 +295,7 @@ def _run_case(case: dict, executable: Path, digest: str, prepared, work_dir: Pat
     ]
     result["execution"] = {
         "argv": _redacted_argv(argv, prepared, case_work, report_path, executable),
+        "command": list(argv),
         "container": False,
         "image_pull": None,
         "network": "not restricted by harness",
@@ -302,7 +311,12 @@ def _run_case(case: dict, executable: Path, digest: str, prepared, work_dir: Pat
         report_path=report_path,
         timeout_seconds=float(case.get("timeout_seconds", timeout)),
         cwd=run_cwd,
+        invocation_type="detection",
+        suite="gitleaks",
+        workload=f"gitleaks-fixtures:{case['id']}",
     )
+    if on_invocation is not None:
+        on_invocation(invocation, case)
     result["duration_seconds"] = round(time.perf_counter() - started, 3)
     result["actual_exit_code"] = invocation.exit_code
     result["stdout_sha256"] = invocation.stdout_sha256
@@ -453,7 +467,13 @@ def _run_case(case: dict, executable: Path, digest: str, prepared, work_dir: Pat
     return result
 
 
-def run(prepared, executable: Path | str, work_dir: Path | str, timeout: int = 120) -> dict:
+def run(
+    prepared,
+    executable: Path | str,
+    work_dir: Path | str,
+    timeout: int = 120,
+    on_invocation=None,
+) -> dict:
     """Run all portable manifest scenarios against a native executable."""
     executable, digest = resolve_binary(executable)
     work_dir = Path(work_dir).resolve()
@@ -473,7 +493,17 @@ def run(prepared, executable: Path | str, work_dir: Path | str, timeout: int = 1
 
     tests: list[dict] = []
     for case in manifest.get("cases", []):
-        tests.append(_run_case(case, executable, digest, prepared, work_dir, timeout))
+        tests.append(
+            _run_case(
+                case,
+                executable,
+                digest,
+                prepared,
+                work_dir,
+                timeout,
+                on_invocation=on_invocation,
+            )
+        )
 
     assertions = [item for case in tests for item in case.get("assertions", [])]
     applicable = [case for case in tests if case["status"] != statuses.NOT_APPLICABLE]

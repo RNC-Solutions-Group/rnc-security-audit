@@ -153,6 +153,48 @@ class PerformanceTests(unittest.TestCase):
         )
         self.assertEqual(seen, [Path("custom.toml")])
 
+    def test_each_performance_invocation_records_type_suite_and_workload(self):
+        seen = []
+
+        class Recording(FakeAdapter):
+            def invoke_native(self, *args, **kwargs):
+                seen.append(kwargs)
+                return super().invoke_native(*args, **kwargs)
+
+        artifact = SimpleNamespace(
+            platform=PLATFORMS["windows-amd64"],
+            artifact_path="fake.exe",
+            artifact_sha256="b" * 64,
+            image_id=None,
+            image_tag=None,
+            version="v1",
+            metadata={"build_id": "fake-build"},
+        )
+        document = performance.benchmark_product(
+            Recording(),
+            artifact,
+            Path("."),
+            Path("work/cp11/test-performance-invocations"),
+            plan=performance.BenchmarkPlan(warmups=1, measured_runs=2),
+            workload={"bytes": 10, "suite": "levain", "key": "levain-filesystem"},
+            suite="levain",
+            workload_key="levain-filesystem",
+        )
+        self.assertEqual(
+            [item["invocation_type"] for item in seen],
+            ["warmup", "measured", "measured"],
+        )
+        self.assertTrue(all(item["suite"] == "levain" for item in seen))
+        self.assertTrue(all(item["workload"] == "levain-filesystem" for item in seen))
+        self.assertTrue(all(item["artifact"] is artifact for item in seen))
+        self.assertEqual(document["product"]["build_id"], "fake-build")
+        self.assertEqual(document["benchmark"]["suite"], "levain")
+        self.assertEqual(document["benchmark"]["workload_key"], "levain-filesystem")
+        self.assertEqual(
+            [run["command"] for run in document["runs"]],
+            [["fake"], ["fake"], ["fake"]],
+        )
+
     def test_environment_profiles_are_separate_from_detection(self):
         dev = performance.environment_for("DEV")
         controlled = performance.environment_for("CONTROLLED")

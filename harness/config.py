@@ -32,9 +32,9 @@ class ConfigError(HarnessError):
 
 
 @dataclass(frozen=True)
-class SourceDefaults:
-    repository: str | None = None
-    commit: str | None = None
+class ArtifactDefaults:
+    manifest: Path = ROOT / "run" / "manifest.toml"
+    build: str | None = None
 
 
 @dataclass(frozen=True)
@@ -57,7 +57,7 @@ class ReportConfig:
 @dataclass(frozen=True)
 class HarnessConfig:
     schema_version: int = 1
-    source: SourceDefaults = field(default_factory=SourceDefaults)
+    artifact: ArtifactDefaults = field(default_factory=ArtifactDefaults)
     scanner: str = "gitleaks"
     platforms: tuple[str, ...] = ("host",)
     suites: tuple[str, ...] = DEFAULT_SUITE_KEYS
@@ -73,9 +73,9 @@ class HarnessConfig:
     def to_dict(self) -> dict:
         return {
             "schema_version": self.schema_version,
-            "source": {
-                "repository": self.source.repository,
-                "commit": self.source.commit,
+            "artifact": {
+                "manifest": str(self.artifact.manifest),
+                "build": self.artifact.build,
             },
             "scanner": self.scanner,
             "platforms": list(self.platforms),
@@ -157,7 +157,7 @@ def load_config(path: Path | str | None = None) -> HarnessConfig:
         raise ConfigError(f"unsupported harness configuration schema_version {version!r}")
 
     base = target.resolve().parent
-    source_table = data.get("source", {})
+    artifact_table = data.get("artifact", {})
     scanner_table = data.get("scanner", {})
     reports_table = data.get("reports", {})
     targets_table = data.get("targets", {})
@@ -165,7 +165,7 @@ def load_config(path: Path | str | None = None) -> HarnessConfig:
     cache_table = data.get("cache", {})
     performance_table = data.get("performance", {})
     for name, value in (
-        ("source", source_table),
+        ("artifact", artifact_table),
         ("scanner", scanner_table),
         ("reports", reports_table),
         ("targets", targets_table),
@@ -175,16 +175,20 @@ def load_config(path: Path | str | None = None) -> HarnessConfig:
     ):
         if not isinstance(value, dict):
             raise ConfigError(f"{name} must be a TOML table")
-    source = SourceDefaults(
-        repository=(
-            _str(source_table, "repository", "", "source")
-            if source_table.get("repository")
+    artifact = ArtifactDefaults(
+        manifest=_path(
+            artifact_table,
+            "manifest",
+            ROOT / "run" / "manifest.toml",
+            "artifact",
+            base,
+        ),
+        build=(
+            _str(artifact_table, "build", "", "artifact")
+            if artifact_table.get("build")
             else None
         ),
-        commit=source_table.get("commit"),
     )
-    if source.commit is not None and (not isinstance(source.commit, str) or len(source.commit) != 40):
-        raise ConfigError("source.commit must be a full 40-character SHA when set")
     scanner = _str(scanner_table, "default", "gitleaks", "scanner")
     if scanner not in adapter_keys():
         raise ConfigError(f"unknown scanner {scanner!r}; available: {', '.join(adapter_keys())}")
@@ -320,7 +324,7 @@ def load_config(path: Path | str | None = None) -> HarnessConfig:
     cache_dir = _path(cache_table, "dir", ROOT / "datasets" / "cache", "cache", base)
     return HarnessConfig(
         schema_version=1,
-        source=source,
+        artifact=artifact,
         scanner=scanner,
         platforms=platforms,
         suites=suites,

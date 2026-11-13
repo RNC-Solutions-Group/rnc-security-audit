@@ -62,6 +62,9 @@ class SyntheticFilesystemSuite(TestingSuite):
                         config=config,
                         mode="dir",
                         timeout_seconds=context.timeout,
+                        artifact=artifact,
+                        suite="synthetic-filesystem",
+                        workload="synthetic-filesystem",
                     )
                 else:
                     invocation = context.adapter.invoke_container(
@@ -72,6 +75,9 @@ class SyntheticFilesystemSuite(TestingSuite):
                         config=config,
                         mode="dir",
                         timeout_seconds=context.timeout,
+                        artifact=artifact,
+                        suite="synthetic-filesystem",
+                        workload="synthetic-filesystem",
                     )
                 problem = context.adapter.invocation_problem(invocation)
                 if problem:

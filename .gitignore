@@ -6,6 +6,12 @@
 /tmp/
 /temp/
 
+# Operator-provided local scanner artifacts. Only the tracked example manifest
+# at the repository root is committed; executables, rules, images, and the
+# operator's actual run/manifest.toml never enter Git history.
+/run/
+/run-manifest.toml
+
 # Built Gitleaks binaries, diagnostics, and local artifacts
 /build/
 /dist/

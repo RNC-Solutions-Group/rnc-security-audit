@@ -25,6 +25,18 @@ def document() -> dict:
         "generated_at": "2026-01-01T00:00:00Z",
         "run_id": "20260101T000000Z",
         "scanner": {"key": "gitleaks", "name": "Gitleaks", "version": "v8"},
+        "registered_build": {
+            "id": "gitleaks-5f6ec56",
+            "executable": "gitleaks.exe",
+            "executable_sha256": "b" * 64,
+            "docker_image": "rnc-gitleaks:5f6ec56",
+            "docker_image_id": "sha256:" + "c" * 64,
+            "source_commit": "a" * 40,
+        },
+        "artifact_manifest": {
+            "path": "run/manifest.toml",
+            "sha256": "d" * 64,
+        },
         "source": {
             "repository": "https://example.invalid/repo",
             "branch": "main",
@@ -33,6 +45,23 @@ def document() -> dict:
         },
         "platforms": [],
         "builds": {},
+        "invocations": [
+            {
+                "sequence": 1,
+                "scanner": "gitleaks",
+                "build_id": "gitleaks-5f6ec56",
+                "platform": "windows-amd64",
+                "invocation_type": "detection",
+                "suite": "levain",
+                "workload": "levain-positive",
+                "executable_sha256": "b" * 64,
+                "command": ["run/gitleaks.exe", "dir", "target", "--report-path", "report.json"],
+                "exit_code": 0,
+                "duration_seconds": 1.25,
+                "timed_out": False,
+                "status": "PASS",
+            }
+        ],
         "suites": {
             "go": {
                 "key": "go",
@@ -127,6 +156,20 @@ class ReportingTests(unittest.TestCase):
         self.assertIn("PASS", text)
         self.assertIn("go", text)
         self.assertIn("Totals", render_console(document()))
+
+    def test_markdown_records_artifact_identity_and_exact_commands(self):
+        text = render_markdown(document())
+        self.assertIn("Registered build", text)
+        self.assertIn("gitleaks-5f6ec56", text)
+        self.assertIn("run/manifest.toml", text)
+        self.assertIn("b" * 64, text)
+        self.assertIn("Scanner invocations", text)
+        self.assertIn("levain-positive", text)
+        self.assertIn("--report-path", text)
+        self.assertIn("1.25", text)
+        console = render_console(document())
+        self.assertIn("Build:", console)
+        self.assertIn("Invocations: 1", console)
 
     def test_naming_rejects_unknown_placeholder(self):
         with self.assertRaises(ValueError):

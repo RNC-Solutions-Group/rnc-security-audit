@@ -41,6 +41,9 @@ class RncLabSuite(TestingSuite):
                 config=context.scanner_config,
                 mode=mode,
                 timeout_seconds=context.timeout,
+                artifact=artifact,
+                suite="rnclab",
+                workload=f"rnclab-{'history' if mode == 'git' else 'filesystem'}",
             )
         else:
             invocation = context.adapter.invoke_container(
@@ -51,6 +54,9 @@ class RncLabSuite(TestingSuite):
                 config=context.scanner_config,
                 mode=mode,
                 timeout_seconds=context.timeout,
+                artifact=artifact,
+                suite="rnclab",
+                workload=f"rnclab-{'history' if mode == 'git' else 'filesystem'}",
             )
         if invocation.report_bytes is not None:
             context.raw_artifacts.append(

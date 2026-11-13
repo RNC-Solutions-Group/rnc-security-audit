@@ -1,12 +1,16 @@
 # Example harness configuration. Copy to harness.toml (Git-ignored) and edit.
-# The source commit is always supplied per experiment or pinned explicitly here.
+# Scanner executables/images are selected from the local run/ artifact manifest;
+# no source repository or commit is supplied to the harness.
 schema_version = 1
 
-[source]
-# repository = "https://github.com/RNC-Solutions-Group/gitleaks"
-# commit = "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c"
+[artifact]
+# Local operator manifest. The default is run/manifest.toml.
+# manifest = "run/manifest.toml"
+# Optional default build id when the manifest registers multiple builds.
+# build = "rnc-cp4a"
 
 [scanner]
+# Used only as a default assertion when --build selects a registered build.
 default = "gitleaks"
 
 [targets]

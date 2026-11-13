@@ -55,20 +55,45 @@ class CliTests(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 parser.parse_args(["run", "--gitleaks", "x"])
 
-    def test_experiment_requires_exact_commit_before_work(self):
-        code, _, stderr = self._call(["experiment", "--scanner", "gitleaks"])
+    def test_experiment_requires_local_artifact_manifest(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            code, _, stderr = self._call(
+                [
+                    "experiment",
+                    "--build",
+                    "missing-build",
+                    "--artifact-manifest",
+                    str(Path(tmp) / "missing.toml"),
+                ]
+            )
         self.assertEqual(code, 2)
-        self.assertIn("--commit", stderr)
+        self.assertIn("artifact manifest", stderr)
+
+    def test_experiment_cli_has_build_and_no_source_checkout_flags(self):
+        parser = build_parser()
+        with self.assertRaises(SystemExit):
+            with redirect_stderr(io.StringIO()):
+                parser.parse_args(["experiment", "--commit", "a" * 40])
+        args = parser.parse_args(
+            [
+                "experiment",
+                "--build",
+                "rnc-cp4a",
+                "--suites",
+                "rnclab",
+            ]
+        )
+        self.assertEqual(args.build, "rnc-cp4a")
+        self.assertFalse(hasattr(args, "commit"))
+        self.assertFalse(hasattr(args, "repo"))
 
     def test_unknown_config_is_a_harness_error(self):
         with tempfile.TemporaryDirectory() as tmp:
             code, _, stderr = self._call(
                 [
                     "experiment",
-                    "--scanner",
-                    "gitleaks",
-                    "--commit",
-                    "a" * 40,
+                    "--build",
+                    "any-build",
                     "--config",
                     str(Path(tmp) / "missing.toml"),
                 ]

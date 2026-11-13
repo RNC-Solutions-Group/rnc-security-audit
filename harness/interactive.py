@@ -1,11 +1,12 @@
-"""Interactive front-end for one source-commit experiment."""
+"""Interactive front-end for one registered-artifact experiment."""
 
 from __future__ import annotations
 
 import sys
 from pathlib import Path
 
-from .adapters import adapter_keys, expand_platform_selection, get_adapter
+from .adapters import expand_platform_selection
+from .artifacts import load_manifest
 from .config import HarnessConfig, load_config
 from .experiment import run as run_experiment
 from .reporting import render_console
@@ -52,11 +53,10 @@ def _select_suites(config: HarnessConfig, input_func, output) -> list[str]:
 
 
 def _select_platforms(config: HarnessConfig, input_func, output) -> list[str]:
-    adapter = get_adapter(config.scanner)
     output("Execution products:")
-    for item in adapter.platforms:
-        marker = "*" if item.key in config.platforms else " "
-        output(f"  [{marker}] {item.key} ({item.kind})")
+    for item in ("windows-amd64", "docker-linux-amd64", "docker-linux-arm64"):
+        marker = "*" if item in config.platforms else " "
+        output(f"  [{marker}] {item}")
     default = ",".join(config.platforms)
     output("Enter platform keys separated by commas, or 'host', 'executable', 'docker', or 'all'.")
     raw = _ask("Platforms", default, input_func)
@@ -72,25 +72,27 @@ def run_interactive(
     output=print,
 ) -> int:
     config = load_config(config_path)
-    adapters = list(adapter_keys())
-    output("Source-commit scanner experiment")
-    if len(adapters) > 1:
-        output("Available scanners: " + ", ".join(adapters))
-        scanner = _ask("Scanner", config.scanner, input_func)
-        if scanner not in adapters:
-            raise ValueError(f"unknown scanner: {scanner}")
-    else:
-        scanner = config.scanner
-        output(f"Scanner: {scanner}")
-    adapter = get_adapter(scanner)
-    repository = _ask(
-        "Source repository",
-        config.source.repository or adapter.default_repository,
-        input_func,
+    manifest = load_manifest(config.artifact.manifest)
+    output("Registered scanner experiment")
+    output(f"Artifact manifest: {manifest.path}")
+    output("Registered builds:")
+    for item in manifest.builds:
+        artifacts = []
+        if item.executable:
+            artifacts.append(f"exe={item.executable}")
+        if item.docker_image:
+            artifacts.append(f"image={item.docker_image}")
+        output(
+            f"  - {item.id} ({item.scanner} {item.version or 'version n/a'}, "
+            f"source {item.source_commit[:12]}): " + ", ".join(artifacts)
+        )
+    default_build = config.artifact.build or (
+        manifest.builds[0].id if len(manifest.builds) == 1 else ""
     )
-    commit = input_func("Exact 40-character source commit: ").strip()
-    if not commit:
-        raise ValueError("an exact source commit is required")
+    build_id = _ask("Registered build", default_build, input_func)
+    if not build_id:
+        raise ValueError("a registered build id is required")
+    selected = manifest.select(build_id)
     profile = _ask("Configuration profile (default/custom)", "default", input_func).lower()
     scanner_config = None
     if profile == "custom":
@@ -101,9 +103,11 @@ def run_interactive(
     platforms = _select_platforms(config, input_func, output)
     output("")
     output("Execution scope:")
-    output(f"  Scanner:   {scanner}")
-    output(f"  Source:    {repository}")
-    output(f"  Commit:    {commit}")
+    output(f"  Build:     {selected.id}")
+    output(f"  Scanner:   {selected.scanner}")
+    output(f"  Source:    {selected.source_commit} (manifest metadata; not checked out)")
+    output(f"  Executable:{selected.executable or 'not registered'}")
+    output(f"  Image:     {selected.docker_image or 'not registered'}")
     output(f"  Profile:   {profile}")
     output(f"  Suites:    {', '.join(suites)}")
     output(f"  Products:  {', '.join(platforms)}")
@@ -111,9 +115,8 @@ def run_interactive(
         output("Cancelled.")
         return 0
     document = run_experiment(
-        scanner=scanner,
-        repository=repository,
-        commit=commit,
+        build=selected.id,
+        artifact_manifest=manifest.path,
         platforms=platforms,
         suites=suites,
         profile_name=profile,

@@ -16,8 +16,20 @@ from ..util import sha256_bytes
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def run_native(fixtures, executable: Path | str, work_dir: Path | str, timeout: int = 120) -> dict:
-    return native_fixtures.run(fixtures, executable, work_dir, timeout=timeout)
+def run_native(
+    fixtures,
+    executable: Path | str,
+    work_dir: Path | str,
+    timeout: int = 120,
+    on_invocation=None,
+) -> dict:
+    return native_fixtures.run(
+        fixtures,
+        executable,
+        work_dir,
+        timeout=timeout,
+        on_invocation=on_invocation,
+    )
 
 
 def run_docker(
@@ -123,6 +135,21 @@ def run_docker(
         lane_status = statuses.FAIL
     else:
         lane_status = statuses.BLOCKED
+    invocations = []
+    for test in document.get("tests", []):
+        execution = test.get("execution") or {}
+        command = execution.get("docker_command")
+        if not command:
+            continue
+        invocations.append(
+            {
+                "id": test.get("id"),
+                "command": list(command),
+                "exit_code": test.get("actual_exit_code"),
+                "duration_seconds": test.get("duration_seconds"),
+                "timed_out": "timeout" in str(test.get("diagnostic") or "").lower(),
+            }
+        )
     return {
         "status": lane_status,
         "command": command,
@@ -151,6 +178,7 @@ def run_docker(
         },
         "tests": document.get("tests", []),
         "assertions": document.get("assertions", []),
+        "invocations": invocations,
         "image_id": document.get("image", {}).get("image_id") or image_id,
         "fixture_source_revision": document.get("fixture_source_revision"),
         "report": str(reports[-1]) if reports else None,

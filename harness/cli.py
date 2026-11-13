@@ -117,9 +117,9 @@ def _experiment(args: argparse.Namespace) -> int:
             ),
         )
     document = run_experiment(
+        build=args.build,
+        artifact_manifest=args.artifact_manifest,
         scanner=args.scanner,
-        repository=args.repo,
-        commit=args.commit,
         platforms=args.platforms,
         suites=args.suites,
         profile_name=args.profile,
@@ -193,8 +193,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="python -m harness",
         description=(
-            "Source-commit scanner benchmark application. One invocation evaluates "
-            "one scanner source commit and writes one experiment report."
+            "Registered-artifact scanner benchmark application. One invocation "
+            "executes one operator-provided scanner build and writes one report."
         ),
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
@@ -231,14 +231,20 @@ def build_parser() -> argparse.ArgumentParser:
 
     experiment_parser = subparsers.add_parser(
         "experiment",
-        help="build one scanner source commit, run benchmarks, and write one report",
-    )
-    experiment_parser.add_argument("--scanner", default=None, help="adapter key")
-    experiment_parser.add_argument(
-        "--repo", default=None, help="Git repository (default: adapter repository)"
+        help="execute one registered scanner build, run benchmarks, and write one report",
     )
     experiment_parser.add_argument(
-        "--commit", default=None, help="exact full 40-character source commit SHA"
+        "--build",
+        default=None,
+        help="registered build id from run/manifest.toml (required when several are registered)",
+    )
+    experiment_parser.add_argument(
+        "--artifact-manifest",
+        default=None,
+        help="local artifact manifest (default: run/manifest.toml)",
+    )
+    experiment_parser.add_argument(
+        "--scanner", default=None, help="assert the registered build's scanner adapter"
     )
     experiment_parser.add_argument(
         "--platforms",
@@ -252,7 +258,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--profile",
         choices=("default", "custom"),
         default="default",
-        help="DEFAULT bundled rules or explicit CUSTOM configuration",
+        help="DEFAULT registered rules or explicit CUSTOM configuration",
     )
     experiment_parser.add_argument(
         "--scanner-config", default=None, help="CUSTOM profile scanner configuration"
@@ -266,7 +272,7 @@ def build_parser() -> argparse.ArgumentParser:
     experiment_parser.add_argument(
         "--retain-work",
         action="store_true",
-        help="retain the run-owned source checkout, builds, and Docker resources",
+        help="retain the run-owned benchmark workspace and Docker containers",
     )
     experiment_parser.add_argument("--offline", action="store_true", help="datasets use cache only")
     experiment_parser.add_argument("--compact", action="store_true")
@@ -300,7 +306,7 @@ def build_parser() -> argparse.ArgumentParser:
     rescore_parser.set_defaults(func=_rescore_history)
 
     interactive_parser = subparsers.add_parser(
-        "interactive", help="prompt for scanner, exact commit, suites, and products"
+        "interactive", help="prompt for a registered build, suites, and products"
     )
     interactive_parser.add_argument("--config", default=None)
     interactive_parser.add_argument("--offline", action="store_true")

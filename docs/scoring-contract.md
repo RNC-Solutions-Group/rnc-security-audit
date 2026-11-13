@@ -16,7 +16,7 @@ Gitleaks and Betterleaks both feed the same engine. There are no scanner-specifi
 matching exceptions and no truth changes that favor one scanner. A scanner may
 miss many expected items while the scorer is fully correct; scoring-engine
 accuracy and scanner detection accuracy are separate claims. The harness scores
-one scanner source commit per invocation; comparisons across reports are external
+one registered scanner artifact per invocation; comparisons across reports are external
 to the harness.
 
 ## Normalized finding
@@ -106,9 +106,9 @@ an absence from the positive manifest.
 
 ## Target-driven capabilities
 
-Operators select a scanner source commit and benchmark suites/products. Leaky Repo
+Operators select one registered build and benchmark suites/products. Leaky Repo
 always evaluates filesystem capability and automatically evaluates Git history
-when the adapter supports Git mode. Unsupported scanner capability is
+when the artifact declares Git mode. Unsupported scanner capability is
 `NOT_APPLICABLE` with a reason; it is not zero recall. When execution is supported
 but independent truth is unavailable, the dimension is executed and marked
 `COMPLETED_UNSCORED` rather than omitted. Actual execution failure remains
@@ -116,15 +116,16 @@ but independent truth is unavailable, the dimension is executed and marked
 
 ## Configuration profiles
 
-DEFAULT uses bundled scanner rules and cannot accept an external configuration.
-CUSTOM requires an explicit configuration and records its path and SHA-256.
+DEFAULT uses the registered scanner defaults (for RNC, the operator-provided
+`rules_file`) and cannot accept an external experiment configuration. CUSTOM
+requires an explicit configuration and records its path and SHA-256.
 Controlled synthetic fixtures use a separately labeled `CONTROLLED_FIXTURE`
 configuration and are excluded from default-baseline metrics. CUSTOM results are
 also excluded from default-baseline metrics.
 
 ## Detection reporting responsibility
 
-The experiment reports one scanner commit across one or more execution products.
+The experiment reports one registered artifact across one or more execution products.
 It does not execute multiple scanners as one scoring transaction, score one
 scanner against another, or infer superiority from separate reports. Those
 comparisons belong to external orchestration and reporting.
@@ -179,11 +180,12 @@ is not a substitute for verified recall.
 
 ## Reproducibility fields
 
-Reports record the source repository and exact commit, checkout HEAD verification,
-scanner build version, executable SHA-256 or image ID, dataset revision, inventory
-and truth-manifest hashes, manifest version, scoring policy version, product
-platform, execution method, image architecture, and whether Docker ARM64 was
-emulated. Source commit remains the primary identity; artifact hashes support it.
+Reports record the registered build ID, local artifact-manifest path and SHA-256,
+operator-supplied source-commit metadata, executable SHA-256 or image ID, dataset
+revision, inventory and truth-manifest hashes, manifest version, scoring policy
+version, product platform, execution method, image architecture, and whether
+Docker ARM64 was emulated. The verified artifact identity is the runtime identity;
+source-commit metadata is not a substitute for it.
 
 ## Strict report validation
 

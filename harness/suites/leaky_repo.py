@@ -33,6 +33,9 @@ class LeakyRepoSuite(TestingSuite):
                 report_path,
                 config=context.scanner_config,
                 timeout_seconds=context.timeout,
+                artifact=artifact,
+                suite="leaky-repo",
+                workload="leaky-repo-filesystem",
             )
         else:
             invocation = context.adapter.invoke_container(
@@ -42,6 +45,9 @@ class LeakyRepoSuite(TestingSuite):
                 platform_dir / "out",
                 config=context.scanner_config,
                 timeout_seconds=context.timeout,
+                artifact=artifact,
+                suite="leaky-repo",
+                workload="leaky-repo-filesystem",
             )
         problem = context.adapter.invocation_problem(invocation)
         if invocation.report_bytes is not None:
@@ -192,6 +198,9 @@ class LeakyRepoSuite(TestingSuite):
                     config=context.scanner_config,
                     mode="git",
                     timeout_seconds=context.timeout,
+                    artifact=artifact,
+                    suite="leaky-repo",
+                    workload="leaky-repo-history",
                 )
             else:
                 invocation = context.adapter.invoke_container(
@@ -202,6 +211,9 @@ class LeakyRepoSuite(TestingSuite):
                     config=context.scanner_config,
                     mode="git",
                     timeout_seconds=context.timeout,
+                    artifact=artifact,
+                    suite="leaky-repo",
+                    workload="leaky-repo-history",
                 )
             problem = context.adapter.invocation_problem(invocation)
             if problem:

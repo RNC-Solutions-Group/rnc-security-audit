@@ -60,6 +60,9 @@ class GitHistorySuite(TestingSuite):
                         config=config,
                         mode="git",
                         timeout_seconds=context.timeout,
+                        artifact=artifact,
+                        suite="git-history",
+                        workload="git-history",
                     )
                 else:
                     invocation = context.adapter.invoke_container(
@@ -70,6 +73,9 @@ class GitHistorySuite(TestingSuite):
                         config=config,
                         mode="git",
                         timeout_seconds=context.timeout,
+                        artifact=artifact,
+                        suite="git-history",
+                        workload="git-history",
                     )
                 problem = context.adapter.invocation_problem(invocation)
                 if problem:

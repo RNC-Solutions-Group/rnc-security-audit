@@ -12,15 +12,15 @@ from pathlib import Path
 
 from .. import status as statuses
 from ..adapters.base import BuildArtifact, ScannerAdapter
+from ..artifacts import RegisteredBuild
 from ..config import HarnessConfig
 from ..profile import ExperimentProfile
-from ..source import SourceCheckout
 
 
 @dataclass
 class SuiteContext:
     adapter: ScannerAdapter
-    source: SourceCheckout
+    build: RegisteredBuild
     config: HarnessConfig
     builds: dict[str, BuildArtifact]
     work_dir: Path
@@ -36,6 +36,11 @@ class SuiteContext:
     performance_loads: list[dict] = field(default_factory=list)
     performance_copies: int = 10
     _cache: dict[str, object] = field(default_factory=dict)
+
+    @property
+    def source_commit(self) -> str:
+        """Source commit metadata supplied by the operator manifest."""
+        return self.build.source_commit
 
     @property
     def profile_name(self) -> str:
@@ -122,9 +127,9 @@ def platform_status(
     if artifact is None:
         return statuses.NOT_APPLICABLE, "platform was not selected for this run"
     if artifact.status == statuses.FAIL:
-        return statuses.BLOCKED, "target build failed"
+        return statuses.BLOCKED, "target artifact failed verification"
     if artifact.status == statuses.BLOCKED:
-        return statuses.BLOCKED, "target build was blocked"
+        return statuses.BLOCKED, "target artifact was blocked"
     if not context.adapter.can_execute(artifact.platform):
         return statuses.NOT_APPLICABLE, context.adapter.execution_reason(artifact.platform)
     return statuses.NOT_RUN, "target is executable but the suite has not run yet"

@@ -108,7 +108,7 @@ class StatusTests(unittest.TestCase):
         )
         status, reason = platform_status(artifact, context=context)
         self.assertEqual(status, statuses.BLOCKED)
-        self.assertIn("build", reason)
+        self.assertIn("artifact", reason)
 
 
 class ScoringReadinessTests(unittest.TestCase):

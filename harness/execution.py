@@ -39,6 +39,9 @@ class Invocation:
     error_code: str | None = None
     error_message: str = ""
     resource_metrics: dict = field(default_factory=dict)
+    invocation_type: str = "detection"
+    suite: str | None = None
+    workload: str | None = None
 
     @property
     def report_sha256(self) -> str | None:
@@ -100,6 +103,9 @@ def run_process(
     unset_env: tuple[str, ...] = (),
     cwd: Path | None = None,
     collect_telemetry: bool = False,
+    invocation_type: str = "detection",
+    suite: str | None = None,
+    workload: str | None = None,
 ) -> Invocation:
     if collect_telemetry:
         return _run_sampled(
@@ -112,6 +118,9 @@ def run_process(
             env=env,
             unset_env=unset_env,
             cwd=cwd,
+            invocation_type=invocation_type,
+            suite=suite,
+            workload=workload,
         )
     report_path = Path(report_path)
     report_path.parent.mkdir(parents=True, exist_ok=True)
@@ -141,6 +150,9 @@ def run_process(
             stdout=process.stdout,
             stderr=process.stderr,
             report_bytes=None,
+            invocation_type=invocation_type,
+            suite=suite,
+            workload=workload,
         )
     except subprocess.TimeoutExpired as exc:
         duration = time.perf_counter() - started
@@ -159,6 +171,9 @@ def run_process(
             report_bytes=None,
             error_code="TIMEOUT",
             error_message=f"scanner exceeded {timeout_seconds:g}s timeout",
+            invocation_type=invocation_type,
+            suite=suite,
+            workload=workload,
         )
     except OSError as exc:
         duration = time.perf_counter() - started
@@ -177,6 +192,9 @@ def run_process(
             report_bytes=None,
             error_code="INVOCATION_FAILED",
             error_message=f"could not start scanner: {exc}",
+            invocation_type=invocation_type,
+            suite=suite,
+            workload=workload,
         )
 
     if report_path.is_file():
@@ -197,6 +215,9 @@ def _run_sampled(
     env: dict[str, str] | None,
     unset_env: tuple[str, ...],
     cwd: Path | None,
+    invocation_type: str = "detection",
+    suite: str | None = None,
+    workload: str | None = None,
 ) -> Invocation:
     report_path = Path(report_path)
     report_path.parent.mkdir(parents=True, exist_ok=True)
@@ -229,6 +250,9 @@ def _run_sampled(
             error_code="INVOCATION_FAILED",
             error_message=f"could not start scanner: {exc}",
             resource_metrics={"method": "unavailable", "unavailable_reason": str(exc)},
+            invocation_type=invocation_type,
+            suite=suite,
+            workload=workload,
         )
     sampler, thread = telemetry.start_process_sampler(process.pid, argv)
     try:
@@ -274,6 +298,9 @@ def _run_sampled(
         error_code=error_code,
         error_message=error_message,
         resource_metrics=resource,
+        invocation_type=invocation_type,
+        suite=suite,
+        workload=workload,
     )
     if report_path.is_file():
         invocation = Invocation(

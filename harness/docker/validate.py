@@ -467,7 +467,7 @@ def materialize_linux_symlink_volume(
         "printf 'link_type=symlink\\ntarget_resolves=yes\\n'"
     )
     helper_args = [
-        "docker", "run", "--rm", "--pull=missing", "--network", "none",
+        "docker", "run", "--rm", "--pull=never", "--network", "none",
         "--mount", mount_arg(testdata, "/source"),
         "--mount", f"type=volume,source={volume_name},target=/fixture",
         "--env", f"RNC_LINK_PATH=repos/symlinks/file_symlink/{Path(symlink_path).name}",
@@ -635,6 +635,7 @@ def run_case(
     image_argument = docker_args.index(image)
     case_result["execution"] = {
         "network": "none",
+        "docker_command": list(docker_args),
         "container_argv": docker_args[image_argument + 1:],
         "config_path": container_path(case["config"]),
         "mounts_read_only": [CONTAINER_TESTDATA, CONTAINER_LOCAL, "/rnc/empty-ignore", CONTAINER_WORK],

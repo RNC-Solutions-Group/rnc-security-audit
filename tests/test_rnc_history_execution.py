@@ -8,6 +8,7 @@ they never modify the scanner, scoring code, or oracle.
 from __future__ import annotations
 
 import json
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -43,7 +44,16 @@ class PinnedRNCHistoryTests(unittest.TestCase):
         cls.adapter._rules_path = RULES
         cls.adapter._history_supported = True
         cls.adapter._ruleset = cls.adapter._describe_rules(RULES)
-        cls.adapter._ruleset["digest"] = cls.adapter._native_ruleset_digest(BINARY, RULES)
+        with tempfile.TemporaryDirectory() as tmp:
+            invocation = cls.adapter._rules_validate_native(
+                BINARY, RULES, Path(tmp), None
+            )
+        match = re.search(
+            r"^Digest:\s+(sha256:[0-9a-f]{64})$",
+            invocation.stdout.decode("utf-8", "replace"),
+            re.MULTILINE,
+        )
+        cls.adapter._ruleset["digest"] = match.group(1) if match else None
 
     def test_native_history_scan_is_covered_and_scored(self):
         with tempfile.TemporaryDirectory() as tmp:

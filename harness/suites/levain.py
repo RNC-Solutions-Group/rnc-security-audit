@@ -158,6 +158,9 @@ class LevainSuite(TestingSuite):
                     report_path,
                     config=context.scanner_config,
                     timeout_seconds=context.timeout,
+                    artifact=artifact,
+                    suite="levain",
+                    workload=f"levain-{corpus}",
                 )
             else:
                 out = work / f"{corpus}-out"
@@ -168,6 +171,9 @@ class LevainSuite(TestingSuite):
                     out,
                     config=context.scanner_config,
                     timeout_seconds=context.timeout,
+                    artifact=artifact,
+                    suite="levain",
+                    workload=f"levain-{corpus}",
                 )
             runs.append(
                 _assess_invocation(context, invocation, target, sections)
@@ -201,7 +207,7 @@ class LevainSuite(TestingSuite):
             corpora,
             runs,
             scanner_kind=context.adapter.key,
-            source_revision=context.source.commit,
+            source_revision=context.source_commit,
             config_path=context.scanner_config,
             config_sha256=context.scanner_config_sha256,
             extra_limitations=(

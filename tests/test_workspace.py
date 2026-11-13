@@ -34,8 +34,8 @@ class WorkspaceTests(unittest.TestCase):
     def test_successful_cleanup_removes_run_owned_workspace(self):
         workspace = RunWorkspace.create(f"cleanup-success-{new_run_id()}")
         workspace.prepare()
-        workspace.source.mkdir()
-        (workspace.source / "marker").write_text("owned", encoding="utf-8")
+        workspace.evidence.mkdir(exist_ok=True)
+        (workspace.evidence / "marker").write_text("owned", encoding="utf-8")
         completed = SimpleNamespace(returncode=0, stdout="", stderr="")
         with patch("harness.workspace.subprocess.run", return_value=completed):
             report = workspace.cleanup()
@@ -48,8 +48,8 @@ class WorkspaceTests(unittest.TestCase):
             f"cleanup-retain-{new_run_id()}", retain=True
         )
         workspace.prepare()
-        workspace.source.mkdir()
-        (workspace.source / "marker").write_text("owned", encoding="utf-8")
+        workspace.evidence.mkdir(exist_ok=True)
+        (workspace.evidence / "marker").write_text("owned", encoding="utf-8")
         with patch("harness.workspace.subprocess.run") as docker:
             report = workspace.cleanup()
         self.assertTrue(report["retained"])
@@ -59,7 +59,7 @@ class WorkspaceTests(unittest.TestCase):
         with patch("harness.workspace.subprocess.run") as docker:
             workspace.cleanup()
 
-    def test_cleanup_uses_run_label_and_exact_ids_not_broad_prune(self):
+    def test_cleanup_removes_containers_but_never_images(self):
         workspace = RunWorkspace.create(f"cleanup-scoped-{new_run_id()}")
         workspace.prepare()
         calls = []
@@ -68,8 +68,6 @@ class WorkspaceTests(unittest.TestCase):
             calls.append(argv)
             if "ps" in argv:
                 return SimpleNamespace(returncode=0, stdout="container-id\n", stderr="")
-            if argv[:3] == ["docker", "image", "ls"]:
-                return SimpleNamespace(returncode=0, stdout="image-id\n", stderr="")
             return SimpleNamespace(returncode=0, stdout="", stderr="")
 
         with (
@@ -78,8 +76,10 @@ class WorkspaceTests(unittest.TestCase):
         ):
             report = workspace.cleanup()
         self.assertEqual(report["containers_removed"], ["container-id"])
-        self.assertEqual(report["images_removed"], ["image-id"])
+        self.assertEqual(report["images_removed"], [])
         self.assertTrue(any(f"label={workspace.docker_label}" in item for argv in calls for item in argv))
+        self.assertFalse(any("image" in argv[:2] for argv in calls))
+        self.assertFalse(any("rmi" in argv for argv in calls))
         self.assertFalse(any("prune" in item for argv in calls for item in argv))
         self.assertFalse(any("volume" in item for argv in calls for item in argv))
 

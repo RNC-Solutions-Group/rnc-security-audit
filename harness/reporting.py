@@ -166,6 +166,11 @@ def _status_line(label: str, value) -> str:
     return f"| {label} | {value if value is not None else '—'} |"
 
 
+def _code(value) -> str:
+    text = str(value if value is not None else "—")
+    return "`" + text.replace("`", "'").replace("|", "\\|") + "`"
+
+
 def render_markdown(document: dict) -> str:
     scanner = document.get("scanner") or {}
     source = document.get("source") or {}
@@ -173,6 +178,8 @@ def render_markdown(document: dict) -> str:
     profile = document.get("profile") or {}
     summary = document.get("summary") or {}
     cleanup = document.get("cleanup") or {}
+    registered = document.get("registered_build") or {}
+    manifest = document.get("artifact_manifest") or {}
     lines = [
         "# Scanner Experiment Report",
         "",
@@ -183,11 +190,18 @@ def render_markdown(document: dict) -> str:
         "| Field | Value |",
         "| --- | --- |",
         f"| Scanner | {scanner.get('name') or scanner.get('key')} (`{scanner.get('key')}`) |",
-        f"| Scanner build version | {scanner.get('version') or 'unavailable'} |",
-        f"| Source repository | {source.get('repository') or '—'} |",
-        f"| Requested source commit | `{source.get('requested_commit') or source.get('commit') or '—'}` |",
-        f"| Checkout HEAD | `{source.get('head') or '—'}` |",
-        f"| Checkout HEAD verified | {source.get('head_verified')} |",
+        f"| Registered build | `{registered.get('id') or summary.get('build_id') or '—'}` |",
+        f"| Scanner version | {scanner.get('version') or 'unavailable'} |",
+        f"| Artifact manifest | `{manifest.get('path') or '—'}` |",
+        f"| Artifact manifest SHA-256 | `{manifest.get('sha256') or '—'}` |",
+        f"| Source commit (manifest metadata) | `{source.get('commit') or '—'}` |",
+        f"| Source commit verification | NOT VERIFIED — operator-supplied metadata; no source checkout or build |",
+        f"| Registered executable | `{registered.get('executable') or '—'}` |",
+        f"| Registered executable SHA-256 | `{registered.get('executable_sha256') or '—'}` |",
+        f"| Registered Docker image | `{registered.get('docker_image') or '—'}` |",
+        f"| Registered Docker image ID | `{registered.get('docker_image_id') or '—'}` |",
+        f"| Rules/configuration file | `{registered.get('rules_file') or '—'}` |",
+        f"| Rules/configuration SHA-256 | `{registered.get('rules_sha256') or '—'}` |",
         f"| Adapter | `{adapter.get('key')}` / {adapter.get('name') or '—'} |",
         f"| Configuration profile | **{profile.get('name') or '—'}** |",
         f"| Configuration source | {profile.get('config_source') or '—'} |",
@@ -196,8 +210,9 @@ def render_markdown(document: dict) -> str:
         f"| Harness version | {document.get('harness_version')} |",
         f"| Generated (UTC) | {document.get('generated_at')} |",
         "",
-        "The source commit is the primary experiment identity. Build hashes and "
-        "image IDs below are supporting provenance, not substitutes for it.",
+        "The executed scanner identity is the operator-provided executable SHA-256 or "
+        "Docker image ID above. The source commit is retained as operator metadata "
+        "only; it is never acquired or compiled by this harness.",
         "",
         "## Configuration profile",
         "",
@@ -213,18 +228,34 @@ def render_markdown(document: dict) -> str:
     if profile.get("limitations"):
         for item in profile["limitations"]:
             lines.append(f"- Limitation: {item}")
-    lines.extend(["", "## Builds and products", "", "| Product | Kind | Build | Version | Artifact identity |", "| --- | --- | --- | --- | --- |"])
+    lines.extend(["", "## Registered artifacts and products", "", "| Product | Kind | Status | Build ID | Version | Artifact identity | Verified |", "| --- | --- | --- | --- | --- | --- | --- |"])
     for key, build in (document.get("builds") or {}).items():
+        metadata = build.get("metadata") or {}
         identity = build.get("artifact_sha256") or build.get("image_id") or "—"
+        verified = (
+            metadata.get("executable_hash_verified")
+            if build.get("platform", {}).get("kind") == "executable"
+            else metadata.get("docker_image_id_verified")
+        )
         lines.append(
             f"| `{key}` | {build.get('platform', {}).get('kind')} | "
-            f"{build.get('status')} | {build.get('version') or 'unavailable'} | `{identity}` |"
+            f"{build.get('status')} | `{metadata.get('build_id') or '—'}` | "
+            f"{build.get('version') or 'unavailable'} | `{identity}` | {verified} |"
         )
+    errors = [
+        (key, build.get("error"))
+        for key, build in (document.get("builds") or {}).items()
+        if build.get("error")
+    ]
+    if errors:
+        lines.append("")
+        for key, error in errors:
+            lines.append(f"- Artifact `{key}` problem: {error}")
     tools = (document.get("host") or {}).get("toolchain") or {}
     lines.extend(
         [
             "",
-            f"Toolchain: Go `{tools.get('go') or 'unavailable'}`, Docker `{tools.get('docker') or 'unavailable'}`, Git `{tools.get('git') or 'unavailable'}`.",
+            f"Toolchain: Docker `{tools.get('docker') or 'unavailable'}`, Git `{tools.get('git') or 'unavailable'}`, Python `{tools.get('python') or 'unavailable'}`.",
             "",
             "## Benchmark outcomes",
             "",
@@ -373,6 +404,48 @@ def render_markdown(document: dict) -> str:
         lines.append(
             f"Not available: {perf.get('reason') or 'no performance measurement'}"
         )
+    invocations = document.get("invocations") or []
+    if invocations:
+        lines.extend(
+            [
+                "",
+                "## Scanner invocations",
+                "",
+                "Every row records the actual executed argument vector (not a "
+                "reconstructed command), in execution order. Credential-bearing "
+                "argument values are redacted only when a sensitive flag such as "
+                "`--password` or `--token` is present; the original argv digest is "
+                "retained in the JSON report.",
+                "",
+                "| # | Type | Suite | Workload | Platform | Build | Artifact identity | Exit | Duration (s) | Timeout/error | Command |",
+                "| ---: | --- | --- | --- | --- | --- | --- | ---: | ---: | --- | --- |",
+            ]
+        )
+        for item in invocations:
+            identity = item.get("executable_sha256") or item.get("docker_image_id") or "—"
+            problem = (
+                "TIMEOUT"
+                if item.get("timed_out")
+                else item.get("error_code")
+                or item.get("error_message")
+                or "none"
+            )
+            lines.append(
+                f"| {item.get('sequence')} | {item.get('invocation_type')} | "
+                f"`{item.get('suite') or '—'}` | `{item.get('workload') or '—'}` | "
+                f"`{item.get('platform') or '—'}` | `{item.get('build_id') or '—'}` | "
+                f"`{identity}` | {item.get('exit_code')} | "
+                f"{item.get('duration_seconds')} | {problem} | "
+                f"{_code(' '.join(item.get('command') or []))} |"
+            )
+        lines.extend(
+            [
+                "",
+                "Invocation types: `detection`, `warmup`, `measured`, and "
+                "`verification` for artifact/ruleset validation. Detection and "
+                "performance commands use the same registered executable or image.",
+            ]
+        )
     lines.extend(["", "## Cleanup", ""])
     lines.append(f"- Status: **{cleanup.get('status', 'UNKNOWN')}**")
     lines.append(f"- Retained by request: {cleanup.get('retained', False)}")
@@ -421,11 +494,26 @@ def render_console(document: dict) -> str:
     source = document.get("source") or {}
     summary = document.get("summary") or {}
     profile = document.get("profile") or {}
+    registered = document.get("registered_build") or {}
     lines = [
         f"Scanner: {scanner.get('key')} {scanner.get('version') or '(version unavailable)'}",
-        f"Source:  {source.get('commit')} ({source.get('repository')})",
-        f"Profile: {profile.get('name') or 'unknown'}  config={profile.get('config_sha256') or 'bundled default'}",
-        "Builds:  "
+        f"Build:   {registered.get('id') or summary.get('build_id') or 'unknown'}",
+        f"Source:  {source.get('commit')} (manifest metadata; not checked out)",
+        (
+            "Artifact:"
+            + (
+                f" exe {registered.get('executable')} sha256={registered.get('executable_sha256')}"
+                if registered.get("executable")
+                else ""
+            )
+            + (
+                f" image {registered.get('docker_image')} id={registered.get('docker_image_id')}"
+                if registered.get("docker_image")
+                else ""
+            )
+        ),
+        f"Profile: {profile.get('name') or 'unknown'}  config={profile.get('config_sha256') or 'registered default'}",
+        "Artifacts:  "
         + ", ".join(
             f"{key}={value['status']}" for key, value in (document.get("builds") or {}).items()
         ),
@@ -462,6 +550,7 @@ def render_console(document: dict) -> str:
         )
     )
     lines.append(f"Cleanup: {cleanup.get('status')} retained={cleanup.get('retained')}")
+    lines.append(f"Invocations: {summary.get('invocation_count', len(document.get('invocations') or []))}")
     lines.append(f"Overall: {summary.get('overall')}")
     reports = document.get("reports") or {}
     if reports.get("sanitized"):

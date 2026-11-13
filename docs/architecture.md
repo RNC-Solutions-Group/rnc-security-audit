@@ -1,35 +1,38 @@
 # Harness architecture
 
-**Branch:** `test/scan-harness`
-**Checkpoint:** CP10 final integration + certified RNC Lab v3 + 184/89 approved history oracle
+**Branch:** `benchmark-harness`
+**Checkpoint:** CP11 local artifact execution (CP10 baselines and scoring preserved)
 
 The harness is an independent, purpose-built scanner benchmark application. It
-evaluates **one scanner source commit per invocation** against pinned benchmark
-datasets, writes one experiment report, and removes its temporary build and scan
-resources. It is not a general-purpose scanner, a scanner-development test
-runner, a hosted service, or a multi-scanner comparison engine.
+executes **one operator-registered scanner build per invocation** against pinned
+benchmark datasets, writes one experiment report, and removes its temporary
+benchmark and container resources. It is not a general-purpose scanner, a
+scanner-development test runner, a build system, a hosted service, or a
+multi-scanner comparison engine.
 
 ## Canonical workflow
 
 ```text
-repository + exact commit
+run/manifest.toml + selected build id
         |
-disposable checkout (HEAD verified)
+verify executable SHA-256 and/or local Docker image ID
         |
-adapter-owned native and Docker source builds
+verify registered rules/configuration (where required)
+        |
+registered native executable and/or local Docker image
         |
 automatic benchmark capabilities
         |
 normalized findings -> independent scoring engine
         |
-one experiment report (JSON + Markdown)
+one experiment report (JSON + Markdown, including exact argv)
         |
-run-owned cleanup
+run-created container cleanup; registered images untouched
 ```
 
-The source commit is the primary experiment identity. A release executable, a
-moving branch, a tag alone, or a published scanner image is never substituted for
-the requested commit.
+The executed artifact SHA-256/image ID is the primary runtime identity. The
+source commit is operator-supplied metadata; the harness never clones, checks
+out, compiles, builds, or pulls scanner artifacts.
 
 ## Layers
 
@@ -38,66 +41,67 @@ CLI (`experiment`)
         |
 experiment runner
    |         |          |
- source   adapters    suites
+artifacts  adapters    suites
    |         |          |
- exact    build/CLI   scoring
- commit   /parse      datasets
+manifest   invocation  scoring
+verify     /parse      datasets
         |
  reporting + performance + cleanup
 ```
 
-### Source acquisition and workspace
+### Artifact registry and workspace
 
-`harness/source.py` validates a full 40-character commit, creates a run-owned
-partial clone in a system temporary directory, fetches the exact commit when
-needed, checks it out detached, verifies `HEAD`, and requires a clean working
-tree. A failed acquisition is reported, never retried against another revision.
+`harness/artifacts.py` loads the local `run/manifest.toml`, validates build IDs,
+scanner keys, full source-commit metadata, relative paths, executable/hash and
+image/ID pairs, and optional rules/hash pairs. `verify_artifact` checks the
+registered executable SHA-256, inspects the local Docker image ID and
+architecture with `docker image inspect`, and verifies rules/configuration
+hashes. A mismatch is `BLOCKED` with expected and observed values; there is no
+pull, rebuild, retag, substitution, or fallback. Source commits are never
+checked out.
 
-`harness/workspace.py` owns the disposable run directory and cleanup. Temporary
-source, native executables, Docker build files, scan evidence, and benchmark
-copies stay outside the tracked harness tree. The only retained output is the
-reported experiment evidence.
+`harness/workspace.py` owns the disposable run directory. Temporary scan
+evidence, generated datasets, and benchmark copies stay outside the tracked
+harness tree. Registered executables and Docker images are read-only inputs and
+are never removed or modified.
 
 ### Scanner adapter contract
 
 `harness/adapters/base.py` defines the single extension point. An adapter owns:
 
-- scanner key, display name, default repository, and capabilities;
-- native source-build strategy and linker/version handling;
-- Docker source-build strategy and image topic;
-- scanner invocation, configuration behavior, and output parsing;
+- scanner key, display name, declared suites, and capability behavior;
+- local-artifact resolution and scanner-specific rules/configuration;
+- native and Docker invocation, including exact argv capture;
+- configuration behavior and output parsing;
 - normalization into the shared `NormalizedFinding` contract;
 - scanner-specific optional fixture hooks.
 
-The harness owns workspace lifecycle, source acquisition, platform selection,
-benchmark suite selection, datasets, scoring, performance, reporting, and
-cleanup. The scoring engine imports neither adapter. Generic orchestration and
-reporting contain no scanner names.
+The harness owns workspace lifecycle, artifact-manifest verification, platform
+selection, benchmark suite selection, datasets, scoring, performance, reporting,
+and container cleanup. The scoring engine imports neither adapter. Generic
+orchestration and reporting contain no scanner names.
 
 Adding a supported scanner requires one conforming adapter plus one registry
 entry. It must not require branches in the scoring engine, reporting layer, or
-experiment runner.
+experiment runner. The selected artifact is joined to its suite results and
+performance iterations by the registered build ID and verified executable/image
+identity; no scanner source is present.
 
 The registry is explicit:
 
-| Adapter | Default repository | Source build | Capabilities |
-| --- | --- | --- | --- |
-| `gitleaks` | RNC Gitleaks fork | Go native; adapter local-base source Dockerfile with offline vendor tree | filesystem, Git history, Gitleaks fixtures, `rnclab` |
-| `betterleaks` | upstream Betterleaks | Go native; adapter source-build Dockerfile | filesystem, Git history, `rnclab` |
-| `rnc` | RNC Security Audit | Rust/Cargo native; adapter source-build Dockerfile with Git runtime | filesystem, Git history, private structured evidence, `rnclab` |
+| Adapter | Registered local artifact | Capabilities |
+| --- | --- | --- |
+| `gitleaks` | Operator executable and/or local Docker image | filesystem, Git history, Gitleaks fixtures, `rnclab` |
+| `betterleaks` | Operator executable and/or local Docker image | filesystem, Git history, `rnclab` |
+| `rnc` | Operator executable and/or local Docker image plus registered rules | filesystem, declared Git history, private structured evidence, `rnclab` |
 
-Betterleaks v1.8.1's upstream Dockerfile pins a Go 1.24 builder while its
-`go.mod` requires Go 1.25. The adapter therefore builds a matching-toolchain
-source Dockerfile from the same checkout. It does not pull the published
-Betterleaks image or download a release binary. This compatibility decision is
-reported as adapter provenance.
-
-RNC Scanner is a Rust workspace built with Cargo at the pinned source commit.
-Its CLI consumes an explicit versioned rule bundle; DEFAULT therefore passes the
-bundled `rules/rnc-providers-v1.json` and records its ruleset ID, version,
-37-rule / 22-family count, component-extractor declarations, and independently
-validated digest. A harness-generated empty repository configuration is passed as
-`--config` so a target-local config cannot silently change DEFAULT.
+RNC Scanner consumes an explicit versioned rule bundle. DEFAULT passes the
+operator-registered `rules_file` from `run/manifest.toml`, records its ruleset
+ID, version, 37-rule / 22-family count, component-extractor declarations, and
+independently validated digest when the artifact supports `rules validate`. A
+harness-generated empty repository configuration is passed as `--config` so a
+target-local config cannot silently change DEFAULT. The adapter never reads
+rules from a scanner source checkout.
 
 The private `rnc-cp2-output-v1` JSON is joined through `execution.units` to map
 byte-addressed findings back to relative paths. Filesystem units use
@@ -125,8 +129,8 @@ parent finding and unit, validates byte/line bounds and ANSI metadata, and uses
 the normalized password digest as the normalized credential identity. The
 contextual URI digest remains safe metadata. Components never create a second
 finding; malformed or multiply-linked components are explicit report errors.
-The Docker runtime installs Git because a successful `rnc --version` is not proof
-of historical acquisition capability.
+The registered Docker image must provide Git for history mode; a successful
+`rnc --version` is not proof of historical acquisition capability.
 
 The adapter also verifies the scanner's own execution and coverage ledger: every
 expected generated source unit must be present, required, `INSPECTED`, and
@@ -148,25 +152,27 @@ existing control behavior.
 | `docker-linux-amd64` | Docker | Linux AMD64 |
 | `docker-linux-arm64` | Docker | Linux ARM64 (emulated on the AMD64 host) |
 
-Multiple products for the **same source commit** may appear in one report with
-separate build results, detection results, and performance. Products are not
-scanners: a Windows executable and a Linux container built from the same commit
-are one scanner identity and two execution products.
+Multiple products of the **same registered build** may appear in one report with
+separate artifact-verification results, detection results, and performance. A
+build may register an executable, a Docker image, or both. A product whose
+required artifact is absent or mismatched is `BLOCKED`; another registered build
+is never substituted.
 
 Native/container and native/emulated-architecture measurements are not directly
 comparable. ARM64 Docker is labeled emulated; it is not native ARM64 evidence.
+A Docker product uses only an existing local image with
+`docker run --rm --pull=never`; no pull or build fallback exists.
 
 ### Configuration profiles
 
 `harness/profile.py` defines two mutually exclusive profiles:
 
-- **DEFAULT** uses the scanner's bundled detection rules. The harness passes no
-  scanner config argument, clears known scanner-config environment variables,
-  and runs from an empty run-owned working directory. The scanner does not expose
-  a machine-readable digest of its embedded rule set, so isolation is verified at
-  the invocation boundary rather than by hashing an embedded file.
+- **DEFAULT** uses the registered scanner defaults. For RNC this means the
+  operator-registered `rules_file`; for Gitleaks/Betterleaks the harness omits
+  `--config`, clears known scanner-config environment variables, and runs from
+  an empty run-owned working directory. The registry SHA-256 is recorded.
 - **CUSTOM** requires an explicit configuration file. The report records the
-  source path, SHA-256, applied settings, scanner commit, and results. CUSTOM
+  source path, SHA-256, applied settings, registered build, and results. CUSTOM
   results are excluded from DEFAULT baseline metrics.
 
 Synthetic integration controls generate their own controlled fixture rules and
@@ -333,25 +339,48 @@ accuracy and performance are never combined into a weighted score.
 
 ### Cleanup
 
-`harness/workspace.py` removes the run-owned source checkout, executables, build
-files, scan copies, and run-owned images/containers by exact tag or run-specific
-Docker label. It never runs a broad Docker prune, removes volumes, or traverses
-unrelated developer paths. Cleanup runs on success, failure, cancellation, and
-exceptions. `--retain-work` is the explicit debugging exception and is recorded in
-the report.
+`harness/workspace.py` removes the run-owned benchmark workspace, generated
+datasets, and run-created containers selected by the run-specific Docker label.
+Docker invocation uses `--rm --pull=never`; the adapter additionally removes its
+exact named container when a run times out or is interrupted. It never removes a
+registered image, retags an image, runs a broad Docker prune, removes volumes, or
+traverses unrelated developer paths. Cleanup runs on success, failure,
+cancellation, and exceptions. `--retain-work` is the explicit debugging
+exception and is recorded in the report.
 
 ### Status and reporting
 
-The experiment report contains scanner identity, source repository and exact
-commit, adapter identity, profile, configuration provenance, build status and
-toolchain, executable SHA-256 and Docker image IDs, platform metadata, dataset and
-oracle revisions, every applicable benchmark outcome, normalized history
-findings, defensible detection metrics, unscored observations, performance,
-errors, and cleanup status.
+The experiment report contains the local manifest path/SHA-256, registered build
+ID, source-commit metadata, adapter identity, profile, configuration provenance,
+artifact-verification result, executable SHA-256 and Docker image ID,
+platform/architecture, dataset and oracle revisions, every applicable benchmark
+outcome, normalized history findings, defensible detection metrics, unscored
+observations, performance, exact scanner invocation records, errors, and
+cleanup status.
+
+`harness/execution.py` captures the actual executed argv for every scanner
+invocation. `harness/adapters/base.py` records scanner, build ID, executable
+SHA-256/image ID, suite, workload, platform, invocation type, argv, exit status,
+duration, timeout/error status, and report digest. Detection, warm-up, measured
+performance, and artifact/ruleset verification invocations are all retained.
+The JSON report exposes them as `invocations`; Markdown renders a readable
+command/execution table.
 
 One invocation writes one Markdown and one JSON report with a collision-resistant
-name containing the source commit and profile. Previous experiment reports are
-never overwritten.
+name containing scanner, source-commit metadata, and profile. Previous
+experiment reports are never overwritten.
+
+## Retired in CP11
+
+The following source-build paths were removed from normal experiments:
+
+- clone/fetch and exact-commit checkout (`harness/source.py`);
+- Go/Cargo compilation and adapter-owned source Dockerfiles (`harness/builds.py`);
+- Docker image builds, pulls, and source-checkout ruleset discovery;
+- executable/image substitution for an unavailable registered build.
+
+Source commits remain manifest metadata only. The harness now verifies and
+executes operator-provided executables and locally retained Docker images.
 
 ## Retired in CP3
 

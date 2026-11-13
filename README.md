@@ -1,64 +1,133 @@
 # RNC Scanner Harness
 
-**Independent source-commit scanner benchmarking for RNC Solutions Group.**
+**Independent, operator-artifact scanner benchmarking for RNC Solutions Group.**
 
-> **Status: CP10 implemented and executed; authoritative baseline refreshed.**
-> One invocation evaluates **one scanner source commit**, builds the requested
-> native/Docker products from a disposable checkout, runs the applicable pinned
-> benchmarks, writes one experiment report, and removes run-owned resources.
-> Gitleaks, Betterleaks, and RNC Scanner are built from the operator-supplied
-> commit; no scanner release is substituted. Cross-scanner execution and
-> comparison were retired. Leaky Repo history is scored against the
-> **owner-approved 184-record / 65-occurrence / 53-group source oracle** when the
-> scanner supports Git mode; reviewed negatives are not exhaustive, so history
-> precision/F1 remain **NOT CERTIFIED**. The certified **RNC Synthetic Secrets
-> Lab v3** is the standalone `rnclab` suite. See the
+> **Status: CP11 implemented.** One invocation selects one registered scanner
+> build from `run/manifest.toml`, verifies the operator-supplied executable
+> SHA-256 and/or local Docker image ID, runs the applicable pinned benchmarks,
+> records the exact scanner command for every invocation, writes one experiment
+> report, and removes only run-created temporary resources. The harness never
+> clones scanner source, compiles a scanner, builds an image, or pulls an image.
+> Cross-scanner execution and comparison remain retired. Leaky Repo history is
+> scored against the **owner-approved 184-record / 65-occurrence / 53-group
+> source oracle** when the selected artifact declares Git-history capability;
+> reviewed negatives are not exhaustive, so history precision/F1 remain
+> **NOT CERTIFIED**. The certified **RNC Synthetic Secrets Lab v3** is the
+> standalone `rnclab` suite. See the
 > [CP10 report](docs/checkpoints/CP10-final-integration-report.md),
+> [CP11 report](docs/checkpoints/CP11-local-artifact-execution-report.md),
 > [baseline index](reports/baseline-20261112/README.md),
 > [history/accountability report](docs/checkpoints/CP4-history-accountability-report.md),
-> [CP5D.1 source-identity report](docs/checkpoints/CP5D1-final-source-identity-report.md),
 > [architecture](docs/architecture.md), and
 > [CP5D.1 evidence](reports/cp5d1/).
 
 ## Purpose
 
-The harness answers a narrow question: **for this scanner source commit, on these
-pinned benchmarks and execution products, what did the scanner do?**
+The harness answers a narrow question: **for this operator-registered scanner
+artifact, on these pinned benchmarks and execution products, what did the
+scanner do?**
 
 ```text
-repository + exact commit
-    -> disposable checkout (HEAD verified)
-    -> adapter-owned native and Docker builds
-    -> automatic benchmark capabilities
-    -> normalized findings -> independent scoring
+run/manifest.toml + build id
+    -> select exactly one registered build
+    -> verify executable SHA-256 and/or local Docker image ID
+    -> verify registered rules/configuration files
+    -> run benchmarks with the existing suites and scoring engines
+    -> record every exact argv, exit status, and timeout
     -> one experiment report
-    -> scoped cleanup
+    -> remove run-created containers and temporary data only
 ```
 
-It is not a general-purpose scanner, a scanner-development test runner, a scheduler,
-a database, a hosted service, or a multi-scanner comparison engine. External tools
-(including DSH agents) may run the harness repeatedly and compare separate reports.
+It is not a general-purpose scanner, a scanner-development test runner, a build
+system, a scheduler, a database, a hosted service, or a multi-scanner comparison
+engine. External tools (including DSH agents) may run the harness repeatedly and
+compare separate reports.
 
-The source commit is the canonical scanner identity. The harness never substitutes
-a release executable, a moving branch, a tag alone, or a published scanner image.
+The executed artifact identity is the registered executable SHA-256 or Docker
+image ID. The source commit is retained as operator-supplied metadata; it is not
+verified by cloning or building the scanner.
+
+## Local artifacts
+
+Create the Git-ignored local directory and copy the tracked example manifest:
+
+```text
+run/
+├── manifest.toml
+├── gitleaks.exe
+├── betterleaks.exe
+├── rnc-cp3.exe
+├── rnc-cp4a.exe
+└── rules/
+    └── rnc-providers-v1.json
+```
+
+```powershell
+New-Item -ItemType Directory -Force run
+Copy-Item run-manifest.example.toml run/manifest.toml
+# place the operator-built executables/rules under run/
+# edit run/manifest.toml with the real SHA-256 and Docker image ID values
+```
+
+`run/` is entirely Git-ignored. Executables, rules, Docker images, and the
+operator's actual `run/manifest.toml` must never be committed. Docker images
+remain in Docker's local image store.
+
+Example build entry:
+
+```toml
+[[builds]]
+id = "rnc-cp4a"
+scanner = "rnc"
+version = "0.1.0"
+source_commit = "93b4dda909cb3b41606a4d0f36c8ef9d06b77fde"
+
+executable = "rnc-cp4a.exe"
+executable_sha256 = "<actual SHA-256>"
+
+docker_image = "rnc-scanner:cp4a"
+docker_image_id = "sha256:<actual image ID>"
+
+rules_file = "rules/rnc-providers-v1.json"
+rules_sha256 = "<actual SHA-256>"
+capabilities = ["filesystem", "git-history"]
+```
+
+Rules and Docker images are optional where the scanner does not require them;
+RNC builds require a registered `rules_file`. Multiple builds for one scanner
+(CP3, CP4A, future revisions) are supported and selected explicitly by
+`--build`. `capabilities` defaults to filesystem + Git history for Gitleaks and
+Betterleaks, and filesystem-only for RNC; declare `git-history` on an RNC build
+only when the artifact actually supports `--history --ref HEAD`.
+
+Verification behavior:
+
+- A missing executable, missing rules file, missing image, wrong SHA-256, wrong
+  image ID, or wrong image architecture is reported as **BLOCKED** with the
+  expected and observed values.
+- No pull, rebuild, retag, alternative build, or image substitution is attempted.
+- Registered executables and images are never deleted or modified.
+- Source commits are metadata only. No scanner source checkout is required.
+
+The schema and a four-build example are in
+[`run-manifest.example.toml`](run-manifest.example.toml).
 
 ## Adapters and profiles
 
-| Adapter | Default repository | Source build | Capabilities |
-| --- | --- | --- | --- |
-| `gitleaks` | RNC Gitleaks fork | Go native; upstream source Dockerfile | filesystem, Git history, Gitleaks fixtures |
-| `betterleaks` | upstream Betterleaks | Go native; adapter source-build Dockerfile | filesystem, Git history |
-| `rnc` | RNC Security Audit (`rnc-security-audit`) | Rust/Cargo native; adapter source-build Dockerfile with Git runtime | filesystem, Git history (pinned CP4/CP4A source), private structured evidence |
+| Adapter | Registered artifact | Capabilities |
+| --- | --- | --- |
+| `gitleaks` | Operator executable and/or Docker image | filesystem, Git history, Gitleaks fixtures |
+| `betterleaks` | Operator executable and/or Docker image | filesystem, Git history |
+| `rnc` | Operator executable and/or Docker image plus registered rules | filesystem, Git history when declared, private structured evidence |
 
 Adding a scanner requires one conforming adapter and one registry entry. Generic
-orchestration, scoring, performance, and reporting contain no scanner-specific
-branches. **DEFAULT** uses the scanner's bundled rules and refuses a target-local
-configuration; **CUSTOM** requires an explicit config and records its path,
-SHA-256, and applied settings. CUSTOM and controlled-fixture results are excluded
-from DEFAULT baseline metrics. For RNC, DEFAULT passes the bundled
-`rules/rnc-providers-v1.json` rule bundle and a harness-generated empty repository
-config to suppress target auto-discovery; CUSTOM accepts an RNC repository config
-or a JSON rule bundle.
+orchestration, artifact verification, scoring, performance, and reporting contain
+no scanner-specific branches. **DEFAULT** uses the registered rules/runtime
+defaults; **CUSTOM** requires an explicit configuration file and records its
+path, SHA-256, and applied settings. CUSTOM and controlled-fixture results are
+excluded from DEFAULT baseline metrics. For RNC, DEFAULT passes the registered
+`rules_file` and a harness-generated empty repository config to suppress target
+auto-discovery; CUSTOM accepts an RNC repository config or a JSON rule bundle.
 
 ## Benchmark suites and outcomes
 
@@ -104,81 +173,52 @@ score remains **LEGACY COUNT COVERAGE**, not verified recall.
 
 | Product | Execution |
 | --- | --- |
-| `windows-amd64` | Native executable |
-| `docker-linux-amd64` | Docker container |
-| `docker-linux-arm64` | Docker container (emulated on this AMD64 host) |
+| `windows-amd64` | Registered native executable |
+| `docker-linux-amd64` | Registered local Docker image |
+| `docker-linux-arm64` | Registered local Docker image (emulated on this AMD64 host) |
 
-Products of one source commit are not scanners. Native/container and
-AMD64/emulated-ARM64 performance are not directly comparable.
+Products of one registered build are not scanners. Native/container and
+AMD64/emulated-ARM64 performance are not directly comparable. A build that
+registers only an executable cannot satisfy a Docker platform, and vice versa;
+that product is `BLOCKED`, never silently substituted.
 
 ## Running the harness
 
-The harness uses only the Python standard library (3.11+; exercised on 3.13) plus
-Go, Cargo/Rust, and Docker for source builds and execution.
+The harness uses only the Python standard library (3.11+; exercised on 3.13).
+Docker is required only for Docker products. No Go or Rust toolchain is used.
 
 ```sh
 python -m unittest discover -s tests -t . -v
 
-# One complete experiment: exact commit, all applicable suites, performance.
-python -m harness experiment \
-  --scanner gitleaks \
-  --repo https://github.com/RNC-Solutions-Group/gitleaks \
-  --commit 5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c \
-  --platforms windows-amd64 \
-  --suites all \
-  --warmups 1 --runs 5 --copies 10 \
-  --offline \
-  --out-dir reports/cp3 --name gitleaks-5f6ec56-native
+# One complete experiment: registered CP4A executable, all applicable suites.
+python -m harness experiment `
+  --build rnc-cp4a `
+  --platforms windows-amd64 `
+  --suites all
 
-# Native plus Docker products of the same commit in one report.
-python -m harness experiment --scanner gitleaks \
-  --commit 5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c \
-  --platforms windows-amd64,docker-linux-amd64,docker-linux-arm64 \
-  --suites synthetic-filesystem,git-history,levain,leaky-repo,gitleaks \
-  --out-dir reports/experiments
+# The same registered build through its locally retained Docker image.
+python -m harness experiment `
+  --build rnc-cp4a `
+  --platforms docker-linux-amd64 `
+  --suites all
 
-# Betterleaks source build.
-python -m harness experiment --scanner betterleaks \
-  --repo https://github.com/betterleaks/betterleaks \
-  --commit 5eab48332cc48565864514e3bc6de89df091a7c4 \
-  --platforms windows-amd64 --suites all --offline
+# Certified RNC Synthetic Secrets Lab v3, including 5x/10x load profiles.
+python -m harness experiment --build rnc-cp4a --platforms windows-amd64 --suites rnclab --warmups 1 --runs 5
 
-# RNC Scanner source build; filesystem and Git-history benchmark.
-python -m harness experiment --scanner rnc \
-  --repo https://github.com/RNC-Solutions-Group/rnc-security-audit \
-  --commit 93b4dda909cb3b41606a4d0f36c8ef9d06b77fde \
-  --platforms windows-amd64,docker-linux-amd64 \
-  --suites all --offline --out-dir reports/rnc-cp5
+# Gitleaks functional fixtures only; no performance workload.
+python -m harness experiment --build gitleaks-5f6ec56 --platforms docker-linux-amd64 --suites gitleaks
 
-# Certified RNC Synthetic Secrets Lab v3: standalone accuracy, performance,
-# and run-owned legacy-5x/legacy-10x load profiles. Never included in `all`.
-python -m harness experiment --scanner gitleaks \
-  --repo C:\Dev\gitleaks\gitleaks \
-  --commit 5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c \
-  --platforms windows-amd64 --suites rnclab \
-  --warmups 1 --runs 5 --offline \
-  --out-dir reports/baseline-20261112
-
-# Scanner-specific functional fixtures: no performance workload.
-python -m harness experiment --scanner gitleaks \
-  --commit 5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c \
-  --platforms docker-linux-amd64 --suites gitleaks --offline
-
-# Offline rescoring of retained normalized history findings.
-python -m harness rescore-history \
-  --report reports/cp3/gitleaks-5f6ec56-native-5f6ec56cfa6f-default.json \
-  --platform windows-amd64 --out work/rescore-history.json
+# Explicit non-default manifest location and output directory.
+python -m harness experiment --build rnc-cp4a --artifact-manifest C:\bench\run\manifest.toml --platforms windows-amd64 --suites all --out-dir reports/cp11
 
 # Declare the benchmark environment explicitly (DEV is the contended default).
-python -m harness experiment --scanner gitleaks --commit <40-char-sha> \
-  --benchmark-environment CONTROLLED --suites all
+python -m harness experiment --build rnc-cp4a --benchmark-environment CONTROLLED --suites all
 
 # Explicit CUSTOM configuration experiment.
-python -m harness experiment --scanner gitleaks \
-  --commit <40-char-sha> --profile custom --scanner-config /path/to/scanner.toml
+python -m harness experiment --build rnc-cp4a --profile custom --scanner-config path\to\scanner.toml
 
-# Debugging: retain the run-owned checkout, builds, and Docker resources.
-python -m harness experiment --scanner gitleaks --commit <40-char-sha> --retain-work
+# Debugging: retain the run-owned workspace and run-created containers.
+python -m harness experiment --build rnc-cp4a --retain-work
 ```
 
 Other active commands:
@@ -191,33 +231,59 @@ python -m harness synthetic  # independent scoring-engine validation
 python -m harness interactive
 ```
 
-`harness.toml.example` is the committed configuration template. `harness.toml` is
-Git-ignored. Dataset caches and temporary scan artifacts remain ignored.
+`harness.toml.example` is the committed configuration template. `harness.toml`
+is Git-ignored. `run/manifest.toml`, executable artifacts, rules, dataset caches,
+and temporary scan artifacts remain ignored.
+
+## Invocation evidence
+
+Every scanner invocation is recorded with:
+
+- scanner and registered manifest build ID;
+- executable SHA-256 or Docker image ID;
+- suite, workload, platform, and invocation type (`detection`, `warmup`,
+  `measured`, or `verification`);
+- the exact executed argv or full `docker run` command, in execution order;
+- exit code, duration, timeout/error status, and report SHA-256.
+
+The JSON report includes the invocation records as `invocations`. The Markdown
+report includes a readable command/execution table. Credential-bearing argument
+values are redacted only when an explicit sensitive flag such as `--password` or
+`--token` is present; the original argv digest is retained. No raw matched
+secret values are serialized.
 
 ## Cleanup and safety
 
-By default the run removes its source checkout, native executable, generated
-Dockerfile, scan copies, and run-owned images/containers. Docker cleanup is scoped
-by a run-specific label and exact image tag; the harness never runs `docker system
-prune`, removes volumes, or traverses unrelated developer files. Cleanup executes
-on success, failure, and exceptions. `--retain-work` is explicit and reported.
+By default the run removes its temporary benchmark workspace, generated
+datasets, and any run-created container identified by the run-specific Docker
+label. `docker run` uses `--rm --pull=never`; the adapter also removes its exact
+named container if a run times out or is interrupted. Cleanup executes on
+success, failure, and exceptions.
 
-Historical source commits execute build-time code. Run this harness only on
-dedicated development/benchmark infrastructure, never on the RNC production website
-VPS. Do not provide production credentials, volumes, or deployment secrets.
+**Registered Docker images are never deleted.** The harness never runs
+`docker image rm`, `docker system prune`, `docker rmi`, or volume removal, and
+it never traverses unrelated developer files. `--retain-work` is explicit and
+reported.
+
+The operator is responsible for the provenance and trustworthiness of local
+scanner artifacts. Run this harness only on dedicated development/benchmark
+infrastructure, never on the RNC production website VPS. Do not provide
+production credentials, volumes, or deployment secrets.
 
 ## Evidence and reproducibility
 
-Each experiment report records source repository/commit and HEAD verification,
-adapter identity, profile and config provenance, build status/toolchain, executable
-SHA-256 or Docker image ID, platform/architecture, dataset/oracle revisions, every
-applicable benchmark outcome, normalized history findings, defensible detection
-metrics, unscored observations, performance iterations, errors, and cleanup status.
+Each experiment report records the local manifest path/SHA-256, registered build
+ID, source-commit metadata, adapter identity, profile and config provenance,
+artifact verification result, executable SHA-256 or Docker image ID,
+platform/architecture, dataset/oracle revisions, every applicable benchmark
+outcome, normalized history findings, defensible detection metrics, unscored
+observations, performance iterations, every exact scanner invocation, errors,
+and cleanup status.
 
 Reports are written as one Markdown and one JSON file with a predictable,
-collision-resistant name containing scanner, commit, and profile. Previous reports
-are never silently overwritten. Full artifacts remain compact enough to review;
-temporary full evidence stays under ignored `work/`.
+collision-resistant name containing scanner, source-commit metadata, and
+profile. Previous reports are never silently overwritten. Full artifacts remain
+compact enough to review; temporary full evidence stays under ignored `work/`.
 
 ## Datasets
 
@@ -246,25 +312,26 @@ See [`datasets/manifest.toml`](datasets/manifest.toml) and
 
 | Path | Purpose |
 | --- | --- |
-| `harness/experiment.py` | One-scanner source-commit orchestration, performance, and report assembly |
-| `harness/source.py` | Exact-commit disposable checkout and HEAD verification |
-| `harness/workspace.py` | Run-owned temporary workspace and scoped cleanup |
-| `harness/builds.py` | Scanner-independent native/Docker build primitives |
-| `harness/adapters/` | Adapter contract, Gitleaks adapter, Betterleaks adapter |
+| `run-manifest.example.toml` | Tracked example of the Git-ignored `run/manifest.toml` |
+| `harness/artifacts.py` | Local artifact manifest parsing, executable/image/rules verification |
+| `harness/experiment.py` | One-registered-build orchestration, performance, and report assembly |
+| `harness/workspace.py` | Run-owned temporary workspace and container-only cleanup |
+| `harness/adapters/` | Adapter contract, Gitleaks/Betterleaks/RNC adapters |
 | `harness/profile.py` | DEFAULT/CUSTOM profiles and provenance |
 | `harness/suites/` | Benchmark suite implementations |
+| `harness/execution.py` | Deterministic invocation, exact argv capture, report parsing |
 | `harness/scoring_engine.py` | Scanner-independent scoring |
 | `harness/rnclab.py` | Certified RNC Lab v3 validation, exact-value attribution, and run-owned load generation |
 | `harness/history_oracle.py` | Owner-approved historical oracle loading and source validation |
 | `harness/history_matching.py` | Ancestry-aware, typed history matcher and accountability ledger |
 | `harness/rescore.py` | Offline rescoring of retained normalized history findings |
-| `harness/performance.py`, `harness/telemetry.py` | Repeated performance measurements, environment profiles, and OS/container telemetry |
-| `harness/reporting.py` | Compact Markdown and machine-readable JSON reports |
-| `docs/checkpoints/` | CP1A–CP1E, CP2, and CP3 reports |
-| `reports/cp3/` | Representative CP3 experiment evidence |
+| `harness/performance.py`, `harness/telemetry.py` | Repeated measurements, environment profiles, and OS/container telemetry |
+| `harness/reporting.py` | Markdown/JSON reports including exact invocation evidence |
+| `docs/checkpoints/` | CP1A–CP11 reports |
+| `reports/baseline-20261112/` | Authoritative retained baseline evidence |
 
-Historical CP1A–CP2 reports remain intact. No application source is modified, no
-application branch is touched, and this orphan branch is never merged into Gitleaks
+Historical CP1A–CP10 reports remain intact. No application source is modified, no
+application branch is touched, and this orphan branch is never merged into
 application history.
 
 ## Licensing

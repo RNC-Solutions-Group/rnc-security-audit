@@ -113,6 +113,8 @@ class RunRecord:
     sequence_index: int = 0
     cache_state: str = "uncontrolled"
     coverage_caveat: dict | None = None
+    command: list[str] | None = None
+    command_sha256: str | None = None
 
 
 def _stats(values: list[float]) -> dict:
@@ -150,6 +152,8 @@ def _run_once(
     sequence_index: int = 0,
     cache_state: str = "uncontrolled",
     allow_partial: bool = False,
+    suite: str | None = None,
+    workload_key: str | None = None,
 ) -> RunRecord:
     out_dir.mkdir(parents=True, exist_ok=True)
     try:
@@ -162,6 +166,10 @@ def _run_once(
                 mode=plan.mode,
                 timeout_seconds=plan.timeout_seconds,
                 collect_telemetry=True,
+                artifact=artifact,
+                invocation_type=phase,
+                suite=suite,
+                workload=workload_key,
             )
         else:
             invocation = adapter.invoke_container(
@@ -173,6 +181,10 @@ def _run_once(
                 mode=plan.mode,
                 timeout_seconds=plan.timeout_seconds,
                 collect_telemetry=True,
+                artifact=artifact,
+                invocation_type=phase,
+                suite=suite,
+                workload=workload_key,
             )
         problem = adapter.invocation_problem(invocation)
         partial = None
@@ -197,6 +209,7 @@ def _run_once(
             sequence_index=sequence_index,
             cache_state=cache_state,
             coverage_caveat=partial,
+            command=list(invocation.argv),
         )
     except Exception as exc:
         return RunRecord(
@@ -230,6 +243,8 @@ def benchmark_product(
     sequence_index: int = 0,
     cache_state: str = "uncontrolled",
     allow_partial: bool = False,
+    suite: str | None = None,
+    workload_key: str | None = None,
 ) -> dict:
     plan = plan or BenchmarkPlan()
     plan.validate()
@@ -237,6 +252,8 @@ def benchmark_product(
     target = Path(target)
     work_dir = Path(work_dir)
     workload = workload or {}
+    suite = suite or workload.get("suite")
+    workload_key = workload_key or workload.get("key") or workload.get("workload_key")
     records: list[RunRecord] = []
     for index in range(plan.warmups):
         records.append(
@@ -252,6 +269,8 @@ def benchmark_product(
                 sequence_index=sequence_index,
                 cache_state="warmup" if index == 0 else "warm",
                 allow_partial=allow_partial,
+                suite=suite,
+                workload_key=workload_key,
             )
         )
     for index in range(plan.measured_runs):
@@ -268,6 +287,8 @@ def benchmark_product(
                 sequence_index=sequence_index,
                 cache_state=cache_state,
                 allow_partial=allow_partial,
+                suite=suite,
+                workload_key=workload_key,
             )
         )
     measured = [record for record in records if record.phase == "measured" and not record.error]
@@ -325,11 +346,16 @@ def benchmark_product(
             "execution_method": (
                 "docker" if artifact.platform.is_docker else "native"
             ),
+            "build_id": (artifact.metadata or {}).get("build_id"),
+            "source_commit": (artifact.metadata or {}).get("source_commit"),
             "image_id": artifact.image_id,
             "image_tag": artifact.image_tag,
             "artifact_sha256": artifact.artifact_sha256,
             "architecture": artifact.platform.arch,
             "emulated": bool((artifact.metadata or {}).get("emulated", False)),
+            "manifest_sha256": ((artifact.metadata or {}).get("manifest") or {}).get(
+                "sha256"
+            ),
         },
         "benchmark_environment": environment.to_dict(),
         "environment": telemetry.host_metadata(),
@@ -347,6 +373,8 @@ def benchmark_product(
             "scanner_order_controlled": cache_state != "uncontrolled",
             "stress_profile": plan.stress_profile,
             "environment_mode": environment.mode,
+            "suite": suite,
+            "workload_key": workload_key,
         },
         "runs": [record.__dict__ for record in records],
         "summary": {
