@@ -7,7 +7,8 @@ explicitly opts in.
 
 | Report | Scanner | Purpose |
 | --- | --- | --- |
-| [`baseline-20261112/`](baseline-20261112/README.md) | Gitleaks / RNC / Betterleaks (blocked) | **Authoritative CP10 baseline:** source-built native/Docker experiments, RNC Lab canonical and load testing, consolidated index, and explicit blocked cells |
+| [`cp11/`](cp11/README.md) | Gitleaks / RNC CP3 | **CP11 local-artifact execution evidence:** executable/image verification, exact invocation commands, blocked-hash behavior, and the CP3 native smoke |
+| [`baseline-20261112/`](baseline-20261112/README.md) | Gitleaks / RNC / Betterleaks (blocked) | **Historical CP10 source-build baseline:** native/Docker experiments, RNC Lab canonical and load testing, consolidated index, and explicit blocked cells. Preserved for comparison; not directly reproducible under CP11 without operator artifacts |
 | [`cp5d1/`](cp5d1/) | RNC / Gitleaks / Betterleaks | CP5D.1 rename-lineage hardening, exact negative identities, official 184/89 proposal validation, and retained rescoring |
 | [`cp5d/`](cp5d/) | RNC / Gitleaks / Betterleaks | CP5D lineage-integrity fixes, exact-value negative design, false-positive accounting, and proposed oracle migration |
 | [`cp5c/`](cp5c/) | RNC / Gitleaks / Betterleaks | CP5C historical attribution corrections, 19-finding reconciliation, and cross-scanner before/after rescoring |

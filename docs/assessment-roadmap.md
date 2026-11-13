@@ -21,6 +21,12 @@ The harness is a test tool, not a Gitleaks fork or a replacement for the origina
 
 ## Checkpoints
 
+> **Historical workflow note:** CP0–CP10 below describe the workflows used at
+> those checkpoints. Sections that mention source acquisition, checkouts, or
+> scanner builds are historical. CP11 is the current execution model:
+> operator-provided local artifacts from `run/manifest.toml`, verified and
+> executed without cloning, compiling, building, or pulling scanners.
+
 ### CP0 — Isolated foundation
 
 **State:** Accepted 2026-11-09.

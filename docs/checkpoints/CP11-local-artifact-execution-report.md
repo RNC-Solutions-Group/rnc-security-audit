@@ -135,6 +135,14 @@ present in the ignored local workspace. Representative reports are retained in
 | RNC CP5 local | executable SHA-256 `321fbdb3…` | `synthetic-filesystem` | PASS; 4/4 expected | 2 |
 | RNC CP5 local | Docker image `sha256:f05f1b34…` | `synthetic-filesystem` | PASS; 4/4 expected | 2 |
 | RNC CP5 local | executable SHA-256 `321fbdb3…` | `leaky-repo` | PASS; filesystem + 25-commit history; 21/65 approved occurrences | 7 |
+| RNC CP3 local | executable SHA-256 `284c4c98…` | `synthetic-filesystem` + `levain` | PASS; 4/4 synthetic, 32/85 Levain TP, 0 FP | 6 |
+
+The CP3 native smoke was executed after the operator registered the CP3
+executable/rules and the `rnc-scanner:cp3-amd64` image in the local manifest. It
+used ruleset `rnc-providers-v1` version `2026.11.2` (19 rules), recorded the
+ruleset digest from `rnc rules validate`, and matched the historical CP3 Levain
+result exactly (32/85 TP, 0 FP). The CP3 Docker AMD64 and ARM64 artifacts verify
+by image ID/architecture but were not executed in this native smoke.
 
 Docker smoke evidence recorded the full `docker run` command, including
 `--rm`, `--pull=never`, image tag/ID, labels, mounts, and scanner arguments. The
@@ -158,11 +166,11 @@ zero scanner invocations, and overall `INCOMPLETE`.
 ## Limitations and pending operator input
 
 - The operator's real `run/manifest.toml` and executables are not committed, by
-  design. CP3/CP4A operator-built artifacts were not available for this
-  checkpoint; real execution used existing local CP5/Gitleaks artifacts.
-- No ARM64 Docker image was available; ARM64 selection would be verified by ID
-  and architecture, and would be `BLOCKED` if an AMD64 image were registered for
-  that product.
+  design. CP3 native/rules and both CP3 Docker images are now registered locally;
+  CP4A uses a CP5-era executable and still references a Docker image that is no
+  longer present, so CP4A Docker remains a local operator follow-up.
+- The CP3 ARM64 Docker image verifies by ID/architecture but was not executed in
+  the native smoke. ARM64 selection remains an explicit operator run.
 - The Docker Gitleaks fixture lane's command capture is implemented through the
   fixture validator's recorded `docker_command`; the real smoke test exercised
   the native fixture lane. Docker fixture execution remains available but was

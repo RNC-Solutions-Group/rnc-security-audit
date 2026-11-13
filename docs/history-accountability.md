@@ -229,10 +229,11 @@ commit identity is `NOT_APPLICABLE` for history scoring, not zero recall.
 - Unsupported Git mode is reported as `NOT_APPLICABLE`, not as zero detection.
 - Detection and performance remain separate; history runs do not feed the
   filesystem score.
-- Source-commit builds execute history with the same disposable checkout as the
-  filesystem and performance lanes.
+- Registered scanner artifacts execute history against the pinned repository
+  revision; the harness requires no scanner source checkout or build.
 - RNC CP4/CP4A runs `--history --ref HEAD` so its history scope is the pinned
   HEAD's reachable 25 commits, not every local ref. Its units are changed
   commit/path revisions, not full snapshots; all 166 revisions must be
-  `INSPECTED` before the suite scores. Docker installs Git, mounts the repository
-  including `.git` read-only, and disables network access.
+  `INSPECTED` before the suite scores. The registered Docker image must provide
+  Git; history execution mounts the repository including `.git` read-only and
+  disables network access.

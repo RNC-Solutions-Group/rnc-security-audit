@@ -1,12 +1,10 @@
 # RNC Gitleaks Docker Acceptance
 
-> **Vendored Docker lane.** The consolidated entry point is
-> `python -m harness consolidate ...`. To run this lane directly, pass
-> `--fixture-root <pinned cache source>` and `--fixture-revision
-> 5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c`; the fixture cache is prepared by
-> `harness.fixtures`. The legacy examples below describe the original standalone
-> layout; its image is now built from the target source by the consolidated
-> orchestrator.
+> **Legacy internal fixture validator.** This lane is normally invoked through
+> the Gitleaks adapter's fixture hooks, using the registered local Gitleaks image.
+> For direct debugging, run `python -m harness.docker.validate` with an existing
+> local image, the pinned fixture cache prepared by `harness.fixtures`, and the
+> full fixture revision. No source build, image build, or image pull occurs.
 
 ```text
 RRRRR  N   N  CCCCC
@@ -21,50 +19,48 @@ www.rncsolutionsgroup.com
 
 Contributed by: Dave Woods (@davidwoods15)
 
-This standard-library Python harness executes Gitleaks CLI acceptance cases inside an operator-supplied local Docker image. It never builds, pulls, retags, or removes the Gitleaks image, and it does not replace Gitleaks' Go test suite. For symlink staging, Docker may pull the small `alpine:3.24` helper if it is not already local.
+This standard-library Python harness executes Gitleaks CLI acceptance cases inside an operator-supplied local Docker image. It never builds, pulls, retags, or removes the Gitleaks image, and it does not replace Gitleaks' Go test suite. The Linux symlink-staging helper image must also already exist locally; no pull fallback is attempted.
 
 ## Requirements
 
 - Python 3.11 or newer.
 - Docker CLI and a running Docker Engine or Docker Desktop daemon.
 - The desired Gitleaks image already present locally.
-- A repository checkout containing the upstream `testdata/` fixtures.
+- The pinned fixture checkout prepared by `harness.fixtures` (contains
+  `testdata/` and `.git`).
 
 The harness uses only Python's standard library. On Windows, Docker Desktop must be able to bind-mount the checkout. WSL2 users should run from a WSL checkout when possible. Native Linux uses the same commands and stable in-container paths.
 
 ## Run
 
 ```powershell
-python _rnc-build/validate.py --image gitleaks:release-latest
+python -m harness.docker.validate `
+  --image gitleaks:release-latest `
+  --fixture-root datasets\cache\gitleaks-fixtures\5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c\source `
+  --fixture-revision 5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c `
+  --reports-dir work\docker-fixtures
 ```
 
-```sh
-python3 _rnc-build/validate.py --image gitleaks:release-latest --scenario-group files
-python3 _rnc-build/validate.py --image gitleaks:pr2308mod \
-  --compare-to _rnc-build/reports/runs/<release-execution-id>/execution.json
-python3 _rnc-build/validate.py --image gitleaks:rnc-base \
-  --compare-to _rnc-build/reports/runs/<release-execution-id>/execution.json
-python3 _rnc-build/validate.py --image gitleaks:release-latest \
-  --scenario-group archives --scenario-group git
-python3 _rnc-build/validate.py --image gitleaks:release-latest --scenario-group symlinks
+```powershell
+python -m harness.docker.validate --image gitleaks:release-latest --scenario-group files --fixture-root <pinned-source> --fixture-revision 5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c --reports-dir work\docker-fixtures
+python -m harness.docker.validate --image gitleaks:release-latest --scenario-group archives --scenario-group git --fixture-root <pinned-source> --fixture-revision 5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c --reports-dir work\docker-fixtures
 ```
 
-Each run gets an immutable `_rnc-build/reports/runs/<execution-id>/` directory containing `execution.json`, `execution.md`, `fixture-assertions.json`, and `fixture-exclusions.json`. Phase 1 reports at the top level remain untouched. Use `--reports-dir` to select another destination. The report records manifest version 2 and harness version 2.4.0.
+Each run gets an immutable `work/docker-fixtures/runs/<execution-id>/` directory containing `execution.json`, `execution.md`, `fixture-assertions.json`, and `fixture-exclusions.json`. Use `--reports-dir` to select another ignored destination. The fixture inventory itself remains the authority for expected coverage.
 
 Generate cumulative reports from saved runs:
 
-```sh
-python3 _rnc-build/aggregate.py --reports-dir _rnc-build/reports \
-  --image-id sha256:<immutable-image-id>
+```powershell
+python -m harness.docker.aggregate --reports-dir work\docker-fixtures --image-id sha256:<immutable-image-id>
 ```
 
 Omit `--image-id` to produce separate aggregates for every compatible image/manifest/revision group. Inspect a run's complete exclusions with:
 
-```sh
-python3 _rnc-build/exclusions.py _rnc-build/reports/runs/<execution-id>/execution.json
+```powershell
+python -m harness.docker.exclusions work\docker-fixtures\runs\<execution-id>\execution.json
 ```
 
-Run the harness's pure logic self-tests with `python _rnc-build/test_evidence.py`. `--scenario-group` may be repeated; unselected scenarios remain `NOT RUN` and their applicable fixtures appear in exclusions.
+Run the harness's pure logic self-tests with `python -m unittest harness.docker.test_evidence`. `--scenario-group` may be repeated; unselected scenarios remain `NOT RUN` and their applicable fixtures appear in exclusions.
 
 The harness inspects the image ID, platform, entrypoint, tags, digests, and labels, then executes Gitleaks containers with `--pull=never --network none`. Fixture/config mounts and scan workspaces are read-only inside each Gitleaks container. CLI JSON is parsed in memory; raw report output is not written to disk. Reports contain secret hashes, sanitized finding fields, exit codes, and output hashes, not raw secret values.
 
@@ -80,9 +76,9 @@ Exit codes are `0` for complete pass, `1` for an acceptance failure, and `2` for
 - `fixtures/` contains synthetic format, encoded, clean, and baseline inputs.
 - `reports/runs/` contains immutable per-execution evidence; `reports/aggregates/` contains cumulative image-scoped evidence.
 
-All container paths are stable under `/rnc/testdata`, `/rnc/local`, and `/rnc/work`. Git history/staged cases copy the upstream `dotGit` fixture to `_rnc-build/.work*/`, restore it as `.git`, and mount the staged copy read-only. The small Git fixture has stale remote-tracking metadata; only those remote refs are removed from the disposable copy. Local branch refs and commit objects remain intact.
+All container paths are stable under `/rnc/testdata`, `/rnc/local`, and `/rnc/work`. Git history/staged cases copy the upstream `dotGit` fixture to an ignored `harness/docker/.work*/` directory, restore it as `.git`, and mount the staged copy read-only. The small Git fixture has stale remote-tracking metadata; only those remote refs are removed from the disposable copy. Local branch refs and commit objects remain intact.
 
-For symlink scenarios, the runner reads the symlink mode and target from the exact fixture source revision, creates a uniquely named temporary Docker volume, copies `testdata` into it with `alpine:3.24`, recreates the link from that Git blob, verifies `test -L`, target resolution, and the relative target, then mounts the volume read-only at `/rnc/testdata` for the network-isolated Gitleaks scan. Only the volume created by that execution is removed. No host Windows symlink semantics or preexisting named volume are required. The helper image may be pulled if unavailable; the Gitleaks image under test is never pulled.
+For symlink scenarios, the runner reads the symlink mode and target from the exact fixture source revision, creates a uniquely named temporary Docker volume, copies `testdata` into it with the locally available `alpine:3.24` helper image, recreates the link from that Git blob, verifies `test -L`, target resolution, and the relative target, then mounts the volume read-only at `/rnc/testdata` for the network-isolated Gitleaks scan. Only the volume created by that execution is removed. No host Windows symlink semantics or preexisting named volume are required. Both the helper image and the Gitleaks image must already be local; neither is pulled.
 
 ## Expected Results
 
@@ -112,7 +108,7 @@ Reports record the exact requested tag, immutable image ID/digests, runtime vers
 
 `fixture-inventory.lock.json` is the pinned full file inventory derived from `cases.json`, the upstream source revision, and discovered files under `testdata/` and `fixtures/`. Each physical record carries a content hash; upstream Git symlinks also carry their Git mode, blob ID, and link target so Windows checkout representation does not erase their Linux semantics. Scenario bundles are hashed from their physical child records and are not counted as physical files.
 
-Normal execution and aggregation fail closed if the current manifest, source revision, discovered paths, fixture hashes, or lock entries differ. To accept an intentional upstream fixture or manifest change, review the inventory diff, update/justify manifest rules (including any explicit overlapping-glob `override`), then run `python _rnc-build/validate.py --refresh-inventory-lock` and commit the reviewed lock together with the manifest change. Do not refresh solely to clear an integrity error.
+Normal execution and aggregation fail closed if the current manifest, source revision, discovered paths, fixture hashes, or lock entries differ. To accept an intentional upstream fixture or manifest change, review the inventory diff, update/justify manifest rules (including any explicit overlapping-glob `override`), then run `python -m harness.docker.validate --refresh-inventory-lock` and commit the reviewed lock together with the manifest change. Do not refresh solely to clear an integrity error.
 
 The runner records a SHA-256 harness implementation identity over the execution, evidence, lock, aggregation, and exclusions modules. Aggregation requires the exact image ID, manifest digest/version, fixture source revision, inventory digest, harness version, and implementation identity. It recomputes inventory membership independently and reconciles every incoming execution before counting successful fixture assertions.
 

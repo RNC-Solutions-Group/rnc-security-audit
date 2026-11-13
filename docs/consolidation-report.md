@@ -1,5 +1,9 @@
 # Consolidation report — Docker harness and executable harness
 
+> **Historical record.** This report documents the retired CP1B/consolidation
+> source-build workflow on the old `test/scan-harness` branch. It is preserved as
+> evidence and is superseded by CP11 local-artifact execution.
+
 **Branch:** `test/scan-harness`
 **Authorized work:** consolidate the legacy Docker acceptance harness with the
 CP1A executable harness. CP2 was not started.

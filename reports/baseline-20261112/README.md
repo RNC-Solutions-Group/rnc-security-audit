@@ -1,5 +1,11 @@
 # CP10 authoritative scanner baseline — 2026-11-12
 
+> **Historical baseline.** These measurements were produced by the retired CP10
+> source-acquisition/build workflow on branch `test/scan-harness`. CP11 executes
+> operator-provided executables and locally retained Docker images; it does not
+> clone or build scanner source. This evidence is preserved for comparison and
+> is not directly reproducible under CP11 without the matching local artifacts.
+
 **Status: PARTIAL / NOT A COMPLETE FOUR-SCANNER BASELINE.** The completed
 Gitleaks native+Docker and RNC native cells are authoritative CP10 measurements.
 Betterleaks and both RNC Docker cells are explicitly blocked by missing local

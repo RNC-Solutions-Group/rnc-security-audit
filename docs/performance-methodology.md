@@ -115,13 +115,19 @@ values remain historical evidence only. See
 | Gitleaks | 0.786 s | 3.578 s | 6.929 s |
 | Betterleaks | 0.683 s | 2.870 s | 9.249 s |
 
-## CP3 source-built experiments
+## CP3 historical source-built experiments (superseded by CP11)
 
-CP3 performance runs are attached to each independent source-commit experiment.
+> **Historical note:** these CP3 measurements were produced by the retired
+> source-acquisition/build workflow. CP11 executes operator-provided artifacts
+> and has no scanner build step, so CP3 build times and artifact provenance are
+> not directly reproducible under the current harness.
+
+CP3 performance runs are attached to each independent source-build experiment.
 No cross-scanner weighted score or comparison transaction exists. Each experiment
-records its source commit, executable hash/image ID, build duration separately,
+records source-commit metadata, executable hash/image ID, artifact verification,
 every measured iteration, median/min/max/stdev/CV, file/byte counts, CPU and peak
 memory where available, host toolchain, and native/container/emulated labels.
+No scanner build duration exists for operator-provided CP11 artifacts.
 
 Final representative evidence (610 files / 5,888,020 bytes; native and both
 Docker products: 5 warm-ups + 7 measured runs):

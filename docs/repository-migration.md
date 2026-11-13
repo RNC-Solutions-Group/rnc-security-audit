@@ -1,49 +1,55 @@
-# Repository migration cleanup specification
+# Repository layout and local artifact policy
 
-**Status:** specification only. CP3 does **not** migrate repositories, delete
-historical CP1A–CP2 evidence, or restructure tracked files. CP3 removes retired
-harness code from this orphan branch but does not rewrite Git history.
+**Status:** current. This supersedes the CP3-era migration specification. The
+harness has been relocated to `RNC-Solutions-Group/rnc-security-audit` on the
+orphan `benchmark-harness` branch, and CP11 replaced source acquisition/builds
+with operator-provided local artifacts.
 
-The harness currently lives on the orphan `test/scan-harness` branch. When it is
-relocated to a permanent repository, apply the following tracked/ignored split.
+## Current repository
+
+- Repository: `https://github.com/RNC-Solutions-Group/rnc-security-audit`
+- Branch: `benchmark-harness` (orphan; never merged into application branches)
+- Scanner source is **not** cloned or compiled by the harness.
+- Scanner executables, rules, and `run/manifest.toml` are local operator inputs.
+- Docker images remain in the local Docker image store.
 
 ## Git-tracked
 
-- Harness source (`harness/`).
-- Unit/integration tests and controlled synthetic fixtures (`tests/`).
-- Configuration examples (`harness.toml.example`).
-- Dataset manifests and provenance (`datasets/manifest.toml`, fixture manifests).
-- Truth manifests and history scope models (`datasets/leaky-repo.rnc-truth.json`,
-  `datasets/leaky-repo.history-scope.json`).
-- Scoring and history contracts (`docs/scoring-contract.md`,
-  `docs/history-accountability.md`).
-- Benchmark methodology (`docs/performance-methodology.md`).
-- Concise checkpoint summaries and compact experiment evidence.
+- Harness source (`harness/`) and tests (`tests/`).
+- Configuration example (`harness.toml.example`).
+- Local-manifest example (`run-manifest.example.toml`).
+- Dataset manifests, provenance, truth manifests, and history-scope models
+  (`datasets/`).
+- Current contracts and methodology (`docs/scoring-contract.md`,
+  `docs/history-accountability.md`, `docs/performance-methodology.md`,
+  `docs/architecture.md`).
+- Concise checkpoint summaries and compact, sanitized experiment evidence.
 - Small sanitized experiment reports that are reviewable in a diff.
 
-## Git-ignored or external artifact storage
+## Git-ignored / local-only
 
-- Full per-finding JSON reports, including evaluation arrays.
-- Raw scanner reports and scanner stdout/stderr.
-- Debug logs and tracebacks.
-- Detailed execution traces.
-- Runtime telemetry sample arrays.
-- Temporary scanner artifacts and extracted benchmark datasets.
-- Full fixture trees and caches.
+- `run/` — operator executables, rules, and the actual `run/manifest.toml`.
+- Docker images — retained in Docker's local image store, never in Git.
+- Dataset caches and extracted corpora (`datasets/cache/`).
+- Raw scanner reports, stdout/stderr, debug logs, tracebacks, telemetry sample
+  arrays, and temporary scan artifacts.
+- Generated benchmark workspaces (`work/`), local reports (`reports/local/`),
+  Python caches, and other disposable build/scan output.
+- `AGENTS.md` is currently workstation-local; decide separately whether a
+  sanitized shared version should be tracked.
 
 ## Requirements
 
-- Full artifacts remain accessible through configurable destinations and optional
-  CI artifact retention.
-- Committed summaries include source repository and exact commit, checkout HEAD
-  verification, scanner/product identity, manifest hashes, benchmark/performance
-  version, and host/architecture labels sufficient to associate them with
-  detailed evidence.
-- Source commit remains the primary identity; executable hashes and image IDs are
-  supporting provenance.
+- The verified executable SHA-256 or Docker image ID is the runtime scanner
+  identity. Source commits in the manifest are provenance metadata only.
+- Reports record the local manifest path/SHA-256, registered build ID,
+  executable/image identity, suite/workload/platform, and exact invocation
+  commands.
 - Sanitized reports never contain raw credential values.
 - Raw destinations must be Git-ignored or outside tracked source; the existing
-  safety check is retained.
-- CP1A–CP2 historical reports and CP3 experiment evidence are preserved as
-  historical evidence unless a separate retention decision authorizes removal.
-- The migration must not rewrite Git history.
+  safety check remains in force.
+- Historical CP1A–CP10 reports are preserved as historical evidence. They
+  describe the retired source-build workflow and are not rewritten.
+- The harness never deletes or retags registered scanner images or `run/`
+  artifacts.
+- No migration or cleanup rewrites Git history.

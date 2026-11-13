@@ -1,0 +1,3167 @@
+{
+  "adapter": {
+    "key": "rnc",
+    "name": "RNC Scanner",
+    "supported_suites": [
+      "synthetic-filesystem",
+      "levain",
+      "leaky-repo",
+      "rnclab"
+    ]
+  },
+  "artifact_manifest": {
+    "path": "run/manifest.toml",
+    "registered_builds": [
+      "gitleaks-latest",
+      "betterleaks-latest",
+      "gl-rnc-mod-v10",
+      "rnc-cp3",
+      "rnc-cp3-arm64",
+      "rnc-cp4a-local"
+    ],
+    "schema_version": 1,
+    "sha256": "6aef0938ab5ef6917b13c2f3250cf3be5ab1529f00daa01ad5e61e4ba79106ad"
+  },
+  "benchmark_environment": {
+    "allowed_stress_profiles": [
+      "none",
+      "cpu",
+      "memory",
+      "io",
+      "network"
+    ],
+    "contention": "uncontrolled",
+    "description": "contended developer workstation; functional and preliminary timing",
+    "documented_conditions": "not a controlled benchmark host",
+    "mode": "DEV",
+    "publishable": false,
+    "stability_threshold": 0.25,
+    "stress_profile": "none"
+  },
+  "builds": {
+    "windows-amd64": {
+      "artifact_path": "C:\\Dev\\rnc-benchmark-harness\\run\\rnc-cp3.exe",
+      "artifact_sha256": "284c4c981401b8328648290f8d24b5e788669dbf1e5f995638427ae352b9a8c3",
+      "command": [],
+      "duration_seconds": 0.0,
+      "error": null,
+      "exit_code": null,
+      "image_id": null,
+      "image_tag": null,
+      "metadata": {
+        "architecture_verified": false,
+        "artifact_kind": "executable",
+        "artifact_origin": "operator-provided-local-artifact",
+        "build_command": "not required: operator-provided local artifact",
+        "build_id": "rnc-cp3",
+        "capabilities": [
+          "filesystem"
+        ],
+        "docker_image": "rnc-scanner:cp3-amd64",
+        "docker_image_id": null,
+        "docker_image_id_expected": "sha256:469d9f1d33c1e30e534993d9540c81fe445ac6d55f99f21ff5b99548eb774d1d",
+        "docker_image_id_verified": false,
+        "emulated": false,
+        "executable": "rnc-cp3.exe",
+        "executable_hash_verified": true,
+        "executable_sha256": "284c4c981401b8328648290f8d24b5e788669dbf1e5f995638427ae352b9a8c3",
+        "executable_sha256_actual": "284c4c981401b8328648290f8d24b5e788669dbf1e5f995638427ae352b9a8c3",
+        "executable_sha256_expected": "284c4c981401b8328648290f8d24b5e788669dbf1e5f995638427ae352b9a8c3",
+        "execution_method": "native",
+        "history_capability": false,
+        "history_capability_source": "operator-provided manifest capabilities",
+        "host_architecture": "amd64",
+        "image_os_architecture": null,
+        "manifest": {
+          "path": "run/manifest.toml",
+          "schema_version": 1,
+          "sha256": "6aef0938ab5ef6917b13c2f3250cf3be5ab1529f00daa01ad5e61e4ba79106ad"
+        },
+        "platform": "windows-amd64",
+        "pull_policy": "never",
+        "rules_file": "rules/rnc-cp3-providers-v1.json",
+        "rules_hash_verified": true,
+        "rules_sha256": "0d21dfe17107e61292bc6eb2f8ff975021851cc27dcbf627e6eeef05a3bd0eb4",
+        "rules_sha256_actual": "0d21dfe17107e61292bc6eb2f8ff975021851cc27dcbf627e6eeef05a3bd0eb4",
+        "rules_sha256_expected": "0d21dfe17107e61292bc6eb2f8ff975021851cc27dcbf627e6eeef05a3bd0eb4",
+        "ruleset": {
+          "component_extractors": [],
+          "digest": "sha256:3ddd1e0aee36ecadb67ee8a2032fbe3a6047803bb56c0d45d65f85851c9b2142",
+          "digest_validation": "PASS",
+          "digest_validation_command": [
+            "C:\\Dev\\rnc-benchmark-harness\\run\\rnc-cp3.exe",
+            "rules",
+            "validate",
+            "--rules",
+            "C:\\Dev\\rnc-benchmark-harness\\run\\rules\\rnc-cp3-providers-v1.json",
+            "--strategy",
+            "auto"
+          ],
+          "family_count": 12,
+          "path": "rules/rnc-cp3-providers-v1.json",
+          "rule_count": 19,
+          "ruleset_id": "rnc-providers-v1",
+          "ruleset_version": "2026.11.2",
+          "schema_version": "0.2.0",
+          "sha256": "0d21dfe17107e61292bc6eb2f8ff975021851cc27dcbf627e6eeef05a3bd0eb4",
+          "source": "operator-provided rules_file in run/manifest.toml"
+        },
+        "scanner": "rnc",
+        "source_commit": "5391d8457ea091c45733920078a7f714ec61f678",
+        "source_commit_verified": false,
+        "source_identity": "manifest-metadata",
+        "source_repository": "https://github.com/RNC-Solutions-Group/rnc-security-audit",
+        "source_verification_note": "Source commit is operator-supplied metadata. No scanner source was cloned, checked out, or compiled by the harness.",
+        "version": "0.1.0"
+      },
+      "platform": {
+        "arch": "amd64",
+        "docker_platform": null,
+        "goarch": "amd64",
+        "goos": "windows",
+        "key": "windows-amd64",
+        "kind": "executable",
+        "os_name": "windows"
+      },
+      "status": "PASS",
+      "stderr_sha256": "",
+      "stdout_sha256": "",
+      "version": "0.1.0",
+      "version_status": "PASS"
+    }
+  },
+  "cleanup": {
+    "actions": [
+      "No Docker artifact was executed; no container cleanup was required.",
+      "Removed run-owned benchmark workspace, generated datasets, and evidence."
+    ],
+    "containers_removed": [],
+    "failures": [],
+    "images_removed": [],
+    "retained": false,
+    "status": "PASS",
+    "workspace": "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a",
+    "workspace_removed": true
+  },
+  "datasets": {
+    "levain": {
+      "license_sha256": "77cc69213a9c08cbd96f731793cff881a4b40a1d0682c70c70a1846afc700043",
+      "manifest_sha256": "3fe1da96dfdeefd4c7d36f3fc7302b3b95aab56a2a7faa1837196e7ea6f80eb3",
+      "name": "Levain FP Corpus (negative and positive fixtures)",
+      "revision": "c130c321aa9046af17a6c876cb97e2ed71397110"
+    }
+  },
+  "detection": {
+    "leaky_filesystem": {
+      "legacy_count_coverage": {
+        "coverage_percent": null,
+        "covered_count": null,
+        "excess_findings": null,
+        "expected_count": null,
+        "expected_files": null,
+        "files_covered": null,
+        "label": "LEGACY COUNT COVERAGE",
+        "unlisted_findings": null
+      },
+      "methodology": "legacy_count_plus_rich_line_truth",
+      "rich_line_truth": {
+        "category_conflict_items": null,
+        "detection_recall_percent": null,
+        "duplicate_count": null,
+        "expected_count": null,
+        "f1_percent": null,
+        "line_only_count": null,
+        "matched_count": null,
+        "missed_count": null,
+        "negative_oracle": false,
+        "precision_percent": null,
+        "unexpected_count": null,
+        "value_verified_count": null
+      }
+    },
+    "leaky_history": {
+      "commits_scanned": null,
+      "coverage_verified": null,
+      "denominator": "65 source occurrences / 53 unique groups",
+      "duplicate_count": null,
+      "execution_status": null,
+      "expected_commits": null,
+      "expected_occurrences": null,
+      "f1_percent": null,
+      "informative_match_count": null,
+      "matched_occurrences": null,
+      "missed_occurrences": null,
+      "observed_findings": null,
+      "occurrence_recall_percent": null,
+      "precision_certification_status": null,
+      "precision_percent": null,
+      "scope_matches": null,
+      "score_status": null,
+      "scored": false,
+      "truth_status": null,
+      "unique_expected": null,
+      "unique_matched": null,
+      "unique_recall_percent": null,
+      "unique_secret_fingerprints": null,
+      "unmatched_pending_review_count": null,
+      "unverified_evidence_count": null,
+      "verified_false_positive_count": null
+    },
+    "levain": {
+      "control_reported": true,
+      "coverage_verified": true,
+      "duplicates": 0,
+      "expected_secrets": 85,
+      "f1_percent": 54.7,
+      "false_positives": 0,
+      "negative_oracle": true,
+      "partial_matches": 0,
+      "precision_percent": 100.0,
+      "recall_percent": 37.65,
+      "true_positives": 32,
+      "unexpected_findings": 3
+    },
+    "rnclab": {
+      "build": null,
+      "denominators": {
+        "filesystem_total_items": 1282,
+        "git_total_items": 320,
+        "positive_occurrences": 800,
+        "unique_credential_identities": 496
+      },
+      "filesystem": {
+        "duplicate_count": null,
+        "expected_positives": null,
+        "expected_unique_groups": null,
+        "f1_percent": null,
+        "false_negative_occurrences": null,
+        "informative_match_count": null,
+        "occurrence_recall_percent": null,
+        "precision_certification_status": null,
+        "precision_percent": null,
+        "true_positive_occurrences": null,
+        "unique_groups_matched": null,
+        "unique_recall_percent": null,
+        "unmatched_pending_review_count": null,
+        "unsupported_capability_count": null,
+        "unverified_evidence_count": null,
+        "verified_false_positive_alert_count": null
+      },
+      "git": {
+        "lanes": {},
+        "supported": null
+      },
+      "lab": null
+    },
+    "synthetic_filesystem": {
+      "accounted_observed_count": 4,
+      "ambiguous_count": 0,
+      "blocked_count": 0,
+      "category_conflict_items": 0,
+      "category_metrics": {
+        "risk": {
+          "expected": 4,
+          "matched": 4,
+          "missed": 0
+        }
+      },
+      "detection_recall_percent": 100.0,
+      "duplicate_count": 0,
+      "execution_error_count": 0,
+      "execution_status": "PASS",
+      "expected_count": 4,
+      "f1_percent": 100.0,
+      "false_positive_count": 0,
+      "finding_accounting_reconciled": true,
+      "finding_review_pending_count": 0,
+      "informative_match_count": 0,
+      "line_only_count": 0,
+      "matched_count": 4,
+      "missed_count": 0,
+      "negative_oracle": true,
+      "not_applicable_count": 0,
+      "observed_count": 4,
+      "partial_count": 0,
+      "precision_certification_status": "ELIGIBLE",
+      "precision_percent": 100.0,
+      "skipped_count": 0,
+      "unexpected_count": 0,
+      "unmapped_count": 0,
+      "unmatched_pending_review_count": 0,
+      "unverified_evidence_count": 0,
+      "value_verified_count": 4,
+      "verified_false_positive_count": 0
+    },
+    "synthetic_history": {}
+  },
+  "detection_by_product": {
+    "windows-amd64": {
+      "levain": {
+        "metrics": {
+          "control_reported": true,
+          "coverage_verified": true,
+          "duplicates": 0,
+          "expected_secrets": 85,
+          "false_positives": 0,
+          "negative_control_status": "COMPLETED",
+          "negative_corpus_findings": null,
+          "partial_matches": 0,
+          "true_positives": 32,
+          "unexpected_findings": 3
+        },
+        "outcome": "COMPLETED_AND_SCORED",
+        "reason": null,
+        "status": "PASS"
+      },
+      "synthetic-filesystem": {
+        "metrics": {
+          "accounted_observed_count": 4,
+          "ambiguous_count": 0,
+          "blocked_count": 0,
+          "category_conflict_items": 0,
+          "category_metrics": {
+            "risk": {
+              "expected": 4,
+              "matched": 4,
+              "missed": 0
+            }
+          },
+          "detection_recall_percent": 100.0,
+          "duplicate_count": 0,
+          "execution_error_count": 0,
+          "execution_status": "PASS",
+          "expected_count": 4,
+          "f1_percent": 100.0,
+          "false_positive_count": 0,
+          "finding_accounting_reconciled": true,
+          "finding_review_pending_count": 0,
+          "informative_match_count": 0,
+          "line_only_count": 0,
+          "matched_count": 4,
+          "missed_count": 0,
+          "negative_oracle": true,
+          "not_applicable_count": 0,
+          "observed_count": 4,
+          "partial_count": 0,
+          "precision_certification_status": "ELIGIBLE",
+          "precision_percent": 100.0,
+          "skipped_count": 0,
+          "unexpected_count": 0,
+          "unmapped_count": 0,
+          "unmatched_pending_review_count": 0,
+          "unverified_evidence_count": 0,
+          "value_verified_count": 4,
+          "verified_false_positive_count": 0
+        },
+        "outcome": null,
+        "reason": null,
+        "status": "PASS"
+      }
+    }
+  },
+  "generated_at": "2026-11-13T19:08:46Z",
+  "harness_version": "0.6.0",
+  "host": {
+    "capacity": {
+      "cpu_count": 8,
+      "disk": {
+        "free_bytes": 136914030592,
+        "total_bytes": 1997447098368,
+        "used_bytes": 1860533067776,
+        "used_percent": 93.15
+      },
+      "load_average": null,
+      "memory_available_bytes": 15363497984,
+      "memory_bytes": 34047959040,
+      "memory_load_percent": 54,
+      "method": "stdlib"
+    },
+    "cpu_count": 8,
+    "hostname_kind": "redacted",
+    "machine": "AMD64",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+    "python": "3.13.5",
+    "system": "Windows",
+    "toolchain": {
+      "docker": "29.9.3",
+      "git": "git version 2.45.2.windows.1",
+      "python": "Python 3.13.5"
+    }
+  },
+  "invocations": [
+    {
+      "arguments": [
+        "rules",
+        "validate",
+        "--rules",
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rules\\rnc-cp3-providers-v1.json",
+        "--strategy",
+        "auto"
+      ],
+      "artifact_kind": "executable",
+      "build_id": "rnc-cp3",
+      "command": [
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rnc-cp3.exe",
+        "rules",
+        "validate",
+        "--rules",
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rules\\rnc-cp3-providers-v1.json",
+        "--strategy",
+        "auto"
+      ],
+      "command_redacted": false,
+      "command_sha256": "f50390e18be80caf0cd1782cb1c17a18261dd330ae499d4841554f29604dfe5a",
+      "docker_image": null,
+      "docker_image_id": null,
+      "duration_seconds": 0.073,
+      "error_code": null,
+      "error_message": "",
+      "executable": "C:\\Dev\\rnc-benchmark-harness\\run\\rnc-cp3.exe",
+      "executable_sha256": "284c4c981401b8328648290f8d24b5e788669dbf1e5f995638427ae352b9a8c3",
+      "exit_code": 0,
+      "invocation_type": "verification",
+      "manifest_sha256": "6aef0938ab5ef6917b13c2f3250cf3be5ab1529f00daa01ad5e61e4ba79106ad",
+      "mode": "rules-validate",
+      "platform": "windows-amd64",
+      "redacted_argument_indexes": [],
+      "report_sha256": null,
+      "scanner": "rnc",
+      "sequence": 1,
+      "source_commit": "5391d8457ea091c45733920078a7f714ec61f678",
+      "status": "PASS",
+      "suite": null,
+      "timed_out": false,
+      "timeout_seconds": 180,
+      "workload": "ruleset-validation"
+    },
+    {
+      "arguments": [
+        "scan",
+        "--root",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\synthetic-filesystem\\target",
+        "--rules",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\synthetic-filesystem\\scanner-config.json",
+        "--config",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\synthetic-filesystem\\lanes\\windows-amd64\\rnc-isolation.toml",
+        "--output",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\synthetic-filesystem\\lanes\\windows-amd64\\report.json",
+        "--format",
+        "private",
+        "--run-id",
+        "20261113T190843Z-1f07120a"
+      ],
+      "artifact_kind": "executable",
+      "build_id": "rnc-cp3",
+      "command": [
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rnc-cp3.exe",
+        "scan",
+        "--root",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\synthetic-filesystem\\target",
+        "--rules",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\synthetic-filesystem\\scanner-config.json",
+        "--config",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\synthetic-filesystem\\lanes\\windows-amd64\\rnc-isolation.toml",
+        "--output",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\synthetic-filesystem\\lanes\\windows-amd64\\report.json",
+        "--format",
+        "private",
+        "--run-id",
+        "20261113T190843Z-1f07120a"
+      ],
+      "command_redacted": false,
+      "command_sha256": "660f6824227136012e64f6407c7c7840b9c37ea9b667ac68c3c34edc20e927d0",
+      "docker_image": null,
+      "docker_image_id": null,
+      "duration_seconds": 0.047,
+      "error_code": null,
+      "error_message": "",
+      "executable": "C:\\Dev\\rnc-benchmark-harness\\run\\rnc-cp3.exe",
+      "executable_sha256": "284c4c981401b8328648290f8d24b5e788669dbf1e5f995638427ae352b9a8c3",
+      "exit_code": 10,
+      "invocation_type": "detection",
+      "manifest_sha256": "6aef0938ab5ef6917b13c2f3250cf3be5ab1529f00daa01ad5e61e4ba79106ad",
+      "mode": "dir",
+      "platform": "windows-amd64",
+      "redacted_argument_indexes": [],
+      "report_sha256": "e1a741c2b6a9f8331fbdd01c1e3e1590926ecb3ce07e28bad01cb7b8196ae991",
+      "scanner": "rnc",
+      "sequence": 2,
+      "source_commit": "5391d8457ea091c45733920078a7f714ec61f678",
+      "status": "PASS",
+      "suite": "synthetic-filesystem",
+      "timed_out": false,
+      "timeout_seconds": 1200,
+      "workload": "synthetic-filesystem"
+    },
+    {
+      "arguments": [
+        "scan",
+        "--root",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\levain\\windows-amd64\\negative",
+        "--rules",
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rules\\rnc-cp3-providers-v1.json",
+        "--config",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\levain\\windows-amd64\\rnc-isolation.toml",
+        "--output",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\levain\\windows-amd64\\negative-report.json",
+        "--format",
+        "private",
+        "--run-id",
+        "20261113T190843Z-1f07120a"
+      ],
+      "artifact_kind": "executable",
+      "build_id": "rnc-cp3",
+      "command": [
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rnc-cp3.exe",
+        "scan",
+        "--root",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\levain\\windows-amd64\\negative",
+        "--rules",
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rules\\rnc-cp3-providers-v1.json",
+        "--config",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\levain\\windows-amd64\\rnc-isolation.toml",
+        "--output",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\levain\\windows-amd64\\negative-report.json",
+        "--format",
+        "private",
+        "--run-id",
+        "20261113T190843Z-1f07120a"
+      ],
+      "command_redacted": false,
+      "command_sha256": "5ecdf28413cb9c1d8bbe431340bc1e62b4101af43c5cbfb3a1209042c2d0c9d6",
+      "docker_image": null,
+      "docker_image_id": null,
+      "duration_seconds": 0.705,
+      "error_code": null,
+      "error_message": "",
+      "executable": "C:\\Dev\\rnc-benchmark-harness\\run\\rnc-cp3.exe",
+      "executable_sha256": "284c4c981401b8328648290f8d24b5e788669dbf1e5f995638427ae352b9a8c3",
+      "exit_code": 10,
+      "invocation_type": "detection",
+      "manifest_sha256": "6aef0938ab5ef6917b13c2f3250cf3be5ab1529f00daa01ad5e61e4ba79106ad",
+      "mode": "dir",
+      "platform": "windows-amd64",
+      "redacted_argument_indexes": [],
+      "report_sha256": "9fa6e63b8182faaf9d168c237798cfe6560ecd02d3e214dfc961da820f187c69",
+      "scanner": "rnc",
+      "sequence": 3,
+      "source_commit": "5391d8457ea091c45733920078a7f714ec61f678",
+      "status": "PASS",
+      "suite": "levain",
+      "timed_out": false,
+      "timeout_seconds": 1200,
+      "workload": "levain-negative"
+    },
+    {
+      "arguments": [
+        "scan",
+        "--root",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\levain\\windows-amd64\\positive",
+        "--rules",
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rules\\rnc-cp3-providers-v1.json",
+        "--config",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\levain\\windows-amd64\\rnc-isolation.toml",
+        "--output",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\levain\\windows-amd64\\positive-report.json",
+        "--format",
+        "private",
+        "--run-id",
+        "20261113T190843Z-1f07120a"
+      ],
+      "artifact_kind": "executable",
+      "build_id": "rnc-cp3",
+      "command": [
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rnc-cp3.exe",
+        "scan",
+        "--root",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\levain\\windows-amd64\\positive",
+        "--rules",
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rules\\rnc-cp3-providers-v1.json",
+        "--config",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\levain\\windows-amd64\\rnc-isolation.toml",
+        "--output",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\levain\\windows-amd64\\positive-report.json",
+        "--format",
+        "private",
+        "--run-id",
+        "20261113T190843Z-1f07120a"
+      ],
+      "command_redacted": false,
+      "command_sha256": "96d7013541bee165ef9150cdb20acbbe9c8bd28322c67b41960b8918305f5ac8",
+      "docker_image": null,
+      "docker_image_id": null,
+      "duration_seconds": 0.128,
+      "error_code": null,
+      "error_message": "",
+      "executable": "C:\\Dev\\rnc-benchmark-harness\\run\\rnc-cp3.exe",
+      "executable_sha256": "284c4c981401b8328648290f8d24b5e788669dbf1e5f995638427ae352b9a8c3",
+      "exit_code": 10,
+      "invocation_type": "detection",
+      "manifest_sha256": "6aef0938ab5ef6917b13c2f3250cf3be5ab1529f00daa01ad5e61e4ba79106ad",
+      "mode": "dir",
+      "platform": "windows-amd64",
+      "redacted_argument_indexes": [],
+      "report_sha256": "d224eb0a491c3393d4663f85c1b6da2d2408c277bb22d286e5ba797845b0f279",
+      "scanner": "rnc",
+      "sequence": 4,
+      "source_commit": "5391d8457ea091c45733920078a7f714ec61f678",
+      "status": "PASS",
+      "suite": "levain",
+      "timed_out": false,
+      "timeout_seconds": 1200,
+      "workload": "levain-positive"
+    },
+    {
+      "arguments": [
+        "scan",
+        "--root",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\performance\\levain",
+        "--rules",
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rules\\rnc-cp3-providers-v1.json",
+        "--config",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\performance\\windows-amd64\\levain-filesystem\\warmup\\0\\rnc-isolation.toml",
+        "--output",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\performance\\windows-amd64\\levain-filesystem\\warmup\\0\\report.json",
+        "--format",
+        "private",
+        "--run-id",
+        "20261113T190843Z-1f07120a"
+      ],
+      "artifact_kind": "executable",
+      "build_id": "rnc-cp3",
+      "command": [
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rnc-cp3.exe",
+        "scan",
+        "--root",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\performance\\levain",
+        "--rules",
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rules\\rnc-cp3-providers-v1.json",
+        "--config",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\performance\\windows-amd64\\levain-filesystem\\warmup\\0\\rnc-isolation.toml",
+        "--output",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\performance\\windows-amd64\\levain-filesystem\\warmup\\0\\report.json",
+        "--format",
+        "private",
+        "--run-id",
+        "20261113T190843Z-1f07120a"
+      ],
+      "command_redacted": false,
+      "command_sha256": "0fd707c9427a59103a6166429880772e73d4569a7a43d987a8ba9d58cb0191af",
+      "docker_image": null,
+      "docker_image_id": null,
+      "duration_seconds": 0.282,
+      "error_code": null,
+      "error_message": "",
+      "executable": "C:\\Dev\\rnc-benchmark-harness\\run\\rnc-cp3.exe",
+      "executable_sha256": "284c4c981401b8328648290f8d24b5e788669dbf1e5f995638427ae352b9a8c3",
+      "exit_code": 10,
+      "invocation_type": "warmup",
+      "manifest_sha256": "6aef0938ab5ef6917b13c2f3250cf3be5ab1529f00daa01ad5e61e4ba79106ad",
+      "mode": "dir",
+      "platform": "windows-amd64",
+      "redacted_argument_indexes": [],
+      "report_sha256": "660945406ac1b16c736b34e3bd1b811dec945c6ba74083176ef79b106c34d46c",
+      "scanner": "rnc",
+      "sequence": 5,
+      "source_commit": "5391d8457ea091c45733920078a7f714ec61f678",
+      "status": "PASS",
+      "suite": "levain",
+      "timed_out": false,
+      "timeout_seconds": 1200,
+      "workload": "levain-filesystem"
+    },
+    {
+      "arguments": [
+        "scan",
+        "--root",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\performance\\levain",
+        "--rules",
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rules\\rnc-cp3-providers-v1.json",
+        "--config",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\performance\\windows-amd64\\levain-filesystem\\measured\\0\\rnc-isolation.toml",
+        "--output",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\performance\\windows-amd64\\levain-filesystem\\measured\\0\\report.json",
+        "--format",
+        "private",
+        "--run-id",
+        "20261113T190843Z-1f07120a"
+      ],
+      "artifact_kind": "executable",
+      "build_id": "rnc-cp3",
+      "command": [
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rnc-cp3.exe",
+        "scan",
+        "--root",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\performance\\levain",
+        "--rules",
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rules\\rnc-cp3-providers-v1.json",
+        "--config",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\performance\\windows-amd64\\levain-filesystem\\measured\\0\\rnc-isolation.toml",
+        "--output",
+        "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\performance\\windows-amd64\\levain-filesystem\\measured\\0\\report.json",
+        "--format",
+        "private",
+        "--run-id",
+        "20261113T190843Z-1f07120a"
+      ],
+      "command_redacted": false,
+      "command_sha256": "a49e815eac9512f0fbe61c5ecd7dbcd986cdb387870464bb18ee4e5ec0270f9e",
+      "docker_image": null,
+      "docker_image_id": null,
+      "duration_seconds": 0.13,
+      "error_code": null,
+      "error_message": "",
+      "executable": "C:\\Dev\\rnc-benchmark-harness\\run\\rnc-cp3.exe",
+      "executable_sha256": "284c4c981401b8328648290f8d24b5e788669dbf1e5f995638427ae352b9a8c3",
+      "exit_code": 10,
+      "invocation_type": "measured",
+      "manifest_sha256": "6aef0938ab5ef6917b13c2f3250cf3be5ab1529f00daa01ad5e61e4ba79106ad",
+      "mode": "dir",
+      "platform": "windows-amd64",
+      "redacted_argument_indexes": [],
+      "report_sha256": "930b49cb55badcc146f976180f7a4619e6804bac2bf546c6bf03a1532d7ef94f",
+      "scanner": "rnc",
+      "sequence": 6,
+      "source_commit": "5391d8457ea091c45733920078a7f714ec61f678",
+      "status": "PASS",
+      "suite": "levain",
+      "timed_out": false,
+      "timeout_seconds": 1200,
+      "workload": "levain-filesystem"
+    }
+  ],
+  "limitations": [
+    "Source commit is operator-supplied manifest metadata; the harness did not clone, check out, or compile scanner source.",
+    "The registered executable SHA-256 and Docker image ID are the executed artifact identities; they are verified before every run.",
+    "A verified artifact is not counted as tested unless an applicable suite executed it.",
+    "Registered Docker images and run/ executables are never deleted or modified by the harness.",
+    "Levain is a synthetic corpus; counts are not real-world prevalence.",
+    "The rule bundle is the operator-provided rules_file registered in run/manifest.toml and hashed before execution.",
+    "The empty repository configuration suppresses target auto-discovery; it does not alter the provider rule bundle.",
+    "Git-history capability is declared by the operator in the manifest; an undeclared capability is reported as NOT_APPLICABLE rather than assumed.",
+    "Performance measurements used the DEV environment profile; the host was contended/uncontrolled and these timings are not release evidence."
+  ],
+  "performance": {
+    "limitations": [
+      "Performance is reported separately from detection accuracy; no weighted combined score exists.",
+      "Native, container, and emulated-architecture products are not directly comparable.",
+      "Unavailable CPU or memory telemetry is null, never zero.",
+      "DEV measurements are contended and not publishable as release evidence.",
+      "Levain, Leaky filesystem, Leaky Git and RNC Lab filesystem/Git are separate workloads.",
+      "RNC Lab legacy-5x/legacy-10x loads are performance-only and are never scored against the canonical oracle.",
+      "Archive extraction and inspected-file coverage are recorded from the declared workload; scanner-internal traversal is not inferred from timing.",
+      "Only 1 measured run(s) were requested; variability and drift are preliminary."
+    ],
+    "methodology": {
+      "build_time_separate": true,
+      "cache_state": "warm_after_warmup",
+      "copies": 10,
+      "detection_and_performance_separate": true,
+      "environment_mode": "DEV",
+      "load_measured_runs": 3,
+      "load_profiles": [],
+      "load_warmups": 1,
+      "measured_runs": 1,
+      "scanner_order": [
+        "windows-amd64"
+      ],
+      "sequential": true,
+      "single_active_execution": true,
+      "stress_profile": "none",
+      "version": "2",
+      "warmups": 1,
+      "workloads": [
+        "levain-filesystem"
+      ]
+    },
+    "products": [
+      {
+        "artifact": {
+          "build_id": "rnc-cp3",
+          "docker_image": null,
+          "docker_image_id": null,
+          "error": null,
+          "executable": "C:\\Dev\\rnc-benchmark-harness\\run\\rnc-cp3.exe",
+          "executable_sha256": "284c4c981401b8328648290f8d24b5e788669dbf1e5f995638427ae352b9a8c3",
+          "execution_method": "native",
+          "kind": "executable",
+          "manifest_sha256": "6aef0938ab5ef6917b13c2f3250cf3be5ab1529f00daa01ad5e61e4ba79106ad",
+          "platform": "windows-amd64",
+          "rules_file": "rules/rnc-cp3-providers-v1.json",
+          "rules_sha256": "0d21dfe17107e61292bc6eb2f8ff975021851cc27dcbf627e6eeef05a3bd0eb4",
+          "scanner": "rnc",
+          "source_commit": "5391d8457ea091c45733920078a7f714ec61f678",
+          "status": "PASS"
+        },
+        "benchmark": {
+          "cache_state": "warm_after_warmup",
+          "environment_mode": "DEV",
+          "measured_runs": 1,
+          "mode": "dir",
+          "scanner_order_controlled": true,
+          "sequence_index": 0,
+          "sequential": true,
+          "stress_profile": "none",
+          "suite": "levain",
+          "timeout_seconds": 1200,
+          "version": "2",
+          "warmups": 1,
+          "workload_key": "levain-filesystem"
+        },
+        "benchmark_environment": {
+          "allowed_stress_profiles": [
+            "none",
+            "cpu",
+            "memory",
+            "io",
+            "network"
+          ],
+          "contention": "uncontrolled",
+          "description": "contended developer workstation; functional and preliminary timing",
+          "documented_conditions": "not a controlled benchmark host",
+          "mode": "DEV",
+          "publishable": false,
+          "stability_threshold": 0.25,
+          "stress_profile": "none"
+        },
+        "build": {
+          "artifact_sha256": "284c4c981401b8328648290f8d24b5e788669dbf1e5f995638427ae352b9a8c3",
+          "build_id": "rnc-cp3",
+          "image_id": null,
+          "source_commit": "5391d8457ea091c45733920078a7f714ec61f678",
+          "status": "PASS"
+        },
+        "dataset": {
+          "dataset_id": "levain",
+          "dataset_version": "c130c321aa9046af17a6c876cb97e2ed71397110",
+          "manifest_sha256": "3fe1da96dfdeefd4c7d36f3fc7302b3b95aab56a2a7faa1837196e7ea6f80eb3"
+        },
+        "environment": {
+          "capacity": {
+            "cpu_count": 8,
+            "disk": {
+              "free_bytes": 136912973824,
+              "total_bytes": 1997447098368,
+              "used_bytes": 1860534124544,
+              "used_percent": 93.15
+            },
+            "load_average": null,
+            "memory_available_bytes": 15395332096,
+            "memory_bytes": 34047959040,
+            "memory_load_percent": 54,
+            "method": "stdlib"
+          },
+          "cpu_count": 8,
+          "hostname_kind": "redacted",
+          "machine": "AMD64",
+          "platform": "Windows-11-10.0.26300-SP0",
+          "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+          "python": "3.13.5",
+          "system": "Windows"
+        },
+        "harness_version": "0.6.0",
+        "load_profile": null,
+        "performance_version": "2",
+        "product": {
+          "architecture": "amd64",
+          "artifact_sha256": "284c4c981401b8328648290f8d24b5e788669dbf1e5f995638427ae352b9a8c3",
+          "build_id": "rnc-cp3",
+          "emulated": false,
+          "execution_method": "native",
+          "image_id": null,
+          "image_tag": null,
+          "kind": "executable",
+          "manifest_sha256": "6aef0938ab5ef6917b13c2f3250cf3be5ab1529f00daa01ad5e61e4ba79106ad",
+          "platform": "windows-amd64",
+          "source_commit": "5391d8457ea091c45733920078a7f714ec61f678"
+        },
+        "report_type": "rnc-scan-harness/performance",
+        "requested_multiplier": 1,
+        "runs": [
+          {
+            "cache_state": "warmup",
+            "command": [
+              "C:\\Dev\\rnc-benchmark-harness\\run\\rnc-cp3.exe",
+              "scan",
+              "--root",
+              "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\performance\\levain",
+              "--rules",
+              "C:\\Dev\\rnc-benchmark-harness\\run\\rules\\rnc-cp3-providers-v1.json",
+              "--config",
+              "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\performance\\windows-amd64\\levain-filesystem\\warmup\\0\\rnc-isolation.toml",
+              "--output",
+              "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\performance\\windows-amd64\\levain-filesystem\\warmup\\0\\report.json",
+              "--format",
+              "private",
+              "--run-id",
+              "20261113T190843Z-1f07120a"
+            ],
+            "command_sha256": null,
+            "coverage_caveat": null,
+            "cpu_total_seconds": 0.1875,
+            "cpu_utilization_percent": 66.476,
+            "duration_seconds": 0.282,
+            "error": null,
+            "exit_code": 10,
+            "peak_memory_bytes": 28389376,
+            "phase": "warmup",
+            "run_index": 0,
+            "sequence_index": 0,
+            "telemetry_method": "windows_process_times",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          },
+          {
+            "cache_state": "warm_after_warmup",
+            "command": [
+              "C:\\Dev\\rnc-benchmark-harness\\run\\rnc-cp3.exe",
+              "scan",
+              "--root",
+              "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\performance\\levain",
+              "--rules",
+              "C:\\Dev\\rnc-benchmark-harness\\run\\rules\\rnc-cp3-providers-v1.json",
+              "--config",
+              "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\performance\\windows-amd64\\levain-filesystem\\measured\\0\\rnc-isolation.toml",
+              "--output",
+              "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\performance\\windows-amd64\\levain-filesystem\\measured\\0\\report.json",
+              "--format",
+              "private",
+              "--run-id",
+              "20261113T190843Z-1f07120a"
+            ],
+            "command_sha256": null,
+            "coverage_caveat": null,
+            "cpu_total_seconds": 0.125,
+            "cpu_utilization_percent": 96.306,
+            "duration_seconds": 0.13,
+            "error": null,
+            "exit_code": 10,
+            "peak_memory_bytes": 28336128,
+            "phase": "measured",
+            "run_index": 0,
+            "sequence_index": 0,
+            "telemetry_method": "windows_process_times",
+            "telemetry_unavailable_reason": null,
+            "timed_out": false
+          }
+        ],
+        "scanner": {
+          "key": "rnc",
+          "version": "0.1.0"
+        },
+        "suite": "levain",
+        "summary": {
+          "archive_files": null,
+          "archives_extracted": null,
+          "coverage_caveat_count": 0,
+          "coverage_caveats": [],
+          "cpu_total_seconds": {
+            "coefficient_of_variation": 0.0,
+            "count": 1,
+            "maximum": 0.125,
+            "median": 0.125,
+            "minimum": 0.125,
+            "stdev": 0.0
+          },
+          "cpu_utilization_percent": {
+            "coefficient_of_variation": 0.0,
+            "count": 1,
+            "maximum": 96.306,
+            "median": 96.306,
+            "minimum": 96.306,
+            "stdev": 0.0
+          },
+          "failures": 0,
+          "file_coverage_percent": 100.0,
+          "files_eligible": 163,
+          "files_inspected": 163,
+          "files_per_second": 1253.846,
+          "inspected_throughput_bytes_per_second": 658315.385,
+          "peak_memory_bytes": {
+            "available_samples": 1,
+            "max": 28336128,
+            "median": 28336128
+          },
+          "resource_limit_events": null,
+          "runtime_seconds": {
+            "coefficient_of_variation": 0.0,
+            "count": 1,
+            "maximum": 0.13,
+            "median": 0.13,
+            "minimum": 0.13,
+            "stdev": 0.0
+          },
+          "stability": "STABLE",
+          "stability_threshold_cv": 0.25,
+          "telemetry_methods": [
+            "windows_process_times"
+          ],
+          "throughput_bytes_per_second": 658315.385,
+          "timeouts": 0
+        },
+        "workload": {
+          "bytes": 85581,
+          "dataset": "levain",
+          "eligible_files": 163,
+          "files": 163,
+          "lane": "filesystem",
+          "negative_sections": 116,
+          "positive_sections": 45
+        },
+        "workload_key": "levain-filesystem",
+        "workload_title": "Levain positive and negative credential corpus"
+      }
+    ],
+    "status": "PASS",
+    "workload": {
+      "bytes": 85581,
+      "count": 1,
+      "files": 163,
+      "items": [
+        {
+          "bytes": 85581,
+          "files": 163,
+          "key": "levain-filesystem",
+          "mode": "dir",
+          "multiplier": 1,
+          "suite": "levain"
+        }
+      ]
+    }
+  },
+  "platforms": [
+    {
+      "arch": "amd64",
+      "docker_platform": null,
+      "goarch": "amd64",
+      "goos": "windows",
+      "key": "windows-amd64",
+      "kind": "executable",
+      "os_name": "windows"
+    }
+  ],
+  "profile": {
+    "applied_settings": {
+      "cleared_environment": [
+        "BETTERLEAKS_CONFIG",
+        "BETTERLEAKS_CONFIG_TOML",
+        "GITLEAKS_CONFIG",
+        "GITLEAKS_CONFIG_TOML",
+        "RNC_CONFIG",
+        "RNC_SCANNER_CONFIG"
+      ],
+      "configuration_file_required": false,
+      "profile": "DEFAULT",
+      "rules_sha256": "0d21dfe17107e61292bc6eb2f8ff975021851cc27dcbf627e6eeef05a3bd0eb4",
+      "scanner_config_argument": null,
+      "working_directory": "empty run-owned scanner-cwd"
+    },
+    "baseline_metrics_included": true,
+    "config_path": null,
+    "config_sha256": null,
+    "config_source": "scanner bundled default rules",
+    "default_isolation": {
+      "config_argument": "--rules",
+      "config_isolation": "empty repository configuration passed as --config to suppress target auto-discovery",
+      "history_mode": {
+        "argument": "--history",
+        "capability_source": "operator-provided manifest capabilities",
+        "limitations": [
+          "History scope is the pinned HEAD's reachable history, selected with --ref HEAD.",
+          "Submodules, symlinks and other uninspected units are never treated as covered."
+        ],
+        "read_only": true,
+        "ref": "HEAD",
+        "ref_argument": "--ref",
+        "runtime_dependency": "git executable in the native host or container image",
+        "scope": "selected-refs"
+      },
+      "isolated_working_directory": true,
+      "limitations": [
+        "The rule bundle is the operator-provided rules_file registered in run/manifest.toml and hashed before execution.",
+        "The empty repository configuration suppresses target auto-discovery; it does not alter the provider rule bundle.",
+        "Git-history capability is declared by the operator in the manifest; an undeclared capability is reported as NOT_APPLICABLE rather than assumed."
+      ],
+      "mode": "operator-registered-provider-rules",
+      "removed_environment": [
+        "BETTERLEAKS_CONFIG",
+        "BETTERLEAKS_CONFIG_TOML",
+        "GITLEAKS_CONFIG",
+        "GITLEAKS_CONFIG_TOML",
+        "RNC_CONFIG",
+        "RNC_SCANNER_CONFIG"
+      ],
+      "rules_hash_recorded_from_manifest": true,
+      "rules_path": "rules/rnc-providers-v1.json",
+      "rules_sha256": null,
+      "rules_source": "operator-provided rules_file in run/manifest.toml",
+      "verifiable": true
+    },
+    "is_default": true,
+    "limitations": [
+      "The rule bundle is the operator-provided rules_file registered in run/manifest.toml and hashed before execution.",
+      "The empty repository configuration suppresses target auto-discovery; it does not alter the provider rule bundle.",
+      "Git-history capability is declared by the operator in the manifest; an undeclared capability is reported as NOT_APPLICABLE rather than assumed."
+    ],
+    "name": "default",
+    "ruleset": {
+      "component_extractors": [],
+      "digest": "sha256:3ddd1e0aee36ecadb67ee8a2032fbe3a6047803bb56c0d45d65f85851c9b2142",
+      "digest_validation": "PASS",
+      "digest_validation_command": [
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rnc-cp3.exe",
+        "rules",
+        "validate",
+        "--rules",
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rules\\rnc-cp3-providers-v1.json",
+        "--strategy",
+        "auto"
+      ],
+      "family_count": 12,
+      "path": "rules/rnc-cp3-providers-v1.json",
+      "rule_count": 19,
+      "ruleset_id": "rnc-providers-v1",
+      "ruleset_version": "2026.11.2",
+      "schema_version": "0.2.0",
+      "sha256": "0d21dfe17107e61292bc6eb2f8ff975021851cc27dcbf627e6eeef05a3bd0eb4",
+      "source": "operator-provided rules_file in run/manifest.toml"
+    }
+  },
+  "raw_policy": "discarded",
+  "registered_build": {
+    "capabilities": [
+      "filesystem"
+    ],
+    "docker_image": "rnc-scanner:cp3-amd64",
+    "docker_image_id": "sha256:469d9f1d33c1e30e534993d9540c81fe445ac6d55f99f21ff5b99548eb774d1d",
+    "executable": "rnc-cp3.exe",
+    "executable_sha256": "284c4c981401b8328648290f8d24b5e788669dbf1e5f995638427ae352b9a8c3",
+    "id": "rnc-cp3",
+    "manifest": {
+      "path": "run/manifest.toml",
+      "schema_version": 1,
+      "sha256": "6aef0938ab5ef6917b13c2f3250cf3be5ab1529f00daa01ad5e61e4ba79106ad"
+    },
+    "rules_file": "rules/rnc-cp3-providers-v1.json",
+    "rules_sha256": "0d21dfe17107e61292bc6eb2f8ff975021851cc27dcbf627e6eeef05a3bd0eb4",
+    "scanner": "rnc",
+    "source_commit": "5391d8457ea091c45733920078a7f714ec61f678",
+    "source_repository": "https://github.com/RNC-Solutions-Group/rnc-security-audit",
+    "version": "0.1.0"
+  },
+  "report_options": {
+    "exception_mode": "exceptions-only",
+    "exceptions_enabled": true,
+    "include_baseline_deltas": true,
+    "include_coverage_gaps": true,
+    "include_not_applicable": false,
+    "include_skipped": true
+  },
+  "report_type": "rnc-scan-harness/experiment",
+  "reports": {
+    "raw": null,
+    "sanitized": [
+      "reports\\cp11\\rnc-cp3-native-smoke-5391d8457ea0-default.json",
+      "reports\\cp11\\rnc-cp3-native-smoke-5391d8457ea0-default.md"
+    ]
+  },
+  "run_id": "20261113T190843Z-1f07120a",
+  "scanner": {
+    "identity": "operator-provided-artifact",
+    "key": "rnc",
+    "name": "RNC Scanner",
+    "ruleset": {
+      "component_extractors": [],
+      "digest": "sha256:3ddd1e0aee36ecadb67ee8a2032fbe3a6047803bb56c0d45d65f85851c9b2142",
+      "digest_validation": "PASS",
+      "digest_validation_command": [
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rnc-cp3.exe",
+        "rules",
+        "validate",
+        "--rules",
+        "C:\\Dev\\rnc-benchmark-harness\\run\\rules\\rnc-cp3-providers-v1.json",
+        "--strategy",
+        "auto"
+      ],
+      "family_count": 12,
+      "path": "rules/rnc-cp3-providers-v1.json",
+      "rule_count": 19,
+      "ruleset_id": "rnc-providers-v1",
+      "ruleset_version": "2026.11.2",
+      "schema_version": "0.2.0",
+      "sha256": "0d21dfe17107e61292bc6eb2f8ff975021851cc27dcbf627e6eeef05a3bd0eb4",
+      "source": "operator-provided rules_file in run/manifest.toml"
+    },
+    "version": "0.1.0"
+  },
+  "schema_version": 2,
+  "source": {
+    "build_id": "rnc-cp3",
+    "commit": "5391d8457ea091c45733920078a7f714ec61f678",
+    "head": null,
+    "head_verified": false,
+    "identity": "manifest-metadata",
+    "manifest": {
+      "path": "run/manifest.toml",
+      "sha256": "6aef0938ab5ef6917b13c2f3250cf3be5ab1529f00daa01ad5e61e4ba79106ad"
+    },
+    "metadata_only": true,
+    "note": "Source commit is operator-supplied metadata. No scanner source was cloned, checked out, or compiled.",
+    "repository": "https://github.com/RNC-Solutions-Group/rnc-security-audit",
+    "requested_commit": "5391d8457ea091c45733920078a7f714ec61f678",
+    "verified": false
+  },
+  "started_at": "2026-11-13T19:08:43Z",
+  "suites": {
+    "levain": {
+      "applicable": true,
+      "baseline_metric": true,
+      "comparisons": {},
+      "details": {
+        "configuration": {
+          "baseline_metric": true,
+          "config_path": null,
+          "config_sha256": null,
+          "profile": "default"
+        },
+        "datasets": {
+          "levain": {
+            "license_sha256": "77cc69213a9c08cbd96f731793cff881a4b40a1d0682c70c70a1846afc700043",
+            "manifest_sha256": "3fe1da96dfdeefd4c7d36f3fc7302b3b95aab56a2a7faa1837196e7ea6f80eb3",
+            "name": "Levain FP Corpus (negative and positive fixtures)",
+            "revision": "c130c321aa9046af17a6c876cb97e2ed71397110"
+          }
+        },
+        "exceptions": [
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "curl-verbose-basic-auth",
+            "platform": "windows-amd64",
+            "reason": "credential kind http_basic_auth not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "gpg-secret-key-export",
+            "platform": "windows-amd64",
+            "reason": "credential kind pgp_private_key_block not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "hardhat-deploy-failure",
+            "platform": "windows-amd64",
+            "reason": "credential kind wallet_seed_phrase not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "wallet-restore-env",
+            "platform": "windows-amd64",
+            "reason": "credential kind wallet_seed_phrase not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "axios-error-dump",
+            "platform": "windows-amd64",
+            "reason": "credential kind bearer_token not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "postgres-connection-failure",
+            "platform": "windows-amd64",
+            "reason": "credential kind url_password not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "mongodb-uri",
+            "platform": "windows-amd64",
+            "reason": "credential kind url_password not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "cloudsql-iam-dsn",
+            "platform": "windows-amd64",
+            "reason": "credential kind url_password not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "cloudsql-iam-dsn",
+            "platform": "windows-amd64",
+            "reason": "credential kind email not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "slack-integration-error",
+            "platform": "windows-amd64",
+            "reason": "credential kind slack_webhook_url not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "mailgun-delivery-log",
+            "platform": "windows-amd64",
+            "reason": "credential kind mailgun_api_key not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "azure-storage-connection-string",
+            "platform": "windows-amd64",
+            "reason": "credential kind azure_storage_key not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "ssh-private-key-in-log",
+            "platform": "windows-amd64",
+            "reason": "credential kind private_key_pem not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "gcp-service-account-json",
+            "platform": "windows-amd64",
+            "reason": "credential kind private_key_escaped_json not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "payment-processing-log",
+            "platform": "windows-amd64",
+            "reason": "credential kind payment_card not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "payment-processing-log",
+            "platform": "windows-amd64",
+            "reason": "credential kind payment_card not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "pip-index-url-with-password",
+            "platform": "windows-amd64",
+            "reason": "credential kind url_password not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "ai-gateway-upstream-errors",
+            "platform": "windows-amd64",
+            "reason": "credential kind groq_api_key not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "ai-gateway-upstream-errors",
+            "platform": "windows-amd64",
+            "reason": "credential kind xai_api_key not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "ai-gateway-upstream-errors",
+            "platform": "windows-amd64",
+            "reason": "credential kind perplexity_api_key not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "ai-gateway-upstream-errors",
+            "platform": "windows-amd64",
+            "reason": "credential kind fireworks_api_key not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "inference-worker-traceback",
+            "platform": "windows-amd64",
+            "reason": "credential kind replicate_api_token not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "inference-worker-traceback",
+            "platform": "windows-amd64",
+            "reason": "credential kind pinecone_api_key not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "inference-worker-traceback",
+            "platform": "windows-amd64",
+            "reason": "credential kind elevenlabs_api_key not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "platform-cli-auth-failures",
+            "platform": "windows-amd64",
+            "reason": "credential kind doppler_token not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "platform-cli-auth-failures",
+            "platform": "windows-amd64",
+            "reason": "credential kind databricks_pat not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "platform-cli-auth-failures",
+            "platform": "windows-amd64",
+            "reason": "credential kind grafana_service_account_token not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "platform-cli-auth-failures",
+            "platform": "windows-amd64",
+            "reason": "credential kind planetscale_token not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "platform-cli-auth-failures",
+            "platform": "windows-amd64",
+            "reason": "credential kind supabase_access_token not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "platform-cli-auth-failures",
+            "platform": "windows-amd64",
+            "reason": "credential kind netlify_pat not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "platform-cli-auth-failures",
+            "platform": "windows-amd64",
+            "reason": "credential kind tailscale_auth_key not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "ci-publish-step-output",
+            "platform": "windows-amd64",
+            "reason": "credential kind rubygems_api_key not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "ci-publish-step-output",
+            "platform": "windows-amd64",
+            "reason": "credential kind nuget_api_key not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "ci-publish-step-output",
+            "platform": "windows-amd64",
+            "reason": "credential kind sonarqube_token not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "ci-publish-step-output",
+            "platform": "windows-amd64",
+            "reason": "credential kind sentry_org_auth_token not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "ci-publish-step-output",
+            "platform": "windows-amd64",
+            "reason": "credential kind newrelic_user_key not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "ci-publish-step-output",
+            "platform": "windows-amd64",
+            "reason": "credential kind dynatrace_api_token not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "ci-publish-step-output",
+            "platform": "windows-amd64",
+            "reason": "credential kind terraform_cloud_token not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "webhook-and-oauth-callback-dump",
+            "platform": "windows-amd64",
+            "reason": "credential kind discord_webhook_url not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "webhook-and-oauth-callback-dump",
+            "platform": "windows-amd64",
+            "reason": "credential kind google_oauth_client_secret not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "webhook-and-oauth-callback-dump",
+            "platform": "windows-amd64",
+            "reason": "credential kind resend_api_key not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "webhook-and-oauth-callback-dump",
+            "platform": "windows-amd64",
+            "reason": "credential kind postman_api_key not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "webhook-and-oauth-callback-dump",
+            "platform": "windows-amd64",
+            "reason": "credential kind airtable_pat not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "edge-openai-project-key-ends-in-hyphen",
+            "platform": "windows-amd64",
+            "reason": "credential kind openai_project_key not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "edge-confluent-secret-ends-in-slash",
+            "platform": "windows-amd64",
+            "reason": "credential kind confluent_cloud_key not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "edge-confluent-secret-ends-in-slash",
+            "platform": "windows-amd64",
+            "reason": "credential kind confluent_cloud_secret not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "edge-vault-token-with-letter-prefixed-body",
+            "platform": "windows-amd64",
+            "reason": "credential kind vault_service_token not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "custom-vendor-prefix-convention",
+            "platform": "windows-amd64",
+            "reason": "credential kind custom_internal_format not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "ansi-docker-compose-logs",
+            "platform": "windows-amd64",
+            "reason": "credential kind url_password not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "ansi-docker-compose-logs",
+            "platform": "windows-amd64",
+            "reason": "credential kind bearer_token not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "hard-shapeless-password",
+            "platform": "windows-amd64",
+            "reason": "credential kind shapeless_password not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "hard-capability-url",
+            "platform": "windows-amd64",
+            "reason": "credential kind capability_url_segment not detected"
+          },
+          {
+            "classification": "MISSED_EXPECTATION",
+            "line": null,
+            "path": "hard-token-split-across-lines",
+            "platform": "windows-amd64",
+            "reason": "credential kind wrapped_token not detected"
+          }
+        ],
+        "lanes": {
+          "windows-amd64": {
+            "adapter": "executable",
+            "metrics": {
+              "control_reported": true,
+              "coverage_verified": true,
+              "duplicates": 0,
+              "expected_secrets": 85,
+              "false_positives": 0,
+              "negative_control_status": "COMPLETED",
+              "negative_corpus_findings": null,
+              "partial_matches": 0,
+              "true_positives": 32,
+              "unexpected_findings": 3
+            },
+            "negative_scored": true,
+            "reason": null,
+            "report": "C:\\Users\\david\\AppData\\Local\\Temp\\rnc-scan-harness\\20261113T190843Z-1f07120a\\evidence\\levain-reports\\windows-amd64\\levain.md",
+            "report_status": "COMPLETED",
+            "runs": [
+              {
+                "control": {
+                  "credential_findings": 2,
+                  "file": "000-control.log",
+                  "file_encountered": true,
+                  "findings_on_file": 2,
+                  "kinds_detected": [
+                    "aws-access-key-id",
+                    "github-token"
+                  ],
+                  "kinds_echoed": [],
+                  "notes": [],
+                  "planted": [
+                    "aws-access-key-id",
+                    "github-token",
+                    "private-key"
+                  ],
+                  "reported": true,
+                  "unmatched_findings": 0
+                },
+                "corpus": "negative",
+                "coverage": {
+                  "applicable": true,
+                  "byte_length_mismatch_files": [],
+                  "content_mismatch_files": [],
+                  "counts": {
+                    "actionable": 2,
+                    "detected": 2,
+                    "discovered": 117,
+                    "exempted": 0,
+                    "inspected": 117,
+                    "required_discovered": 117,
+                    "required_inspected": 117,
+                    "required_uninspected": 0,
+                    "required_verified_blocked": 0,
+                    "uninspected": 0,
+                    "verified_blocked": 0
+                  },
+                  "coverage": "COMPLETE",
+                  "evidence_valid": true,
+                  "execution_state": "COMPLETED",
+                  "expected_file_count": 117,
+                  "failure_codes": [],
+                  "fatal_errors": [],
+                  "missing_files": [],
+                  "mode": "dir",
+                  "not_inspected_files": [],
+                  "notes": [
+                    "RNC verified 117 required source units INSPECTED; unit counts reconcile, content digests match, execution COMPLETED, and the reported ruleset is rnc-providers-v1."
+                  ],
+                  "reason_codes": [],
+                  "result": "ACTIONABLE",
+                  "result_code": 3,
+                  "ruleset": {
+                    "digest": "sha256:3ddd1e0aee36ecadb67ee8a2032fbe3a6047803bb56c0d45d65f85851c9b2142",
+                    "id": "rnc-providers-v1",
+                    "intended_digest": "sha256:3ddd1e0aee36ecadb67ee8a2032fbe3a6047803bb56c0d45d65f85851c9b2142",
+                    "intended_file_sha256": "0d21dfe17107e61292bc6eb2f8ff975021851cc27dcbf627e6eeef05a3bd0eb4",
+                    "intended_id": "rnc-providers-v1"
+                  },
+                  "source_kind": "working_tree_file",
+                  "unexpected_required_files": [],
+                  "unit_count": 117,
+                  "verified": true
+                },
+                "results": {
+                  "clean": true,
+                  "counting_unit": "section/format; expected credentials are zero",
+                  "duplicates": 0,
+                  "examples": [],
+                  "expected_secrets": 0,
+                  "false_positives": 0,
+                  "findings_total": 0,
+                  "findings_without_evidence": 0,
+                  "lines_scanned": 866,
+                  "personal_data_matches": 0,
+                  "sections_scanned": 116,
+                  "sections_tripped": 0,
+                  "true_negatives": null,
+                  "true_negatives_note": "not inferred from lines; this corpus has no per-line oracle",
+                  "worst_sections": []
+                },
+                "status": "COMPLETED"
+              },
+              {
+                "control": {
+                  "credential_findings": 2,
+                  "file": "000-control.log",
+                  "file_encountered": true,
+                  "findings_on_file": 2,
+                  "kinds_detected": [
+                    "aws-access-key-id",
+                    "github-token"
+                  ],
+                  "kinds_echoed": [],
+                  "notes": [],
+                  "planted": [
+                    "aws-access-key-id",
+                    "github-token",
+                    "private-key"
+                  ],
+                  "reported": true,
+                  "unmatched_findings": 0
+                },
+                "corpus": "positive",
+                "coverage": {
+                  "applicable": true,
+                  "byte_length_mismatch_files": [],
+                  "content_mismatch_files": [],
+                  "counts": {
+                    "actionable": 37,
+                    "detected": 37,
+                    "discovered": 46,
+                    "exempted": 0,
+                    "inspected": 46,
+                    "required_discovered": 46,
+                    "required_inspected": 46,
+                    "required_uninspected": 0,
+                    "required_verified_blocked": 0,
+                    "uninspected": 0,
+                    "verified_blocked": 0
+                  },
+                  "coverage": "COMPLETE",
+                  "evidence_valid": true,
+                  "execution_state": "COMPLETED",
+                  "expected_file_count": 46,
+                  "failure_codes": [],
+                  "fatal_errors": [],
+                  "missing_files": [],
+                  "mode": "dir",
+                  "not_inspected_files": [],
+                  "notes": [
+                    "RNC verified 46 required source units INSPECTED; unit counts reconcile, content digests match, execution COMPLETED, and the reported ruleset is rnc-providers-v1."
+                  ],
+                  "reason_codes": [],
+                  "result": "ACTIONABLE",
+                  "result_code": 3,
+                  "ruleset": {
+                    "digest": "sha256:3ddd1e0aee36ecadb67ee8a2032fbe3a6047803bb56c0d45d65f85851c9b2142",
+                    "id": "rnc-providers-v1",
+                    "intended_digest": "sha256:3ddd1e0aee36ecadb67ee8a2032fbe3a6047803bb56c0d45d65f85851c9b2142",
+                    "intended_file_sha256": "0d21dfe17107e61292bc6eb2f8ff975021851cc27dcbf627e6eeef05a3bd0eb4",
+                    "intended_id": "rnc-providers-v1"
+                  },
+                  "source_kind": "working_tree_file",
+                  "unexpected_required_files": [],
+                  "unit_count": 46,
+                  "verified": true
+                },
+                "results": {
+                  "ambiguous_findings": 0,
+                  "ambiguous_match_details": [],
+                  "core_false_negatives": 50,
+                  "core_recall_percent": 39.02,
+                  "core_true_positives": 32,
+                  "counting_unit": "planted credential; one expected secret is one case",
+                  "duplicates": 0,
+                  "examples": [
+                    {
+                      "line": 6,
+                      "rule_id": "database-connection-credential",
+                      "section": "postgres-connection-failure"
+                    },
+                    {
+                      "line": 3,
+                      "rule_id": "database-connection-credential",
+                      "section": "ansi-docker-compose-logs"
+                    },
+                    {
+                      "line": 3,
+                      "rule_id": "database-connection-credential",
+                      "section": "mongodb-uri"
+                    }
+                  ],
+                  "expected_core": 82,
+                  "expected_hard": 3,
+                  "expected_secrets": 85,
+                  "false_negatives": 53,
+                  "false_positives": 3,
+                  "findings_total": 35,
+                  "findings_without_evidence": 3,
+                  "hard_false_negatives": 3,
+                  "hard_recall_percent": 0.0,
+                  "hard_true_positives": 0,
+                  "lines_scanned": 368,
+                  "match_classification": {
+                    "ambiguous": 0,
+                    "complete": 32,
+                    "miss": 53,
+                    "normalized": 0,
+                    "partial": 0
+                  },
+                  "matched_secrets": [
+                    {
+                      "hard": false,
+                      "kind": "aws_access_key_id",
+                      "line": 5,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "aws-access-key-id",
+                      "section": "env-file"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "aws_secret_access_key",
+                      "line": 6,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "aws-secret-access-key",
+                      "section": "env-file"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "stripe_secret_key",
+                      "line": 7,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "stripe-secret-api-key",
+                      "section": "env-file"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "generic_assignment",
+                      "line": 8,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "generic-secret-assignment",
+                      "section": "env-file"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "github_pat_classic",
+                      "line": 3,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "github-classic-pat",
+                      "section": "docker-run-command"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "generic_assignment",
+                      "line": 4,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "generic-secret-assignment",
+                      "section": "docker-run-command"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "github_pat_fine_grained",
+                      "line": 4,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "github-fine-grained-pat",
+                      "section": "github-actions-log"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "generic_assignment",
+                      "line": 8,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "generic-secret-assignment",
+                      "section": "wallet-restore-env"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "generic_assignment",
+                      "line": 9,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "generic-secret-assignment",
+                      "section": "kubectl-describe-pod"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "sendgrid_api_key",
+                      "line": 10,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "sendgrid-api-key",
+                      "section": "kubectl-describe-pod"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "slack_bot_token",
+                      "line": 2,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "slack-token",
+                      "section": "slack-integration-error"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "google_api_key",
+                      "line": 1,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "google-api-key",
+                      "section": "google-api-error"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "twilio_api_key_sid",
+                      "line": 8,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "generic-secret-assignment",
+                      "section": "twilio-sdk-error"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "npm_token",
+                      "line": 2,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "npm-auth-token",
+                      "section": "npmrc-and-publish"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "jwt",
+                      "line": 3,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "jwt-bearer-token",
+                      "section": "jwt-in-request-log"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "github_oauth_token",
+                      "line": 3,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "github-oauth-app-token",
+                      "section": "github-oauth-callback"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "aws_access_key_id",
+                      "line": 5,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "aws-access-key-id",
+                      "section": "terraform-apply-output"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "aws_secret_access_key",
+                      "line": 6,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "aws-secret-access-key-terraform",
+                      "section": "terraform-apply-output"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "stripe_secret_key",
+                      "line": 4,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "stripe-secret-api-key",
+                      "section": "jenkins-console-mixed"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "npm_token",
+                      "line": 5,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "npm-auth-token",
+                      "section": "jenkins-console-mixed"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "slack_app_level_token",
+                      "line": 3,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "slack-token",
+                      "section": "webhook-and-oauth-callback-dump"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "aws_access_key_id",
+                      "line": 9,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "aws-access-key-id",
+                      "section": "edge-aws-secret-ends-in-plus"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "aws_secret_access_key",
+                      "line": 10,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "aws-secret-access-key",
+                      "section": "edge-aws-secret-ends-in-plus"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "github_pat_classic",
+                      "line": 2,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "github-classic-pat",
+                      "section": "edge-github-tokens-containing-placeholder-words"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "github_pat_classic",
+                      "line": 3,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "github-classic-pat",
+                      "section": "edge-github-tokens-containing-placeholder-words"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "gitlab_pat",
+                      "line": 3,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "gitlab-personal-access-token",
+                      "section": "edge-gitlab-pat-ends-in-hyphen"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "aws_access_key_id",
+                      "line": 7,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "aws-access-key-id",
+                      "section": "ansi-github-actions-raw-log"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "aws_secret_access_key",
+                      "line": 8,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "aws-secret-access-key",
+                      "section": "ansi-github-actions-raw-log"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "github_pat_classic",
+                      "line": 9,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "github-classic-pat",
+                      "section": "ansi-github-actions-raw-log"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "npm_token",
+                      "line": 10,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "npm-auth-token",
+                      "section": "ansi-pytest-npm-publish-failure"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "sendgrid_api_key",
+                      "line": 6,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "sendgrid-api-key",
+                      "section": "ansi-terraform-plan-diff"
+                    },
+                    {
+                      "hard": false,
+                      "kind": "generic_assignment",
+                      "line": 7,
+                      "match_field": "secret",
+                      "match_type": "complete",
+                      "rule_id": "generic-secret-assignment",
+                      "section": "ansi-terraform-plan-diff"
+                    }
+                  ],
+                  "missed_secrets": [
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "http_basic_auth",
+                      "partial_evidence": 0,
+                      "section": "curl-verbose-basic-auth"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "pgp_private_key_block",
+                      "partial_evidence": 0,
+                      "section": "gpg-secret-key-export"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "wallet_seed_phrase",
+                      "partial_evidence": 0,
+                      "section": "hardhat-deploy-failure"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "wallet_seed_phrase",
+                      "partial_evidence": 0,
+                      "section": "wallet-restore-env"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "bearer_token",
+                      "partial_evidence": 0,
+                      "section": "axios-error-dump"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "url_password",
+                      "partial_evidence": 0,
+                      "section": "postgres-connection-failure"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "url_password",
+                      "partial_evidence": 0,
+                      "section": "mongodb-uri"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "url_password",
+                      "partial_evidence": 0,
+                      "section": "cloudsql-iam-dsn"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "email",
+                      "partial_evidence": 0,
+                      "section": "cloudsql-iam-dsn"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "slack_webhook_url",
+                      "partial_evidence": 0,
+                      "section": "slack-integration-error"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "mailgun_api_key",
+                      "partial_evidence": 0,
+                      "section": "mailgun-delivery-log"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "azure_storage_key",
+                      "partial_evidence": 0,
+                      "section": "azure-storage-connection-string"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "private_key_pem",
+                      "partial_evidence": 0,
+                      "section": "ssh-private-key-in-log"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "private_key_escaped_json",
+                      "partial_evidence": 0,
+                      "section": "gcp-service-account-json"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "payment_card",
+                      "partial_evidence": 0,
+                      "section": "payment-processing-log"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "payment_card",
+                      "partial_evidence": 0,
+                      "section": "payment-processing-log"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "url_password",
+                      "partial_evidence": 0,
+                      "section": "pip-index-url-with-password"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "groq_api_key",
+                      "partial_evidence": 0,
+                      "section": "ai-gateway-upstream-errors"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "xai_api_key",
+                      "partial_evidence": 0,
+                      "section": "ai-gateway-upstream-errors"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "perplexity_api_key",
+                      "partial_evidence": 0,
+                      "section": "ai-gateway-upstream-errors"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "fireworks_api_key",
+                      "partial_evidence": 0,
+                      "section": "ai-gateway-upstream-errors"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "replicate_api_token",
+                      "partial_evidence": 0,
+                      "section": "inference-worker-traceback"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "pinecone_api_key",
+                      "partial_evidence": 0,
+                      "section": "inference-worker-traceback"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "elevenlabs_api_key",
+                      "partial_evidence": 0,
+                      "section": "inference-worker-traceback"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "doppler_token",
+                      "partial_evidence": 0,
+                      "section": "platform-cli-auth-failures"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "databricks_pat",
+                      "partial_evidence": 0,
+                      "section": "platform-cli-auth-failures"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "grafana_service_account_token",
+                      "partial_evidence": 0,
+                      "section": "platform-cli-auth-failures"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "planetscale_token",
+                      "partial_evidence": 0,
+                      "section": "platform-cli-auth-failures"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "supabase_access_token",
+                      "partial_evidence": 0,
+                      "section": "platform-cli-auth-failures"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "netlify_pat",
+                      "partial_evidence": 0,
+                      "section": "platform-cli-auth-failures"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "tailscale_auth_key",
+                      "partial_evidence": 0,
+                      "section": "platform-cli-auth-failures"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "rubygems_api_key",
+                      "partial_evidence": 0,
+                      "section": "ci-publish-step-output"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "nuget_api_key",
+                      "partial_evidence": 0,
+                      "section": "ci-publish-step-output"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "sonarqube_token",
+                      "partial_evidence": 0,
+                      "section": "ci-publish-step-output"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "sentry_org_auth_token",
+                      "partial_evidence": 0,
+                      "section": "ci-publish-step-output"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "newrelic_user_key",
+                      "partial_evidence": 0,
+                      "section": "ci-publish-step-output"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "dynatrace_api_token",
+                      "partial_evidence": 0,
+                      "section": "ci-publish-step-output"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "terraform_cloud_token",
+                      "partial_evidence": 0,
+                      "section": "ci-publish-step-output"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "discord_webhook_url",
+                      "partial_evidence": 0,
+                      "section": "webhook-and-oauth-callback-dump"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "google_oauth_client_secret",
+                      "partial_evidence": 0,
+                      "section": "webhook-and-oauth-callback-dump"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "resend_api_key",
+                      "partial_evidence": 0,
+                      "section": "webhook-and-oauth-callback-dump"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "postman_api_key",
+                      "partial_evidence": 0,
+                      "section": "webhook-and-oauth-callback-dump"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "airtable_pat",
+                      "partial_evidence": 0,
+                      "section": "webhook-and-oauth-callback-dump"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "openai_project_key",
+                      "partial_evidence": 0,
+                      "section": "edge-openai-project-key-ends-in-hyphen"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "confluent_cloud_key",
+                      "partial_evidence": 0,
+                      "section": "edge-confluent-secret-ends-in-slash"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "confluent_cloud_secret",
+                      "partial_evidence": 0,
+                      "section": "edge-confluent-secret-ends-in-slash"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "vault_service_token",
+                      "partial_evidence": 0,
+                      "section": "edge-vault-token-with-letter-prefixed-body"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "custom_internal_format",
+                      "partial_evidence": 0,
+                      "section": "custom-vendor-prefix-convention"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "url_password",
+                      "partial_evidence": 0,
+                      "section": "ansi-docker-compose-logs"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": false,
+                      "kind": "bearer_token",
+                      "partial_evidence": 0,
+                      "section": "ansi-docker-compose-logs"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": true,
+                      "kind": "shapeless_password",
+                      "partial_evidence": 0,
+                      "section": "hard-shapeless-password"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": true,
+                      "kind": "capability_url_segment",
+                      "partial_evidence": 0,
+                      "section": "hard-capability-url"
+                    },
+                    {
+                      "classification": "miss",
+                      "hard": true,
+                      "kind": "wrapped_token",
+                      "partial_evidence": 0,
+                      "section": "hard-token-split-across-lines"
+                    }
+                  ],
+                  "overall_recall_percent": 37.65,
+                  "partial_match_details": [],
+                  "partial_matches": 0,
+                  "personal_data_matches": 0,
+                  "sections_scanned": 45,
+                  "sections_tripped": 3,
+                  "true_positives": 32,
+                  "unexpected_findings": 3,
+                  "worst_sections": [
+                    {
+                      "findings": 1,
+                      "section": "ansi-docker-compose-logs"
+                    },
+                    {
+                      "findings": 1,
+                      "section": "mongodb-uri"
+                    },
+                    {
+                      "findings": 1,
+                      "section": "postgres-connection-failure"
+                    }
+                  ]
+                },
+                "status": "COMPLETED"
+              }
+            ],
+            "status": "PASS"
+          }
+        }
+      },
+      "key": "levain",
+      "limitations": [
+        "Levain is a synthetic corpus; counts are not real-world prevalence."
+      ],
+      "metrics": {
+        "control_reported": true,
+        "coverage_verified": true,
+        "duplicates": 0,
+        "expected_secrets": 85,
+        "f1_percent": 54.7,
+        "false_positives": 0,
+        "negative_oracle": true,
+        "partial_matches": 0,
+        "precision_percent": 100.0,
+        "recall_percent": 37.65,
+        "true_positives": 32,
+        "unexpected_findings": 3
+      },
+      "outcome": "COMPLETED_AND_SCORED",
+      "reason": null,
+      "results": [
+        {
+          "baseline_metric": true,
+          "configuration_profile": "default",
+          "dimension": "levain",
+          "metrics": {
+            "control_reported": true,
+            "coverage_verified": true,
+            "duplicates": 0,
+            "expected_secrets": 85,
+            "false_positives": 0,
+            "negative_control_status": "COMPLETED",
+            "negative_corpus_findings": null,
+            "partial_matches": 0,
+            "true_positives": 32,
+            "unexpected_findings": 3
+          },
+          "outcome": "COMPLETED_AND_SCORED",
+          "platform": "windows-amd64",
+          "status": "PASS"
+        }
+      ],
+      "status": "PASS",
+      "summary": {
+        "baseline_metric": true,
+        "configuration_profile": "default",
+        "coverage_incomplete": false,
+        "negative_oracle": true,
+        "platforms_executed": 1
+      },
+      "targets": {
+        "windows-amd64": {
+          "metrics": {
+            "control_reported": true,
+            "coverage_verified": true,
+            "duplicates": 0,
+            "expected_secrets": 85,
+            "false_positives": 0,
+            "negative_control_status": "COMPLETED",
+            "negative_corpus_findings": null,
+            "partial_matches": 0,
+            "true_positives": 32,
+            "unexpected_findings": 3
+          },
+          "negative_scored": true,
+          "outcome": "COMPLETED_AND_SCORED",
+          "reason": null,
+          "status": "PASS"
+        }
+      },
+      "title": "Levain credential corpus"
+    },
+    "synthetic-filesystem": {
+      "applicable": true,
+      "baseline_metric": false,
+      "comparisons": {},
+      "details": {
+        "configuration": {
+          "baseline_metric": false,
+          "config_sha256": "a693147ab769a48aa678ff7964a2bb7f8711d20dc5d54909adb481d9f7de0da0",
+          "config_source": "harness/filesystem_fixture.py",
+          "note": "The controlled RNC-token rule is a fixture rule, not a scanner default and not a real-world benchmark configuration.",
+          "profile": "CONTROLLED_FIXTURE"
+        },
+        "lanes": {
+          "windows-amd64": {
+            "duration_seconds": 0.047,
+            "evaluations": [
+              {
+                "classification": "EXPECTED_DETECTION",
+                "expected": {
+                  "category": "risk",
+                  "category_conflict": false,
+                  "classification": "EXPECTED_DETECTION",
+                  "commit": null,
+                  "dataset_id": "rnc-synthetic-filesystem",
+                  "dataset_version": "1",
+                  "finding_id": "rnc-synthetic-filesystem:db-beta",
+                  "fingerprint_sha256": "79be74a533afd0f4d8acd7b0649c6b744a38ebbb650e89737cfc1a0f2d2b645d",
+                  "line_end": 2,
+                  "line_start": 2,
+                  "location": "nested/db.json:2",
+                  "matching_policy": "line_range",
+                  "notes": "",
+                  "path": "nested/db.json",
+                  "risk_bearing": true,
+                  "source_reference": "synthetic manifest nested/db.json:2"
+                },
+                "expected_id": "rnc-synthetic-filesystem:db-beta",
+                "identity_confidence": "value",
+                "line": 2,
+                "observed": {
+                  "commit": null,
+                  "file": "nested/db.json",
+                  "finding_id": "f-bed08b62ca5476cf415177241ba05becf064bc8d7611c93313f19249db421936",
+                  "index": 0,
+                  "line": 2,
+                  "match_sha256": "32b41ffe477d20b7e8b62460e69384b9c1cfe99bc66868e7ed7a98f168c17215",
+                  "metadata": {
+                    "category": "synthetic-control",
+                    "confidence": "high",
+                    "contextual_secret_sha256": "32b41ffe477d20b7e8b62460e69384b9c1cfe99bc66868e7ed7a98f168c17215",
+                    "coverage": "COMPLETE",
+                    "end_byte": 38,
+                    "engine_version": "0.1.0",
+                    "evidence_digest": "32b41ffe477d20b7e8b62460e69384b9c1cfe99bc66868e7ed7a98f168c17215",
+                    "execution_evidence_valid": true,
+                    "execution_state": "COMPLETED",
+                    "line_end": null,
+                    "result": "ACTIONABLE",
+                    "result_code": 3,
+                    "rule_version": "1",
+                    "ruleset_digest": "sha256:d6f2bced4e77e59a0c3b64ac57922b59509a2ecc77cb7f69a490afad4bc9ee19",
+                    "ruleset_id": "rnc-harness-controlled-v1",
+                    "source_adapter": {
+                      "id": "local-working-tree",
+                      "version": "0.1.0"
+                    },
+                    "source_kind": "working_tree_file",
+                    "start_byte": 18,
+                    "structured_evidence": {
+                      "present": false
+                    },
+                    "unit_id": "u-7a574970e40a35c39277d28bfed9630e9e5da87fdf9d93f0089ce568a1662944",
+                    "validation": [
+                      "ASCII_ONLY"
+                    ]
+                  },
+                  "rule_id": "rnc-harness-controlled-token",
+                  "scanner": "rnc",
+                  "scanner_version": "0.1.0",
+                  "secret_redacted": true,
+                  "secret_sha256": "32b41ffe477d20b7e8b62460e69384b9c1cfe99bc66868e7ed7a98f168c17215",
+                  "target": "rnc"
+                },
+                "path": "nested/db.json",
+                "reason": "file, line, and value fingerprint match",
+                "review_status": "VERIFIED"
+              },
+              {
+                "classification": "EXPECTED_DETECTION",
+                "expected": {
+                  "category": "risk",
+                  "category_conflict": false,
+                  "classification": "EXPECTED_DETECTION",
+                  "commit": null,
+                  "dataset_id": "rnc-synthetic-filesystem",
+                  "dataset_version": "1",
+                  "finding_id": "rnc-synthetic-filesystem:multi-gamma",
+                  "fingerprint_sha256": "e66e071e6b16ffdca8734f74b6980d22750f4e1699437288d676758dda3ca9fd",
+                  "line_end": 1,
+                  "line_start": 1,
+                  "location": "multi.env:1",
+                  "matching_policy": "line_range",
+                  "notes": "",
+                  "path": "multi.env",
+                  "risk_bearing": true,
+                  "source_reference": "synthetic manifest multi.env:1"
+                },
+                "expected_id": "rnc-synthetic-filesystem:multi-gamma",
+                "identity_confidence": "value",
+                "line": 1,
+                "observed": {
+                  "commit": null,
+                  "file": "multi.env",
+                  "finding_id": "f-7855c0659992e9471269f12b7ec1f5586ac08cbc8c1048c7653738846fd3f051",
+                  "index": 1,
+                  "line": 1,
+                  "match_sha256": "e59438e9bfeb7e21825e67f9ee6bd61737a4d5d3d3f53aab113ed10b70fde709",
+                  "metadata": {
+                    "category": "synthetic-control",
+                    "confidence": "high",
+                    "contextual_secret_sha256": "e59438e9bfeb7e21825e67f9ee6bd61737a4d5d3d3f53aab113ed10b70fde709",
+                    "coverage": "COMPLETE",
+                    "end_byte": 26,
+                    "engine_version": "0.1.0",
+                    "evidence_digest": "e59438e9bfeb7e21825e67f9ee6bd61737a4d5d3d3f53aab113ed10b70fde709",
+                    "execution_evidence_valid": true,
+                    "execution_state": "COMPLETED",
+                    "line_end": null,
+                    "result": "ACTIONABLE",
+                    "result_code": 3,
+                    "rule_version": "1",
+                    "ruleset_digest": "sha256:d6f2bced4e77e59a0c3b64ac57922b59509a2ecc77cb7f69a490afad4bc9ee19",
+                    "ruleset_id": "rnc-harness-controlled-v1",
+                    "source_adapter": {
+                      "id": "local-working-tree",
+                      "version": "0.1.0"
+                    },
+                    "source_kind": "working_tree_file",
+                    "start_byte": 6,
+                    "structured_evidence": {
+                      "present": false
+                    },
+                    "unit_id": "u-97328079cd5948b8877c4b4c9e0ea212aa52f0372525277dfe082c353c4ef7cd",
+                    "validation": [
+                      "ASCII_ONLY"
+                    ]
+                  },
+                  "rule_id": "rnc-harness-controlled-token",
+                  "scanner": "rnc",
+                  "scanner_version": "0.1.0",
+                  "secret_redacted": true,
+                  "secret_sha256": "e59438e9bfeb7e21825e67f9ee6bd61737a4d5d3d3f53aab113ed10b70fde709",
+                  "target": "rnc"
+                },
+                "path": "multi.env",
+                "reason": "file, line, and value fingerprint match",
+                "review_status": "VERIFIED"
+              },
+              {
+                "classification": "EXPECTED_DETECTION",
+                "expected": {
+                  "category": "risk",
+                  "category_conflict": false,
+                  "classification": "EXPECTED_DETECTION",
+                  "commit": null,
+                  "dataset_id": "rnc-synthetic-filesystem",
+                  "dataset_version": "1",
+                  "finding_id": "rnc-synthetic-filesystem:multi-delta",
+                  "fingerprint_sha256": "6c86e68c033d3bef7999d3f7b0822f129c35e9a9df34b62e1fda50ab5f6c8b89",
+                  "line_end": 2,
+                  "line_start": 2,
+                  "location": "multi.env:2",
+                  "matching_policy": "line_range",
+                  "notes": "",
+                  "path": "multi.env",
+                  "risk_bearing": true,
+                  "source_reference": "synthetic manifest multi.env:2"
+                },
+                "expected_id": "rnc-synthetic-filesystem:multi-delta",
+                "identity_confidence": "value",
+                "line": 2,
+                "observed": {
+                  "commit": null,
+                  "file": "multi.env",
+                  "finding_id": "f-149aa4a91e86469b4542794efb3def5976bf174b5c2e972396aa5572ac577deb",
+                  "index": 2,
+                  "line": 2,
+                  "match_sha256": "9dbd72247e4c31bf53129abda1404cc2f8fae7e20d16a3353faca923f640e88e",
+                  "metadata": {
+                    "category": "synthetic-control",
+                    "confidence": "high",
+                    "contextual_secret_sha256": "9dbd72247e4c31bf53129abda1404cc2f8fae7e20d16a3353faca923f640e88e",
+                    "coverage": "COMPLETE",
+                    "end_byte": 55,
+                    "engine_version": "0.1.0",
+                    "evidence_digest": "9dbd72247e4c31bf53129abda1404cc2f8fae7e20d16a3353faca923f640e88e",
+                    "execution_evidence_valid": true,
+                    "execution_state": "COMPLETED",
+                    "line_end": null,
+                    "result": "ACTIONABLE",
+                    "result_code": 3,
+                    "rule_version": "1",
+                    "ruleset_digest": "sha256:d6f2bced4e77e59a0c3b64ac57922b59509a2ecc77cb7f69a490afad4bc9ee19",
+                    "ruleset_id": "rnc-harness-controlled-v1",
+                    "source_adapter": {
+                      "id": "local-working-tree",
+                      "version": "0.1.0"
+                    },
+                    "source_kind": "working_tree_file",
+                    "start_byte": 35,
+                    "structured_evidence": {
+                      "present": false
+                    },
+                    "unit_id": "u-97328079cd5948b8877c4b4c9e0ea212aa52f0372525277dfe082c353c4ef7cd",
+                    "validation": [
+                      "ASCII_ONLY"
+                    ]
+                  },
+                  "rule_id": "rnc-harness-controlled-token",
+                  "scanner": "rnc",
+                  "scanner_version": "0.1.0",
+                  "secret_redacted": true,
+                  "secret_sha256": "9dbd72247e4c31bf53129abda1404cc2f8fae7e20d16a3353faca923f640e88e",
+                  "target": "rnc"
+                },
+                "path": "multi.env",
+                "reason": "file, line, and value fingerprint match",
+                "review_status": "VERIFIED"
+              },
+              {
+                "classification": "EXPECTED_DETECTION",
+                "expected": {
+                  "category": "risk",
+                  "category_conflict": false,
+                  "classification": "EXPECTED_DETECTION",
+                  "commit": null,
+                  "dataset_id": "rnc-synthetic-filesystem",
+                  "dataset_version": "1",
+                  "finding_id": "rnc-synthetic-filesystem:app-alpha",
+                  "fingerprint_sha256": "cd8da1018efc644450586384e5777db4a4c8d5ecb1261f20c8b7de4d3ce15ef6",
+                  "line_end": 1,
+                  "line_start": 1,
+                  "location": "app.env:1",
+                  "matching_policy": "line_range",
+                  "notes": "",
+                  "path": "app.env",
+                  "risk_bearing": true,
+                  "source_reference": "synthetic manifest app.env:1"
+                },
+                "expected_id": "rnc-synthetic-filesystem:app-alpha",
+                "identity_confidence": "value",
+                "line": 1,
+                "observed": {
+                  "commit": null,
+                  "file": "app.env",
+                  "finding_id": "f-d62d4e36b68582294afc97ad74d28c36c0331693ee6342d4a3d2cd37a9872a40",
+                  "index": 3,
+                  "line": 1,
+                  "match_sha256": "2fb9cd2d33acd2b4c0ea7218b1c240ce1b51544c646b40b5729cb4c6df87ac8a",
+                  "metadata": {
+                    "category": "synthetic-control",
+                    "confidence": "high",
+                    "contextual_secret_sha256": "2fb9cd2d33acd2b4c0ea7218b1c240ce1b51544c646b40b5729cb4c6df87ac8a",
+                    "coverage": "COMPLETE",
+                    "end_byte": 28,
+                    "engine_version": "0.1.0",
+                    "evidence_digest": "2fb9cd2d33acd2b4c0ea7218b1c240ce1b51544c646b40b5729cb4c6df87ac8a",
+                    "execution_evidence_valid": true,
+                    "execution_state": "COMPLETED",
+                    "line_end": null,
+                    "result": "ACTIONABLE",
+                    "result_code": 3,
+                    "rule_version": "1",
+                    "ruleset_digest": "sha256:d6f2bced4e77e59a0c3b64ac57922b59509a2ecc77cb7f69a490afad4bc9ee19",
+                    "ruleset_id": "rnc-harness-controlled-v1",
+                    "source_adapter": {
+                      "id": "local-working-tree",
+                      "version": "0.1.0"
+                    },
+                    "source_kind": "working_tree_file",
+                    "start_byte": 8,
+                    "structured_evidence": {
+                      "present": false
+                    },
+                    "unit_id": "u-cfe18499643678e774948fd9e7f45014f18e079d0a4dc2b571a563373502afe2",
+                    "validation": [
+                      "ASCII_ONLY"
+                    ]
+                  },
+                  "rule_id": "rnc-harness-controlled-token",
+                  "scanner": "rnc",
+                  "scanner_version": "0.1.0",
+                  "secret_redacted": true,
+                  "secret_sha256": "2fb9cd2d33acd2b4c0ea7218b1c240ce1b51544c646b40b5729cb4c6df87ac8a",
+                  "target": "rnc"
+                },
+                "path": "app.env",
+                "reason": "file, line, and value fingerprint match",
+                "review_status": "VERIFIED"
+              }
+            ],
+            "execution_status": "PASS",
+            "exit_code": 10,
+            "metrics": {
+              "accounted_observed_count": 4,
+              "ambiguous_count": 0,
+              "blocked_count": 0,
+              "category_conflict_items": 0,
+              "category_metrics": {
+                "risk": {
+                  "expected": 4,
+                  "matched": 4,
+                  "missed": 0
+                }
+              },
+              "detection_recall_percent": 100.0,
+              "duplicate_count": 0,
+              "execution_error_count": 0,
+              "execution_status": "PASS",
+              "expected_count": 4,
+              "f1_percent": 100.0,
+              "false_positive_count": 0,
+              "finding_accounting_reconciled": true,
+              "finding_review_pending_count": 0,
+              "informative_match_count": 0,
+              "line_only_count": 0,
+              "matched_count": 4,
+              "missed_count": 0,
+              "negative_oracle": true,
+              "not_applicable_count": 0,
+              "observed_count": 4,
+              "partial_count": 0,
+              "precision_certification_status": "ELIGIBLE",
+              "precision_percent": 100.0,
+              "skipped_count": 0,
+              "unexpected_count": 0,
+              "unmapped_count": 0,
+              "unmatched_pending_review_count": 0,
+              "unverified_evidence_count": 0,
+              "value_verified_count": 4,
+              "verified_false_positive_count": 0
+            },
+            "scoring_status": "COMPLETED",
+            "status": "PASS"
+          }
+        },
+        "truth": {
+          "dataset_id": "rnc-synthetic-filesystem",
+          "dataset_version": "1",
+          "items": [
+            {
+              "category": "risk",
+              "category_conflict": false,
+              "classification": "EXPECTED_DETECTION",
+              "commit": null,
+              "dataset_id": "rnc-synthetic-filesystem",
+              "dataset_version": "1",
+              "finding_id": "rnc-synthetic-filesystem:app-alpha",
+              "fingerprint_sha256": "cd8da1018efc644450586384e5777db4a4c8d5ecb1261f20c8b7de4d3ce15ef6",
+              "line_end": 1,
+              "line_start": 1,
+              "location": "app.env:1",
+              "matching_policy": "line_range",
+              "notes": "",
+              "path": "app.env",
+              "risk_bearing": true,
+              "source_reference": "synthetic manifest app.env:1"
+            },
+            {
+              "category": "risk",
+              "category_conflict": false,
+              "classification": "EXPECTED_DETECTION",
+              "commit": null,
+              "dataset_id": "rnc-synthetic-filesystem",
+              "dataset_version": "1",
+              "finding_id": "rnc-synthetic-filesystem:db-beta",
+              "fingerprint_sha256": "79be74a533afd0f4d8acd7b0649c6b744a38ebbb650e89737cfc1a0f2d2b645d",
+              "line_end": 2,
+              "line_start": 2,
+              "location": "nested/db.json:2",
+              "matching_policy": "line_range",
+              "notes": "",
+              "path": "nested/db.json",
+              "risk_bearing": true,
+              "source_reference": "synthetic manifest nested/db.json:2"
+            },
+            {
+              "category": "risk",
+              "category_conflict": false,
+              "classification": "EXPECTED_DETECTION",
+              "commit": null,
+              "dataset_id": "rnc-synthetic-filesystem",
+              "dataset_version": "1",
+              "finding_id": "rnc-synthetic-filesystem:multi-gamma",
+              "fingerprint_sha256": "e66e071e6b16ffdca8734f74b6980d22750f4e1699437288d676758dda3ca9fd",
+              "line_end": 1,
+              "line_start": 1,
+              "location": "multi.env:1",
+              "matching_policy": "line_range",
+              "notes": "",
+              "path": "multi.env",
+              "risk_bearing": true,
+              "source_reference": "synthetic manifest multi.env:1"
+            },
+            {
+              "category": "risk",
+              "category_conflict": false,
+              "classification": "EXPECTED_DETECTION",
+              "commit": null,
+              "dataset_id": "rnc-synthetic-filesystem",
+              "dataset_version": "1",
+              "finding_id": "rnc-synthetic-filesystem:multi-delta",
+              "fingerprint_sha256": "6c86e68c033d3bef7999d3f7b0822f129c35e9a9df34b62e1fda50ab5f6c8b89",
+              "line_end": 2,
+              "line_start": 2,
+              "location": "multi.env:2",
+              "matching_policy": "line_range",
+              "notes": "",
+              "path": "multi.env",
+              "risk_bearing": true,
+              "source_reference": "synthetic manifest multi.env:2"
+            }
+          ],
+          "manifest_id": "rnc-synthetic-filesystem-truth",
+          "manifest_version": "1"
+        }
+      },
+      "key": "synthetic-filesystem",
+      "limitations": [],
+      "metrics": {
+        "accounted_observed_count": 4,
+        "ambiguous_count": 0,
+        "blocked_count": 0,
+        "category_conflict_items": 0,
+        "category_metrics": {
+          "risk": {
+            "expected": 4,
+            "matched": 4,
+            "missed": 0
+          }
+        },
+        "detection_recall_percent": 100.0,
+        "duplicate_count": 0,
+        "execution_error_count": 0,
+        "execution_status": "PASS",
+        "expected_count": 4,
+        "f1_percent": 100.0,
+        "false_positive_count": 0,
+        "finding_accounting_reconciled": true,
+        "finding_review_pending_count": 0,
+        "informative_match_count": 0,
+        "line_only_count": 0,
+        "matched_count": 4,
+        "missed_count": 0,
+        "negative_oracle": true,
+        "not_applicable_count": 0,
+        "observed_count": 4,
+        "partial_count": 0,
+        "precision_certification_status": "ELIGIBLE",
+        "precision_percent": 100.0,
+        "skipped_count": 0,
+        "unexpected_count": 0,
+        "unmapped_count": 0,
+        "unmatched_pending_review_count": 0,
+        "unverified_evidence_count": 0,
+        "value_verified_count": 4,
+        "verified_false_positive_count": 0
+      },
+      "outcome": "COMPLETED_AND_SCORED",
+      "reason": null,
+      "results": [
+        {
+          "baseline_metric": false,
+          "configuration_profile": "CONTROLLED_FIXTURE",
+          "dimension": "controlled-filesystem",
+          "outcome": "COMPLETED_AND_SCORED",
+          "platform": "windows-amd64",
+          "scoring_status": "COMPLETED",
+          "status": "PASS"
+        }
+      ],
+      "status": "PASS",
+      "summary": {
+        "baseline_metric": false,
+        "configuration_profile": "CONTROLLED_FIXTURE",
+        "engine_status": "VALID",
+        "expected": 4,
+        "negative_oracle": true,
+        "note": "Synthetic fixtures test scanner/adapter/scorer integration; they are not real-world prevalence."
+      },
+      "targets": {
+        "windows-amd64": {
+          "metrics": {
+            "accounted_observed_count": 4,
+            "ambiguous_count": 0,
+            "blocked_count": 0,
+            "category_conflict_items": 0,
+            "category_metrics": {
+              "risk": {
+                "expected": 4,
+                "matched": 4,
+                "missed": 0
+              }
+            },
+            "detection_recall_percent": 100.0,
+            "duplicate_count": 0,
+            "execution_error_count": 0,
+            "execution_status": "PASS",
+            "expected_count": 4,
+            "f1_percent": 100.0,
+            "false_positive_count": 0,
+            "finding_accounting_reconciled": true,
+            "finding_review_pending_count": 0,
+            "informative_match_count": 0,
+            "line_only_count": 0,
+            "matched_count": 4,
+            "missed_count": 0,
+            "negative_oracle": true,
+            "not_applicable_count": 0,
+            "observed_count": 4,
+            "partial_count": 0,
+            "precision_certification_status": "ELIGIBLE",
+            "precision_percent": 100.0,
+            "skipped_count": 0,
+            "unexpected_count": 0,
+            "unmapped_count": 0,
+            "unmatched_pending_review_count": 0,
+            "unverified_evidence_count": 0,
+            "value_verified_count": 4,
+            "verified_false_positive_count": 0
+          },
+          "reason": null,
+          "scoring_status": "COMPLETED",
+          "status": "PASS"
+        }
+      },
+      "title": "Synthetic Filesystem Controls"
+    }
+  },
+  "summary": {
+    "artifact_manifest_sha256": "6aef0938ab5ef6917b13c2f3250cf3be5ab1529f00daa01ad5e61e4ba79106ad",
+    "baseline_metrics_executed": true,
+    "baseline_metrics_included": true,
+    "benchmark_environment": "DEV",
+    "build_id": "rnc-cp3",
+    "builds": {
+      "windows-amd64": "PASS"
+    },
+    "cleanup_status": "PASS",
+    "counts": {
+      "blocked": 0,
+      "fail": 0,
+      "not_applicable": 0,
+      "not_run": 0,
+      "pass": 2
+    },
+    "coverage_complete": true,
+    "experiment_status": "COMPLETE",
+    "fatal_error": null,
+    "invocation_count": 6,
+    "matrix_status": "PASS",
+    "outcomes": {
+      "levain": "COMPLETED_AND_SCORED",
+      "synthetic-filesystem": "COMPLETED_AND_SCORED"
+    },
+    "overall": "COMPLETE",
+    "performance_status": "PASS",
+    "profile": "default",
+    "scoring_oracle_unavailable": [],
+    "source_commit": "5391d8457ea091c45733920078a7f714ec61f678",
+    "source_commit_metadata_only": true,
+    "source_head_verified": false,
+    "stress_profile": "none",
+    "suites": {
+      "levain": "PASS",
+      "synthetic-filesystem": "PASS"
+    },
+    "tested_platforms": [
+      "windows-amd64"
+    ]
+  }
+}
