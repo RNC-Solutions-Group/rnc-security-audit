@@ -294,11 +294,24 @@ def _results_positive(results: dict) -> list[str]:
                 "| --- | --- |",
                 f"| Complete | {classification['complete']} |",
                 f"| Normalized | {classification['normalized']} |",
-                f"| Partial | {classification['partial']} |",
-                f"| Ambiguous | {classification['ambiguous']} |",
-                f"| Miss | {classification['miss']} |",
+                f"| Partial (uncredited, included in FN) | {classification['partial']} |",
+                f"| Ambiguous findings (not target buckets) | {classification['ambiguous']} |",
+                f"| Ordinary miss | {classification['miss']} |",
             ]
         )
+        accounting = results.get("target_accounting") or {}
+        if accounting:
+            lines.extend(
+                [
+                    "",
+                    f"Target accounting: expected={accounting.get('expected')}, "
+                    f"TP={accounting.get('true_positives')}, "
+                    f"FN={accounting.get('false_negatives')} "
+                    f"(ordinary={accounting.get('ordinary_misses')}, "
+                    f"partial={accounting.get('partial_uncredited')}); "
+                    f"reconciled={accounting.get('reconciled')}.",
+                ]
+            )
     if results["missed_secrets"]:
         lines.extend(
             [

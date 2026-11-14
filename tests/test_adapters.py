@@ -58,6 +58,23 @@ class BetterleaksAdapterTests(unittest.TestCase):
         self.assertNotIn("synthetic-secret", repr(findings[0]))
         self.assertNotIn("synthetic-secret", json.dumps(findings[0].safe_dict()))
 
+    def test_parser_preserves_embedded_archive_member(self):
+        adapter = get_adapter("betterleaks")
+        raw = json.dumps(
+            [
+                {
+                    "File": "archive.zip!nested/data.env",
+                    "StartLine": 2,
+                    "RuleID": "rule",
+                    "Secret": "synthetic-secret",
+                    "Match": "KEY=synthetic-secret",
+                }
+            ]
+        ).encode()
+        finding = adapter.parse_findings(raw)[0]
+        self.assertEqual(finding.file, "archive.zip!nested/data.env")
+        self.assertEqual(finding.container_member, "nested/data.env")
+
     def test_betterleaks_has_no_release_artifact_dependency(self):
         import harness.adapters.betterleaks as module
 
@@ -191,6 +208,14 @@ class RNCAdapterTests(unittest.TestCase):
         self.assertEqual(findings[0].secret_sha256, "a" * 64)
         self.assertTrue(findings[0].secret_redacted)
         self.assertNotIn("synthetic-secret", repr(findings[0]))
+
+    def test_private_report_preserves_archive_member(self):
+        adapter = get_adapter("rnc")
+        payload = json.loads(self._report())
+        payload["execution"]["units"][0]["locator"] = "archive.zip!nested/app.env"
+        finding = adapter.parse_findings(json.dumps(payload).encode())[0]
+        self.assertEqual(finding.file, "archive.zip!nested/app.env")
+        self.assertEqual(finding.container_member, "nested/app.env")
 
     def test_valid_empty_private_report_is_zero_findings(self):
         self.assertEqual(
@@ -798,6 +823,23 @@ class GitleaksAdapterTests(unittest.TestCase):
         self.assertEqual(findings[0].line, 4)
         self.assertIsNotNone(findings[0].secret_sha256)
         self.assertNotIn("super-secret-value", repr(findings[0]))
+
+    def test_parser_preserves_embedded_archive_member(self):
+        adapter = get_adapter("gitleaks")
+        report = json.dumps(
+            [
+                {
+                    "RuleID": "test-rule",
+                    "File": "archive.zip!nested/data.env",
+                    "StartLine": 2,
+                    "Secret": "synthetic-secret",
+                    "Match": "KEY=synthetic-secret",
+                }
+            ]
+        ).encode("utf-8")
+        finding = adapter.parse_findings(report)[0]
+        self.assertEqual(finding.file, "archive.zip!nested/data.env")
+        self.assertEqual(finding.container_member, "nested/data.env")
 
     def test_config_hash(self):
         adapter = get_adapter("gitleaks")

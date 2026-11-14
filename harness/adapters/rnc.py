@@ -21,6 +21,7 @@ from dataclasses import replace
 from pathlib import Path, PurePosixPath
 
 from .. import status as statuses
+from ..archive import member_from_path
 from ..artifacts import (
     RegisteredBuild,
     verify_artifact,
@@ -1464,6 +1465,10 @@ class RNCAdapter(ScannerAdapter):
                         secret_sha256=secret_digest,
                         match_sha256=match_digest,
                         secret_redacted=True,
+                        byte_start=start_byte,
+                        byte_end=end_byte,
+                        container_member=member_from_path(unit["file"]),
+                        source_span_sha256=digest,
                         finding_id=finding_id,
                         target="rnc",
                         scanner="rnc",

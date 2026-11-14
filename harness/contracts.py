@@ -92,6 +92,11 @@ class NormalizedFinding:
 
     ``secret_text`` and ``match_text`` are transient matching context only and
     are deliberately excluded from ``repr``. They are never serialized.
+
+    ``file`` remains the scanner-reported path. ``container_member`` is the
+    canonical member path relative to the enclosing archive, using ``!`` for
+    nested archive boundaries. When both an embedded path member and an explicit
+    field are present they must agree; the scorer never chooses one arbitrarily.
     """
 
     file: str
@@ -105,6 +110,10 @@ class NormalizedFinding:
     scanner: str | None = None
     scanner_version: str | None = None
     commit: str | None = None
+    byte_start: int | None = None
+    byte_end: int | None = None
+    container_member: str | None = None
+    source_span_sha256: str | None = None
     metadata: dict[str, Any] = field(default_factory=dict, repr=False)
     secret_text: str | None = field(default=None, repr=False)
     match_text: str | None = field(default=None, repr=False)
@@ -122,6 +131,10 @@ class NormalizedFinding:
             "scanner": self.scanner,
             "scanner_version": self.scanner_version,
             "commit": self.commit,
+            "byte_start": self.byte_start,
+            "byte_end": self.byte_end,
+            "container_member": self.container_member,
+            "source_span_sha256": self.source_span_sha256,
             "metadata": safe_metadata_value(self.metadata),
         }
 
