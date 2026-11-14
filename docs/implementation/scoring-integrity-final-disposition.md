@@ -51,6 +51,25 @@ These are corrected **measurements under the existing corpus and methodology**,
 not a change to the oracle or to scanner behavior. The deltas are concentrated in
 the previously mis-scored Base64 and private-key representations.
 
+## 1a. PR #15 pre-merge corrective disposition
+
+| Finding | Diagnosis | Corrective action | Regression evidence | Status |
+|---|---|---|---|---|
+| Evidence priority and alias selection | **Confirmed** — ambiguity used `min(priority, ...)` while assignment used `-priority`; per-item aliases were retained by first digest encounter. | Added `EVIDENCE_STRENGTH`, one `_candidate_rank`, strongest-proof-per-item retention, and ambiguity checks over the same rank. | `test_stronger_identity_alias_survives_digest_order`, `test_unique_stronger_evidence_is_not_ambiguous`, candidate-order tests. | **RESOLVED** |
+| Global one-to-one attribution | **Confirmed** — greedy assignment could consume a target needed by a later finding (A→1/2, B→1). | Replaced with deterministic maximum-weight bipartite assignment: positive coverage, total assignment, evidence/location quality; forced-edge ambiguity checks. | `test_shared_target_does_not_create_avoidable_false_negative`, full synthetic A/B integration, equal-cycle ambiguity test, order invariance. | **RESOLVED** |
+| Archive-member identity end-to-end | **Confirmed as a contract gap** — `container_member` was not populated by adapters and only filename parsing was used. | Added canonical `harness/archive.py`; Gitleaks/Betterleaks/RNC populate the field; resolver requires explicit/embedded agreement; nested members canonicalized; ZIP/TAR path-only rejected; gzip single-member permitted. | Adapter tests, explicit/embedded/wrong/missing/conflict/nested/gzip/identical-member tests. | **RESOLVED WITH RNC CAPABILITY LIMITATION** |
+| Kubernetes location policy | **Confirmed** — any earlier line was accepted for recognized rule names. | Source-verified YAML document/kind/data-block/key policy with bounded ranks; unrelated lines, fields, and documents rejected. | Kind/data/key acceptance, unrelated line/field/document, wrong digest, multiple credentials, repeated-value ambiguity, synthetic multi-document test. | **RESOLVED** |
+
+Additional directly related defect: **Kubernetes repeated values were separated by
+line distance**, making an earlier field look stronger when both were reported at
+the document `kind` line. Structured location ranks now make those alternatives
+equal, so repeated identical values remain genuinely ambiguous rather than being
+credited to the lexicographically or positionally first field.
+
+The corrective reruns produced the same target sets and aggregate scores as the
+validated baseline, which is expected: the corrections close latent attribution
+paths rather than manufacturing new detections.
+
 ## 2. Defect disposition
 
 | ID | Defect | Disposition | Evidence |
@@ -60,17 +79,20 @@ the previously mis-scored Base64 and private-key representations.
 | SI-03 | Kubernetes/Base64 private key rejected by raw-text policy | **RESOLVED** | Oracle span decoded and validated; Git 10/10 all scanners |
 | SI-04 | Levain partial included in `miss` and positive-run FP | **RESOLVED** | Partial is a distinct uncredited bucket; target accounting reconciles |
 | SI-05 | Exception ledger silently truncated at 250 | **RESOLVED** | `exception_count` covers all entries; `exceptions_truncated` explicit |
-| SI-06 | Archive member not strict | **RESOLVED WITH LIMITATION** | Canonical member and gzip single-member policy; database/structured members not fully modelled |
+| SI-06 | Archive member not strict | **RESOLVED WITH RNC CAPABILITY LIMITATION** | Shared canonical contract, adapter population, explicit/embedded agreement, nested/gzip policy; native RNC units still expose no separate member |
 | SI-07 | RNC Kubernetes private key + public-only ambiguity | **RESOLVED** | Public-only rejected; decoded K8s PEM credited; 14/28 all scanners |
-| SI-08 | Order-dependent, proximity-ranked attribution | **RESOLVED** | Global edge assignment, stable keys, one-to-one, order tests |
+| SI-08 | Order-dependent, proximity-ranked attribution | **RESOLVED** | Maximum-weight one-to-one matching, stable keys, forced-edge ambiguity checks, order tests |
 | SI-09 | Near-miss / unverified / ambiguous diagnostics absent | **RESOLVED** | Classification, reason codes, stages, evidence kinds, calibration |
 | SI-10 | Suite/readable reports dropped new RNC diagnostics | **RESOLVED** | Aggregation and detection-summary propagation fixed |
 | SI-11 | Cross-suite finding/target accounting ambiguous | **RESOLVED** | Explicit target/finding accounting and reconciliation booleans |
 
-SI-06 is the only conditional item. Archive member identity is enforced when the
-scanner reports it, and a path-only report is accepted only for a single-member
-gzip stream. Database/table/row identity and nested structured records remain a
-documented model limitation rather than an implicit credit path.
+SI-06 is conditional only at the source-capability boundary. Archive member
+identity is enforced when the scanner supplies it, an explicit field must agree
+with an embedded path, nested members are canonicalized, and a path-only report
+is accepted only for a single-member gzip stream. Native RNC units do not expose
+a separate member field, so RNC cannot claim ZIP/TAR member identity; that is an
+explicit capability limitation, not an implicit credit path. Database/table/row
+identity remains a documented model limitation.
 
 ## 3. Acceptance criteria
 
@@ -79,32 +101,35 @@ documented model limitation rather than an implicit credit path.
 | Equivalent verified evidence receives equivalent credit | PASS | Private-key 14/28 and 10/10 across all four scanners |
 | Incorrect evidence cannot earn TP | PASS | Calibration: public-only, wrong key, incomplete PEM, wrong location, unrelated value |
 | Matching is not weakened to increase recall | PASS | No generic strip; only representation-specific complete-PEM/decoded-K8s aliases |
-| Attribution is deterministic and one-to-one | PASS | Finding-order and oracle-order tests; stable edge assignment |
-| Every observed finding is accounted for | PASS | `finding_accounting_reconciled=true` in all 12 reports |
-| Every expected target is TP or FN | PASS | `target_accounting_reconciled=true` in all 12 reports |
+| Attribution is deterministic and one-to-one | PASS | Maximum-weight matching; forced-edge ambiguity checks; finding/oracle-order tests |
+| Every observed finding is accounted for | PASS | `finding_accounting_reconciled=true` in all baseline and corrective reports |
+| Every expected target is TP or FN | PASS | `target_accounting_reconciled=true` in all baseline and corrective reports |
 | Near misses are visible without becoming TP/FP | PASS | `NEAR_MISS` reason codes; calibration includes line/offset/truncation/source mismatch |
 | FP only from verified negative evidence | PASS | Unmatched/unverified/partial/ambiguous excluded from verified FP |
 | Partial remains uncredited | PASS | Partial is an FN bucket; Levain target accounting passes |
 | Truncation is explicit | PASS | `exceptions_truncated`; 250-row display cap documented |
-| Independent calibration | PASS | `tests/test_scoring_calibration.py`, 19 predetermined cases |
-| Real-scanner validation | PASS | 12 fresh runs across six registered builds |
+| Independent calibration | PASS | `tests/test_scoring_calibration.py`, 43 predetermined cases |
+| Real-scanner validation | PASS | 18 fresh runs (12 baseline + 6 corrective) across six registered builds |
 | Historical reports unchanged | PASS | No historical report or score was edited |
 | No raw secrets in committed artifacts | PASS | Raw evidence remains in Git-ignored `run/`; exports are hashes/diagnostics |
 
 ## 4. Validation evidence
 
 - Full regression: `python -m unittest discover -s tests -t .`
-  - **330 tests run, OK, 1 skipped**.
+  - **354 tests run, OK, 1 skipped**.
   - The skip is an existing platform/capability skip; no test was reported as
     passed without execution.
-- Calibration suite: 19 predetermined cases, including Base64, PEM LF/CRLF,
+- Calibration suite: 43 predetermined cases, including Base64, PEM LF/CRLF,
   Kubernetes decoded private key, public-only rejection, wrong line, wrong byte
   offset, truncated value, unrelated same-line value, duplicate, order invariance,
-  and accounting.
-- Fresh scanner reports: six builds × (`all`, `rnclab`) = 12 runs, native Windows
-  AMD64, `--warmups 2 --runs 5 --benchmark-environment DEV --offline`.
-- All 12 reports are `COMPLETE` or `COMPLETE_WITH_LIMITATIONS`; no artifact was
-  substituted and no historical report was used.
+  archive-member contracts, bounded Kubernetes locations, repeated-value
+  ambiguity, and accounting.
+- Fresh scanner reports: six builds × (`all`, `rnclab`) = 12 baseline runs plus six
+  corrective `rnclab` reruns, native Windows AMD64, `--warmups 2 --runs 5
+  --benchmark-environment DEV --offline`.
+- All 18 reports are `COMPLETE` or `COMPLETE_WITH_LIMITATIONS`; no artifact was
+  substituted and no historical report was used. The six corrective reruns did
+  not change credited target sets or scores.
 
 Evidence paths (Git-ignored, not committed):
 
@@ -113,6 +138,8 @@ Evidence paths (Git-ignored, not committed):
 - `run/investigations/scoring-integrity-remediation/corrected-historical-impact.csv`
 - `run/investigations/scoring-integrity-remediation/baselines/`
 - `run/investigations/scoring-integrity-remediation/validation/`
+- `run/investigations/scoring-integrity-remediation/corrective/`
+- `run/investigations/scoring-integrity-remediation/corrective/validation-summary.json`
 - Prior investigation, unchanged:
   `run/investigations/scoring-integrity-20261113/`
 
@@ -129,10 +156,11 @@ Evidence paths (Git-ignored, not committed):
    into false positives or silently dropped.
 4. **Respect capability gaps.** CP3 Git-history is `NOT_APPLICABLE`; unsupported
    private-key formats remain scanner coverage limitations, not scoring passes.
-5. **Do not re-open source identity through filenames.** Archive and structured
-   container identity remain strict where reported; database/structured-member
-   identity is a known model limitation and must be resolved before claiming
-   complete container-level attribution.
+5. **Do not re-open source identity through filenames.** Archive members require
+   a canonical explicit or embedded identity; ZIP/TAR path-only reports are
+   unverified. Native RNC units do not expose a separate member field, so RNC
+   cannot claim ZIP/TAR member identity. Database/structured-member identity
+   remains a known model limitation.
 6. **Preserve the no-merge boundary.** This package prepares a PR against
    `benchmark-harness`; the operator retains merge authority.
 
@@ -142,15 +170,21 @@ Evidence paths (Git-ignored, not committed):
   non-reporting unit. Complete execution coverage remains separate from scoring.
 - **Negative oracle:** the certified corpus is not an exhaustive negative oracle;
   unmatched findings remain pending. This is why precision/F1 are not certified.
-- **Structured containers:** database/table/row identity is not fully represented
-  in the normalized finding contract. Archive members are strict where the
-  scanner reports them.
+- **Archive capability:** Gitleaks/Betterleaks path-embedded members are carried
+  explicitly and validated; RNC native units expose no separate member. Database/
+  table/row identity is not fully represented in the normalized finding contract.
+- **Kubernetes scope:** structured location support is limited to the certified
+  `kind: Secret` + `data`/`stringData` shape. Other YAML structures are not
+  inferred.
 - **Scanner coverage:** the 14/28 filesystem private-key ceiling is shared by all
   scanners and reflects formats not reported as complete private material (for
   example PPK/PKCS#12 or archive-embedded keys), not a harness credit rule.
 - **Wrong-line negatives:** some negative traps reported one line off are now
   `UNVERIFIED_EVIDENCE` rather than verified FP. This is intentional: a wrong
   location does not establish negative evidence.
+- **Genuine ambiguity:** when multiple verified assignments remain equally
+  optimal, the finding is `AMBIGUOUS` and the targets remain FN. The harness does
+  not choose a lexicographic or positional winner.
 - **Legacy metric names:** `scoring_engine` retains compatibility names while
   adding explicit `unmatched_only_count`, `unexpected_observation_count`, and
   accounting. Consumers should prefer the explicit fields.

@@ -11,6 +11,26 @@ changed. It is deliberately separate from the prior investigation report under
 `run/investigations/scoring-integrity-20261113/`; that report and all historical
 benchmark reports remain untouched.
 
+## 0. Pre-merge corrective review (PR #15)
+
+Four independent findings were examined before merge.
+
+| Finding | Review result | Root cause | Correction | Regression intent |
+|---|---|---|---|---|
+| Evidence priority and alias selection | **Confirmed** | Ambiguity used `min(priority, ...)` while attribution used `-priority`; per-item aliases were retained by first encounter order, not strongest proof. | One `_candidate_rank()` contract; strongest alias per finding/item; ambiguity and assignment use the same rank. | Exact+weaker candidate stays uniquely stronger; digest/oracle/finding/alias permutations do not change attribution. |
+| Global one-to-one attribution | **Confirmed** | Greedy edge assignment can consume a shared target needed by a later finding (A→1/2, B→1). | Deterministic maximum-weight bipartite assignment with positive coverage first, total assignment second, evidence quality third; genuinely ambiguous findings remain uncredited. | Adversarial A/B case assigns both targets; equal-strength cycles remain `AMBIGUOUS`; permutations preserve target sets. |
+| Archive-member identity end-to-end | **Confirmed as a contract gap** | Adapters did not populate `container_member`; RNC path resolution parsed only the filename. Native RNC reports do not expose a separate member field; Gitleaks/Betterleaks may embed it in the path. | Shared canonical archive-member parser; adapters populate the field from embedded paths; resolver requires the explicit member or an embedded member, with gzip single-member handling only. | Correct/wrong archive and member, nested members, identical values in different members, explicit vs embedded identity, gzip path-only. |
+| Kubernetes structured-source location | **Confirmed** | `_line_matches()` accepted any earlier line for recognized rule names. | Source-verified YAML document/`kind: Secret`/`data` block/key policy, bounded to the item's enclosing document and exact value evidence. | Exact line, valid `kind`/`data`/key line, unrelated earlier line/document, wrong field, wrong digest, repeated values. |
+
+No finding was unreproducible. The archive finding is partly a **capability
+limitation**: native RNC reports do not provide container-member identity, so the
+common scorer cannot invent it. Gitleaks/Betterleaks path-embedded members are
+recoverable and are now carried explicitly. Single-member gzip may use the
+enclosing path; multi-member ZIP/TAR may not.
+
+The correction preserves the existing architecture: the evidence contract remains
+central, and no scanner-specific score exception is introduced.
+
 ## 1. Scope and constraints observed
 
 - No RNC, Gitleaks, Betterleaks, or RNC-Mod source was modified.
@@ -172,9 +192,10 @@ Command:
 python -m unittest discover -s tests -t .
 ```
 
-Final result: **330 tests run, OK, 1 skipped** (the skip is the existing
+Final result: **354 tests run, OK, 1 skipped** (the skip is the existing
 platform/capability skip, not a failed or unscored test). The final count includes
-the new RNC Lab and independent calibration cases added by this package.
+the new RNC Lab, archive-member, Kubernetes-location, assignment, and independent
+calibration cases added by this package and the pre-merge corrective pass.
 
 Targeted commands used during development:
 
@@ -209,10 +230,10 @@ sequential execution. No historical report was substituted.
 | `gl-rnc-mod-v10` | `all` | COMPLETE_WITH_LIMITATIONS | — | — |
 | `gl-rnc-mod-v10` | `rnclab` | COMPLETE | 369/640 (57.66%) | 130/160 (81.25%) |
 
-All 12 reports report `target_accounting_reconciled=true` and
-`finding_accounting_reconciled=true` for both RNC Lab lanes. All performance
-measurements completed with `PASS`; the RNC Lab runs are intentionally separate
-from the `all` suite.
+All baseline and corrective RNC Lab reports report
+`target_accounting_reconciled=true` and `finding_accounting_reconciled=true` for
+both applicable lanes. All performance measurements completed with `PASS`; the
+RNC Lab runs are intentionally separate from the `all` suite.
 
 Private-key cross-scanner result after correction:
 
@@ -267,6 +288,31 @@ decoded PEM with its terminal newline stripped.
 Positive-run unexpected findings are no longer added to `false_positives`;
 suite-level false positives remain the verified negative-corpus count.
 
+### 4.4 PR #15 corrective reruns
+
+After the pre-merge hardening changes, fresh `rnclab` reports were generated for
+all six registered builds:
+
+| Build | FS TP | Git TP | Overall | Performance |
+|---|---:|---:|---|---|
+| `rnc-cp3` | 302/640 | N/A | COMPLETE | PASS |
+| `rnc-cp4a` | 347/640 | 115/160 | COMPLETE | PASS |
+| `rnc-cp4b` | 347/640 | 120/160 | COMPLETE | PASS |
+| `gitleaks-master` | 369/640 | 130/160 | COMPLETE | PASS |
+| `betterleaks-lts` | 438/640 | 158/160 | COMPLETE | PASS |
+| `gl-rnc-mod-v10` | 369/640 | 130/160 | COMPLETE | PASS |
+
+The corrective pass changed no credited target sets or aggregate scores. It
+changed the correctness of assignment and location decisions: the adversarial
+A/B case now credits both targets, repeated Kubernetes values remain ambiguous,
+archive members are explicit, and Kubernetes alternatives are bounded to the
+item's own document and block. All corrective reports reconcile targets and
+findings.
+
+Corrective evidence is under
+`run/investigations/scoring-integrity-remediation/corrective/`, with a machine
+summary at `corrective/validation-summary.json`.
+
 ## 5. Unexpected failures found during validation and their disposition
 
 1. **Contained byte ranges were initially rejected.** RNC reports the userinfo
@@ -274,14 +320,18 @@ suite-level false positives remain the verified negative-corpus count.
    value identity was exact, but strict equality rejected 33 filesystem and 10 Git
    targets. Fixed by accepting a byte range fully contained in the oracle span
    after exact value evidence; extended/overlapping ranges remain near misses.
-2. **Kubernetes secret YAML line was initially rejected.** Gitleaks/Betterleaks
-   report the `data:` block line rather than the base64 value line. Fixed with an
-   explicit structured-source line policy, valid only for Kubernetes
-   representations after value evidence.
+2. **Kubernetes secret YAML location was initially over-broad.** Gitleaks/
+   Betterleaks report the `kind: Secret` document line rather than the base64
+   value line. The first fix accepted any earlier line for a Kubernetes rule.
+   Replaced with a source-verified policy limited to the item's enclosing
+   document `kind` line, its `data`/`stringData` block, its key line, or the exact
+   value line; unrelated lines, fields, and documents are rejected.
 3. **Nested archive member separators differed.** Betterleaks reports
    `archive!member`, while the oracle member can contain `!` before a nested path.
    Fixed by canonicalizing `!/` and `::` and by allowing a path-only report only
-   for single-member gzip streams.
+   for single-member gzip streams. Adapters now populate `container_member` from
+   the reported path and the resolver uses it, with embedded/explicit conflicts
+   rejected.
 4. **Decoded Kubernetes private keys were not aliased.** Gitleaks/Betterleaks
    report the decoded PEM with its terminal newline stripped; the initial fix only
    aliased the encoded source span. Added decoded PEM aliases for Kubernetes
@@ -292,17 +342,40 @@ suite-level false positives remain the verified negative-corpus count.
    `harness/suites/rnclab.py` and propagated through `harness/experiment.py`.
 6. **The prior Levain `miss` bucket double-counted partials.** Fixed by making
    partial a distinct target bucket; `target_accounting.reconciled` is asserted.
+7. **Ambiguity ranking was inverted and alias selection was first-seen.**
+   `min(priority, ...)` evaluated the weakest tier while assignment used
+   `-priority`; the per-item `seen_items` set kept the first digest rather than
+   the strongest proof. Replaced with `EVIDENCE_STRENGTH`, an explicit
+   `_candidate_rank`, strongest-proof-per-item retention, and ambiguity detection
+   over the same ranking contract.
+8. **Greedy assignment could lose avoidable coverage.** A finding with two valid
+   targets could consume the only target of another finding. Replaced with a
+   deterministic maximum-weight bipartite assignment: positive coverage first,
+   total assignment second, evidence/location quality third, with forced-edge
+   ambiguity checks. The adversarial A/B case now credits both targets; equal
+   cycles remain `AMBIGUOUS`.
+9. **Archive member identity was not end-to-end.** Added `harness/archive.py`,
+   adapter population in Gitleaks/Betterleaks/RNC, explicit-versus-embedded
+   consistency checks, nested-member canonicalization, and single-member gzip
+   handling. RNC native reports still do not expose a separate member field; that
+   remains a capability limitation, not a reason to accept enclosing ZIP/TAR
+   paths.
+10. **Kubernetes repeated-value ambiguity used line proximity.** When two fields
+    shared the same value and the scanner reported the document `kind` line, line
+    distance made the earlier field look stronger. Structured location ranks now
+    treat `kind`/`data`/key alternatives equally for that document; repeated
+    identical values remain genuinely ambiguous.
 
 ## 6. Evidence locations
 
-- Corrected reports and console logs:
-  `run/investigations/scoring-integrity-remediation/baselines/` and
-  `run/investigations/scoring-integrity-remediation/validation/`
-- Machine-readable summary:
-  `run/investigations/scoring-integrity-remediation/validation-summary.json`
-- Flat summary:
-  `run/investigations/scoring-integrity-remediation/validation-summary.csv`
-- Corrected historical comparison:
+- Corrected baseline and corrective reports:
+  `run/investigations/scoring-integrity-remediation/baselines/`,
+  `run/investigations/scoring-integrity-remediation/validation/`, and
+  `run/investigations/scoring-integrity-remediation/corrective/`
+- Corrective machine-readable summary:
+  `run/investigations/scoring-integrity-remediation/corrective/validation-summary.json`
+- Prior corrected summary and historical comparison:
+  `run/investigations/scoring-integrity-remediation/validation-summary.json`,
   `run/investigations/scoring-integrity-remediation/corrected-historical-impact.csv`
 - Prior investigation (unchanged):
   `run/investigations/scoring-integrity-20261113/`
@@ -311,18 +384,24 @@ suite-level false positives remain the verified negative-corpus count.
 
 - `b2e106b` — `fix: correct scoring evidence attribution` (implementation,
   regression tests, architecture review, and remediation plan).
-- Documentation checkpoint for this ledger and the final disposition follows the
-  code commit; see the final branch status for the documentation SHA.
+- `61f60da` — `docs: record scoring-integrity validation and disposition`
+  (initial ledger and disposition).
+- `c3e907e` — `fix: harden scoring evidence ordering and source identity`
+  (pre-merge corrective implementation, archive contract, bounded Kubernetes
+  location policy, adversarial calibration, and adapter coverage).
+- The updated ledger and final disposition follow as the documentation checkpoint;
+  see the final branch status for that SHA.
 
-The code commit was made on `feat/scoring-integrity-remediation`, based on
+The work is on `feat/scoring-integrity-remediation`, based on
 `benchmark-harness` at `1d147f9feb7b73003c46adab3ea9e780807e5cdf`.
 
 ## 8. Residual limitations
 
 - `NO_ALERT` still cannot prove that a scanner executed a non-reporting unit;
   complete execution coverage remains a separate requirement.
-- Database/structured container member identity is not fully modelled; archive
-  members are strict where the scanner reports them.
+- Archive member identity is strict where supplied. Native RNC units do not
+  expose a separate member field; database/structured-member identity is not fully
+  modelled. Enclosing ZIP/TAR paths alone never earn credit.
 - Precision/F1 remain `NOT CERTIFIED` because the negative oracle is not
   exhaustive. Unmatched and unverified findings remain visible; they are not
   converted to false positives.
@@ -331,3 +410,6 @@ The code commit was made on `feat/scoring-integrity-remediation`, based on
 - Some negative traps with a scanner line off by one are now `UNVERIFIED_EVIDENCE`
   rather than verified FP. This is intentional strictness: a wrong location does
   not establish negative evidence.
+- Kubernetes structured location support is deliberately limited to the
+  certified `kind: Secret` + `data`/`stringData` shape. Other YAML structures are
+  not inferred.
