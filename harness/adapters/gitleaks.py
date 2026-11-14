@@ -11,6 +11,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
+from ..archive import member_from_path
 from ..execution import Invocation, run_process
 from ..util import sha256_file
 from . import gitleaks_fixtures
@@ -221,6 +222,7 @@ class GitleaksAdapter(ScannerAdapter):
                 secret_sha256=entry["secret_sha256"],
                 match_sha256=entry["match_sha256"],
                 secret_redacted=entry["secret_redacted"],
+                container_member=member_from_path(entry["file"]),
                 metadata={"fingerprint": entry.get("fingerprint")}
                 if entry.get("fingerprint")
                 else {},

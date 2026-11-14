@@ -23,12 +23,12 @@ import sqlite3
 import subprocess
 import tarfile
 import zipfile
-from collections import Counter, defaultdict
+from collections import Counter, defaultdict, deque
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from typing import Iterable
 
-from . import evidence
+from . import archive, evidence
 from .errors import HarnessError
 from .util import sha256_bytes, sha256_file
 
@@ -827,58 +827,62 @@ def _normalize_path(value: str, root: Path) -> str:
     return raw
 
 
-def _canonical_member(value: str | None) -> str | None:
-    if not value:
-        return None
-    value = value.replace("!/", "!").replace("::", "!").strip("/")
-    return value or None
+def _path_matches(item: LabItem, finding: LabFinding, root: Path) -> bool:
+    """Match the source path and a canonical archive-member identity.
 
-
-def _archive_member(path: str) -> tuple[str, str | None]:
-    for marker in ("!", "::"):
-        if marker in path:
-            archive, member = path.split(marker, 1)
-            return archive, _canonical_member(member)
-    return path, None
-
-
-def _path_matches(item: LabItem, finding_file: str, root: Path) -> bool:
-    """Match path and, for archives, the reported member identity.
-
-    An enclosing archive path alone is not proof that the correct member was
-    detected.  RNC's adapter may report only the archive path; in that case the
-    finding remains eligible only when the oracle item itself has no member
-    identity.  Reports that include a member must match it exactly.
+    ``file`` keeps the scanner-reported path. A member may be embedded in that
+    path (``archive.zip!member`` or ``archive.zip::member``) or supplied through
+    the explicit ``container_member`` contract. If both forms are present they
+    must agree. An enclosing ZIP/TAR path alone is never sufficient proof of a
+    member; a single-member gzip stream may use its enclosing path.
     """
-    if not finding_file:
+    if not finding.file:
         return False
-    finding_archive, finding_member = _archive_member(finding_file)
-    item_member = _canonical_member(item.source_member)
-    if item.container_kind == "archive":
-        if finding_archive != item.source_path:
+    if item.container_kind != "archive":
+        if finding.container_member:
             return False
-        if item_member:
-            if finding_member is not None:
-                return finding_member == item_member
-            # A gzip stream has exactly one member; the enclosing path is the
-            # only available identity.  Multi-member archives require an exact
-            # member report.
-            formats = {
-                str(item.source_format or "").lower(),
-                str(((item.raw.get("container") or {}).get("format") or "")).lower(),
-            }
-            return item.source_path.lower().endswith(".gz") or bool(
-                formats & {"gz", "gzip"}
-            )
-        return finding_member is None
-    if finding_file == item.source_path:
-        return True
-    if item.lane == "filesystem":
-        left = (root / item.source_path).resolve()
-        right = (root / finding_file).resolve()
-        if left == right:
+        if finding.file == item.source_path:
             return True
-    return False
+        if item.lane == "filesystem":
+            left = (root / item.source_path).resolve()
+            right = (root / finding.file).resolve()
+            if left == right:
+                return True
+        return False
+
+    if archive.has_member_separator(finding.file):
+        finding_archive, finding_member = archive.split_archive_path(finding.file)
+        if finding_member is None:
+            # A separator was present but the member was unsafe or malformed.
+            return False
+    else:
+        finding_archive, finding_member = finding.file, None
+
+    explicit_raw = finding.container_member or None
+    explicit = archive.canonical_member(explicit_raw)
+    if explicit_raw and explicit is None:
+        return False
+    if explicit is not None and finding_member is not None and explicit != finding_member:
+        return False
+    member = explicit if explicit is not None else finding_member
+
+    if finding_archive != item.source_path:
+        return False
+    item_member = archive.canonical_member(item.source_member)
+    if item_member:
+        if member is not None:
+            return member == item_member
+        formats = {
+            str(item.source_format or "").lower(),
+            str(((item.raw.get("container") or {}).get("format") or "")).lower(),
+        }
+        return archive.is_gzip_path(item.source_path) or bool(
+            formats & {"gz", "gzip"}
+        )
+    return member is None and not explicit_raw
+
+
+
 def _text_candidates(text: str) -> set[str]:
     if not text:
         return set()
@@ -1000,23 +1004,156 @@ def _item_aliases(
     return tuple(aliases)
 
 
-def _line_matches(item: LabItem, finding: LabFinding) -> bool:
+def _source_text_lines(
+    dataset: LabDataset,
+    item: LabItem,
+    cache: dict[str, list[str] | None],
+) -> list[str] | None:
+    if item.item_id in cache:
+        return cache[item.item_id]
+    lines: list[str] | None = None
+    try:
+        if item.lane == "filesystem" and item.container_kind == "file":
+            text = (dataset.filesystem_root / item.source_path).read_bytes().decode(
+                "utf-8", "replace"
+            )
+            lines = text.splitlines()
+        elif item.lane == "git" and item.source_blob:
+            text = _git(
+                dataset.history_root,
+                "cat-file",
+                "blob",
+                item.source_blob,
+                binary=True,
+            ).decode("utf-8", "replace")
+            lines = text.splitlines()
+    except (OSError, RncLabError):
+        lines = None
+    cache[item.item_id] = lines
+    return lines
+
+
+def _kubernetes_structure(
+    dataset: LabDataset,
+    item: LabItem,
+    cache: dict[str, list[str] | None],
+) -> tuple[int, int, int] | None:
+    """Return the item's (kind, data block, key) source lines, if verified."""
+    if item.line is None or not str(item.representation).startswith("kubernetes_"):
+        return None
+    lines = _source_text_lines(dataset, item, cache)
+    if not lines:
+        return None
+    index = item.line - 1
+    if index < 0 or index >= len(lines):
+        return None
+
+    document_start = 0
+    for cursor in range(index, -1, -1):
+        if lines[cursor].strip() == "---":
+            document_start = cursor + 1
+            break
+    document_end = len(lines)
+    for cursor in range(index + 1, len(lines)):
+        if lines[cursor].strip() == "---":
+            document_end = cursor
+            break
+
+    kind_lines = [
+        cursor
+        for cursor in range(document_start, document_end)
+        if re.match(
+            r"^\s*kind\s*:\s*[\"']?Secret[\"']?\s*$",
+            lines[cursor],
+            flags=re.IGNORECASE,
+        )
+    ]
+    if not kind_lines:
+        return None
+    kind_line = kind_lines[-1]
+
+    value_line = lines[index]
+    value_indent = len(value_line) - len(value_line.lstrip(" "))
+    data_line: int | None = None
+    for cursor in range(index, document_start - 1, -1):
+        stripped = lines[cursor].strip()
+        indent = len(lines[cursor]) - len(lines[cursor].lstrip(" "))
+        if stripped in ("data:", "stringData:") and indent < value_indent:
+            data_line = cursor
+            break
+    if data_line is None:
+        return None
+
+    key_line = index
+    for cursor in range(index, data_line, -1):
+        stripped = lines[cursor].strip()
+        indent = len(lines[cursor]) - len(lines[cursor].lstrip(" "))
+        if ":" in stripped and indent <= value_indent:
+            key_line = cursor
+            break
+
+    return kind_line + 1, data_line + 1, key_line + 1
+
+
+def _kubernetes_allowed_lines(
+    dataset: LabDataset,
+    item: LabItem,
+    cache: dict[str, list[str] | None],
+) -> set[int]:
+    """Return source-verified lines for a Kubernetes secret finding.
+
+    Gitleaks/Betterleaks may report the ``kind: Secret`` line for a whole secret
+    YAML document. That is valid only when the item is actually inside a
+    ``data``/``stringData`` block of that same YAML document. Arbitrary earlier
+    lines, another document, and another field are not accepted.
+    """
+    structure = _kubernetes_structure(dataset, item, cache)
+    if structure is None:
+        return set()
+    return {structure[0], structure[1], structure[2], item.line}
+
+
+def _kubernetes_location_rank(
+    dataset: LabDataset,
+    item: LabItem,
+    finding: LabFinding,
+    cache: dict[str, list[str] | None],
+) -> int:
+    """0 is exact; key/data/kind structured alternatives rank 1/2/3."""
+    if finding.line == item.line:
+        return 0
+    structure = _kubernetes_structure(dataset, item, cache)
+    if structure is None:
+        return 999
+    kind_line, data_line, key_line = structure
+    if finding.line == key_line:
+        return 1
+    if finding.line == data_line:
+        return 2
+    if finding.line == kind_line:
+        return 3
+    return 999
+
+
+def _line_matches(
+    item: LabItem,
+    finding: LabFinding,
+    dataset: LabDataset,
+    text_cache: dict[str, list[str] | None],
+) -> bool:
     if item.line is None:
         return True
     if finding.line is None:
         return False
     if finding.line == item.line:
         return True
-    # A Kubernetes secret YAML scanner may locate the enclosing data block
-    # rather than the base64 value line.  This is an explicit structured-source
-    # location policy, valid only when the value digest already matched.
     if (
-        str(item.representation).startswith("kubernetes_")
-        and str(finding.rule_id) in ("kubernetes-secret-yaml", "pem-private-key-base64")
-        and finding.line < item.line
+        str(finding.rule_id) in ("kubernetes-secret-yaml", "pem-private-key-base64")
+        and finding.line in _kubernetes_allowed_lines(dataset, item, text_cache)
     ):
         return True
     return False
+
 
 
 def _byte_matches(item: LabItem, finding: LabFinding) -> bool:
@@ -1033,11 +1170,16 @@ def _byte_matches(item: LabItem, finding: LabFinding) -> bool:
     return item.byte_start <= finding.byte_start and finding.byte_end <= item.byte_end
 
 
-def _location_reason(item: LabItem, finding: LabFinding) -> str | None:
+def _location_reason(
+    item: LabItem,
+    finding: LabFinding,
+    dataset: LabDataset,
+    text_cache: dict[str, list[str] | None],
+) -> str | None:
     if item.line is not None:
         if finding.line is None:
             return evidence.LOCATION_UNVERIFIED
-        if not _line_matches(item, finding):
+        if not _line_matches(item, finding, dataset, text_cache):
             return evidence.LOCATION_LINE_MISMATCH
     if not _byte_matches(item, finding):
         return evidence.LOCATION_OFFSET_MISMATCH
@@ -1083,6 +1225,7 @@ def _near_miss_relation(
     source_root: Path,
     commit_ancestors: dict[str, frozenset[str]] | None,
     span_cache: dict[str, bytes | None],
+    text_cache: dict[str, list[str] | None],
     used: set[str],
 ) -> tuple[LabItem, str, str] | None:
     hashes = _candidate_hashes(finding)
@@ -1104,9 +1247,9 @@ def _near_miss_relation(
                 continue
             if alias.kind == evidence.PUBLIC_KEY_ONLY:
                 continue
-            if not _path_matches(item, finding.file, source_root):
+            if not _path_matches(item, finding, source_root):
                 continue
-            reason = _location_reason(item, finding)
+            reason = _location_reason(item, finding, dataset, text_cache)
             if reason:
                 candidates.append((0, _line_distance(item, finding), item.item_id, item, reason, "source value matched but location did not"))
 
@@ -1117,7 +1260,25 @@ def _near_miss_relation(
                 continue
             if alias.kind == evidence.PUBLIC_KEY_ONLY:
                 continue
-            if _path_matches(item, finding.file, source_root):
+            if _path_matches(item, finding, source_root):
+                continue
+            finding_archive, _finding_member = archive.split_archive_path(finding.file)
+            item_member = archive.canonical_member(item.source_member)
+            if (
+                item.container_kind == "archive"
+                and finding_archive == item.source_path
+                and item_member
+            ):
+                candidates.append(
+                    (
+                        1,
+                        1_000_000,
+                        item.item_id,
+                        item,
+                        evidence.MEMBER_MISMATCH,
+                        "exact credential value is in a different archive member or member identity is missing",
+                    )
+                )
                 continue
             candidates.append((1, 1_000_000, item.item_id, item, evidence.SOURCE_OCCURRENCE_MISMATCH, "exact credential value belongs to a different source occurrence"))
 
@@ -1125,9 +1286,11 @@ def _near_miss_relation(
     for item in lane_items:
         if not item.is_positive or item.item_id in used or not _commit_ok(item):
             continue
-        if not _path_matches(item, finding.file, source_root):
+        if not _path_matches(item, finding, source_root):
             continue
-        if item.line is not None and finding.line != item.line:
+        if item.line is not None and not _line_matches(
+            item, finding, dataset, text_cache
+        ):
             continue
         span = _source_span_bytes(dataset, item, span_cache)
         if not span:
@@ -1156,6 +1319,197 @@ def _near_miss_relation(
     candidates.sort(key=lambda value: (value[0], value[1], value[2]))
     _rank, _distance, _item_id, item, reason, detail = candidates[0]
     return item, reason, detail
+def _candidate_rank(candidate: dict) -> tuple[int, int, int]:
+    """Authoritative candidate ranking: evidence first, then source location."""
+    return (
+        int(candidate["priority"]),
+        -int(candidate.get("location_rank", candidate["line_distance"])),
+        -int(candidate["byte_distance"]),
+    )
+
+
+def _candidate_weight(candidate: dict) -> int:
+    """Scalar encoding of the lexicographic assignment objective.
+
+    Positive target coverage is maximized first, then the number of assigned
+    findings, then evidence/location quality. The constants are far larger than
+    any quality sum in the certified lab, so the ordering is exact for Python
+    integers.
+    """
+    priority, neg_line, neg_byte = _candidate_rank(candidate)
+    quality = (
+        priority * 10**12
+        + (1_000_000 + neg_line) * 10**6
+        + (1_000_000 + neg_byte)
+    )
+    return (10**22 if candidate["item"].is_positive else 0) + 10**18 + quality
+
+
+def _optimal_assignment(
+    candidates_by_finding: dict[int, list[dict]],
+    findings: list[LabFinding],
+    *,
+    remove: tuple[int, str] | None = None,
+    force: tuple[int, str] | None = None,
+) -> tuple[int, dict[int, dict]]:
+    """Deterministic maximum-weight one-to-one assignment.
+
+    The graph is a unit-capacity bipartite matching. The scalar weights encode
+    positive coverage, total assignment count, and candidate quality in that
+    order. Successive shortest augmenting paths solve the min-cost flow; all
+    node and edge ordering is derived from stable finding/item keys.
+    """
+    finding_order = sorted(
+        candidates_by_finding,
+        key=lambda index: (
+            evidence.stable_finding_key(
+                file=findings[index].file,
+                line=findings[index].line,
+                commit=findings[index].commit,
+                rule_id=findings[index].rule_id,
+                secret_sha256=findings[index].secret_sha256,
+                match_sha256=findings[index].match_sha256,
+                byte_start=findings[index].byte_start,
+                byte_end=findings[index].byte_end,
+            ),
+            index,
+        ),
+    )
+    if not finding_order:
+        return 0, {}
+    item_ids = sorted(
+        {
+            candidate["item"].item_id
+            for index in finding_order
+            for candidate in candidates_by_finding[index]
+        }
+    )
+    if not item_ids:
+        return 0, {}
+    finding_node = {index: 1 + position for position, index in enumerate(finding_order)}
+    item_node = {
+        item_id: 1 + len(finding_order) + position
+        for position, item_id in enumerate(item_ids)
+    }
+    source = 0
+    sink = 1 + len(finding_order) + len(item_ids)
+    graph: list[list[list[int]]] = [[] for _ in range(sink + 1)]
+    edge_ref: dict[tuple[int, str], tuple[int, int]] = {}
+
+    def add_edge(left: int, right: int, capacity: int, cost: int) -> None:
+        graph[left].append([right, len(graph[right]), capacity, cost])
+        graph[right].append([left, len(graph[left]) - 1, 0, -cost])
+
+    for index in finding_order:
+        add_edge(source, finding_node[index], 1, 0)
+        candidates = candidates_by_finding[index]
+        for candidate in sorted(
+            candidates,
+            key=lambda value: (
+                value["item"].item_id,
+                -value["weight"],
+                value["alias"].kind,
+                value["alias"].digest,
+            ),
+        ):
+            item_id = candidate["item"].item_id
+            if remove == (index, item_id):
+                continue
+            if force is not None and force[0] == index and force[1] != item_id:
+                continue
+            position = len(graph[finding_node[index]])
+            add_edge(finding_node[index], item_node[item_id], 1, -candidate["weight"])
+            edge_ref[(index, item_id)] = (finding_node[index], position)
+    for item_id in item_ids:
+        add_edge(item_node[item_id], sink, 1, 0)
+
+    total_cost = 0
+    while True:
+        distance = [10**30] * len(graph)
+        previous_node = [-1] * len(graph)
+        previous_edge = [-1] * len(graph)
+        in_queue = [False] * len(graph)
+        distance[source] = 0
+        queue = deque([source])
+        in_queue[source] = True
+        while queue:
+            node = queue.popleft()
+            in_queue[node] = False
+            for edge_index, edge in enumerate(graph[node]):
+                target, _reverse, capacity, cost = edge
+                if capacity <= 0:
+                    continue
+                candidate_distance = distance[node] + cost
+                if candidate_distance < distance[target]:
+                    distance[target] = candidate_distance
+                    previous_node[target] = node
+                    previous_edge[target] = edge_index
+                    if not in_queue[target]:
+                        queue.append(target)
+                        in_queue[target] = True
+        if distance[sink] == 10**30:
+            break
+        node = sink
+        while node != source:
+            parent = previous_node[node]
+            edge_index = previous_edge[node]
+            if parent < 0 or edge_index < 0:
+                raise RncLabError("assignment augmenting path is incomplete")
+            edge = graph[parent][edge_index]
+            edge[2] -= 1
+            graph[node][edge[1]][2] += 1
+            node = parent
+        total_cost += distance[sink]
+
+    assignment: dict[int, dict] = {}
+    for index in finding_order:
+        for candidate in candidates_by_finding[index]:
+            reference = edge_ref.get((index, candidate["item"].item_id))
+            if reference is None:
+                continue
+            node, position = reference
+            if graph[node][position][2] == 0:
+                assignment[index] = candidate
+                break
+    return -total_cost, assignment
+
+
+def _select_assignment(
+    candidates_by_finding: dict[int, list[dict]],
+    findings: list[LabFinding],
+) -> tuple[dict[int, dict], set[int], int]:
+    """Choose a canonical optimum and leave genuinely ambiguous edges uncredited."""
+    total, assignment = _optimal_assignment(candidates_by_finding, findings)
+    ambiguous: set[int] = set()
+    for index, candidates in candidates_by_finding.items():
+        if len({candidate["item"].item_id for candidate in candidates}) <= 1:
+            continue
+        selected = assignment.get(index)
+        if selected is not None:
+            without, _ = _optimal_assignment(
+                candidates_by_finding,
+                findings,
+                remove=(index, selected["item"].item_id),
+            )
+            if without == total:
+                ambiguous.add(index)
+            continue
+        # An unassigned finding with multiple verified candidates is ambiguous
+        # only when forcing one of those candidates remains optimal.
+        for candidate in candidates:
+            forced, _ = _optimal_assignment(
+                candidates_by_finding,
+                findings,
+                force=(index, candidate["item"].item_id),
+            )
+            if forced == total:
+                ambiguous.add(index)
+                break
+    for index in ambiguous:
+        assignment.pop(index, None)
+    return assignment, ambiguous, total
+
+
 def _commit_ancestors(history_root: Path) -> dict[str, frozenset[str]]:
     text = _git(history_root, "rev-list", "--parents", "--all")
     parents: dict[str, list[str]] = {}
@@ -1210,54 +1564,75 @@ def _attribute(
     ]
     lane_items = [item for item in dataset.items if item.lane == lane]
     span_cache: dict[str, bytes | None] = {}
+    text_cache: dict[str, list[str] | None] = {}
     alias_index: dict[str, list[tuple[LabItem, evidence.EvidenceAlias]]] = defaultdict(list)
     for item in lane_items:
         for alias in _item_aliases(dataset, item, span_cache):
             alias_index[alias.digest].append((item, alias))
 
-    priority = {
-        evidence.IDENTITY_DIGEST: 5,
-        evidence.SOURCE_SPAN_EXACT: 4,
-        evidence.SOURCE_SPAN_NORMALIZED: 3,
-        evidence.DECODED_IDENTITY: 2,
-    }
-    # A finding may have candidates at several items.  Build all edges first so
-    # attribution does not depend on input order or premature short-circuiting.
-    edges: list[dict] = []
+    # A finding may have candidates at several items. Build the strongest valid
+    # proof per finding/item relationship first; digest insertion order and
+    # alias order must never decide evidence quality.
     failures: dict[int, list[tuple[LabItem | None, str, str, str]]] = defaultdict(list)
     candidates_by_finding: dict[int, list[dict]] = defaultdict(list)
     for finding in findings:
         hashes = _candidate_hashes(finding)
         if not hashes:
-            failures[finding.index].append((None, evidence.EVIDENCE_MISSING, evidence.STAGE_VALUE, "scanner supplied no value evidence"))
+            failures[finding.index].append(
+                (
+                    None,
+                    evidence.EVIDENCE_MISSING,
+                    evidence.STAGE_VALUE,
+                    "scanner supplied no value evidence",
+                )
+            )
             continue
-        seen_items: set[str] = set()
+        best_by_item: dict[str, dict] = {}
         for digest in sorted(hashes):
             for item, alias in alias_index.get(digest, []):
-                if item.item_id in seen_items:
-                    continue
                 if alias.kind == evidence.PUBLIC_KEY_ONLY:
-                    failures[finding.index].append((item, evidence.PUBLIC_KEY_ONLY, evidence.STAGE_MATERIAL, "only public-key identity was reported"))
+                    failures[finding.index].append(
+                        (
+                            item,
+                            evidence.PUBLIC_KEY_ONLY,
+                            evidence.STAGE_MATERIAL,
+                            "only public-key identity was reported",
+                        )
+                    )
                     continue
-                if not _path_matches(item, finding.file, source_root):
+                if not _path_matches(item, finding, source_root):
                     continue
                 if lane == "git":
                     if not finding.commit or item.source_commit not in (
                         commit_ancestors or {}
                     ).get(finding.commit, frozenset()):
                         continue
-                location_reason = _location_reason(item, finding)
+                location_reason = _location_reason(
+                    item, finding, dataset, text_cache
+                )
                 if location_reason:
-                    failures[finding.index].append((item, location_reason, evidence.STAGE_LOCATION, "source value and path matched but location did not"))
+                    failures[finding.index].append(
+                        (
+                            item,
+                            location_reason,
+                            evidence.STAGE_LOCATION,
+                            "source value and path matched but location did not",
+                        )
+                    )
                     continue
                 material_ok, material_reason = _material_status(
                     dataset, item, finding, alias, hashes, span_cache
                 )
                 if not material_ok:
-                    failures[finding.index].append((item, material_reason or evidence.PRIVATE_MATERIAL_UNPROVEN, evidence.STAGE_MATERIAL, "private-key material could not be verified"))
+                    failures[finding.index].append(
+                        (
+                            item,
+                            material_reason or evidence.PRIVATE_MATERIAL_UNPROVEN,
+                            evidence.STAGE_MATERIAL,
+                            "private-key material could not be verified",
+                        )
+                    )
                     continue
-                seen_items.add(item.item_id)
-                candidate_priority = priority.get(alias.kind, 1)
                 candidate = {
                     "finding_index": finding.index,
                     "finding_key": evidence.stable_finding_key(
@@ -1272,73 +1647,67 @@ def _attribute(
                     ),
                     "item": item,
                     "alias": alias,
-                    "priority": candidate_priority,
+                    "priority": evidence.EVIDENCE_STRENGTH.get(alias.kind, 0),
                     "line_distance": _line_distance(item, finding),
+                    "location_rank": _kubernetes_location_rank(
+                        dataset, item, finding, text_cache
+                    ),
                     "byte_distance": (
                         abs((finding.byte_start or 0) - item.byte_start)
                         if finding.byte_start is not None
                         else 1_000_000
                     ),
                 }
-                edges.append(candidate)
-                candidates_by_finding[finding.index].append(candidate)
-        if not candidates_by_finding.get(finding.index):
-            # Same known positive path/line but a non-matching value is
-            # unverified evidence, not a near miss (proximity alone is not a
-            # relationship).
-            for item in lane_items:
-                if not item.is_positive:
+                existing = best_by_item.get(item.item_id)
+                alias_key = (alias.kind, alias.digest, alias.detail)
+                if existing is None:
+                    best_by_item[item.item_id] = candidate
                     continue
-                if not _path_matches(item, finding.file, source_root):
+                existing_key = (
+                    existing["alias"].kind,
+                    existing["alias"].digest,
+                    existing["alias"].detail,
+                )
+                if _candidate_rank(candidate) > _candidate_rank(existing) or (
+                    _candidate_rank(candidate) == _candidate_rank(existing)
+                    and alias_key < existing_key
+                ):
+                    best_by_item[item.item_id] = candidate
+        candidates = sorted(best_by_item.values(), key=lambda value: value["item"].item_id)
+        if candidates:
+            for candidate in candidates:
+                candidate["weight"] = _candidate_weight(candidate)
+            candidates_by_finding[finding.index] = candidates
+            continue
+        # Same known positive path/line but a non-matching value is unverified
+        # evidence, not a near miss (proximity alone is not a relationship).
+        for item in lane_items:
+            if not item.is_positive:
+                continue
+            if not _path_matches(item, finding, source_root):
+                continue
+            if lane == "git":
+                if not finding.commit or item.source_commit not in (
+                    commit_ancestors or {}
+                ).get(finding.commit, frozenset()):
                     continue
-                if lane == "git":
-                    if not finding.commit or item.source_commit not in (
-                        commit_ancestors or {}
-                    ).get(finding.commit, frozenset()):
-                        continue
-                if _line_matches(item, finding):
-                    failures[finding.index].append(
-                        (
-                            item,
-                            evidence.EVIDENCE_CONFLICT,
-                            evidence.STAGE_VALUE,
-                            "known positive location but value evidence did not match",
-                        )
+            if _line_matches(item, finding, dataset, text_cache):
+                failures[finding.index].append(
+                    (
+                        item,
+                        evidence.EVIDENCE_CONFLICT,
+                        evidence.STAGE_VALUE,
+                        "known positive location but value evidence did not match",
                     )
-                    break
+                )
+                break
 
-    # Equal-strength candidates that cannot be resolved by location are
-    # ambiguous, not a reason to pick one by oracle order.
-    ambiguous: set[int] = set()
-    for index, candidates in candidates_by_finding.items():
-        top = min((c["priority"], c["line_distance"], c["byte_distance"]) for c in candidates)
-        top_items = {
-            c["item"].item_id
-            for c in candidates
-            if (c["priority"], c["line_distance"], c["byte_distance"]) == top
-        }
-        if len(top_items) > 1:
-            ambiguous.add(index)
-
-    edges.sort(
-        key=lambda c: (
-            -c["priority"],
-            c["line_distance"],
-            c["byte_distance"],
-            c["item"].item_id,
-            c["finding_key"],
-        )
+    assigned_finding, ambiguous, _total = _select_assignment(
+        candidates_by_finding, findings
     )
-    assigned_finding: dict[int, dict] = {}
-    assigned_item: dict[str, int] = {}
-    for edge in edges:
-        if edge["finding_index"] in ambiguous or edge["finding_index"] in assigned_finding:
-            continue
-        item = edge["item"]
-        if item.item_id in assigned_item:
-            continue
-        assigned_finding[edge["finding_index"]] = edge
-        assigned_item[item.item_id] = edge["finding_index"]
+    assigned_item = {
+        edge["item"].item_id: index for index, edge in assigned_finding.items()
+    }
 
     outcomes: list[FindingOutcome] = []
     used = set(assigned_item)
@@ -1351,7 +1720,7 @@ def _attribute(
                     finding,
                     MATCH_AMBIGUOUS,
                     candidates[0]["item"].item_id if candidates else None,
-                    "multiple equal-strength oracle candidates could not be resolved safely",
+                    "multiple verified candidate assignments remain equally optimal",
                     candidates[0]["item"].group_id if candidates else None,
                     evidence_kind=candidates[0]["alias"].kind if candidates else None,
                     stage=evidence.STAGE_ATTRIBUTION,
@@ -1418,6 +1787,7 @@ def _attribute(
             source_root=source_root,
             commit_ancestors=commit_ancestors,
             span_cache=span_cache,
+            text_cache=text_cache,
             used=used,
         )
         if near is not None:

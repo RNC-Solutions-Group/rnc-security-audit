@@ -92,6 +92,11 @@ class NormalizedFinding:
 
     ``secret_text`` and ``match_text`` are transient matching context only and
     are deliberately excluded from ``repr``. They are never serialized.
+
+    ``file`` remains the scanner-reported path. ``container_member`` is the
+    canonical member path relative to the enclosing archive, using ``!`` for
+    nested archive boundaries. When both an embedded path member and an explicit
+    field are present they must agree; the scorer never chooses one arbitrarily.
     """
 
     file: str
