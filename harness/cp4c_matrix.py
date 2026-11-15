@@ -1518,6 +1518,7 @@ def _render_tables(document: dict) -> str:
             f"Manifest: `{document['artifact']['manifest_sha256']}`",
             f"CP4B reference: `{document['cp4b_artifact']['executable_sha256']}` "
             f"({document['cp4b_artifact']['source_commit']})",
+            f"Harness code: `{document.get('harness_source_commit')}`",
             "",
             "Raw reports, profiles, commands and per-run evidence remain under this Git-ignored experiment directory.",
             "",
@@ -1940,6 +1941,7 @@ def generate_report(out_dir: Path) -> dict:
         "experiment": EXPERIMENT,
         "generated_at": _utc_now(),
         "harness_version": context.get("harness_version"),
+        "harness_source_commit": context.get("harness_source_commit"),
         "environment": {
             "mode": "DEV",
             "description": "contended developer workstation; preliminary timing",

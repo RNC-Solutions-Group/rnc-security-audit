@@ -330,7 +330,8 @@
     "stability_cv_threshold": 0.25
   },
   "experiment": "cp4c-matrix0",
-  "generated_at": "2026-11-15T23:01:51.276191+00:00",
+  "generated_at": "2026-11-15T23:09:50.264189+00:00",
+  "harness_source_commit": "cfc1cb001eeb95cfccc57bb41c30ea156988ccb2",
   "harness_version": "0.6.0",
   "host": {
     "capacity": {

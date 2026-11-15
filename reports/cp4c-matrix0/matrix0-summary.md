@@ -1,6 +1,6 @@
 # CP4C Matrix 0 — Worker Scaling and Profiler Overhead
 
-Generated: 2026-11-15T23:01:51.276191+00:00
+Generated: 2026-11-15T23:09:50.264189+00:00
 
 ## Executive outcome
 
@@ -344,5 +344,6 @@ Artifact: `170bd1df345c4985043ff449051c247f22a1012fe9c054cae5c2edcc190fb1cb` (80
 Ruleset: `2eb315fa40553ab1e133322a1f0a014a4593ab2ca6164152149eb59c1197a6b7`
 Manifest: `c43792964fd8b07317ff8e3bc8fb75c63f175387d27d2b5855814ecebd4d132b`
 CP4B reference: `d5dc4a1620da8b4a9a38f298933bbcc2bd094de89fe96cde3ebd551edcba61f4` (d00f71f1e2cf16ce58beb07d8b960c5ad056f915)
+Harness code: `cfc1cb001eeb95cfccc57bb41c30ea156988ccb2`
 
 Raw reports, profiles, commands and per-run evidence remain under this Git-ignored experiment directory.
