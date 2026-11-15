@@ -330,7 +330,7 @@
     "stability_cv_threshold": 0.25
   },
   "experiment": "cp4c-matrix0",
-  "generated_at": "2026-11-15T22:59:07.764832+00:00",
+  "generated_at": "2026-11-15T23:01:51.276191+00:00",
   "harness_version": "0.6.0",
   "host": {
     "capacity": {
@@ -430,7 +430,10 @@
     "generated_at": "2026-11-15T22:38:08.582831+00:00",
     "last_finished_at": "2026-11-15T22:36:48.281233+00:00",
     "measured": 160,
+    "off_first_blocks": 41,
+    "on_first_blocks": 39,
     "overlaps": [],
+    "pair_blocks": 80,
     "profile_counters_equal": true,
     "profiles_present": true,
     "profiles_valid": true,

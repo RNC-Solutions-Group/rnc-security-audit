@@ -1,6 +1,6 @@
 # CP4C Matrix 0 — Worker Scaling and Profiler Overhead
 
-Generated: 2026-11-15T22:59:07.764832+00:00
+Generated: 2026-11-15T23:01:51.276191+00:00
 
 ## Executive outcome
 
@@ -293,7 +293,7 @@ Free disk: median 116.8 GiB (min 116.6 GiB).
 
 ## Independent post-run audit
 
-Audit available: **True**. Records: 208; measured: 160; failed: 0. Unit dispositions equal: **True**; profile counters equal: **True**; command flags equal: **True**; raw reports present: **True**; profiles present: **True**; sequential: **True**; span: 27.193 min.
+Audit available: **True**. Records: 208; measured: 160; failed: 0. Unit dispositions equal: **True**; profile counters equal: **True**; command flags equal: **True**; raw reports present: **True**; profiles present: **True**; paired blocks: 80 (off-first 41, on-first 39); sequential: **True**; span: 27.193 min.
 
 CP4B/CP4C reference audit: rnclab-filesystem units=True, findings=True, target_ids=True; rnclab-git units=True, findings=True, target_ids=True.
 

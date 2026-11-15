@@ -1473,6 +1473,8 @@ def _render_tables(document: dict) -> str:
                 f"command flags equal: **{audit.get('command_flags_equal')}**; "
                 f"raw reports present: **{audit.get('raw_reports_present')}**; "
                 f"profiles present: **{audit.get('profiles_present')}**; "
+                f"paired blocks: {audit.get('pair_blocks')} "
+                f"(off-first {audit.get('off_first_blocks')}, on-first {audit.get('on_first_blocks')}); "
                 f"sequential: **{audit.get('sequential')}**; span: {audit.get('span_minutes')} min."
             ),
             "",
