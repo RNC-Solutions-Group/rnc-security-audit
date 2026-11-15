@@ -472,6 +472,11 @@ def score_findings(
             bucket["matched"] += 1
         else:
             bucket["missed"] += 1
+    finding_classifications = Counter(
+        evaluation.classification
+        for evaluation in evaluations
+        if evaluation.observed is not None
+    )
     metrics = {
         "expected_count": expected_count,
         "matched_count": matched,
@@ -491,6 +496,24 @@ def score_findings(
         "duplicate_count": classifications[DUPLICATE],
         "ambiguous_count": classifications[AMBIGUOUS_MATCH],
         "unmapped_count": classifications[UNMAPPED],
+        "unmatched_only_count": classifications[UNMATCHED_PENDING_REVIEW],
+        "unexpected_observation_count": classifications[UNEXPECTED_FINDING],
+        "unmatched_or_unmapped_count": (
+            classifications[UNMATCHED_PENDING_REVIEW] + classifications[UNMAPPED]
+        ),
+        "finding_classification_counts": dict(finding_classifications),
+        "finding_classification_total": sum(finding_classifications.values()),
+        "finding_accounting": {
+            "observed": len(findings),
+            "classified": sum(finding_classifications.values()),
+            "reconciled": sum(finding_classifications.values()) == len(findings),
+        },
+        "target_accounting": {
+            "expected": expected_count,
+            "matched": matched,
+            "missed": classifications[MISSED_EXPECTATION],
+            "reconciled": matched + classifications[MISSED_EXPECTATION] == expected_count,
+        },
         "skipped_count": classifications[SKIPPED],
         "not_applicable_count": classifications[NOT_APPLICABLE],
         "blocked_count": classifications[BLOCKED],

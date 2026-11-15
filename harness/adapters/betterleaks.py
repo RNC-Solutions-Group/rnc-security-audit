@@ -12,6 +12,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
+from ..archive import member_from_path
 from ..contracts import NormalizedFinding
 from ..execution import Invocation, run_process
 from ..util import sha256_file
@@ -283,6 +284,7 @@ class BetterleaksAdapter(ScannerAdapter):
                         else None
                     ),
                     secret_redacted=secret_text == "REDACTED",
+                    container_member=member_from_path(str(file_value)),
                     metadata={
                         "fingerprint": entry.get("Fingerprint"),
                         "description": entry.get("Description"),

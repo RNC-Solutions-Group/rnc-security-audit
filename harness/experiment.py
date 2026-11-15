@@ -208,17 +208,26 @@ def _detection_summary(suites: dict[str, dict]) -> dict:
                 "unique_groups_matched": lab_metrics.get("unique_groups_matched"),
                 "unique_recall_percent": lab_metrics.get("unique_recall_percent"),
                 "duplicate_count": lab_metrics.get("duplicate_count"),
-                "informative_match_count": lab_metrics.get(
-                    "informative_match_count"
-                ),
+                "informative_match_count": lab_metrics.get("informative_match_count"),
                 "verified_false_positive_alert_count": lab_metrics.get(
                     "verified_false_positive_alert_count"
                 ),
+                "near_miss_count": lab_metrics.get("near_miss_count"),
+                "near_miss_target_count": lab_metrics.get("near_miss_target_count"),
+                "near_miss_reason_counts": lab_metrics.get("near_miss_reason_counts"),
+                "near_miss_targets": lab_metrics.get("near_miss_targets"),
                 "unmatched_pending_review_count": lab_metrics.get(
                     "unmatched_pending_review_count"
                 ),
                 "unverified_evidence_count": lab_metrics.get(
                     "unverified_evidence_count"
+                ),
+                "ambiguous_count": lab_metrics.get("ambiguous_count"),
+                "target_accounting_reconciled": lab_metrics.get(
+                    "target_accounting_reconciled"
+                ),
+                "finding_accounting_reconciled": lab_metrics.get(
+                    "finding_accounting_reconciled"
                 ),
                 "unsupported_capability_count": lab_metrics.get(
                     "unsupported_capability_count"
