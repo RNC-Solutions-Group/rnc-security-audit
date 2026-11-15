@@ -1,10 +1,11 @@
 # Scoring-Integrity Execution Ledger
 
-**Checkpoint:** CP-SI0 → CP-SI7  
-**Branch:** `feat/scoring-integrity-remediation`  
-**Baseline:** `benchmark-harness` at `1d147f9feb7b73003c46adab3ea9e780807e5cdf`  
-**Authority:** Implement, validate, document, commit, and prepare a PR; do not merge.  
-**Recorded:** 2026-11-13 (America/New_York)
+**Checkpoint:** CP-SI0 → CP-SI8<br>
+**Branch:** `feat/scoring-integrity-remediation`<br>
+**Baseline:** `benchmark-harness` at `1d147f9feb7b73003c46adab3ea9e780807e5cdf`<br>
+**Authority:** Implement, validate, document, commit, and prepare a PR; do not merge.<br>
+**Recorded:** 2026-11-13 (America/New_York)<br>
+**Updated:** 2026-11-15 (America/New_York)
 
 This ledger records what was implemented, how it was validated, and what was not
 changed. It is deliberately separate from the prior investigation report under
@@ -30,6 +31,27 @@ enclosing path; multi-member ZIP/TAR may not.
 
 The correction preserves the existing architecture: the evidence contract remains
 central, and no scanner-specific score exception is introduced.
+
+## 0a. CP-SI8 final edge-case cleanup
+
+Two narrow defects remained after the pre-merge corrective pass. Both were
+reproduced directly before correction.
+
+| Item | Diagnosis | Correction | Regression evidence |
+|---|---|---|---|
+| Forced assignment semantics | **Confirmed.** `_optimal_assignment(force=...)` removed the finding's other candidate edges but did not require the finding to receive the forced edge. An unassigned finding could remain unassigned and still return the unrestricted total, so `_select_assignment()` could label it `AMBIGUOUS` without an alternative optimum containing it. | `force` is now mandatory: the forced finding/item pair is reserved, the disjoint remainder is optimized, and the forced edge is included in the returned assignment and total. An unavailable forced edge is rejected. | `test_forced_edge_is_mandatory_and_quality_loss_is_measured`, `test_unavailable_forced_edge_is_rejected`, `test_weaker_third_finding_does_not_make_optimum_ambiguous`, equal-strength single-finding, competing-finding, cycle, and permutation cases. |
+| Mixed archive separators | **Confirmed.** `split_archive_path()` tested `!` before `::`, so `outer.zip::inner.tar!secret.txt` split at `!` and treated `outer.zip::inner.tar` as the enclosing archive. | The earliest separator by position now defines the archive boundary; nested members canonicalize with `!`. Absolute, drive-qualified, empty, NUL, and traversal members are rejected; gzip single-member handling and ZIP/TAR path-only rejection are preserved. | `test_mixed_separator_boundaries_use_earliest_position`, three-level nesting, explicit/embedded agreement and conflict, unsafe/empty members, Windows separators, and path-only ZIP rejection. |
+| Repository housekeeping | **Clean.** The complete PR diff was reviewed against `benchmark-harness`; no temporary/generated files were tracked, no raw scanner output or credential material was committed, and no scanner, executable, ruleset, oracle, fixture, corpus, historical report, or `run/manifest.toml` was modified. | Removed no unrelated code; corrected matching and archive contract documentation. Existing pre-remediation pyflakes warnings were left untouched. | `git diff --check`, branch diff review, tracked-file audit, full regression, and six fresh CP-SI8 RNC Lab reruns. |
+
+The forced-assignment correction preserves the lexicographic objective. Reserving
+the forced edge does not change the weight of any candidate, does not create a
+target credit by itself, and cannot increase the unrestricted optimum. It changes
+only whether an alternative optimum actually contains the requested edge.
+
+The archive correction does not loosen member acceptance. A scanner still needs a
+canonical member identity for ZIP/TAR; an enclosing archive path alone remains
+unverified. Mixed separators now produce the same member identity regardless of
+which supported separator appears first.
 
 ## 1. Scope and constraints observed
 
@@ -174,7 +196,11 @@ Predetermined cases cover:
 - finding-order and oracle-order invariance;
 - exception truncation visibility;
 - Levain partial buckets and target reconciliation;
-- Leaky scoring target/finding accounting.
+- Leaky scoring target/finding accounting;
+- forced-edge alternatives, competing findings, equal-strength ambiguity, and
+  candidate permutation invariance;
+- mixed archive separators, nested identities, explicit/embedded agreement,
+  unsafe and malformed members, Windows normalization, and gzip/path-only policy.
 
 **Expanded:** `tests/test_rnclab.py`
 
@@ -192,10 +218,11 @@ Command:
 python -m unittest discover -s tests -t .
 ```
 
-Final result: **354 tests run, OK, 1 skipped** (the skip is the existing
+Final result: **366 tests run, OK, 1 skipped** (the skip is the existing
 platform/capability skip, not a failed or unscored test). The final count includes
-the new RNC Lab, archive-member, Kubernetes-location, assignment, and independent
-calibration cases added by this package and the pre-merge corrective pass.
+the new RNC Lab, archive-member, Kubernetes-location, assignment, forced-edge,
+mixed-separator, and independent calibration cases added by this package and the
+CP-SI8 cleanup pass.
 
 Targeted commands used during development:
 
@@ -309,9 +336,31 @@ archive members are explicit, and Kubernetes alternatives are bounded to the
 item's own document and block. All corrective reports reconcile targets and
 findings.
 
-Corrective evidence is under
-`run/investigations/scoring-integrity-remediation/corrective/`, with a machine
-summary at `corrective/validation-summary.json`.
+- Corrective evidence is under
+  `run/investigations/scoring-integrity-remediation/corrective/`, with a machine
+  summary at `corrective/validation-summary.json`.
+- CP-SI8 fresh reruns and target-set comparisons are under
+  `run/investigations/scoring-integrity-remediation/cp-si8/`.
+
+### 4.5 CP-SI8 edge-case reruns
+
+The forced-assignment and mixed-separator corrections were followed by six fresh
+`rnclab` reports, one per registered build. Each report was compared with its
+pre-CP-SI8 corrective report using the exact `matched_positive_ids` and
+`missed_positive_ids` sets, not aggregate counts alone.
+
+| Build | FS TP | Git TP | Overall | Performance |
+|---|---:|---:|---|---|
+| `rnc-cp3` | 302/640 | N/A | COMPLETE | PASS |
+| `rnc-cp4a` | 347/640 | 115/160 | COMPLETE | PASS |
+| `rnc-cp4b` | 347/640 | 120/160 | COMPLETE | PASS |
+| `gitleaks-master` | 369/640 | 130/160 | COMPLETE | PASS |
+| `betterleaks-lts` | 438/640 | 158/160 | COMPLETE | PASS |
+| `gl-rnc-mod-v10` | 369/640 | 130/160 | COMPLETE | PASS |
+
+No target was added or removed in either lane, no ambiguity count changed, and all
+target/finding accounting remained reconciled. The machine comparison is
+`cp-si8/validation-summary.json`.
 
 ## 5. Unexpected failures found during validation and their disposition
 
@@ -351,9 +400,9 @@ summary at `corrective/validation-summary.json`.
 8. **Greedy assignment could lose avoidable coverage.** A finding with two valid
    targets could consume the only target of another finding. Replaced with a
    deterministic maximum-weight bipartite assignment: positive coverage first,
-   total assignment second, evidence/location quality third, with forced-edge
-   ambiguity checks. The adversarial A/B case now credits both targets; equal
-   cycles remain `AMBIGUOUS`.
+   total assignment second, evidence/location quality third, with mandatory
+   forced-edge checks for alternative optima. The adversarial A/B case now credits
+   both targets; equal cycles remain `AMBIGUOUS`.
 9. **Archive member identity was not end-to-end.** Added `harness/archive.py`,
    adapter population in Gitleaks/Betterleaks/RNC, explicit-versus-embedded
    consistency checks, nested-member canonicalization, and single-member gzip
@@ -365,6 +414,20 @@ summary at `corrective/validation-summary.json`.
     distance made the earlier field look stronger. Structured location ranks now
     treat `kind`/`data`/key alternatives equally for that document; repeated
     identical values remain genuinely ambiguous.
+11. **Forced assignment was not actually mandatory.** `_optimal_assignment(force=...)`
+    removed non-forced edges but did not require the forced edge to carry flow.
+    For an unassigned finding, the restricted optimum could still return the
+    unrestricted total because the finding remained unassigned. `_select_assignment()`
+    could therefore mark a weaker, non-optimal finding `AMBIGUOUS`. The forced
+    finding/item pair is now reserved and the disjoint remainder optimized; the
+    returned total includes the forced edge. The weaker-third case now remains a
+    duplicate/uncredited edge with no ambiguity, while genuine equal optima still
+    return equal totals.
+12. **Mixed archive separators split at the wrong boundary.** The old parser
+    searched for `!` before `::`, so `outer.zip::inner.tar!secret.txt` treated
+    `outer.zip::inner.tar` as the enclosing archive. The parser now chooses the
+    earliest boundary and canonicalizes later separators into the member. Absolute,
+    drive-qualified, NUL, empty, and traversal members remain rejected.
 
 ## 6. Evidence locations
 
@@ -374,6 +437,8 @@ summary at `corrective/validation-summary.json`.
   `run/investigations/scoring-integrity-remediation/corrective/`
 - Corrective machine-readable summary:
   `run/investigations/scoring-integrity-remediation/corrective/validation-summary.json`
+- CP-SI8 reruns and exact target-set comparison:
+  `run/investigations/scoring-integrity-remediation/cp-si8/`
 - Prior corrected summary and historical comparison:
   `run/investigations/scoring-integrity-remediation/validation-summary.json`,
   `run/investigations/scoring-integrity-remediation/corrected-historical-impact.csv`
@@ -389,8 +454,13 @@ summary at `corrective/validation-summary.json`.
 - `c3e907e` — `fix: harden scoring evidence ordering and source identity`
   (pre-merge corrective implementation, archive contract, bounded Kubernetes
   location policy, adversarial calibration, and adapter coverage).
-- The updated ledger and final disposition follow as the documentation checkpoint;
-  see the final branch status for that SHA.
+- `e1ecdf6` — `docs: record pre-merge scoring integrity hardening` (updated
+  ledger and final disposition for the pre-merge corrective pass).
+- `49c4bdb` — `fix: enforce forced assignment and archive boundaries`
+  (CP-SI8 mandatory forced-edge semantics, earliest archive boundary, strict
+  member safety, and adversarial calibration).
+- The CP-SI8 documentation closeout follows as the final documentation
+  checkpoint; see the branch HEAD and PR commit list for that SHA.
 
 The work is on `feat/scoring-integrity-remediation`, based on
 `benchmark-harness` at `1d147f9feb7b73003c46adab3ea9e780807e5cdf`.
