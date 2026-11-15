@@ -104,6 +104,108 @@ def _candidate(finding, item, *, priority: int = 50) -> dict:
     return candidate
 
 
+class ArchiveIdentityCalibrationTests(unittest.TestCase):
+    def _item(self, member: str = "secret.txt"):
+        return SimpleNamespace(
+            container_kind="archive",
+            source_path="outer.zip",
+            source_member=member,
+            source_format="zip",
+            raw={"container": {"format": "zip"}},
+            lane="filesystem",
+        )
+
+    def test_mixed_separator_boundaries_use_earliest_position(self):
+        cases = (
+            ("outer.zip!secret.txt", "outer.zip", "secret.txt"),
+            ("outer.zip::secret.txt", "outer.zip", "secret.txt"),
+            (
+                "outer.zip::inner.tar!secret.txt",
+                "outer.zip",
+                "inner.tar!secret.txt",
+            ),
+            (
+                "outer.zip!inner.tar::secret.txt",
+                "outer.zip",
+                "inner.tar!secret.txt",
+            ),
+            (
+                "outer.zip!inner.tar::middle.zip!secret.txt",
+                "outer.zip",
+                "inner.tar!middle.zip!secret.txt",
+            ),
+        )
+        for value, expected_archive, expected_member in cases:
+            with self.subTest(value=value):
+                self.assertEqual(
+                    archive.split_archive_path(value),
+                    (expected_archive, expected_member),
+                )
+
+    def test_nested_member_separators_canonicalize_consistently(self):
+        expected = "inner.tar!secret.txt"
+        for value in (
+            "inner.tar!secret.txt",
+            "inner.tar::secret.txt",
+            "inner.tar!/secret.txt",
+        ):
+            with self.subTest(value=value):
+                self.assertEqual(archive.canonical_member(value), expected)
+
+    def test_embedded_and_explicit_identities_agree_after_canonicalization(self):
+        item = self._item("inner.tar!secret.txt")
+        finding = SimpleNamespace(
+            file="outer.zip::inner.tar!secret.txt",
+            container_member="inner.tar::secret.txt",
+        )
+        self.assertTrue(rnclab._path_matches(item, finding, Path(".")))
+
+    def test_conflicting_or_unsafe_members_are_rejected(self):
+        item = self._item("inner.tar!secret.txt")
+        for finding in (
+            SimpleNamespace(
+                file="outer.zip::inner.tar!secret.txt",
+                container_member="inner.tar!other.txt",
+            ),
+            SimpleNamespace(
+                file="outer.zip::inner.tar!secret.txt",
+                container_member="../secret.txt",
+            ),
+            SimpleNamespace(
+                file="outer.zip::inner.tar!secret.txt",
+                container_member="/absolute/secret.txt",
+            ),
+            SimpleNamespace(
+                file="outer.zip::inner.tar!secret.txt",
+                container_member=r"C:\absolute\secret.txt",
+            ),
+        ):
+            with self.subTest(finding=finding):
+                self.assertFalse(rnclab._path_matches(item, finding, Path(".")))
+
+    def test_empty_and_malformed_members_are_rejected(self):
+        for value in ("outer.zip!", "outer.zip::", "outer.zip!!secret.txt"):
+            with self.subTest(value=value):
+                self.assertEqual(archive.split_archive_path(value), ("outer.zip", None))
+        for value in ("", "/absolute", r"C:\absolute", "../escape", "foo//..//bar"):
+            with self.subTest(value=value):
+                self.assertIsNone(archive.canonical_member(value))
+        self.assertEqual(archive.split_archive_path("!secret.txt"), ("!secret.txt", None))
+
+    def test_windows_separators_and_zip_path_only_are_safe(self):
+        self.assertEqual(
+            archive.split_archive_path(r"outer.zip::inner.tar!\secret.txt"),
+            ("outer.zip", "inner.tar!secret.txt"),
+        )
+        self.assertEqual(
+            archive.split_archive_path(r"C:\scan\outer.zip!secret.txt"),
+            ("C:/scan/outer.zip", "secret.txt"),
+        )
+        item = self._item()
+        path_only = SimpleNamespace(file="outer.zip", container_member=None)
+        self.assertFalse(rnclab._path_matches(item, path_only, Path(".")))
+
+
 @unittest.skipUnless(CACHE.is_dir(), "certified RNC Lab cache is not prepared")
 class RncLabCalibrationTests(unittest.TestCase):
     @classmethod
@@ -855,6 +957,114 @@ class AssignmentCalibrationTests(unittest.TestCase):
         assignment, ambiguous, _total = rnclab._select_assignment(candidates, findings)
         self.assertEqual(ambiguous, set())
         self.assertEqual(assignment[0]["item"].item_id, "target-2")
+
+    def test_single_finding_equal_strength_targets_is_ambiguous(self):
+        findings = [_FakeFinding(0)]
+        target_one = _FakeItem("target-1")
+        target_two = _FakeItem("target-2")
+        candidates = {
+            0: [
+                _candidate(findings[0], target_one),
+                _candidate(findings[0], target_two),
+            ]
+        }
+        assignment, ambiguous, _total = rnclab._select_assignment(candidates, findings)
+        self.assertEqual(assignment, {})
+        self.assertEqual(ambiguous, {0})
+
+    def test_two_findings_competing_for_one_target_credit_one(self):
+        findings = [_FakeFinding(0), _FakeFinding(1)]
+        target = _FakeItem("target-1")
+        candidates = {
+            0: [_candidate(findings[0], target)],
+            1: [_candidate(findings[1], target)],
+        }
+        assignment, ambiguous, _total = rnclab._select_assignment(candidates, findings)
+        self.assertEqual(len(assignment), 1)
+        self.assertEqual(ambiguous, set())
+
+    def test_weaker_third_finding_does_not_make_optimum_ambiguous(self):
+        findings = [_FakeFinding(0), _FakeFinding(1), _FakeFinding(2)]
+        target_one = _FakeItem("target-1")
+        target_two = _FakeItem("target-2")
+        candidates = {
+            0: [_candidate(findings[0], target_one)],
+            1: [_candidate(findings[1], target_two)],
+            2: [
+                _candidate(findings[2], target_one, priority=30),
+                _candidate(findings[2], target_two, priority=30),
+            ],
+        }
+        assignment, ambiguous, _total = rnclab._select_assignment(candidates, findings)
+        self.assertEqual(ambiguous, set())
+        self.assertEqual(
+            {index: candidate["item"].item_id for index, candidate in assignment.items()},
+            {0: "target-1", 1: "target-2"},
+        )
+
+    def test_forced_edge_is_mandatory_and_quality_loss_is_measured(self):
+        findings = [_FakeFinding(0), _FakeFinding(1), _FakeFinding(2)]
+        target_one = _FakeItem("target-1")
+        target_two = _FakeItem("target-2")
+        candidates = {
+            0: [_candidate(findings[0], target_one)],
+            1: [_candidate(findings[1], target_two)],
+            2: [
+                _candidate(findings[2], target_one, priority=30),
+                _candidate(findings[2], target_two, priority=30),
+            ],
+        }
+        total, _assignment = rnclab._optimal_assignment(candidates, findings)
+        forced_total, forced = rnclab._optimal_assignment(
+            candidates, findings, force=(2, "target-1")
+        )
+        self.assertEqual(forced[2]["item"].item_id, "target-1")
+        self.assertEqual(
+            {index: candidate["item"].item_id for index, candidate in forced.items()},
+            {1: "target-2", 2: "target-1"},
+        )
+        self.assertLess(forced_total, total)
+
+    def test_unavailable_forced_edge_is_rejected(self):
+        findings = [_FakeFinding(0)]
+        target = _FakeItem("target-1")
+        candidates = {0: [_candidate(findings[0], target)]}
+        with self.assertRaises(rnclab.RncLabError):
+            rnclab._optimal_assignment(candidates, findings, force=(0, "target-2"))
+        with self.assertRaises(rnclab.RncLabError):
+            rnclab._optimal_assignment(candidates, findings, force=(1, "target-1"))
+
+    def test_forced_assignment_is_candidate_order_invariant(self):
+        findings = [_FakeFinding(0), _FakeFinding(1), _FakeFinding(2)]
+        target_one = _FakeItem("target-1")
+        target_two = _FakeItem("target-2")
+        forward = {
+            0: [_candidate(findings[0], target_one)],
+            1: [_candidate(findings[1], target_two)],
+            2: [
+                _candidate(findings[2], target_one, priority=30),
+                _candidate(findings[2], target_two, priority=30),
+            ],
+        }
+        reverse = {
+            2: [
+                _candidate(findings[2], target_two, priority=30),
+                _candidate(findings[2], target_one, priority=30),
+            ],
+            1: [_candidate(findings[1], target_two)],
+            0: [_candidate(findings[0], target_one)],
+        }
+        first_total, first = rnclab._optimal_assignment(
+            forward, findings, force=(2, "target-1")
+        )
+        second_total, second = rnclab._optimal_assignment(
+            reverse, findings, force=(2, "target-1")
+        )
+        self.assertEqual(first_total, second_total)
+        self.assertEqual(
+            {index: candidate["item"].item_id for index, candidate in first.items()},
+            {index: candidate["item"].item_id for index, candidate in second.items()},
+        )
 
     def test_equal_strength_cycle_remains_ambiguous(self):
         findings = [_FakeFinding(0), _FakeFinding(1)]

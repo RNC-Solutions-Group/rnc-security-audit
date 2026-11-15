@@ -6,10 +6,12 @@ A scanner may report an archive member in one of three ways:
 * an embedded path such as ``archive.zip!member/path``;
 * an embedded path using ``::`` instead of ``!``.
 
-Nested archives use the same separator (``outer.zip!inner.tar.gz!member``).  The
-canonical member is relative to its immediate enclosing archive and uses ``!``
-for nested archive boundaries.  Absolute paths, traversal segments, and empty
-identities are rejected as unsafe rather than normalized into a different source.
+Nested archives may mix separators (``outer.zip::inner.tar!member``).  The
+earliest separator is the boundary of the enclosing archive; later separators
+are canonicalized to ``!`` inside the member identity.  The canonical member is
+relative to its immediate enclosing archive.  Absolute paths, drive-qualified
+paths, traversal segments, and empty identities are rejected as unsafe rather
+than normalized into a different source.
 """
 
 from __future__ import annotations
@@ -30,7 +32,12 @@ def canonical_member(value: str | None) -> str | None:
     if not value:
         return None
     text = _normalize_path(value)
-    if text.startswith("/") or text.startswith("~"):
+    if (
+        text.startswith("/")
+        or text.startswith("~")
+        or _is_drive_qualified(text)
+        or "\x00" in text
+    ):
         return None
     # ``!/`` and ``::`` are formatting variants of the same nested boundary.
     text = text.replace("::", "!").replace("!/", "!")
@@ -48,7 +55,14 @@ def canonical_member(value: str | None) -> str | None:
     return _clean_segment(text)
 
 
+def _is_drive_qualified(value: str) -> bool:
+    return len(value) >= 2 and value[0].isalpha() and value[1] == ":"
+
+
 def _clean_segment(value: str) -> str | None:
+    value = value.strip()
+    if value.startswith("/") or value.startswith("~") or _is_drive_qualified(value):
+        return None
     value = value.strip("/")
     if not value:
         return None
@@ -63,13 +77,27 @@ def _clean_segment(value: str) -> str | None:
 
 
 def split_archive_path(path: str) -> tuple[str, str | None]:
-    """Split a reported path into enclosing archive and canonical member."""
+    """Split a reported path at its earliest archive boundary.
+
+    Separator priority must not decide the boundary: in
+    ``outer.zip::inner.tar!secret.txt`` the first archive is ``outer.zip`` and
+    the member identity is ``inner.tar!secret.txt``.  The member is canonicalized
+    with ``!`` for every nested boundary.
+    """
     text = _normalize_path(path)
-    for separator in ARCHIVE_SEPARATORS:
-        if separator in text:
-            archive, member = text.split(separator, 1)
-            return archive.rstrip("/"), canonical_member(member)
-    return text, None
+    boundaries = [
+        (text.find(separator), separator)
+        for separator in ARCHIVE_SEPARATORS
+        if separator in text
+    ]
+    if not boundaries:
+        return text, None
+    position, separator = min(boundaries, key=lambda value: value[0])
+    archive = text[:position].rstrip("/")
+    if not archive:
+        return text, None
+    member = canonical_member(text[position + len(separator) :])
+    return archive, member
 
 
 def member_from_path(path: str) -> str | None:

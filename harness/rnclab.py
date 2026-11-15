@@ -831,10 +831,12 @@ def _path_matches(item: LabItem, finding: LabFinding, root: Path) -> bool:
     """Match the source path and a canonical archive-member identity.
 
     ``file`` keeps the scanner-reported path. A member may be embedded in that
-    path (``archive.zip!member`` or ``archive.zip::member``) or supplied through
-    the explicit ``container_member`` contract. If both forms are present they
-    must agree. An enclosing ZIP/TAR path alone is never sufficient proof of a
-    member; a single-member gzip stream may use its enclosing path.
+    path (``archive.zip!member``, ``archive.zip::member``, or a mixed nested form)
+    or supplied through the explicit ``container_member`` contract. The earliest
+    archive separator defines the enclosing archive; later separators are part of
+    the canonical member. If both forms are present they must agree. An enclosing
+    ZIP/TAR path alone is never sufficient proof of a member; a single-member gzip
+    stream may use its enclosing path.
     """
     if not finding.file:
         return False
@@ -1358,7 +1360,14 @@ def _optimal_assignment(
     positive coverage, total assignment count, and candidate quality in that
     order. Successive shortest augmenting paths solve the min-cost flow; all
     node and edge ordering is derived from stable finding/item keys.
+
+    ``force`` is a hard constraint: the returned assignment always contains the
+    requested finding/item edge. The remainder of the optimum is computed with
+    that finding and item removed, so a forced edge cannot silently lose its
+    assignment to a competing finding.
     """
+    if remove is not None and force is not None:
+        raise RncLabError("remove and force are mutually exclusive")
     finding_order = sorted(
         candidates_by_finding,
         key=lambda index: (
@@ -1377,22 +1386,53 @@ def _optimal_assignment(
     )
     if not finding_order:
         return 0, {}
+
+    forced_candidate: dict | None = None
+    forced_index: int | None = None
+    forced_item_id: str | None = None
+    if force is not None:
+        forced_index, forced_item_id = force
+        if forced_index not in candidates_by_finding:
+            raise RncLabError("forced assignment refers to an unknown finding")
+        forced_candidate = next(
+            (
+                candidate
+                for candidate in candidates_by_finding[forced_index]
+                if candidate["item"].item_id == forced_item_id
+            ),
+            None,
+        )
+        if forced_candidate is None:
+            raise RncLabError("forced assignment edge is unavailable")
+
+    remaining_findings = [
+        index for index in finding_order if index != forced_index
+    ]
     item_ids = sorted(
         {
             candidate["item"].item_id
-            for index in finding_order
+            for index in remaining_findings
             for candidate in candidates_by_finding[index]
+            if candidate["item"].item_id != forced_item_id
         }
     )
-    if not item_ids:
+    if not remaining_findings:
+        if forced_candidate is None:
+            return 0, {}
+        return forced_candidate["weight"], {forced_index: forced_candidate}
+    if not item_ids and forced_candidate is None:
         return 0, {}
-    finding_node = {index: 1 + position for position, index in enumerate(finding_order)}
+
+    finding_node = {
+        index: 1 + position
+        for position, index in enumerate(remaining_findings)
+    }
     item_node = {
-        item_id: 1 + len(finding_order) + position
+        item_id: 1 + len(remaining_findings) + position
         for position, item_id in enumerate(item_ids)
     }
     source = 0
-    sink = 1 + len(finding_order) + len(item_ids)
+    sink = 1 + len(remaining_findings) + len(item_ids)
     graph: list[list[list[int]]] = [[] for _ in range(sink + 1)]
     edge_ref: dict[tuple[int, str], tuple[int, int]] = {}
 
@@ -1400,7 +1440,7 @@ def _optimal_assignment(
         graph[left].append([right, len(graph[right]), capacity, cost])
         graph[right].append([left, len(graph[left]) - 1, 0, -cost])
 
-    for index in finding_order:
+    for index in remaining_findings:
         add_edge(source, finding_node[index], 1, 0)
         candidates = candidates_by_finding[index]
         for candidate in sorted(
@@ -1413,9 +1453,9 @@ def _optimal_assignment(
             ),
         ):
             item_id = candidate["item"].item_id
-            if remove == (index, item_id):
+            if item_id == forced_item_id:
                 continue
-            if force is not None and force[0] == index and force[1] != item_id:
+            if remove == (index, item_id):
                 continue
             position = len(graph[finding_node[index]])
             add_edge(finding_node[index], item_node[item_id], 1, -candidate["weight"])
@@ -1423,7 +1463,8 @@ def _optimal_assignment(
     for item_id in item_ids:
         add_edge(item_node[item_id], sink, 1, 0)
 
-    total_cost = 0
+    # Account for the mandatory edge, then optimize the disjoint remainder.
+    total_cost = -(forced_candidate["weight"] if forced_candidate else 0)
     while True:
         distance = [10**30] * len(graph)
         previous_node = [-1] * len(graph)
@@ -1462,7 +1503,9 @@ def _optimal_assignment(
         total_cost += distance[sink]
 
     assignment: dict[int, dict] = {}
-    for index in finding_order:
+    if forced_candidate is not None and forced_index is not None:
+        assignment[forced_index] = forced_candidate
+    for index in remaining_findings:
         for candidate in candidates_by_finding[index]:
             reference = edge_ref.get((index, candidate["item"].item_id))
             if reference is None:
@@ -1478,7 +1521,13 @@ def _select_assignment(
     candidates_by_finding: dict[int, list[dict]],
     findings: list[LabFinding],
 ) -> tuple[dict[int, dict], set[int], int]:
-    """Choose a canonical optimum and leave genuinely ambiguous edges uncredited."""
+    """Choose a canonical optimum and leave genuinely ambiguous edges uncredited.
+
+    A selected finding is ambiguous only when removing its selected edge leaves a
+    maximum of the same total weight; an unassigned finding is ambiguous only when
+    a true forced edge produces another maximum. Multiple candidate edges alone
+    are not ambiguity.
+    """
     total, assignment = _optimal_assignment(candidates_by_finding, findings)
     ambiguous: set[int] = set()
     for index, candidates in candidates_by_finding.items():

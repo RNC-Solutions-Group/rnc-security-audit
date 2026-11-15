@@ -95,8 +95,10 @@ class NormalizedFinding:
 
     ``file`` remains the scanner-reported path. ``container_member`` is the
     canonical member path relative to the enclosing archive, using ``!`` for
-    nested archive boundaries. When both an embedded path member and an explicit
-    field are present they must agree; the scorer never chooses one arbitrarily.
+    nested archive boundaries. A reported path is split at its earliest ``!`` or
+    ``::`` boundary, and nested separators are canonicalized by the shared archive
+    parser. When both an embedded path member and an explicit field are present
+    they must agree; the scorer never chooses one arbitrarily.
     """
 
     file: str
