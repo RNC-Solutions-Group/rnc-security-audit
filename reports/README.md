@@ -7,6 +7,7 @@ explicitly opts in.
 
 | Report | Scanner | Purpose |
 | --- | --- | --- |
+| [`cp4c-matrix0/`](cp4c-matrix0/README.md) | RNC CP4C `805e3bb` | **CP4C Matrix 0:** native Windows AMD64 worker scaling and schema-v1 profiler overhead across 640/160 canonical items and x5/x10 loads; DEV evidence, not release timing |
 | [`cp11/`](cp11/README.md) | Gitleaks / RNC CP3 | **CP11 local-artifact execution evidence:** executable/image verification, exact invocation commands, blocked-hash behavior, and the CP3 native smoke |
 | [`baseline-20261112/`](baseline-20261112/README.md) | Gitleaks / RNC / Betterleaks (blocked) | **Historical CP10 source-build baseline:** native/Docker experiments, RNC Lab canonical and load testing, consolidated index, and explicit blocked cells. Preserved for comparison; not directly reproducible under CP11 without operator artifacts |
 | [`cp5d1/`](cp5d1/) | RNC / Gitleaks / Betterleaks | CP5D.1 rename-lineage hardening, exact negative identities, official 184/89 proposal validation, and retained rescoring |
