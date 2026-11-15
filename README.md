@@ -228,6 +228,7 @@ python -m harness prepare    # fetch/verify the pinned Levain corpus
 python -m harness verify     # verify cache offline
 python -m harness status     # dataset readiness
 python -m harness synthetic  # independent scoring-engine validation
+python -m harness matrix --experiment cp4c --out-dir run/reports/cp4c-matrix0  # CP4C worker/profiler Matrix 0
 python -m harness interactive
 ```
 
@@ -315,6 +316,8 @@ See [`datasets/manifest.toml`](datasets/manifest.toml) and
 | `run-manifest.example.toml` | Tracked example of the Git-ignored `run/manifest.toml` |
 | `harness/artifacts.py` | Local artifact manifest parsing, executable/image/rules verification |
 | `harness/experiment.py` | One-registered-build orchestration, performance, and report assembly |
+| `harness/cp4c_matrix.py` | CP4C Matrix 0 worker/profiler experiment and evidence report |
+| `harness/profiler_contract.py` | CP4C schema-v1 profile ingestion and validation |
 | `harness/workspace.py` | Run-owned temporary workspace and container-only cleanup |
 | `harness/adapters/` | Adapter contract, Gitleaks/Betterleaks/RNC adapters |
 | `harness/profile.py` | DEFAULT/CUSTOM profiles and provenance |

@@ -148,6 +148,64 @@ def _interactive(args: argparse.Namespace) -> int:
     return run_interactive(config_path=args.config, offline=args.offline)
 
 
+def _matrix(args: argparse.Namespace) -> int:
+    from . import cp4c_matrix
+
+    command = [
+        "python",
+        "-m",
+        "harness",
+        "matrix",
+        "--experiment",
+        args.experiment,
+        "--out-dir",
+        args.out_dir,
+        "--cache-dir",
+        args.cache_dir,
+        "--build",
+        args.build,
+        "--cp4b-build",
+        args.cp4b_build,
+        "--seed",
+        str(args.seed),
+        "--repetitions",
+        str(args.repetitions),
+    ]
+    if args.artifact_manifest:
+        command.extend(["--artifact-manifest", args.artifact_manifest])
+    if args.resume:
+        command.append("--resume")
+    if args.report_only:
+        command.append("--report-only")
+    if args.reference_only:
+        command.append("--reference-only")
+    document = cp4c_matrix.run_matrix(
+        out_dir=Path(args.out_dir),
+        cache_dir=Path(args.cache_dir),
+        manifest_path=Path(args.artifact_manifest) if args.artifact_manifest else None,
+        build_id=args.build,
+        cp4b_build_id=args.cp4b_build,
+        seed=args.seed,
+        repetitions=args.repetitions,
+        resume=args.resume,
+        report_only=args.report_only,
+        reference_only=args.reference_only,
+        command=command,
+    )
+    if args.report_only:
+        print(Path(args.out_dir) / "matrix0-summary.md")
+    elif args.reference_only:
+        print("Matrix 0 reference equivalence: PASS")
+        print(Path(args.out_dir) / "matrix0-reference.json")
+    else:
+        print(
+            f"Matrix 0: {document['summary']['executive_outcome']}\n"
+            f"Report: {Path(args.out_dir) / 'matrix0-summary.md'}"
+        )
+    return 0
+
+
+
 def _synthetic(args: argparse.Namespace) -> int:
     from . import synthetic_validation
 
@@ -317,6 +375,26 @@ def build_parser() -> argparse.ArgumentParser:
     )
     synthetic_parser.add_argument("--out-dir", default="reports/cp1d")
     synthetic_parser.set_defaults(func=_synthetic)
+
+    matrix_parser = subparsers.add_parser(
+        "matrix", help="run or report the CP4C Matrix 0 worker/profiler experiment"
+    )
+    matrix_parser.add_argument("--experiment", choices=("cp4c",), default="cp4c")
+    matrix_parser.add_argument(
+        "--out-dir", default="run/reports/cp4c-matrix0"
+    )
+    matrix_parser.add_argument(
+        "--cache-dir", default="datasets/cache/rnc-synth-lab"
+    )
+    matrix_parser.add_argument("--artifact-manifest", default=None)
+    matrix_parser.add_argument("--build", default="rnc-cp4c")
+    matrix_parser.add_argument("--cp4b-build", default="rnc-cp4b")
+    matrix_parser.add_argument("--seed", type=int, default=20261115)
+    matrix_parser.add_argument("--repetitions", type=int, default=5)
+    matrix_parser.add_argument("--resume", action="store_true")
+    matrix_parser.add_argument("--report-only", action="store_true")
+    matrix_parser.add_argument("--reference-only", action="store_true")
+    matrix_parser.set_defaults(func=_matrix)
     return parser
 
 
