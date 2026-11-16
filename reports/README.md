@@ -5,8 +5,16 @@ matched values, and temporary scan directories are never committed; they are
 written only under ignored paths (`reports/raw/`, `reports/local/`) when a caller
 explicitly opts in.
 
+> **Baseline epochs:** reports in this tree other than `baselines-20261115/`,
+> `cp4c-matrix0/`, and `rnc-mod-v14-vs-gitleaks/` predate the scoring-integrity
+> remediation. They are indexed with file hashes in
+> [`archive/pre-scoring-fix/`](archive/pre-scoring-fix/README.md) and are not
+> current baselines. Use `baselines-20261115/` for current-scoring comparisons.
+
 | Report | Scanner | Purpose |
 | --- | --- | --- |
+| [`baselines-20261115/`](baselines-20261115/README.md) | All eight requested Windows AMD64 programs | **Current-scoring baseline:** Levain, Leaky Repo filesystem/Git, RNC Lab filesystem/Git and legacy x5/x10; 1 warmup + 3 measured runs; individual plus combined report |
+| [`archive/pre-scoring-fix/`](archive/pre-scoring-fix/README.md) | Historical | Immutable zip and hash index of reports predating the scoring-integrity remediation; originals preserved at historical paths |
 | [`rnc-mod-v14-vs-gitleaks/`](rnc-mod-v14-vs-gitleaks/README.md) | RNC-MOD-v14 vs Gitleaks 8.25.0 | **RNC Lab comparison:** canonical filesystem/Git detection and x5/x10 load performance; 1 warmup + 3 measured runs, primary and reverse-order control, DEV only |
 | [`cp4c-matrix0/`](cp4c-matrix0/README.md) | RNC CP4C `805e3bb` | **CP4C Matrix 0:** native Windows AMD64 worker scaling and schema-v1 profiler overhead across 640/160 canonical items and x5/x10 loads; DEV evidence, not release timing |
 | [`cp11/`](cp11/README.md) | Gitleaks / RNC CP3 | **CP11 local-artifact execution evidence:** executable/image verification, exact invocation commands, blocked-hash behavior, and the CP3 native smoke |
