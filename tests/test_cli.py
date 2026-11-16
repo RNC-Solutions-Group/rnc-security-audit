@@ -89,6 +89,24 @@ class CliTests(unittest.TestCase):
         self.assertFalse(hasattr(args, "commit"))
         self.assertFalse(hasattr(args, "repo"))
 
+    def test_detection_gaps_cli_accepts_retained_evidence_options(self):
+        parser = build_parser()
+        args = parser.parse_args(
+            [
+                "detection-gaps",
+                "--scanners",
+                "cp4c,v14",
+                "--comparators",
+                "gitleaks,betterleaks",
+                "--out-dir",
+                "reports/detection-gaps",
+            ]
+        )
+        self.assertEqual(args.command, "detection-gaps")
+        self.assertEqual(args.scanners, "cp4c,v14")
+        self.assertEqual(args.out_dir, "reports/detection-gaps")
+        self.assertFalse(hasattr(args, "commit"))
+
     def test_unknown_config_is_a_harness_error(self):
         with tempfile.TemporaryDirectory() as tmp:
             code, _, stderr = self._call(

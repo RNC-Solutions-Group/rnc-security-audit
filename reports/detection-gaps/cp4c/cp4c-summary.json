@@ -1,0 +1,4687 @@
+{
+  "analysis_version": "1.0.0",
+  "breakdowns": {
+    "category": [
+      {
+        "cross_found": 86,
+        "expected": 549,
+        "informative_misses": 0,
+        "key": "password",
+        "matched": 252,
+        "missed": 297,
+        "recall_percent": 45.9,
+        "risk_misses": 297
+      },
+      {
+        "cross_found": 1,
+        "expected": 87,
+        "informative_misses": 87,
+        "key": "informative_reference",
+        "matched": 0,
+        "missed": 87,
+        "recall_percent": 0.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 58,
+        "expected": 121,
+        "informative_misses": 0,
+        "key": "hmac_secret",
+        "matched": 57,
+        "missed": 64,
+        "recall_percent": 47.11,
+        "risk_misses": 64
+      },
+      {
+        "cross_found": 34,
+        "expected": 248,
+        "informative_misses": 0,
+        "key": "provider_token",
+        "matched": 203,
+        "missed": 45,
+        "recall_percent": 81.85,
+        "risk_misses": 45
+      },
+      {
+        "cross_found": 3,
+        "expected": 49,
+        "informative_misses": 0,
+        "key": "private_key",
+        "matched": 28,
+        "missed": 21,
+        "recall_percent": 57.14,
+        "risk_misses": 21
+      },
+      {
+        "cross_found": 2,
+        "expected": 37,
+        "informative_misses": 0,
+        "key": "api_key",
+        "matched": 20,
+        "missed": 17,
+        "recall_percent": 54.05,
+        "risk_misses": 17
+      },
+      {
+        "cross_found": 0,
+        "expected": 12,
+        "informative_misses": 0,
+        "key": "otp_seed",
+        "matched": 0,
+        "missed": 12,
+        "recall_percent": 0.0,
+        "risk_misses": 12
+      },
+      {
+        "cross_found": 3,
+        "expected": 20,
+        "informative_misses": 0,
+        "key": "unknown_credential",
+        "matched": 10,
+        "missed": 10,
+        "recall_percent": 50.0,
+        "risk_misses": 10
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "payment_data",
+        "matched": 0,
+        "missed": 2,
+        "recall_percent": 0.0,
+        "risk_misses": 2
+      }
+    ],
+    "confidence": [
+      {
+        "cross_found": 135,
+        "expected": 989,
+        "informative_misses": 87,
+        "key": "CONFIRMED",
+        "matched": 570,
+        "missed": 419,
+        "recall_percent": 57.63,
+        "risk_misses": 332
+      },
+      {
+        "cross_found": 42,
+        "expected": 124,
+        "informative_misses": 0,
+        "key": "PROBABLE",
+        "matched": 0,
+        "missed": 124,
+        "recall_percent": 0.0,
+        "risk_misses": 124
+      },
+      {
+        "cross_found": 10,
+        "expected": 12,
+        "informative_misses": 0,
+        "key": "UNRESOLVED",
+        "matched": 0,
+        "missed": 12,
+        "recall_percent": 0.0,
+        "risk_misses": 12
+      }
+    ],
+    "container": [
+      {
+        "cross_found": 130,
+        "expected": 874,
+        "informative_misses": 87,
+        "key": "ordinary_file",
+        "matched": 422,
+        "missed": 452,
+        "recall_percent": 48.28,
+        "risk_misses": 365
+      },
+      {
+        "cross_found": 49,
+        "expected": 225,
+        "informative_misses": 0,
+        "key": "git_blob",
+        "matched": 148,
+        "missed": 77,
+        "recall_percent": 65.78,
+        "risk_misses": 77
+      },
+      {
+        "cross_found": 0,
+        "expected": 12,
+        "informative_misses": 0,
+        "key": "database_record",
+        "matched": 0,
+        "missed": 12,
+        "recall_percent": 0.0,
+        "risk_misses": 12
+      },
+      {
+        "cross_found": 8,
+        "expected": 10,
+        "informative_misses": 0,
+        "key": "archive_member",
+        "matched": 0,
+        "missed": 10,
+        "recall_percent": 0.0,
+        "risk_misses": 10
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "binary_file",
+        "matched": 0,
+        "missed": 4,
+        "recall_percent": 0.0,
+        "risk_misses": 4
+      }
+    ],
+    "file_type": [
+      {
+        "cross_found": 50,
+        "expected": 272,
+        "informative_misses": 6,
+        "key": "env",
+        "matched": 139,
+        "missed": 133,
+        "recall_percent": 51.1,
+        "risk_misses": 127
+      },
+      {
+        "cross_found": 42,
+        "expected": 103,
+        "informative_misses": 6,
+        "key": "php",
+        "matched": 23,
+        "missed": 80,
+        "recall_percent": 22.33,
+        "risk_misses": 74
+      },
+      {
+        "cross_found": 19,
+        "expected": 106,
+        "informative_misses": 38,
+        "key": "json",
+        "matched": 42,
+        "missed": 64,
+        "recall_percent": 39.62,
+        "risk_misses": 26
+      },
+      {
+        "cross_found": 21,
+        "expected": 110,
+        "informative_misses": 0,
+        "key": "log",
+        "matched": 61,
+        "missed": 49,
+        "recall_percent": 55.45,
+        "risk_misses": 49
+      },
+      {
+        "cross_found": 23,
+        "expected": 235,
+        "informative_misses": 0,
+        "key": "yaml",
+        "matched": 190,
+        "missed": 45,
+        "recall_percent": 80.85,
+        "risk_misses": 45
+      },
+      {
+        "cross_found": 0,
+        "expected": 30,
+        "informative_misses": 7,
+        "key": "xml",
+        "matched": 8,
+        "missed": 22,
+        "recall_percent": 26.67,
+        "risk_misses": 15
+      },
+      {
+        "cross_found": 4,
+        "expected": 30,
+        "informative_misses": 8,
+        "key": "shell",
+        "matched": 14,
+        "missed": 16,
+        "recall_percent": 46.67,
+        "risk_misses": 8
+      },
+      {
+        "cross_found": 7,
+        "expected": 51,
+        "informative_misses": 0,
+        "key": "python",
+        "matched": 37,
+        "missed": 14,
+        "recall_percent": 72.55,
+        "risk_misses": 14
+      },
+      {
+        "cross_found": 4,
+        "expected": 25,
+        "informative_misses": 5,
+        "key": "no-extension",
+        "matched": 13,
+        "missed": 12,
+        "recall_percent": 52.0,
+        "risk_misses": 7
+      },
+      {
+        "cross_found": 1,
+        "expected": 13,
+        "informative_misses": 3,
+        "key": "config",
+        "matched": 1,
+        "missed": 12,
+        "recall_percent": 7.69,
+        "risk_misses": 9
+      },
+      {
+        "cross_found": 0,
+        "expected": 13,
+        "informative_misses": 2,
+        "key": "text",
+        "matched": 1,
+        "missed": 12,
+        "recall_percent": 7.69,
+        "risk_misses": 10
+      },
+      {
+        "cross_found": 0,
+        "expected": 12,
+        "informative_misses": 0,
+        "key": "sql",
+        "matched": 0,
+        "missed": 12,
+        "recall_percent": 0.0,
+        "risk_misses": 12
+      },
+      {
+        "cross_found": 0,
+        "expected": 11,
+        "informative_misses": 1,
+        "key": "ppk",
+        "matched": 0,
+        "missed": 11,
+        "recall_percent": 0.0,
+        "risk_misses": 10
+      },
+      {
+        "cross_found": 0,
+        "expected": 10,
+        "informative_misses": 0,
+        "key": "sqlite",
+        "matched": 0,
+        "missed": 10,
+        "recall_percent": 0.0,
+        "risk_misses": 10
+      },
+      {
+        "cross_found": 0,
+        "expected": 11,
+        "informative_misses": 0,
+        "key": "ini",
+        "matched": 4,
+        "missed": 7,
+        "recall_percent": 36.36,
+        "risk_misses": 7
+      },
+      {
+        "cross_found": 0,
+        "expected": 7,
+        "informative_misses": 3,
+        "key": "ftpconfig",
+        "matched": 0,
+        "missed": 7,
+        "recall_percent": 0.0,
+        "risk_misses": 4
+      },
+      {
+        "cross_found": 4,
+        "expected": 6,
+        "informative_misses": 2,
+        "key": "docker-config",
+        "matched": 0,
+        "missed": 6,
+        "recall_percent": 0.0,
+        "risk_misses": 4
+      },
+      {
+        "cross_found": 0,
+        "expected": 6,
+        "informative_misses": 0,
+        "key": "netrc",
+        "matched": 0,
+        "missed": 6,
+        "recall_percent": 0.0,
+        "risk_misses": 6
+      },
+      {
+        "cross_found": 2,
+        "expected": 6,
+        "informative_misses": 1,
+        "key": "npmrc",
+        "matched": 1,
+        "missed": 5,
+        "recall_percent": 16.67,
+        "risk_misses": 4
+      },
+      {
+        "cross_found": 3,
+        "expected": 5,
+        "informative_misses": 0,
+        "key": "zip",
+        "matched": 0,
+        "missed": 5,
+        "recall_percent": 0.0,
+        "risk_misses": 5
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 2,
+        "key": "esmtprc",
+        "matched": 0,
+        "missed": 4,
+        "recall_percent": 0.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "pkcs12",
+        "matched": 0,
+        "missed": 4,
+        "recall_percent": 0.0,
+        "risk_misses": 4
+      },
+      {
+        "cross_found": 2,
+        "expected": 4,
+        "informative_misses": 2,
+        "key": "s3cfg",
+        "matched": 1,
+        "missed": 3,
+        "recall_percent": 25.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 3,
+        "informative_misses": 0,
+        "key": "pgpass",
+        "matched": 0,
+        "missed": 3,
+        "recall_percent": 0.0,
+        "risk_misses": 3
+      },
+      {
+        "cross_found": 3,
+        "expected": 3,
+        "informative_misses": 0,
+        "key": "xz",
+        "matched": 0,
+        "missed": 3,
+        "recall_percent": 0.0,
+        "risk_misses": 3
+      },
+      {
+        "cross_found": 0,
+        "expected": 3,
+        "informative_misses": 0,
+        "key": "git-credentials",
+        "matched": 1,
+        "missed": 2,
+        "recall_percent": 33.33,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "bson",
+        "matched": 0,
+        "missed": 2,
+        "recall_percent": 0.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "key",
+        "matched": 0,
+        "missed": 2,
+        "recall_percent": 0.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "bz2",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "gz",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "javascript",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 1,
+        "key": "pub",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 20,
+        "informative_misses": 0,
+        "key": "pem",
+        "matched": 20,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 8,
+        "informative_misses": 0,
+        "key": "typescript",
+        "matched": 8,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "legacy",
+        "matched": 2,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "terraform",
+        "matched": 2,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "cnf",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "properties",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      }
+    ],
+    "inspection": [
+      {
+        "cross_found": 179,
+        "expected": 1099,
+        "informative_misses": 87,
+        "key": "INSPECTED",
+        "matched": 570,
+        "missed": 529,
+        "recall_percent": 51.87,
+        "risk_misses": 442
+      },
+      {
+        "cross_found": 8,
+        "expected": 26,
+        "informative_misses": 0,
+        "key": "UNSUPPORTED_CONTAINER",
+        "matched": 0,
+        "missed": 26,
+        "recall_percent": 0.0,
+        "risk_misses": 26
+      }
+    ],
+    "provider": [
+      {
+        "cross_found": 49,
+        "expected": 142,
+        "informative_misses": 0,
+        "key": "WordPress",
+        "matched": 0,
+        "missed": 142,
+        "recall_percent": 0.0,
+        "risk_misses": 142
+      },
+      {
+        "cross_found": 1,
+        "expected": 87,
+        "informative_misses": 87,
+        "key": "Informative reference",
+        "matched": 0,
+        "missed": 87,
+        "recall_percent": 0.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 15,
+        "expected": 227,
+        "informative_misses": 0,
+        "key": "Database service",
+        "matched": 173,
+        "missed": 54,
+        "recall_percent": 76.21,
+        "risk_misses": 54
+      },
+      {
+        "cross_found": 13,
+        "expected": 83,
+        "informative_misses": 0,
+        "key": "Application service",
+        "matched": 47,
+        "missed": 36,
+        "recall_percent": 56.63,
+        "risk_misses": 36
+      },
+      {
+        "cross_found": 30,
+        "expected": 32,
+        "informative_misses": 0,
+        "key": "Application signing",
+        "matched": 0,
+        "missed": 32,
+        "recall_percent": 0.0,
+        "risk_misses": 32
+      },
+      {
+        "cross_found": 15,
+        "expected": 41,
+        "informative_misses": 0,
+        "key": "Unidentified provider token",
+        "matched": 16,
+        "missed": 25,
+        "recall_percent": 39.02,
+        "risk_misses": 25
+      },
+      {
+        "cross_found": 18,
+        "expected": 60,
+        "informative_misses": 0,
+        "key": "Application HMAC",
+        "matched": 39,
+        "missed": 21,
+        "recall_percent": 65.0,
+        "risk_misses": 21
+      },
+      {
+        "cross_found": 2,
+        "expected": 17,
+        "informative_misses": 0,
+        "key": "Unidentified API provider",
+        "matched": 0,
+        "missed": 17,
+        "recall_percent": 0.0,
+        "risk_misses": 17
+      },
+      {
+        "cross_found": 8,
+        "expected": 22,
+        "informative_misses": 0,
+        "key": "Azure Account Key",
+        "matched": 10,
+        "missed": 12,
+        "recall_percent": 45.45,
+        "risk_misses": 12
+      },
+      {
+        "cross_found": 0,
+        "expected": 12,
+        "informative_misses": 0,
+        "key": "FTP/SFTP service",
+        "matched": 0,
+        "missed": 12,
+        "recall_percent": 0.0,
+        "risk_misses": 12
+      },
+      {
+        "cross_found": 0,
+        "expected": 12,
+        "informative_misses": 0,
+        "key": "TOTP / OTP",
+        "matched": 0,
+        "missed": 12,
+        "recall_percent": 0.0,
+        "risk_misses": 12
+      },
+      {
+        "cross_found": 3,
+        "expected": 22,
+        "informative_misses": 0,
+        "key": "PEM / RSA",
+        "matched": 11,
+        "missed": 11,
+        "recall_percent": 50.0,
+        "risk_misses": 11
+      },
+      {
+        "cross_found": 10,
+        "expected": 20,
+        "informative_misses": 0,
+        "key": "JWT / application",
+        "matched": 10,
+        "missed": 10,
+        "recall_percent": 50.0,
+        "risk_misses": 10
+      },
+      {
+        "cross_found": 3,
+        "expected": 17,
+        "informative_misses": 0,
+        "key": "Unidentified unknown credential",
+        "matched": 7,
+        "missed": 10,
+        "recall_percent": 41.18,
+        "risk_misses": 10
+      },
+      {
+        "cross_found": 0,
+        "expected": 13,
+        "informative_misses": 0,
+        "key": "Unidentified password",
+        "matched": 3,
+        "missed": 10,
+        "recall_percent": 23.08,
+        "risk_misses": 10
+      },
+      {
+        "cross_found": 0,
+        "expected": 10,
+        "informative_misses": 0,
+        "key": "Private-key container",
+        "matched": 0,
+        "missed": 10,
+        "recall_percent": 0.0,
+        "risk_misses": 10
+      },
+      {
+        "cross_found": 1,
+        "expected": 9,
+        "informative_misses": 0,
+        "key": "Administrative account",
+        "matched": 0,
+        "missed": 9,
+        "recall_percent": 0.0,
+        "risk_misses": 9
+      },
+      {
+        "cross_found": 7,
+        "expected": 42,
+        "informative_misses": 0,
+        "key": "Amazon Web Services (AWS)",
+        "matched": 35,
+        "missed": 7,
+        "recall_percent": 83.33,
+        "risk_misses": 7
+      },
+      {
+        "cross_found": 0,
+        "expected": 6,
+        "informative_misses": 0,
+        "key": "PKCS#12 container",
+        "matched": 0,
+        "missed": 6,
+        "recall_percent": 0.0,
+        "risk_misses": 6
+      },
+      {
+        "cross_found": 0,
+        "expected": 7,
+        "informative_misses": 0,
+        "key": "PKCS#12 / TLS",
+        "matched": 2,
+        "missed": 5,
+        "recall_percent": 28.57,
+        "risk_misses": 5
+      },
+      {
+        "cross_found": 5,
+        "expected": 5,
+        "informative_misses": 0,
+        "key": "Microsoft Azure Storage",
+        "matched": 0,
+        "missed": 5,
+        "recall_percent": 0.0,
+        "risk_misses": 5
+      },
+      {
+        "cross_found": 2,
+        "expected": 16,
+        "informative_misses": 0,
+        "key": "npm",
+        "matched": 12,
+        "missed": 4,
+        "recall_percent": 75.0,
+        "risk_misses": 4
+      },
+      {
+        "cross_found": 0,
+        "expected": 23,
+        "informative_misses": 0,
+        "key": "SMTP service",
+        "matched": 20,
+        "missed": 3,
+        "recall_percent": 86.96,
+        "risk_misses": 3
+      },
+      {
+        "cross_found": 2,
+        "expected": 57,
+        "informative_misses": 0,
+        "key": "GitHub",
+        "matched": 55,
+        "missed": 2,
+        "recall_percent": 96.49,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "Unidentified hmac secret",
+        "matched": 2,
+        "missed": 2,
+        "recall_percent": 50.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "PuTTY",
+        "matched": 0,
+        "missed": 2,
+        "recall_percent": 0.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "Unidentified payment data",
+        "matched": 0,
+        "missed": 2,
+        "recall_percent": 0.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "Unidentified private key",
+        "matched": 0,
+        "missed": 2,
+        "recall_percent": 0.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 1,
+        "expected": 54,
+        "informative_misses": 0,
+        "key": "Stripe",
+        "matched": 53,
+        "missed": 1,
+        "recall_percent": 98.15,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 32,
+        "informative_misses": 0,
+        "key": "Twilio SendGrid",
+        "matched": 31,
+        "missed": 1,
+        "recall_percent": 96.88,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 14,
+        "informative_misses": 0,
+        "key": "Slack",
+        "matched": 13,
+        "missed": 1,
+        "recall_percent": 92.86,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "PEM / Ed25519",
+        "matched": 3,
+        "missed": 1,
+        "recall_percent": 75.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "HTTP Basic authentication",
+        "matched": 1,
+        "missed": 1,
+        "recall_percent": 50.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 5,
+        "informative_misses": 0,
+        "key": "Twilio",
+        "matched": 5,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "OpenSSH",
+        "matched": 4,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "PEM / EC",
+        "matched": 4,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "Private Key Pem",
+        "matched": 4,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "PyPI",
+        "matched": 4,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "Redis",
+        "matched": 4,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "Microsoft Azure",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "Terraform",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      }
+    ],
+    "representation": [
+      {
+        "cross_found": 0,
+        "expected": 77,
+        "informative_misses": 3,
+        "key": "php_define",
+        "matched": 0,
+        "missed": 77,
+        "recall_percent": 0.0,
+        "risk_misses": 74
+      },
+      {
+        "cross_found": 18,
+        "expected": 94,
+        "informative_misses": 43,
+        "key": "json_string",
+        "matched": 27,
+        "missed": 67,
+        "recall_percent": 28.72,
+        "risk_misses": 24
+      },
+      {
+        "cross_found": 42,
+        "expected": 77,
+        "informative_misses": 0,
+        "key": "php_string_literal",
+        "matched": 21,
+        "missed": 56,
+        "recall_percent": 27.27,
+        "risk_misses": 56
+      },
+      {
+        "cross_found": 38,
+        "expected": 106,
+        "informative_misses": 0,
+        "key": "env_value",
+        "matched": 55,
+        "missed": 51,
+        "recall_percent": 51.89,
+        "risk_misses": 51
+      },
+      {
+        "cross_found": 21,
+        "expected": 85,
+        "informative_misses": 0,
+        "key": "section_text",
+        "matched": 43,
+        "missed": 42,
+        "recall_percent": 50.59,
+        "risk_misses": 42
+      },
+      {
+        "cross_found": 10,
+        "expected": 66,
+        "informative_misses": 24,
+        "key": "assignment",
+        "matched": 24,
+        "missed": 42,
+        "recall_percent": 36.36,
+        "risk_misses": 18
+      },
+      {
+        "cross_found": 17,
+        "expected": 55,
+        "informative_misses": 0,
+        "key": "kubernetes_secret_data",
+        "matched": 31,
+        "missed": 24,
+        "recall_percent": 56.36,
+        "risk_misses": 24
+      },
+      {
+        "cross_found": 11,
+        "expected": 94,
+        "informative_misses": 0,
+        "key": "dotenv_value",
+        "matched": 74,
+        "missed": 20,
+        "recall_percent": 78.72,
+        "risk_misses": 20
+      },
+      {
+        "cross_found": 7,
+        "expected": 49,
+        "informative_misses": 0,
+        "key": "python_string_literal",
+        "matched": 35,
+        "missed": 14,
+        "recall_percent": 71.43,
+        "risk_misses": 14
+      },
+      {
+        "cross_found": 0,
+        "expected": 16,
+        "informative_misses": 7,
+        "key": "xml_element_or_attribute",
+        "matched": 2,
+        "missed": 14,
+        "recall_percent": 12.5,
+        "risk_misses": 7
+      },
+      {
+        "cross_found": 0,
+        "expected": 16,
+        "informative_misses": 7,
+        "key": "source_line",
+        "matched": 4,
+        "missed": 12,
+        "recall_percent": 25.0,
+        "risk_misses": 5
+      },
+      {
+        "cross_found": 0,
+        "expected": 12,
+        "informative_misses": 0,
+        "key": "sql_copy_value",
+        "matched": 0,
+        "missed": 12,
+        "recall_percent": 0.0,
+        "risk_misses": 12
+      },
+      {
+        "cross_found": 0,
+        "expected": 10,
+        "informative_misses": 0,
+        "key": "sqlite_table_cell",
+        "matched": 0,
+        "missed": 10,
+        "recall_percent": 0.0,
+        "risk_misses": 10
+      },
+      {
+        "cross_found": 0,
+        "expected": 9,
+        "informative_misses": 0,
+        "key": "putty_ppk_v2",
+        "matched": 0,
+        "missed": 9,
+        "recall_percent": 0.0,
+        "risk_misses": 9
+      },
+      {
+        "cross_found": 0,
+        "expected": 8,
+        "informative_misses": 0,
+        "key": "compose_command_arg",
+        "matched": 0,
+        "missed": 8,
+        "recall_percent": 0.0,
+        "risk_misses": 8
+      },
+      {
+        "cross_found": 8,
+        "expected": 8,
+        "informative_misses": 0,
+        "key": "redis_url",
+        "matched": 0,
+        "missed": 8,
+        "recall_percent": 0.0,
+        "risk_misses": 8
+      },
+      {
+        "cross_found": 0,
+        "expected": 7,
+        "informative_misses": 0,
+        "key": "alembic_url",
+        "matched": 0,
+        "missed": 7,
+        "recall_percent": 0.0,
+        "risk_misses": 7
+      },
+      {
+        "cross_found": 0,
+        "expected": 7,
+        "informative_misses": 0,
+        "key": "log_command_argument",
+        "matched": 0,
+        "missed": 7,
+        "recall_percent": 0.0,
+        "risk_misses": 7
+      },
+      {
+        "cross_found": 5,
+        "expected": 70,
+        "informative_misses": 1,
+        "key": "yaml_value",
+        "matched": 64,
+        "missed": 6,
+        "recall_percent": 91.43,
+        "risk_misses": 5
+      },
+      {
+        "cross_found": 5,
+        "expected": 6,
+        "informative_misses": 0,
+        "key": "docker_config_auth",
+        "matched": 0,
+        "missed": 6,
+        "recall_percent": 0.0,
+        "risk_misses": 6
+      },
+      {
+        "cross_found": 0,
+        "expected": 24,
+        "informative_misses": 0,
+        "key": "compose_environment_value",
+        "matched": 19,
+        "missed": 5,
+        "recall_percent": 79.17,
+        "risk_misses": 5
+      },
+      {
+        "cross_found": 0,
+        "expected": 5,
+        "informative_misses": 0,
+        "key": "docker_secret_file",
+        "matched": 0,
+        "missed": 5,
+        "recall_percent": 0.0,
+        "risk_misses": 5
+      },
+      {
+        "cross_found": 0,
+        "expected": 5,
+        "informative_misses": 0,
+        "key": "otpauth_secret",
+        "matched": 0,
+        "missed": 5,
+        "recall_percent": 0.0,
+        "risk_misses": 5
+      },
+      {
+        "cross_found": 0,
+        "expected": 5,
+        "informative_misses": 0,
+        "key": "xml_attribute_value",
+        "matched": 0,
+        "missed": 5,
+        "recall_percent": 0.0,
+        "risk_misses": 5
+      },
+      {
+        "cross_found": 0,
+        "expected": 8,
+        "informative_misses": 0,
+        "key": "browser_encrypted_value",
+        "matched": 4,
+        "missed": 4,
+        "recall_percent": 50.0,
+        "risk_misses": 4
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "filezilla_base64_password",
+        "matched": 0,
+        "missed": 4,
+        "recall_percent": 0.0,
+        "risk_misses": 4
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "jetbrains_static_key_obfuscated",
+        "matched": 0,
+        "missed": 4,
+        "recall_percent": 0.0,
+        "risk_misses": 4
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "netrc_password",
+        "matched": 0,
+        "missed": 4,
+        "recall_percent": 0.0,
+        "risk_misses": 4
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "pkcs12_der",
+        "matched": 0,
+        "missed": 4,
+        "recall_percent": 0.0,
+        "risk_misses": 4
+      },
+      {
+        "cross_found": 2,
+        "expected": 6,
+        "informative_misses": 2,
+        "key": "ini_value",
+        "matched": 3,
+        "missed": 3,
+        "recall_percent": 50.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "uri_userinfo",
+        "matched": 1,
+        "missed": 3,
+        "recall_percent": 25.0,
+        "risk_misses": 3
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "base64_value",
+        "matched": 0,
+        "missed": 2,
+        "recall_percent": 0.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "bson_string_value",
+        "matched": 0,
+        "missed": 2,
+        "recall_percent": 0.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "hash_value",
+        "matched": 0,
+        "missed": 2,
+        "recall_percent": 0.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "pem_pkcs8",
+        "matched": 0,
+        "missed": 2,
+        "recall_percent": 0.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "pgpass_password",
+        "matched": 0,
+        "missed": 2,
+        "recall_percent": 0.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "raw_key_file",
+        "matched": 0,
+        "missed": 2,
+        "recall_percent": 0.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 1,
+        "expected": 11,
+        "informative_misses": 0,
+        "key": "log_kv_value",
+        "matched": 10,
+        "missed": 1,
+        "recall_percent": 90.91,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "cloud_init_password",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "kubeconfig_token",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "nuget_clear_text_password",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "redis_config_directive",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 53,
+        "informative_misses": 0,
+        "key": "github_actions_expression_value",
+        "matched": 53,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 14,
+        "informative_misses": 0,
+        "key": "gitlab_ci_variable",
+        "matched": 14,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 10,
+        "informative_misses": 0,
+        "key": "pem_pkcs1",
+        "matched": 10,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 9,
+        "informative_misses": 0,
+        "key": "database_url",
+        "matched": 9,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 8,
+        "informative_misses": 0,
+        "key": "log_quoted_value",
+        "matched": 8,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 8,
+        "informative_misses": 0,
+        "key": "ts_string_literal",
+        "matched": 8,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 5,
+        "informative_misses": 0,
+        "key": "azure_pipeline_variable",
+        "matched": 5,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 5,
+        "informative_misses": 0,
+        "key": "publish_profile_base64",
+        "matched": 5,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 5,
+        "informative_misses": 0,
+        "key": "sqlserver_connection_string",
+        "matched": 5,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 5,
+        "informative_misses": 0,
+        "key": "stackexchange_redis_config",
+        "matched": 5,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "pem_block",
+        "matched": 4,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "pem_sec1",
+        "matched": 4,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "pkcs8_encrypted_aes256",
+        "matched": 4,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "shell_assignment",
+        "matched": 4,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 3,
+        "informative_misses": 0,
+        "key": "openssh_private_key_file",
+        "matched": 3,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "hcl_string",
+        "matched": 2,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "git_credential_url",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "kubeconfig_client_key",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "kubernetes_ssh_key",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "kubernetes_tls_key",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "maven_settings_password",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "mongodb_uri",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "npmrc_auth_token",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "pip_conf_password",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "pypirc_password",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "shell_command_inline",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      }
+    ],
+    "root_cause": [
+      {
+        "cross_found": 111,
+        "expected": 257,
+        "informative_misses": 0,
+        "key": "IDENTIFIER_MISMATCH",
+        "matched": 0,
+        "missed": 257,
+        "recall_percent": 0.0,
+        "risk_misses": 257
+      },
+      {
+        "cross_found": 22,
+        "expected": 100,
+        "informative_misses": 0,
+        "key": "FORMAT_UNSUPPORTED",
+        "matched": 0,
+        "missed": 100,
+        "recall_percent": 0.0,
+        "risk_misses": 100
+      },
+      {
+        "cross_found": 1,
+        "expected": 87,
+        "informative_misses": 87,
+        "key": "INFORMATIVE_REFERENCE",
+        "matched": 0,
+        "missed": 87,
+        "recall_percent": 0.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 17,
+        "expected": 48,
+        "informative_misses": 0,
+        "key": "RULE_ABSENT",
+        "matched": 0,
+        "missed": 48,
+        "recall_percent": 0.0,
+        "risk_misses": 48
+      },
+      {
+        "cross_found": 8,
+        "expected": 26,
+        "informative_misses": 0,
+        "key": "SOURCE_UNSUPPORTED",
+        "matched": 0,
+        "missed": 26,
+        "recall_percent": 0.0,
+        "risk_misses": 26
+      },
+      {
+        "cross_found": 15,
+        "expected": 22,
+        "informative_misses": 0,
+        "key": "CONTEXT_INSUFFICIENT",
+        "matched": 0,
+        "missed": 22,
+        "recall_percent": 0.0,
+        "risk_misses": 22
+      },
+      {
+        "cross_found": 10,
+        "expected": 12,
+        "informative_misses": 0,
+        "key": "UNKNOWN",
+        "matched": 0,
+        "missed": 12,
+        "recall_percent": 0.0,
+        "risk_misses": 12
+      },
+      {
+        "cross_found": 2,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "VALIDATOR_REJECTION",
+        "matched": 0,
+        "missed": 2,
+        "recall_percent": 0.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "CAPTURE_MISMATCH",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 570,
+        "informative_misses": 0,
+        "key": "MATCHED",
+        "matched": 570,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      }
+    ],
+    "subtype": [
+      {
+        "cross_found": 49,
+        "expected": 142,
+        "informative_misses": 0,
+        "key": "wordpress_salt",
+        "matched": 0,
+        "missed": 142,
+        "recall_percent": 0.0,
+        "risk_misses": 142
+      },
+      {
+        "cross_found": 1,
+        "expected": 87,
+        "informative_misses": 87,
+        "key": "informative_reference",
+        "matched": 0,
+        "missed": 87,
+        "recall_percent": 0.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 15,
+        "expected": 227,
+        "informative_misses": 0,
+        "key": "database_password",
+        "matched": 173,
+        "missed": 54,
+        "recall_percent": 76.21,
+        "risk_misses": 54
+      },
+      {
+        "cross_found": 13,
+        "expected": 83,
+        "informative_misses": 0,
+        "key": "application_password",
+        "matched": 47,
+        "missed": 36,
+        "recall_percent": 56.63,
+        "risk_misses": 36
+      },
+      {
+        "cross_found": 30,
+        "expected": 32,
+        "informative_misses": 0,
+        "key": "application_signing_key",
+        "matched": 0,
+        "missed": 32,
+        "recall_percent": 0.0,
+        "risk_misses": 32
+      },
+      {
+        "cross_found": 18,
+        "expected": 60,
+        "informative_misses": 0,
+        "key": "application_hmac_key",
+        "matched": 39,
+        "missed": 21,
+        "recall_percent": 65.0,
+        "risk_misses": 21
+      },
+      {
+        "cross_found": 2,
+        "expected": 33,
+        "informative_misses": 0,
+        "key": "generic_api_key",
+        "matched": 16,
+        "missed": 17,
+        "recall_percent": 48.48,
+        "risk_misses": 17
+      },
+      {
+        "cross_found": 0,
+        "expected": 12,
+        "informative_misses": 0,
+        "key": "ftp_password",
+        "matched": 0,
+        "missed": 12,
+        "recall_percent": 0.0,
+        "risk_misses": 12
+      },
+      {
+        "cross_found": 0,
+        "expected": 12,
+        "informative_misses": 0,
+        "key": "totp_seed",
+        "matched": 0,
+        "missed": 12,
+        "recall_percent": 0.0,
+        "risk_misses": 12
+      },
+      {
+        "cross_found": 3,
+        "expected": 21,
+        "informative_misses": 0,
+        "key": "rsa_private_key_pkcs1",
+        "matched": 10,
+        "missed": 11,
+        "recall_percent": 47.62,
+        "risk_misses": 11
+      },
+      {
+        "cross_found": 10,
+        "expected": 20,
+        "informative_misses": 0,
+        "key": "jwt_signing_key",
+        "matched": 10,
+        "missed": 10,
+        "recall_percent": 50.0,
+        "risk_misses": 10
+      },
+      {
+        "cross_found": 0,
+        "expected": 10,
+        "informative_misses": 0,
+        "key": "key_passphrase",
+        "matched": 0,
+        "missed": 10,
+        "recall_percent": 0.0,
+        "risk_misses": 10
+      },
+      {
+        "cross_found": 1,
+        "expected": 9,
+        "informative_misses": 0,
+        "key": "admin_password",
+        "matched": 0,
+        "missed": 9,
+        "recall_percent": 0.0,
+        "risk_misses": 9
+      },
+      {
+        "cross_found": 8,
+        "expected": 8,
+        "informative_misses": 0,
+        "key": "docker_registry_password",
+        "matched": 0,
+        "missed": 8,
+        "recall_percent": 0.0,
+        "risk_misses": 8
+      },
+      {
+        "cross_found": 7,
+        "expected": 38,
+        "informative_misses": 0,
+        "key": "aws_secret_access_key",
+        "matched": 31,
+        "missed": 7,
+        "recall_percent": 81.58,
+        "risk_misses": 7
+      },
+      {
+        "cross_found": 0,
+        "expected": 6,
+        "informative_misses": 0,
+        "key": "pkcs12_passphrase",
+        "matched": 0,
+        "missed": 6,
+        "recall_percent": 0.0,
+        "risk_misses": 6
+      },
+      {
+        "cross_found": 0,
+        "expected": 8,
+        "informative_misses": 0,
+        "key": "url_password",
+        "matched": 3,
+        "missed": 5,
+        "recall_percent": 37.5,
+        "risk_misses": 5
+      },
+      {
+        "cross_found": 0,
+        "expected": 7,
+        "informative_misses": 0,
+        "key": "tls_private_key_pkcs8",
+        "matched": 2,
+        "missed": 5,
+        "recall_percent": 28.57,
+        "risk_misses": 5
+      },
+      {
+        "cross_found": 5,
+        "expected": 5,
+        "informative_misses": 0,
+        "key": "azure_storage_account_key",
+        "matched": 0,
+        "missed": 5,
+        "recall_percent": 0.0,
+        "risk_misses": 5
+      },
+      {
+        "cross_found": 1,
+        "expected": 16,
+        "informative_misses": 0,
+        "key": "application_secret",
+        "matched": 12,
+        "missed": 4,
+        "recall_percent": 75.0,
+        "risk_misses": 4
+      },
+      {
+        "cross_found": 0,
+        "expected": 8,
+        "informative_misses": 0,
+        "key": "browser_saved_credential",
+        "matched": 4,
+        "missed": 4,
+        "recall_percent": 50.0,
+        "risk_misses": 4
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "netrc_credential",
+        "matched": 0,
+        "missed": 4,
+        "recall_percent": 0.0,
+        "risk_misses": 4
+      },
+      {
+        "cross_found": 0,
+        "expected": 23,
+        "informative_misses": 0,
+        "key": "smtp_password",
+        "matched": 20,
+        "missed": 3,
+        "recall_percent": 86.96,
+        "risk_misses": 3
+      },
+      {
+        "cross_found": 2,
+        "expected": 42,
+        "informative_misses": 0,
+        "key": "github_personal_access_token",
+        "matched": 40,
+        "missed": 2,
+        "recall_percent": 95.24,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 2,
+        "expected": 14,
+        "informative_misses": 0,
+        "key": "npm_access_token",
+        "matched": 12,
+        "missed": 2,
+        "recall_percent": 85.71,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 0,
+        "expected": 10,
+        "informative_misses": 0,
+        "key": "generic_token",
+        "matched": 8,
+        "missed": 2,
+        "recall_percent": 80.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "base64_basic_credential",
+        "matched": 0,
+        "missed": 2,
+        "recall_percent": 0.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "password_hash",
+        "matched": 0,
+        "missed": 2,
+        "recall_percent": 0.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "payment_card",
+        "matched": 0,
+        "missed": 2,
+        "recall_percent": 0.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "unspecified_credential",
+        "matched": 0,
+        "missed": 2,
+        "recall_percent": 0.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "wallet_seed_phrase",
+        "matched": 0,
+        "missed": 2,
+        "recall_percent": 0.0,
+        "risk_misses": 2
+      },
+      {
+        "cross_found": 1,
+        "expected": 32,
+        "informative_misses": 0,
+        "key": "sendgrid_api_key",
+        "matched": 31,
+        "missed": 1,
+        "recall_percent": 96.88,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 14,
+        "informative_misses": 0,
+        "key": "slack_bot_token",
+        "matched": 13,
+        "missed": 1,
+        "recall_percent": 92.86,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 5,
+        "informative_misses": 0,
+        "key": "pem_private_key",
+        "matched": 4,
+        "missed": 1,
+        "recall_percent": 80.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "ed25519_private_key_pkcs8",
+        "matched": 3,
+        "missed": 1,
+        "recall_percent": 75.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "bearer_token",
+        "matched": 1,
+        "missed": 1,
+        "recall_percent": 50.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "http_basic_password",
+        "matched": 1,
+        "missed": 1,
+        "recall_percent": 50.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "airtable_pat",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "confluent_cloud_key",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "confluent_cloud_secret",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "databricks_pat",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "discord_webhook_url",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "doppler_token",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "dynatrace_api_token",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "elevenlabs_api_key",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "email",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "fireworks_api_key",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "google_oauth_client_secret",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "grafana_service_account_token",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "mailgun_api_key",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "netlify_pat",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "nuget_api_key",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "openai_project_key",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "planetscale_token",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "postman_api_key",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "putty_ppk_private_key",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "resend_api_key",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "rubygems_api_key",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "sentry_org_auth_token",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "sonarqube_token",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "stripe_webhook_secret",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "supabase_access_token",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "terraform_cloud_token",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "twilio_api_key_sid",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 1,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "vault_service_token",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "xai_api_key",
+        "matched": 0,
+        "missed": 1,
+        "recall_percent": 0.0,
+        "risk_misses": 1
+      },
+      {
+        "cross_found": 0,
+        "expected": 53,
+        "informative_misses": 0,
+        "key": "stripe_secret_key",
+        "matched": 53,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 5,
+        "informative_misses": 0,
+        "key": "twilio_auth_token",
+        "matched": 5,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "aws_access_key_id",
+        "matched": 4,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "ec_private_key_sec1",
+        "matched": 4,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "pypi_api_token",
+        "matched": 4,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 4,
+        "informative_misses": 0,
+        "key": "redis_password",
+        "matched": 4,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "openssh_private_key_ed25519",
+        "matched": 2,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 2,
+        "informative_misses": 0,
+        "key": "openssh_private_key_rsa",
+        "matched": 2,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "azure_storage_key",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "gitlab_pat",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "google_api_key",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "groq_api_key",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "jwt",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "newrelic_user_key",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "perplexity_api_key",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "pinecone_api_key",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "replicate_api_token",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "rsa_private_key_pkcs8",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "slack_webhook_url",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      },
+      {
+        "cross_found": 0,
+        "expected": 1,
+        "informative_misses": 0,
+        "key": "tailscale_auth_key",
+        "matched": 1,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
+      }
+    ]
+  },
+  "build_id": "rnc-cp4c",
+  "configuration_profile": "default",
+  "counts": {
+    "confirmed_causes": 419,
+    "expected": 1125,
+    "informative_expected": 87,
+    "informative_misses": 87,
+    "matched": 570,
+    "missed": 555,
+    "probable_causes": 124,
+    "risk_bearing_expected": 1038,
+    "risk_bearing_matched": 570,
+    "risk_bearing_misses": 468,
+    "risk_bearing_recall_percent": 54.91,
+    "unresolved_causes": 12,
+    "unverified_evidence": 1
+  },
+  "cross_scanner": {
+    "found_by_other": 187,
+    "missed_by_all": 368,
+    "unique_misses": 158,
+    "unique_successes": 30
+  },
+  "executable_sha256": "170bd1df345c4985043ff449051c247f22a1012fe9c054cae5c2edcc190fb1cb",
+  "generated_at": "2026-11-16T03:08:16+00:00",
+  "generated_report_at": "2026-11-15T23:57:44Z",
+  "input_evidence": {
+    "oracle_files": {
+      "leaky_history": "datasets/leaky-repo.history-oracle.json",
+      "leaky_truth": "datasets/leaky-repo.rnc-truth.json",
+      "levain": "datasets/cache/levain/<revision>/source/tp-corpus.json.b64",
+      "rnclab": "datasets/cache/rnc-synth-lab/oracle/oracle.jsonl"
+    },
+    "reports": {
+      "betterleaks": {
+        "build_id": "betterleaks-lts",
+        "executable_sha256": "727820f1a9f9264319cc50458b99f01acbb93e93df7a39b8eaa2715a7b1aaed5",
+        "generated_at": "2026-11-16T00:01:28Z",
+        "history_coverage": null,
+        "key": "betterleaks",
+        "label": "Betterleaks 1.8.1",
+        "overall": "COMPLETE_WITH_LIMITATIONS",
+        "profile": "default",
+        "report_path": "C:\\Dev\\rnc-benchmark-harness\\run\\reports\\all-windows-baselines\\betterleaks-lts\\betterleaks-lts-current-baseline-5eab48332cc4-default.json",
+        "report_sha256": "e484374e52dd5ccea93418fe3b65e78d2e34fbb39d6132d06fab418a03b689d6",
+        "rules_file": null,
+        "rules_sha256": "",
+        "run_id": "20261115T235951Z-407bdf96",
+        "scanner_extra_args": [],
+        "source_commit": "5eab48332cc48565864514e3bc6de89df091a7c4",
+        "version": "1.8.1"
+      },
+      "cp4c": {
+        "build_id": "rnc-cp4c",
+        "executable_sha256": "170bd1df345c4985043ff449051c247f22a1012fe9c054cae5c2edcc190fb1cb",
+        "generated_at": "2026-11-15T23:57:44Z",
+        "history_coverage": {
+          "applicable": true,
+          "counts": {
+            "actionable": 64,
+            "detected": 64,
+            "discovered": 166,
+            "exempted": 0,
+            "inspected": 166,
+            "required_discovered": 166,
+            "required_inspected": 166,
+            "required_uninspected": 0,
+            "required_verified_blocked": 0,
+            "uninspected": 0,
+            "verified_blocked": 0
+          },
+          "expected_file_count": 0,
+          "history": {
+            "changed_paths": 172,
+            "commits": 25,
+            "deleted_paths": 6,
+            "refs": [
+              "HEAD"
+            ],
+            "scope": "selected-refs",
+            "units_seen": 166
+          },
+          "mode": "git",
+          "notes": [
+            "RNC verified 166 Git commit/path units INSPECTED; 25 commits selected by --ref HEAD, unit counts reconcile, execution COMPLETED, and no required unit is blocked or uninspected."
+          ],
+          "ruleset": {
+            "digest": "sha256:901008d7cf64ee7387599eb13720bc3b78a2ab8868aae6e779fea1843c22dfb9",
+            "id": "rnc-providers-v1",
+            "intended_digest": "sha256:901008d7cf64ee7387599eb13720bc3b78a2ab8868aae6e779fea1843c22dfb9",
+            "intended_id": "rnc-providers-v1"
+          },
+          "source_ids": [
+            "local-git-history:dfe49079f5664029"
+          ],
+          "source_kind": "git_commit_blob",
+          "source_kinds": [
+            "git_commit_blob"
+          ],
+          "unit_count": 166,
+          "unit_locator_errors": [],
+          "verified": true
+        },
+        "key": "cp4c",
+        "label": "RNC Scanner CP4C",
+        "overall": "COMPLETE_WITH_LIMITATIONS",
+        "profile": "default",
+        "report_path": "C:\\Dev\\rnc-benchmark-harness\\run\\reports\\all-windows-baselines\\rnc-cp4c\\rnc-cp4c-current-baseline-805e3bb79276-default.json",
+        "report_sha256": "ec2f5efe50d3dddd9e0b7b1a1e03628ccd97c748b3cf2b38a7deab806902b1f8",
+        "rules_file": "rules/rnc-cp4c-providers-v1.json",
+        "rules_sha256": "2eb315fa40553ab1e133322a1f0a014a4593ab2ca6164152149eb59c1197a6b7",
+        "run_id": "20261115T235444Z-dbf46367",
+        "scanner_extra_args": [
+          "--workers",
+          "auto"
+        ],
+        "source_commit": "805e3bb79276b94de636e27024f38773da303b44",
+        "version": "0.1.0"
+      },
+      "gitleaks": {
+        "build_id": "gitleaks-master",
+        "executable_sha256": "e0831964099a20be3edaa5187f4f11a802821c2eea66a37acc6c09e0587724f2",
+        "generated_at": "2026-11-15T23:59:50Z",
+        "history_coverage": null,
+        "key": "gitleaks",
+        "label": "Gitleaks master",
+        "overall": "COMPLETE_WITH_LIMITATIONS",
+        "profile": "default",
+        "report_path": "C:\\Dev\\rnc-benchmark-harness\\run\\reports\\all-windows-baselines\\gitleaks-master\\gitleaks-master-current-baseline-5f6ec56cfa6f-default.json",
+        "report_sha256": "fa80019006f9a515ee82ae107122dbd7871602e3fc5c2461587a4cfa397f2569",
+        "rules_file": null,
+        "rules_sha256": "",
+        "run_id": "20261115T235801Z-0198709c",
+        "scanner_extra_args": [],
+        "source_commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+        "version": "8.25.0-local"
+      },
+      "v14": {
+        "build_id": "gl-rnc-mod-v14",
+        "executable_sha256": "7f1c9bd6f61c3ae414ab7df7688aeef04bd03312ac624127a13d39aa15238bfb",
+        "generated_at": "2026-11-16T00:06:02Z",
+        "history_coverage": null,
+        "key": "v14",
+        "label": "RNC-Mod V14",
+        "overall": "COMPLETE_WITH_LIMITATIONS",
+        "profile": "default",
+        "report_path": "C:\\Dev\\rnc-benchmark-harness\\run\\reports\\all-windows-baselines\\gl-rnc-mod-v14\\gl-rnc-mod-v14-current-baseline-7d7492184111-default.json",
+        "report_sha256": "1480f1bb80ef77dc303fe61527ef7d930823c6287dc92557f6b36115fe02151a",
+        "rules_file": null,
+        "rules_sha256": "",
+        "run_id": "20261116T000424Z-080efee1",
+        "scanner_extra_args": [],
+        "source_commit": "7d74921841114be7677a423cf60620210e832bf7",
+        "version": "v8.25.0+dev.7d7492184111"
+      },
+      "v16": {
+        "build_id": "gl-rnc-mod-v16",
+        "executable_sha256": "d561ec675ac265240ff7002adf0019a9b1644f4df6d854a86be67b58b789bb72",
+        "generated_at": "2026-11-16T02:25:52Z",
+        "history_coverage": null,
+        "key": "v16",
+        "label": "RNC-Mod V16",
+        "overall": "COMPLETE_WITH_LIMITATIONS",
+        "profile": "default",
+        "report_path": "C:\\Dev\\rnc-benchmark-harness\\run\\reports\\all-windows-baselines\\gl-rnc-mod-v16\\gl-rnc-mod-v16-current-baseline-11897cd27e57-full-11897cd27e57-default.json",
+        "report_sha256": "c82cab9e710676b689412c43843cdc2a593f248f0dd687271cd0843b19e93969",
+        "rules_file": null,
+        "rules_sha256": "",
+        "run_id": "20261116T022413Z-04c1ef8c",
+        "scanner_extra_args": [],
+        "source_commit": "11897cd27e57d5eee7262c9d053a4356bca59cd8",
+        "version": "v8.25.0+dev.11897cd27e57"
+      }
+    }
+  },
+  "lanes": [
+    {
+      "expected": 85,
+      "informative_misses": 0,
+      "lane": "levain",
+      "matched": 43,
+      "missed": 42,
+      "recall_percent": 50.59,
+      "risk_misses": 42,
+      "title": "Levain credential corpus",
+      "unverified": 0
+    },
+    {
+      "expected": 175,
+      "informative_misses": 87,
+      "lane": "leaky_filesystem",
+      "matched": 32,
+      "missed": 143,
+      "recall_percent": 18.29,
+      "risk_misses": 56,
+      "title": "Leaky Repo filesystem",
+      "unverified": 1
+    },
+    {
+      "expected": 65,
+      "informative_misses": 0,
+      "lane": "leaky_git",
+      "matched": 28,
+      "missed": 37,
+      "recall_percent": 43.08,
+      "risk_misses": 37,
+      "title": "Leaky Repo Git history",
+      "unverified": 0
+    },
+    {
+      "expected": 640,
+      "informative_misses": 0,
+      "lane": "rnclab_filesystem",
+      "matched": 347,
+      "missed": 293,
+      "recall_percent": 54.22,
+      "risk_misses": 293,
+      "title": "RNC Synthetic Secrets Lab v3 filesystem",
+      "unverified": 0
+    },
+    {
+      "expected": 160,
+      "informative_misses": 0,
+      "lane": "rnclab_git",
+      "matched": 120,
+      "missed": 40,
+      "recall_percent": 75.0,
+      "risk_misses": 40,
+      "title": "RNC Synthetic Secrets Lab v3 Git history",
+      "unverified": 0
+    }
+  ],
+  "limitations": [
+    "This is an independent evaluator report. No scanner rule, source file, oracle, or scoring policy was modified.",
+    "Leaky Repo filesystem is a line-level detection benchmark without a complete negative oracle; precision and F1 are not certified.",
+    "Leaky Repo Git precision/F1 are not certified; 65 source occurrences and 53 unique groups are separate denominators.",
+    "Leaky Git source units are marked INSPECTED_UNVERIFIED for adapters that do not return a true coverage attestation; this is not evidence that a unit was skipped.",
+    "RNC Lab precision/F1 are not certified; the 640 filesystem and 160 Git positive denominators are separate and are not combined.",
+    "The 11 RNC Lab symlink aliases are not followed by the scanner. They contain no expected positive target in this oracle, so they do not change the positive recall denominator.",
+    "Provider and subtype labels for Leaky Repo and Levain are source-context inferences because those oracles do not expose the Lab's fine-grained subtype taxonomy. RNC Lab labels come directly from its oracle.",
+    "A miss is not proof that a regular expression failed. Candidate rejection, source acquisition, context association, and value extraction are distinct layers.",
+    "Scanner-side candidate instrumentation is required to turn some PROBABLE or UNRESOLVED causes into confirmed ones.",
+    "CP4C was executed with the experiment-owned --workers auto argument and no profiling, as in the retained baseline."
+  ],
+  "load_evidence": [
+    {
+      "accuracy_scored": false,
+      "coverage_reason": "TOTAL_BYTE_LIMIT",
+      "file_coverage_percent": 99.94,
+      "files_eligible": 1810,
+      "files_inspected": 1809,
+      "median_seconds": 5.121,
+      "profile": "legacy-5x",
+      "scanner": "RNC Scanner CP4C",
+      "stability": "STABLE",
+      "uninspected": [
+        "generated/large/payload-07.bin"
+      ]
+    },
+    {
+      "accuracy_scored": false,
+      "coverage_reason": "TOTAL_BYTE_LIMIT",
+      "file_coverage_percent": 99.97,
+      "files_eligible": 3610,
+      "files_inspected": 3609,
+      "median_seconds": 6.892,
+      "profile": "legacy-10x",
+      "scanner": "RNC Scanner CP4C",
+      "stability": "STABLE",
+      "uninspected": [
+        "generated/large/payload-07.bin"
+      ]
+    }
+  ],
+  "negative_oracle": {
+    "leaky_filesystem_unexpected_findings": 0,
+    "levain_false_positives": 2,
+    "note": "RNC Lab and Leaky Git precision/F1 remain uncertified; negative references are not exhaustive.",
+    "precision_certified": false,
+    "rnclab_filesystem_verified_fp_alerts": 10,
+    "rnclab_git_verified_fp_alerts": 3
+  },
+  "opportunities": [
+    {
+      "confidence": "CONFIRMED",
+      "cross_found": 49,
+      "identifiers": [
+        "AUTH_KEY",
+        "AUTH_SALT",
+        "LOGGED_IN_KEY",
+        "LOGGED_IN_SALT",
+        "NONCE_KEY",
+        "NONCE_SALT",
+        "SECURE_AUTH_KEY",
+        "SECURE_AUTH_SALT",
+        "WP_SALT_1",
+        "WP_SALT_2"
+      ],
+      "lanes": [
+        "leaky_filesystem",
+        "leaky_git",
+        "rnclab_filesystem"
+      ],
+      "misses": 142,
+      "opportunity": "wordpress_authentication_material",
+      "priority": "HIGH",
+      "providers": [
+        "WordPress"
+      ],
+      "representations": [
+        "kubernetes_secret_data",
+        "php_define",
+        "php_string_literal"
+      ],
+      "risk_misses": 142,
+      "root_cause": "IDENTIFIER_MISMATCH",
+      "root_causes": {
+        "IDENTIFIER_MISMATCH": 142
+      },
+      "sample_targets": [
+        "leaky-repo:web/var/www/public_html/wp-config.php:33:risk",
+        "leaky-repo:web/var/www/public_html/wp-config.php:35:risk",
+        "leaky-repo:web/var/www/public_html/wp-config.php:37:risk",
+        "leaky-repo:web/var/www/public_html/wp-config.php:39:risk",
+        "leaky-repo:web/var/www/public_html/wp-config.php:41:risk",
+        "leaky-repo:web/var/www/public_html/wp-config.php:43:risk",
+        "leaky-repo:web/var/www/public_html/wp-config.php:45:risk",
+        "leaky-repo:web/var/www/public_html/wp-config.php:47:risk",
+        "LH-0162",
+        "LH-0163",
+        "LH-0164",
+        "LH-0165"
+      ],
+      "subtypes": [
+        "wordpress_salt"
+      ]
+    },
+    {
+      "confidence": "PROBABLE",
+      "cross_found": 5,
+      "identifiers": [
+        "NO_ASSIGNMENT_IDENTIFIER",
+        "Pass",
+        "_authToken",
+        "admin",
+        "auth",
+        "command",
+        "git_credentials_url",
+        "netrc_password",
+        "pgpass_password_field",
+        "token"
+      ],
+      "lanes": [
+        "leaky_filesystem",
+        "leaky_git",
+        "levain",
+        "rnclab_filesystem"
+      ],
+      "misses": 66,
+      "opportunity": "password_positional_or_encoded",
+      "priority": "HIGH",
+      "providers": [
+        "Administrative account",
+        "Application service",
+        "Database service",
+        "FTP/SFTP service",
+        "HTTP Basic authentication",
+        "SMTP service",
+        "Unidentified password",
+        "npm"
+      ],
+      "representations": [
+        "base64_value",
+        "compose_command_arg",
+        "docker_config_auth",
+        "docker_secret_file",
+        "dotenv_value",
+        "filezilla_base64_password",
+        "hash_value",
+        "jetbrains_static_key_obfuscated"
+      ],
+      "risk_misses": 66,
+      "root_cause": "FORMAT_UNSUPPORTED",
+      "root_causes": {
+        "CONTEXT_INSUFFICIENT": 5,
+        "FORMAT_UNSUPPORTED": 60,
+        "IDENTIFIER_MISMATCH": 1
+      },
+      "sample_targets": [
+        "LEV-S43-K01",
+        "leaky-repo:.esmtprc:4:risk",
+        "leaky-repo:.git-credentials:1:risk",
+        "leaky-repo:.netrc:1:risk",
+        "leaky-repo:.netrc:2:risk",
+        "leaky-repo:.npmrc:7:risk",
+        "leaky-repo:db/.pgpass:2:risk",
+        "leaky-repo:db/dump.sql:32:risk",
+        "leaky-repo:db/dump.sql:33:risk",
+        "leaky-repo:db/dump.sql:34:risk",
+        "leaky-repo:db/dump.sql:35:risk",
+        "leaky-repo:db/dump.sql:36:risk"
+      ],
+      "subtypes": [
+        "admin_password",
+        "application_password",
+        "base64_basic_credential",
+        "database_password",
+        "ftp_password",
+        "http_basic_password",
+        "netrc_credential",
+        "password_hash"
+      ]
+    },
+    {
+      "confidence": "CONFIRMED",
+      "cross_found": 58,
+      "identifiers": [
+        "Authorization",
+        "JWT_SIGNING_KEY",
+        "PAYMENTS_SIGNING_KEY",
+        "SECRET_KEY",
+        "SIGNING_KEY",
+        "SigningKey",
+        "jwt-signing-key"
+      ],
+      "lanes": [
+        "levain",
+        "rnclab_filesystem",
+        "rnclab_git"
+      ],
+      "misses": 61,
+      "opportunity": "hmac_and_signing_identifiers",
+      "priority": "HIGH",
+      "providers": [
+        "Application HMAC",
+        "Application signing",
+        "JWT / application"
+      ],
+      "representations": [
+        "env_value",
+        "json_string",
+        "kubernetes_secret_data",
+        "python_string_literal",
+        "section_text"
+      ],
+      "risk_misses": 61,
+      "root_cause": "IDENTIFIER_MISMATCH",
+      "root_causes": {
+        "IDENTIFIER_MISMATCH": 54,
+        "UNKNOWN": 7
+      },
+      "sample_targets": [
+        "LEV-S45-K01",
+        "RNC-SL-POS-000108",
+        "RNC-SL-POS-000114",
+        "RNC-SL-POS-000155",
+        "RNC-SL-POS-000179",
+        "RNC-SL-POS-000190",
+        "RNC-SL-POS-000203",
+        "RNC-SL-POS-000209",
+        "RNC-SL-POS-000246",
+        "RNC-SL-POS-000257",
+        "RNC-SL-POS-000274",
+        "RNC-SL-POS-000297"
+      ],
+      "subtypes": [
+        "application_hmac_key",
+        "application_signing_key",
+        "jwt_signing_key"
+      ]
+    },
+    {
+      "confidence": "CONFIRMED",
+      "cross_found": 8,
+      "identifiers": [
+        "API_TOKEN",
+        "DB_PASSWORD",
+        "POSTGRES_PASSWORD",
+        "PRIVATE_KEY_BLOCK",
+        "REDIS_PASSWORD",
+        "RELEASE_DB_PASSWORD",
+        "admin_password",
+        "api_key",
+        "client_secret",
+        "db_password"
+      ],
+      "lanes": [
+        "rnclab_filesystem"
+      ],
+      "misses": 26,
+      "opportunity": "structured_container",
+      "priority": "HIGH",
+      "providers": [
+        "Administrative account",
+        "Application HMAC",
+        "Database service",
+        "PEM / Ed25519",
+        "PKCS#12 / TLS",
+        "Unidentified API provider"
+      ],
+      "representations": [
+        "bson_string_value",
+        "dotenv_value",
+        "env_value",
+        "log_kv_value",
+        "pem_pkcs8",
+        "pkcs12_der",
+        "sqlite_table_cell"
+      ],
+      "risk_misses": 26,
+      "root_cause": "SOURCE_UNSUPPORTED",
+      "root_causes": {
+        "SOURCE_UNSUPPORTED": 26
+      },
+      "sample_targets": [
+        "RNC-SL-POS-000029",
+        "RNC-SL-POS-000030",
+        "RNC-SL-POS-000031",
+        "RNC-SL-POS-000032",
+        "RNC-SL-POS-000033",
+        "RNC-SL-POS-000034",
+        "RNC-SL-POS-000035",
+        "RNC-SL-POS-000036",
+        "RNC-SL-POS-000037",
+        "RNC-SL-POS-000038",
+        "RNC-SL-POS-000126",
+        "RNC-SL-POS-000127"
+      ],
+      "subtypes": [
+        "admin_password",
+        "application_hmac_key",
+        "database_password",
+        "ed25519_private_key_pkcs8",
+        "generic_api_key",
+        "tls_private_key_pkcs8"
+      ]
+    },
+    {
+      "confidence": "CONFIRMED",
+      "cross_found": 8,
+      "identifiers": [
+        "APP_KEY",
+        "IRC_PASS",
+        "MLAB_PASS",
+        "Pass",
+        "auth",
+        "connection",
+        "indexes",
+        "pass",
+        "root",
+        "tFs"
+      ],
+      "lanes": [
+        "leaky_filesystem",
+        "leaky_git",
+        "levain",
+        "rnclab_filesystem"
+      ],
+      "misses": 25,
+      "opportunity": "application_password_identifiers",
+      "priority": "HIGH",
+      "providers": [
+        "Application service",
+        "Azure Account Key",
+        "FTP/SFTP service",
+        "Unidentified password"
+      ],
+      "representations": [
+        "assignment",
+        "json_string",
+        "redis_config_directive",
+        "section_text",
+        "source_line",
+        "xml_element_or_attribute"
+      ],
+      "risk_misses": 25,
+      "root_cause": "IDENTIFIER_MISMATCH",
+      "root_causes": {
+        "IDENTIFIER_MISMATCH": 25
+      },
+      "sample_targets": [
+        "LEV-S11-K01",
+        "LEV-S26-K01",
+        "leaky-repo:.bash_profile:24:risk",
+        "leaky-repo:.docker/.dockercfg:4:risk",
+        "leaky-repo:.docker/.dockercfg:8:risk",
+        "leaky-repo:.docker/config.json:5:risk",
+        "leaky-repo:.docker/config.json:9:risk",
+        "leaky-repo:.ftpconfig:6:risk",
+        "leaky-repo:db/dbeaver-data-sources.xml:4:risk",
+        "leaky-repo:filezilla/filezilla.xml:13:risk",
+        "leaky-repo:filezilla/recentservers.xml:13:risk",
+        "leaky-repo:filezilla/recentservers.xml:30:risk"
+      ],
+      "subtypes": [
+        "application_password",
+        "docker_registry_password",
+        "ftp_password",
+        "url_password"
+      ]
+    },
+    {
+      "confidence": "CONFIRMED",
+      "cross_found": 15,
+      "identifiers": [
+        "Authorization",
+        "Dsonar.token",
+        "HEROKU_API_KEY",
+        "NO_ASSIGNMENT_IDENTIFIER",
+        "X-Vault-Token",
+        "api_key_sid",
+        "audio",
+        "auth",
+        "databricks",
+        "doppler"
+      ],
+      "lanes": [
+        "leaky_filesystem",
+        "leaky_git",
+        "levain"
+      ],
+      "misses": 25,
+      "opportunity": "provider_token:Unidentified provider token",
+      "priority": "HIGH",
+      "providers": [
+        "Unidentified provider token"
+      ],
+      "representations": [
+        "assignment",
+        "section_text"
+      ],
+      "risk_misses": 25,
+      "root_cause": "RULE_ABSENT",
+      "root_causes": {
+        "IDENTIFIER_MISMATCH": 1,
+        "RULE_ABSENT": 22,
+        "UNKNOWN": 2
+      },
+      "sample_targets": [
+        "LEV-S15-K01",
+        "LEV-S17-K01",
+        "LEV-S27-K02",
+        "LEV-S27-K04",
+        "LEV-S28-K03",
+        "LEV-S29-K01",
+        "LEV-S29-K02",
+        "LEV-S29-K03",
+        "LEV-S29-K04",
+        "LEV-S29-K05",
+        "LEV-S29-K06",
+        "LEV-S30-K01"
+      ],
+      "subtypes": [
+        "airtable_pat",
+        "bearer_token",
+        "databricks_pat",
+        "discord_webhook_url",
+        "doppler_token",
+        "dynatrace_api_token",
+        "elevenlabs_api_key",
+        "fireworks_api_key"
+      ]
+    },
+    {
+      "confidence": "CONFIRMED",
+      "cross_found": 9,
+      "identifiers": [
+        "DB_PASSWORD",
+        "MONGO-0002_PASSWORD",
+        "add",
+        "deploy",
+        "password",
+        "uri"
+      ],
+      "lanes": [
+        "leaky_filesystem",
+        "leaky_git",
+        "rnclab_filesystem",
+        "rnclab_git"
+      ],
+      "misses": 17,
+      "opportunity": "database_password_identifiers",
+      "priority": "HIGH",
+      "providers": [
+        "Database service"
+      ],
+      "representations": [
+        "cloud_init_password",
+        "dotenv_value",
+        "php_define",
+        "uri_userinfo",
+        "xml_attribute_value",
+        "yaml_value"
+      ],
+      "risk_misses": 17,
+      "root_cause": "IDENTIFIER_MISMATCH",
+      "root_causes": {
+        "CAPTURE_MISMATCH": 1,
+        "CONTEXT_INSUFFICIENT": 4,
+        "FORMAT_UNSUPPORTED": 2,
+        "IDENTIFIER_MISMATCH": 6,
+        "UNKNOWN": 3,
+        "VALIDATOR_REJECTION": 1
+      },
+      "sample_targets": [
+        "leaky-repo:db/mongoid.yml:4:risk",
+        "leaky-repo:web/var/www/public_html/wp-config.php:20:risk",
+        "LH-0160",
+        "RNC-SL-POS-000182",
+        "RNC-SL-POS-000249",
+        "RNC-SL-POS-000409",
+        "RNC-SL-POS-000443",
+        "RNC-SL-POS-000465",
+        "RNC-SL-POS-000596",
+        "RNC-SL-POS-000604",
+        "RNC-SL-POS-000670",
+        "RNC-SL-POS-000712"
+      ],
+      "subtypes": [
+        "database_password"
+      ]
+    },
+    {
+      "confidence": "CONFIRMED",
+      "cross_found": 0,
+      "identifiers": [
+        "ENCKEY-0001_PASSPHRASE",
+        "ENCKEY-0002_PASSPHRASE",
+        "ENCKEY-0003_PASSPHRASE",
+        "ENCKEY-0004_PASSPHRASE",
+        "ENCKEY-0005_PASSPHRASE",
+        "ENCKEY-0006_PASSPHRASE",
+        "P12-0001_PASSPHRASE",
+        "P12-0002_PASSPHRASE",
+        "P12-0003_PASSPHRASE",
+        "P12-0004_PASSPHRASE"
+      ],
+      "lanes": [
+        "leaky_filesystem",
+        "leaky_git",
+        "rnclab_filesystem"
+      ],
+      "misses": 16,
+      "opportunity": "passphrase_identifiers",
+      "priority": "HIGH",
+      "providers": [
+        "PKCS#12 container",
+        "Private-key container"
+      ],
+      "representations": [
+        "dotenv_value",
+        "env_value",
+        "json_string"
+      ],
+      "risk_misses": 16,
+      "root_cause": "IDENTIFIER_MISMATCH",
+      "root_causes": {
+        "IDENTIFIER_MISMATCH": 16
+      },
+      "sample_targets": [
+        "leaky-repo:.ftpconfig:12:risk",
+        "leaky-repo:db/robomongo.json:22:risk",
+        "LH-0108",
+        "LH-0172",
+        "RNC-SL-POS-000424",
+        "RNC-SL-POS-000425",
+        "RNC-SL-POS-000426",
+        "RNC-SL-POS-000427",
+        "RNC-SL-POS-000428",
+        "RNC-SL-POS-000429",
+        "RNC-SL-POS-000430",
+        "RNC-SL-POS-000431"
+      ],
+      "subtypes": [
+        "key_passphrase",
+        "pkcs12_passphrase"
+      ]
+    },
+    {
+      "confidence": "PROBABLE",
+      "cross_found": 8,
+      "identifiers": [
+        "REDIS_URL",
+        "sqlalchemy.url"
+      ],
+      "lanes": [
+        "rnclab_filesystem"
+      ],
+      "misses": 15,
+      "opportunity": "password_in_uri_or_connection_string",
+      "priority": "HIGH",
+      "providers": [
+        "Application service",
+        "Database service"
+      ],
+      "representations": [
+        "alembic_url",
+        "redis_url"
+      ],
+      "risk_misses": 15,
+      "root_cause": "FORMAT_UNSUPPORTED",
+      "root_causes": {
+        "FORMAT_UNSUPPORTED": 15
+      },
+      "sample_targets": [
+        "RNC-SL-POS-000106",
+        "RNC-SL-POS-000154",
+        "RNC-SL-POS-000189",
+        "RNC-SL-POS-000201",
+        "RNC-SL-POS-000256",
+        "RNC-SL-POS-000273",
+        "RNC-SL-POS-000295",
+        "RNC-SL-POS-000380",
+        "RNC-SL-POS-000445",
+        "RNC-SL-POS-000472",
+        "RNC-SL-POS-000484",
+        "RNC-SL-POS-000503"
+      ],
+      "subtypes": [
+        "application_password",
+        "database_password"
+      ]
+    },
+    {
+      "confidence": "CONFIRMED",
+      "cross_found": 3,
+      "identifiers": [
+        "MNEMONIC",
+        "PRIVATE_KEY_BLOCK",
+        "Private-Lines",
+        "PuTTY-User-Key-File-2",
+        "accounts",
+        "private_key"
+      ],
+      "lanes": [
+        "leaky_filesystem",
+        "leaky_git",
+        "levain",
+        "rnclab_filesystem"
+      ],
+      "misses": 15,
+      "opportunity": "private_key_container_or_pem",
+      "priority": "HIGH",
+      "providers": [
+        "PEM / RSA",
+        "PuTTY",
+        "Unidentified private key"
+      ],
+      "representations": [
+        "putty_ppk_v2",
+        "section_text",
+        "source_line"
+      ],
+      "risk_misses": 15,
+      "root_cause": "FORMAT_UNSUPPORTED",
+      "root_causes": {
+        "FORMAT_UNSUPPORTED": 13,
+        "RULE_ABSENT": 2
+      },
+      "sample_targets": [
+        "LEV-S05-K01",
+        "LEV-S06-K01",
+        "LEV-S07-K01",
+        "LEV-S20-K01",
+        "LEV-S21-K01",
+        "leaky-repo:misc-keys/putty-example.ppk:11:risk",
+        "LH-0127",
+        "RNC-SL-POS-000633",
+        "RNC-SL-POS-000634",
+        "RNC-SL-POS-000635",
+        "RNC-SL-POS-000636",
+        "RNC-SL-POS-000637"
+      ],
+      "subtypes": [
+        "pem_private_key",
+        "putty_ppk_private_key",
+        "rsa_private_key_pkcs1",
+        "wallet_seed_phrase"
+      ]
+    },
+    {
+      "confidence": "CONFIRMED",
+      "cross_found": 0,
+      "identifiers": [
+        "TOTP_SEED",
+        "otpauth"
+      ],
+      "lanes": [
+        "rnclab_filesystem"
+      ],
+      "misses": 12,
+      "opportunity": "totp_seed",
+      "priority": "HIGH",
+      "providers": [
+        "TOTP / OTP"
+      ],
+      "representations": [
+        "otpauth_secret",
+        "python_string_literal"
+      ],
+      "risk_misses": 12,
+      "root_cause": "RULE_ABSENT",
+      "root_causes": {
+        "RULE_ABSENT": 12
+      },
+      "sample_targets": [
+        "RNC-SL-POS-000047",
+        "RNC-SL-POS-000146",
+        "RNC-SL-POS-000160",
+        "RNC-SL-POS-000173",
+        "RNC-SL-POS-000195",
+        "RNC-SL-POS-000262",
+        "RNC-SL-POS-000279",
+        "RNC-SL-POS-000292",
+        "RNC-SL-POS-000344",
+        "RNC-SL-POS-000386",
+        "RNC-SL-POS-000478",
+        "RNC-SL-POS-000528"
+      ],
+      "subtypes": [
+        "totp_seed"
+      ]
+    },
+    {
+      "confidence": "CONFIRMED",
+      "cross_found": 1,
+      "identifiers": [
+        "MINIO_ROOT_USER",
+        "add"
+      ],
+      "lanes": [
+        "rnclab_filesystem"
+      ],
+      "misses": 11,
+      "opportunity": "generic_api_key",
+      "priority": "HIGH",
+      "providers": [
+        "Unidentified API provider"
+      ],
+      "representations": [
+        "compose_environment_value",
+        "env_value",
+        "nuget_clear_text_password"
+      ],
+      "risk_misses": 11,
+      "root_cause": "RULE_ABSENT",
+      "root_causes": {
+        "RULE_ABSENT": 11
+      },
+      "sample_targets": [
+        "RNC-SL-POS-000040",
+        "RNC-SL-POS-000045",
+        "RNC-SL-POS-000139",
+        "RNC-SL-POS-000144",
+        "RNC-SL-POS-000166",
+        "RNC-SL-POS-000171",
+        "RNC-SL-POS-000285",
+        "RNC-SL-POS-000290",
+        "RNC-SL-POS-000337",
+        "RNC-SL-POS-000342",
+        "RNC-SL-POS-000498"
+      ],
+      "subtypes": [
+        "generic_api_key"
+      ]
+    },
+    {
+      "confidence": "PROBABLE",
+      "cross_found": 7,
+      "identifiers": [
+        "AWS_SECRET_ACCESS_KEY",
+        "aws_secret_access_key",
+        "aws_secret_key"
+      ],
+      "lanes": [
+        "leaky_filesystem",
+        "leaky_git"
+      ],
+      "misses": 7,
+      "opportunity": "provider_token:Amazon Web Services (AWS)",
+      "priority": "MEDIUM",
+      "providers": [
+        "Amazon Web Services (AWS)"
+      ],
+      "representations": [
+        "assignment",
+        "ini_value"
+      ],
+      "risk_misses": 7,
+      "root_cause": "CONTEXT_INSUFFICIENT",
+      "root_causes": {
+        "CONTEXT_INSUFFICIENT": 7
+      },
+      "sample_targets": [
+        "leaky-repo:.bash_profile:12:risk",
+        "leaky-repo:cloud/.credentials:4:risk",
+        "leaky-repo:cloud/.credentials:7:risk",
+        "LH-0002",
+        "LH-0080",
+        "LH-0082",
+        "LH-0084"
+      ],
+      "subtypes": [
+        "aws_secret_access_key"
+      ]
+    },
+    {
+      "confidence": "PROBABLE",
+      "cross_found": 5,
+      "identifiers": [
+        "AccountKey"
+      ],
+      "lanes": [
+        "rnclab_filesystem"
+      ],
+      "misses": 5,
+      "opportunity": "provider_token:Microsoft Azure Storage",
+      "priority": "MEDIUM",
+      "providers": [
+        "Microsoft Azure Storage"
+      ],
+      "representations": [
+        "json_string"
+      ],
+      "risk_misses": 5,
+      "root_cause": "FORMAT_UNSUPPORTED",
+      "root_causes": {
+        "FORMAT_UNSUPPORTED": 5
+      },
+      "sample_targets": [
+        "RNC-SL-POS-000176",
+        "RNC-SL-POS-000243",
+        "RNC-SL-POS-000459",
+        "RNC-SL-POS-000590",
+        "RNC-SL-POS-000598"
+      ],
+      "subtypes": [
+        "azure_storage_account_key"
+      ]
+    },
+    {
+      "confidence": "CONFIRMED",
+      "cross_found": 0,
+      "identifiers": [
+        "encryptedUsername"
+      ],
+      "lanes": [
+        "leaky_filesystem"
+      ],
+      "misses": 4,
+      "opportunity": "encrypted_browser_credentials",
+      "priority": "MEDIUM",
+      "providers": [
+        "Azure Account Key"
+      ],
+      "representations": [
+        "browser_encrypted_value"
+      ],
+      "risk_misses": 4,
+      "root_cause": "FORMAT_UNSUPPORTED",
+      "root_causes": {
+        "FORMAT_UNSUPPORTED": 4
+      },
+      "sample_targets": [
+        "leaky-repo:.mozilla/firefox/logins.json:11:risk",
+        "leaky-repo:.mozilla/firefox/logins.json:27:risk",
+        "leaky-repo:.mozilla/firefox/logins.json:43:risk",
+        "leaky-repo:.mozilla/firefox/logins.json:59:risk"
+      ],
+      "subtypes": [
+        "browser_saved_credential"
+      ]
+    },
+    {
+      "confidence": "PROBABLE",
+      "cross_found": 1,
+      "identifiers": [
+        "NO_ASSIGNMENT_IDENTIFIER",
+        "key"
+      ],
+      "lanes": [
+        "leaky_filesystem",
+        "leaky_git",
+        "levain"
+      ],
+      "misses": 4,
+      "opportunity": "other:application_secret",
+      "priority": "MEDIUM",
+      "providers": [
+        "Unidentified hmac secret",
+        "Unidentified unknown credential"
+      ],
+      "representations": [
+        "raw_key_file",
+        "section_text"
+      ],
+      "risk_misses": 4,
+      "root_cause": "IDENTIFIER_MISMATCH",
+      "root_causes": {
+        "CONTEXT_INSUFFICIENT": 2,
+        "IDENTIFIER_MISMATCH": 2
+      },
+      "sample_targets": [
+        "LEV-S38-K01",
+        "LEV-S42-K02",
+        "leaky-repo:web/ruby/config/master.key:1:risk",
+        "LH-0139"
+      ],
+      "subtypes": [
+        "application_secret"
+      ]
+    },
+    {
+      "confidence": "PROBABLE",
+      "cross_found": 0,
+      "identifiers": [
+        "card"
+      ],
+      "lanes": [
+        "levain"
+      ],
+      "misses": 2,
+      "opportunity": "other:payment_card",
+      "priority": "MEDIUM",
+      "providers": [
+        "Unidentified payment data"
+      ],
+      "representations": [
+        "section_text"
+      ],
+      "risk_misses": 2,
+      "root_cause": "IDENTIFIER_MISMATCH",
+      "root_causes": {
+        "IDENTIFIER_MISMATCH": 2
+      },
+      "sample_targets": [
+        "LEV-S22-K01",
+        "LEV-S22-K02"
+      ],
+      "subtypes": [
+        "payment_card"
+      ]
+    },
+    {
+      "confidence": "PROBABLE",
+      "cross_found": 0,
+      "identifiers": [
+        "APP_KEY",
+        "IRC_PASS"
+      ],
+      "lanes": [
+        "leaky_filesystem"
+      ],
+      "misses": 2,
+      "opportunity": "other:unspecified_credential",
+      "priority": "MEDIUM",
+      "providers": [
+        "Unidentified unknown credential"
+      ],
+      "representations": [
+        "assignment"
+      ],
+      "risk_misses": 2,
+      "root_cause": "IDENTIFIER_MISMATCH",
+      "root_causes": {
+        "IDENTIFIER_MISMATCH": 2
+      },
+      "sample_targets": [
+        "leaky-repo:config:10:risk",
+        "leaky-repo:web/var/www/.env:5:risk"
+      ],
+      "subtypes": [
+        "unspecified_credential"
+      ]
+    },
+    {
+      "confidence": "PROBABLE",
+      "cross_found": 2,
+      "identifiers": [
+        "JEKYLL_GITHUB_TOKEN"
+      ],
+      "lanes": [
+        "leaky_filesystem",
+        "leaky_git"
+      ],
+      "misses": 2,
+      "opportunity": "provider_token:GitHub",
+      "priority": "MEDIUM",
+      "providers": [
+        "GitHub"
+      ],
+      "representations": [
+        "assignment"
+      ],
+      "risk_misses": 2,
+      "root_cause": "CONTEXT_INSUFFICIENT",
+      "root_causes": {
+        "CONTEXT_INSUFFICIENT": 2
+      },
+      "sample_targets": [
+        "leaky-repo:.bashrc:109:risk",
+        "LH-0017"
+      ],
+      "subtypes": [
+        "github_personal_access_token"
+      ]
+    },
+    {
+      "confidence": "PROBABLE",
+      "cross_found": 2,
+      "identifiers": [
+        "_authToken"
+      ],
+      "lanes": [
+        "leaky_filesystem",
+        "leaky_git"
+      ],
+      "misses": 2,
+      "opportunity": "provider_token:npm",
+      "priority": "MEDIUM",
+      "providers": [
+        "npm"
+      ],
+      "representations": [
+        "assignment"
+      ],
+      "risk_misses": 2,
+      "root_cause": "CONTEXT_INSUFFICIENT",
+      "root_causes": {
+        "CONTEXT_INSUFFICIENT": 2
+      },
+      "sample_targets": [
+        "leaky-repo:.npmrc:9:risk",
+        "LH-0171"
+      ],
+      "subtypes": [
+        "npm_access_token"
+      ]
+    },
+    {
+      "confidence": "PROBABLE",
+      "cross_found": 1,
+      "identifiers": [
+        "confluent_key"
+      ],
+      "lanes": [
+        "levain"
+      ],
+      "misses": 1,
+      "opportunity": "other:confluent_cloud_key",
+      "priority": "MEDIUM",
+      "providers": [
+        "Unidentified unknown credential"
+      ],
+      "representations": [
+        "section_text"
+      ],
+      "risk_misses": 1,
+      "root_cause": "IDENTIFIER_MISMATCH",
+      "root_causes": {
+        "IDENTIFIER_MISMATCH": 1
+      },
+      "sample_targets": [
+        "LEV-S36-K01"
+      ],
+      "subtypes": [
+        "confluent_cloud_key"
+      ]
+    },
+    {
+      "confidence": "PROBABLE",
+      "cross_found": 1,
+      "identifiers": [
+        "confluent_secret"
+      ],
+      "lanes": [
+        "levain"
+      ],
+      "misses": 1,
+      "opportunity": "other:confluent_cloud_secret",
+      "priority": "MEDIUM",
+      "providers": [
+        "Unidentified unknown credential"
+      ],
+      "representations": [
+        "section_text"
+      ],
+      "risk_misses": 1,
+      "root_cause": "IDENTIFIER_MISMATCH",
+      "root_causes": {
+        "IDENTIFIER_MISMATCH": 1
+      },
+      "sample_targets": [
+        "LEV-S36-K02"
+      ],
+      "subtypes": [
+        "confluent_cloud_secret"
+      ]
+    },
+    {
+      "confidence": "PROBABLE",
+      "cross_found": 0,
+      "identifiers": [
+        "sqlalchemy.exc.OperationalError"
+      ],
+      "lanes": [
+        "levain"
+      ],
+      "misses": 1,
+      "opportunity": "other:email",
+      "priority": "MEDIUM",
+      "providers": [
+        "Unidentified unknown credential"
+      ],
+      "representations": [
+        "section_text"
+      ],
+      "risk_misses": 1,
+      "root_cause": "IDENTIFIER_MISMATCH",
+      "root_causes": {
+        "IDENTIFIER_MISMATCH": 1
+      },
+      "sample_targets": [
+        "LEV-S11-K02"
+      ],
+      "subtypes": [
+        "email"
+      ]
+    },
+    {
+      "confidence": "PROBABLE",
+      "cross_found": 0,
+      "identifiers": [
+        "client_id"
+      ],
+      "lanes": [
+        "levain"
+      ],
+      "misses": 1,
+      "opportunity": "other:google_oauth_client_secret",
+      "priority": "MEDIUM",
+      "providers": [
+        "Unidentified unknown credential"
+      ],
+      "representations": [
+        "section_text"
+      ],
+      "risk_misses": 1,
+      "root_cause": "IDENTIFIER_MISMATCH",
+      "root_causes": {
+        "IDENTIFIER_MISMATCH": 1
+      },
+      "sample_targets": [
+        "LEV-S31-K03"
+      ],
+      "subtypes": [
+        "google_oauth_client_secret"
+      ]
+    },
+    {
+      "confidence": "PROBABLE",
+      "cross_found": 0,
+      "identifiers": [
+        "openai.AuthenticationError"
+      ],
+      "lanes": [
+        "levain"
+      ],
+      "misses": 1,
+      "opportunity": "other:openai_project_key",
+      "priority": "MEDIUM",
+      "providers": [
+        "Unidentified unknown credential"
+      ],
+      "representations": [
+        "section_text"
+      ],
+      "risk_misses": 1,
+      "root_cause": "IDENTIFIER_MISMATCH",
+      "root_causes": {
+        "IDENTIFIER_MISMATCH": 1
+      },
+      "sample_targets": [
+        "LEV-S34-K01"
+      ],
+      "subtypes": [
+        "openai_project_key"
+      ]
+    },
+    {
+      "confidence": "PROBABLE",
+      "cross_found": 0,
+      "identifiers": [
+        "NO_ASSIGNMENT_IDENTIFIER"
+      ],
+      "lanes": [
+        "levain"
+      ],
+      "misses": 1,
+      "opportunity": "other:url_password",
+      "priority": "MEDIUM",
+      "providers": [
+        "Unidentified unknown credential"
+      ],
+      "representations": [
+        "section_text"
+      ],
+      "risk_misses": 1,
+      "root_cause": "IDENTIFIER_MISMATCH",
+      "root_causes": {
+        "IDENTIFIER_MISMATCH": 1
+      },
+      "sample_targets": [
+        "LEV-S44-K01"
+      ],
+      "subtypes": [
+        "url_password"
+      ]
+    },
+    {
+      "confidence": "PROBABLE",
+      "cross_found": 1,
+      "identifiers": [
+        "slack-bot-token"
+      ],
+      "lanes": [
+        "rnclab_filesystem"
+      ],
+      "misses": 1,
+      "opportunity": "provider_token:Slack",
+      "priority": "MEDIUM",
+      "providers": [
+        "Slack"
+      ],
+      "representations": [
+        "kubernetes_secret_data"
+      ],
+      "risk_misses": 1,
+      "root_cause": "FORMAT_UNSUPPORTED",
+      "root_causes": {
+        "FORMAT_UNSUPPORTED": 1
+      },
+      "sample_targets": [
+        "RNC-SL-POS-000415"
+      ],
+      "subtypes": [
+        "slack_bot_token"
+      ]
+    },
+    {
+      "confidence": "CONFIRMED",
+      "cross_found": 1,
+      "identifiers": [
+        "webhook_secret"
+      ],
+      "lanes": [
+        "rnclab_git"
+      ],
+      "misses": 1,
+      "opportunity": "provider_token:Stripe",
+      "priority": "MEDIUM",
+      "providers": [
+        "Stripe"
+      ],
+      "representations": [
+        "yaml_value"
+      ],
+      "risk_misses": 1,
+      "root_cause": "RULE_ABSENT",
+      "root_causes": {
+        "RULE_ABSENT": 1
+      },
+      "sample_targets": [
+        "RNC-SL-POS-000735"
+      ],
+      "subtypes": [
+        "stripe_webhook_secret"
+      ]
+    },
+    {
+      "confidence": "PROBABLE",
+      "cross_found": 1,
+      "identifiers": [
+        "sendgrid_key"
+      ],
+      "lanes": [
+        "rnclab_git"
+      ],
+      "misses": 1,
+      "opportunity": "provider_token:Twilio SendGrid",
+      "priority": "MEDIUM",
+      "providers": [
+        "Twilio SendGrid"
+      ],
+      "representations": [
+        "yaml_value"
+      ],
+      "risk_misses": 1,
+      "root_cause": "VALIDATOR_REJECTION",
+      "root_causes": {
+        "VALIDATOR_REJECTION": 1
+      },
+      "sample_targets": [
+        "RNC-SL-POS-000791"
+      ],
+      "subtypes": [
+        "sendgrid_api_key"
+      ]
+    }
+  ],
+  "report_path": "C:\\Dev\\rnc-benchmark-harness\\run\\reports\\all-windows-baselines\\rnc-cp4c\\rnc-cp4c-current-baseline-805e3bb79276-default.json",
+  "report_sha256": "ec2f5efe50d3dddd9e0b7b1a1e03628ccd97c748b3cf2b38a7deab806902b1f8",
+  "rules_file": "rules/rnc-cp4c-providers-v1.json",
+  "rules_sha256": "2eb315fa40553ab1e133322a1f0a014a4593ab2ca6164152149eb59c1197a6b7",
+  "run_id": "20261115T235444Z-dbf46367",
+  "scanner": "RNC Scanner CP4C",
+  "scanner_extra_args": [
+    "--workers",
+    "auto"
+  ],
+  "scanner_key": "cp4c",
+  "schema_version": 1,
+  "scoring_epoch": "current post-scoring-integrity remediation (2026-11-15)",
+  "source_commit": "805e3bb79276b94de636e27024f38773da303b44",
+  "source_commit_metadata_only": true,
+  "stats": {
+    "by_lane": {
+      "leaky_filesystem": {
+        "confirmed_causes": 115,
+        "expected": 175,
+        "informative_misses": 87,
+        "matched": 32,
+        "missed": 143,
+        "probable_causes": 27,
+        "recall_percent": 18.29,
+        "risk_misses": 56,
+        "uninspected": 0,
+        "unresolved_causes": 1,
+        "unsupported_container": 0,
+        "unverified": 1
+      },
+      "leaky_git": {
+        "confirmed_causes": 22,
+        "expected": 65,
+        "informative_misses": 0,
+        "matched": 28,
+        "missed": 37,
+        "probable_causes": 14,
+        "recall_percent": 43.08,
+        "risk_misses": 37,
+        "uninspected": 0,
+        "unresolved_causes": 1,
+        "unsupported_container": 0,
+        "unverified": 0
+      },
+      "levain": {
+        "confirmed_causes": 25,
+        "expected": 85,
+        "informative_misses": 0,
+        "matched": 43,
+        "missed": 42,
+        "probable_causes": 17,
+        "recall_percent": 50.59,
+        "risk_misses": 42,
+        "uninspected": 0,
+        "unresolved_causes": 0,
+        "unsupported_container": 0,
+        "unverified": 0
+      },
+      "rnclab_filesystem": {
+        "confirmed_causes": 225,
+        "expected": 640,
+        "informative_misses": 0,
+        "matched": 347,
+        "missed": 293,
+        "probable_causes": 61,
+        "recall_percent": 54.22,
+        "risk_misses": 293,
+        "uninspected": 0,
+        "unresolved_causes": 7,
+        "unsupported_container": 26,
+        "unverified": 0
+      },
+      "rnclab_git": {
+        "confirmed_causes": 32,
+        "expected": 160,
+        "informative_misses": 0,
+        "matched": 120,
+        "missed": 40,
+        "probable_causes": 5,
+        "recall_percent": 75.0,
+        "risk_misses": 40,
+        "uninspected": 0,
+        "unresolved_causes": 3,
+        "unsupported_container": 0,
+        "unverified": 0
+      }
+    },
+    "categories": {
+      "api_key": 20,
+      "hmac_secret": 64,
+      "otp_seed": 12,
+      "password": 315,
+      "payment_data": 2,
+      "private_key": 22,
+      "provider_token": 51,
+      "unknown_credential": 69
+    },
+    "confidence": {
+      "CONFIRMED": 419,
+      "PROBABLE": 124,
+      "UNRESOLVED": 12
+    },
+    "confirmed_causes": 419,
+    "containers": {
+      "archive_member": 10,
+      "binary_file": 4,
+      "database_record": 12,
+      "git_blob": 77,
+      "ordinary_file": 452
+    },
+    "expected": 1125,
+    "file_types": {
+      "bson": 2,
+      "bz2": 1,
+      "config": 12,
+      "docker-config": 6,
+      "env": 133,
+      "esmtprc": 4,
+      "ftpconfig": 7,
+      "git-credentials": 2,
+      "gz": 1,
+      "ini": 7,
+      "javascript": 1,
+      "json": 64,
+      "key": 2,
+      "log": 49,
+      "netrc": 6,
+      "no-extension": 12,
+      "npmrc": 5,
+      "pgpass": 3,
+      "php": 80,
+      "pkcs12": 4,
+      "ppk": 11,
+      "pub": 1,
+      "python": 14,
+      "s3cfg": 3,
+      "shell": 16,
+      "sql": 12,
+      "sqlite": 10,
+      "text": 12,
+      "xml": 22,
+      "xz": 3,
+      "yaml": 45,
+      "zip": 5
+    },
+    "informative_misses": 87,
+    "matched": 570,
+    "missed": 555,
+    "probable_causes": 124,
+    "providers": {
+      "Administrative account": 9,
+      "Amazon Web Services (AWS)": 13,
+      "Application HMAC": 21,
+      "Application service": 41,
+      "Application signing": 32,
+      "Azure Account Key": 15,
+      "Database service": 55,
+      "FTP/SFTP service": 21,
+      "GitHub": 6,
+      "HTTP Basic authentication": 1,
+      "JWT / application": 10,
+      "Microsoft Azure Storage": 5,
+      "PEM / Ed25519": 1,
+      "PEM / RSA": 11,
+      "PKCS#12 / TLS": 5,
+      "PKCS#12 container": 6,
+      "Private-key container": 10,
+      "PuTTY": 3,
+      "Redis": 1,
+      "SMTP service": 6,
+      "Slack": 1,
+      "Stripe": 1,
+      "TOTP / OTP": 12,
+      "Twilio SendGrid": 1,
+      "Unidentified API provider": 17,
+      "Unidentified hmac secret": 2,
+      "Unidentified password": 10,
+      "Unidentified payment data": 2,
+      "Unidentified private key": 2,
+      "Unidentified provider token": 25,
+      "Unidentified unknown credential": 60,
+      "WordPress": 145,
+      "npm": 5
+    },
+    "recall_percent": 50.67,
+    "representations": {
+      "alembic_url": 7,
+      "assignment": 42,
+      "base64_value": 2,
+      "browser_encrypted_value": 4,
+      "bson_string_value": 2,
+      "cloud_init_password": 1,
+      "compose_command_arg": 8,
+      "compose_environment_value": 5,
+      "docker_config_auth": 6,
+      "docker_secret_file": 5,
+      "dotenv_value": 20,
+      "env_value": 51,
+      "filezilla_base64_password": 4,
+      "hash_value": 2,
+      "ini_value": 3,
+      "jetbrains_static_key_obfuscated": 4,
+      "json_string": 67,
+      "kubeconfig_token": 1,
+      "kubernetes_secret_data": 24,
+      "log_command_argument": 7,
+      "log_kv_value": 1,
+      "netrc_password": 4,
+      "nuget_clear_text_password": 1,
+      "otpauth_secret": 5,
+      "pem_pkcs8": 2,
+      "pgpass_password": 2,
+      "php_define": 77,
+      "php_string_literal": 56,
+      "pkcs12_der": 4,
+      "putty_ppk_v2": 9,
+      "python_string_literal": 14,
+      "raw_key_file": 2,
+      "redis_config_directive": 1,
+      "redis_url": 8,
+      "section_text": 42,
+      "source_line": 12,
+      "sql_copy_value": 12,
+      "sqlite_table_cell": 10,
+      "uri_userinfo": 3,
+      "xml_attribute_value": 5,
+      "xml_element_or_attribute": 14,
+      "yaml_value": 6
+    },
+    "risk_misses": 468,
+    "root_causes": {
+      "CAPTURE_MISMATCH": 1,
+      "CONTEXT_INSUFFICIENT": 22,
+      "FORMAT_UNSUPPORTED": 100,
+      "IDENTIFIER_MISMATCH": 257,
+      "INFORMATIVE_REFERENCE": 87,
+      "RULE_ABSENT": 48,
+      "SOURCE_UNSUPPORTED": 26,
+      "UNKNOWN": 12,
+      "VALIDATOR_REJECTION": 2
+    },
+    "subtypes": {
+      "admin_password": 9,
+      "airtable_pat": 1,
+      "application_hmac_key": 21,
+      "application_password": 41,
+      "application_secret": 4,
+      "application_signing_key": 32,
+      "aws_access_key_id": 3,
+      "aws_secret_access_key": 9,
+      "azure_storage_account_key": 5,
+      "base64_basic_credential": 2,
+      "bearer_token": 1,
+      "browser_saved_credential": 4,
+      "confluent_cloud_key": 1,
+      "confluent_cloud_secret": 1,
+      "database_password": 55,
+      "databricks_pat": 1,
+      "discord_webhook_url": 1,
+      "docker_registry_password": 8,
+      "doppler_token": 1,
+      "dynatrace_api_token": 1,
+      "ed25519_private_key_pkcs8": 1,
+      "elevenlabs_api_key": 1,
+      "email": 1,
+      "fireworks_api_key": 1,
+      "ftp_password": 21,
+      "generic_api_key": 17,
+      "generic_token": 2,
+      "github_personal_access_token": 6,
+      "google_oauth_client_secret": 1,
+      "grafana_service_account_token": 1,
+      "http_basic_password": 1,
+      "jwt_signing_key": 10,
+      "key_passphrase": 10,
+      "mailgun_api_key": 1,
+      "netlify_pat": 1,
+      "netrc_credential": 4,
+      "npm_access_token": 2,
+      "nuget_api_key": 1,
+      "openai_project_key": 1,
+      "password_hash": 2,
+      "payment_card": 2,
+      "pem_private_key": 2,
+      "pkcs12_passphrase": 6,
+      "planetscale_token": 1,
+      "postman_api_key": 1,
+      "putty_ppk_private_key": 1,
+      "resend_api_key": 1,
+      "rsa_private_key_pkcs1": 11,
+      "rubygems_api_key": 1,
+      "sendgrid_api_key": 1,
+      "sentry_org_auth_token": 1,
+      "slack_bot_token": 1,
+      "smtp_password": 6,
+      "sonarqube_token": 1,
+      "stripe_webhook_secret": 1,
+      "supabase_access_token": 1,
+      "terraform_cloud_token": 1,
+      "tls_private_key_pkcs8": 5,
+      "totp_seed": 12,
+      "twilio_api_key_sid": 1,
+      "unspecified_credential": 61,
+      "url_password": 5,
+      "vault_service_token": 1,
+      "wallet_seed_phrase": 2,
+      "wordpress_salt": 142,
+      "xai_api_key": 1
+    },
+    "uninspected": 0,
+    "unresolved_causes": 12,
+    "unsupported_container": 26,
+    "unverified": 1
+  },
+  "target_universe": {
+    "by_lane": {
+      "leaky_filesystem": 175,
+      "leaky_git": 65,
+      "levain": 85,
+      "rnclab_filesystem": 640,
+      "rnclab_git": 160
+    },
+    "total": 1125
+  },
+  "validation": {
+    "all_missed_targets_have_evidence": true,
+    "all_root_causes_reconcile": true,
+    "all_scanner_counts_reconcile": true,
+    "archives_not_treated_as_members": true,
+    "category_partition": {
+      "by_category": {
+        "api_key": 37,
+        "hmac_secret": 121,
+        "informative_reference": 87,
+        "otp_seed": 12,
+        "password": 549,
+        "payment_data": 2,
+        "private_key": 49,
+        "provider_token": 248,
+        "unknown_credential": 20
+      },
+      "expected": 1125,
+      "sums_to_target_universe": true
+    },
+    "category_percentages_use_lane_denominators": true,
+    "container_partition": {
+      "archive_members": 10,
+      "binary_files": 4,
+      "by_container": {
+        "archive_member": 10,
+        "binary_file": 4,
+        "database_record": 12,
+        "git_blob": 225,
+        "ordinary_file": 874
+      },
+      "database_records": 12,
+      "not_treated_as_plaintext": 26
+    },
+    "cross_scanner_counts": {
+      "all_scanner_misses": 368,
+      "betterleaks_only_vs_cp4c_v14": 26,
+      "missed_by": {
+        "betterleaks": 408,
+        "cp4c": 555,
+        "gitleaks": 536,
+        "v14": 534,
+        "v16": 533
+      },
+      "missing_both": {
+        "cp4c_v14": 395,
+        "cp4c_v16": 394,
+        "v14_v16": 533
+      },
+      "only_missed": {
+        "betterleaks": 5,
+        "cp4c": 158,
+        "gitleaks": 0,
+        "v14": 0,
+        "v16": 0
+      },
+      "unique_successes": {
+        "betterleaks": 26,
+        "cp4c": 30,
+        "gitleaks": 0,
+        "v14": 0,
+        "v16": 1
+      }
+    },
+    "empty_evidence_targets": [],
+    "generator_mode": "read-only over retained reports and frozen oracles",
+    "informative_references_separated": true,
+    "oracle_or_scoring_changed": false,
+    "private_key_substitution_rejected": true,
+    "reconstructed_counts": {
+      "betterleaks": {
+        "expected": 1125,
+        "matched": 717,
+        "matched_by_lane": {
+          "leaky_filesystem": 37,
+          "leaky_git": 36,
+          "levain": 48,
+          "rnclab_filesystem": 438,
+          "rnclab_git": 158
+        },
+        "missed": 408,
+        "report_metrics": {
+          "leaky_filesystem": 37,
+          "leaky_git": 36,
+          "levain": 48,
+          "rnclab_filesystem": 438,
+          "rnclab_git": 158
+        },
+        "root_cause_total": 408,
+        "root_causes_reconcile": true
+      },
+      "cp4c": {
+        "expected": 1125,
+        "matched": 570,
+        "matched_by_lane": {
+          "leaky_filesystem": 32,
+          "leaky_git": 28,
+          "levain": 43,
+          "rnclab_filesystem": 347,
+          "rnclab_git": 120
+        },
+        "missed": 555,
+        "report_metrics": {
+          "leaky_filesystem": 32,
+          "leaky_git": 28,
+          "levain": 43,
+          "rnclab_filesystem": 347,
+          "rnclab_git": 120
+        },
+        "root_cause_total": 555,
+        "root_causes_reconcile": true
+      },
+      "gitleaks": {
+        "expected": 1125,
+        "matched": 589,
+        "matched_by_lane": {
+          "leaky_filesystem": 22,
+          "leaky_git": 21,
+          "levain": 47,
+          "rnclab_filesystem": 369,
+          "rnclab_git": 130
+        },
+        "missed": 536,
+        "report_metrics": {
+          "leaky_filesystem": 22,
+          "leaky_git": 21,
+          "levain": 47,
+          "rnclab_filesystem": 369,
+          "rnclab_git": 130
+        },
+        "root_cause_total": 536,
+        "root_causes_reconcile": true
+      },
+      "v14": {
+        "expected": 1125,
+        "matched": 591,
+        "matched_by_lane": {
+          "leaky_filesystem": 22,
+          "leaky_git": 21,
+          "levain": 49,
+          "rnclab_filesystem": 369,
+          "rnclab_git": 130
+        },
+        "missed": 534,
+        "report_metrics": {
+          "leaky_filesystem": 22,
+          "leaky_git": 21,
+          "levain": 49,
+          "rnclab_filesystem": 369,
+          "rnclab_git": 130
+        },
+        "root_cause_total": 534,
+        "root_causes_reconcile": true
+      },
+      "v16": {
+        "expected": 1125,
+        "matched": 592,
+        "matched_by_lane": {
+          "leaky_filesystem": 22,
+          "leaky_git": 21,
+          "levain": 50,
+          "rnclab_filesystem": 369,
+          "rnclab_git": 130
+        },
+        "missed": 533,
+        "report_metrics": {
+          "leaky_filesystem": 22,
+          "leaky_git": 21,
+          "levain": 50,
+          "rnclab_filesystem": 369,
+          "rnclab_git": 130
+        },
+        "root_cause_total": 533,
+        "root_causes_reconcile": true
+      }
+    },
+    "risk_partition": {
+      "informative": 87,
+      "risk_bearing": 1038,
+      "sums_to_target_universe": true
+    },
+    "target_universe": {
+      "by_lane": {
+        "leaky_filesystem": 175,
+        "leaky_git": 65,
+        "levain": 85,
+        "rnclab_filesystem": 640,
+        "rnclab_git": 160
+      },
+      "observed_by_lane": {
+        "leaky_filesystem": 175,
+        "leaky_git": 65,
+        "levain": 85,
+        "rnclab_filesystem": 640,
+        "rnclab_git": 160
+      },
+      "sum_matches_expected": true,
+      "total": 1125
+    },
+    "unique_identity_checks": {
+      "leaky_git_occurrences": 65,
+      "leaky_git_unique_groups": 53,
+      "leaky_git_unique_groups_expected": 53,
+      "rnclab_occurrences": 800,
+      "rnclab_unique_groups": 496,
+      "rnclab_unique_groups_expected": 496
+    }
+  },
+  "version": "0.1.0"
+}
