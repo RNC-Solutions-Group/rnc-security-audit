@@ -1,0 +1,731 @@
+{
+  "archival_policy": "Original files remain at their historical paths and are not moved, rewritten, or deleted; this manifest is the immutable archive index.",
+  "archive_zip": {
+    "bytes": 2823057,
+    "path": "reports/archive/pre-scoring-fix/pre-scoring-fix-reports.zip",
+    "sha256": "bc0ff8189df6092352fbe785e4408b03ba5da11534a7ff0364bf022b4002707b"
+  },
+  "current_baseline_directory": "reports/baselines-20261115",
+  "entries": [
+    {
+      "bytes": 2074,
+      "path": "baseline-20261112/betterleaks-5eab483-blocked.json",
+      "sha256": "95dc458b7ba1bb8ea978568632d454fce071e20bc4b4e7dc40aa4c20afe96f36"
+    },
+    {
+      "bytes": 1337708,
+      "path": "baseline-20261112/gitleaks-5f6ec56-docker-amd64-all-5f6ec56cfa6f-default.json",
+      "sha256": "2ec0c4fe738759e98e3ee685670249a6dcd02e91e599a973c1f2e307176136c8"
+    },
+    {
+      "bytes": 21822,
+      "path": "baseline-20261112/gitleaks-5f6ec56-docker-amd64-all-5f6ec56cfa6f-default.md",
+      "sha256": "6039030034961f4dc2e2b93a430244b7ed25a67d6103060a52f8e19c2369adae"
+    },
+    {
+      "bytes": 17250,
+      "path": "baseline-20261112/gitleaks-5f6ec56-docker-amd64-fixtures-5f6ec56cfa6f-default.json",
+      "sha256": "c1997b7e9ce319286d819a2f95e0e88143052cbc622d1775150569141180c305"
+    },
+    {
+      "bytes": 5588,
+      "path": "baseline-20261112/gitleaks-5f6ec56-docker-amd64-fixtures-5f6ec56cfa6f-default.md",
+      "sha256": "26715dd9630841c539654d6833e0d1e3338a13a25637f80adf1066df2e9eba0c"
+    },
+    {
+      "bytes": 592126,
+      "path": "baseline-20261112/gitleaks-5f6ec56-docker-amd64-rnclab-5f6ec56cfa6f-default.json",
+      "sha256": "a2c57bac6480f8f485af591aa1042ea9b07ab7b44cb26a72b02a387c6dbcbe95"
+    },
+    {
+      "bytes": 23059,
+      "path": "baseline-20261112/gitleaks-5f6ec56-docker-amd64-rnclab-5f6ec56cfa6f-default.md",
+      "sha256": "230dcc6d97afa9abf4dddb256cdd0594a8da1dbc0cfe4293cf57b4ed44ae6861"
+    },
+    {
+      "bytes": 1339062,
+      "path": "baseline-20261112/gitleaks-5f6ec56-native-all-5f6ec56cfa6f-default.json",
+      "sha256": "3c793e3825e732c75dd877454f64d9fb9d703e2f61c0fb634e56bcfecabfc815"
+    },
+    {
+      "bytes": 21719,
+      "path": "baseline-20261112/gitleaks-5f6ec56-native-all-5f6ec56cfa6f-default.md",
+      "sha256": "032f4d53f5f56100c0003ef4535ffbabea27195a8a89f6fc0779b23caf0ef90c"
+    },
+    {
+      "bytes": 16250,
+      "path": "baseline-20261112/gitleaks-5f6ec56-native-fixtures-5f6ec56cfa6f-default.json",
+      "sha256": "1e5d3de44c553bce75a0f2aa51804426428a20949fbd6a038d628f9824a0cf5d"
+    },
+    {
+      "bytes": 5766,
+      "path": "baseline-20261112/gitleaks-5f6ec56-native-fixtures-5f6ec56cfa6f-default.md",
+      "sha256": "149c28eb4f28dfac2509807c9e12aaeba514f3575638014f5391998baa925252"
+    },
+    {
+      "bytes": 587990,
+      "path": "baseline-20261112/gitleaks-5f6ec56-native-rnclab-5f6ec56cfa6f-default.json",
+      "sha256": "ffc47da1c8d264389eae990d3981c0ad9466461cf0f4842de7c0ef7adc8af30f"
+    },
+    {
+      "bytes": 22449,
+      "path": "baseline-20261112/gitleaks-5f6ec56-native-rnclab-5f6ec56cfa6f-default.md",
+      "sha256": "5337ab3b17d0ebb9f37a81297da782f3ca8f2929356d6a85184323e53475f1ed"
+    },
+    {
+      "bytes": 80659,
+      "path": "baseline-20261112/index.json",
+      "sha256": "e0abcd0c96dfc815c0b0503da6f329e2903ab0eb7aed83e4e8341df532cecb5c"
+    },
+    {
+      "bytes": 389045,
+      "path": "baseline-20261112/leaky-regression-rescore.json",
+      "sha256": "1714ee093504800085815160638610ea2fe3518e953d0e796e4bb60cadf8722d"
+    },
+    {
+      "bytes": 11795,
+      "path": "baseline-20261112/README.md",
+      "sha256": "668d8eb3c691cac096096d845f9246baaf3d39cc1839088dbd6ccf4b01fcf333"
+    },
+    {
+      "bytes": 2430,
+      "path": "baseline-20261112/rnc-5391d84-docker-amd64-blocked.json",
+      "sha256": "227a41935cdd22535df62ad315bf75b131e739a8c6d11031e78773443090f7fc"
+    },
+    {
+      "bytes": 931295,
+      "path": "baseline-20261112/rnc-5391d84-native-all-5391d8457ea0-default.json",
+      "sha256": "cafeb3f3a4d105a4064f63abfafd82bda4ecf17d525c1faf0d212155692a5381"
+    },
+    {
+      "bytes": 21151,
+      "path": "baseline-20261112/rnc-5391d84-native-all-5391d8457ea0-default.md",
+      "sha256": "a9f87b24cc8eab8476d108ebb44669e7914d7d5e68aa18cbe9f80c45ed2362d5"
+    },
+    {
+      "bytes": 438093,
+      "path": "baseline-20261112/rnc-5391d84-native-rnclab-5391d8457ea0-default.json",
+      "sha256": "318e3159bbaf7a437709f082ed2633b1b6f8e0461807320ed2d4d38565232185"
+    },
+    {
+      "bytes": 23325,
+      "path": "baseline-20261112/rnc-5391d84-native-rnclab-5391d8457ea0-default.md",
+      "sha256": "0c1d39ff1dc82828c0ebee8cef25a8568ba633af6dddc58f05395d7bf9a211a7"
+    },
+    {
+      "bytes": 2408,
+      "path": "baseline-20261112/rnc-93b4dda-docker-amd64-blocked.json",
+      "sha256": "521c0aa7321ced1b5ec212060c615bdc94e0566ebb6ef14d29f7d947eb97c4f6"
+    },
+    {
+      "bytes": 2404178,
+      "path": "baseline-20261112/rnc-93b4dda-native-all-93b4dda909cb-default.json",
+      "sha256": "6c4d01da7ec9fa6c121384be0f26fdd78663028de115f7ab1ecd63cb7ea91960"
+    },
+    {
+      "bytes": 22566,
+      "path": "baseline-20261112/rnc-93b4dda-native-all-93b4dda909cb-default.md",
+      "sha256": "21f8143cce3dfec04259edd0b11eaa84d31ad422c636d101ea1074e034053084"
+    },
+    {
+      "bytes": 587920,
+      "path": "baseline-20261112/rnc-93b4dda-native-rnclab-93b4dda909cb-default.json",
+      "sha256": "f41abc2329515c4305990f684aad0c4abd01c2e65a8d2fefca13270eb1601a88"
+    },
+    {
+      "bytes": 24006,
+      "path": "baseline-20261112/rnc-93b4dda-native-rnclab-93b4dda909cb-default.md",
+      "sha256": "0a5e9abc06ae925f70f7f6b4896a20da1e16867d1be2e29af791147d945d0ec9"
+    },
+    {
+      "bytes": 628194,
+      "path": "baseline-20261112/superseded/gitleaks-5f6ec56-docker-amd64-rnclab-5f6ec56cfa6f-default.json",
+      "sha256": "67cb7d4054372914dc776f8152e658b2545b40f52292cc9f23b4a199f13b103c"
+    },
+    {
+      "bytes": 25311,
+      "path": "baseline-20261112/superseded/gitleaks-5f6ec56-docker-amd64-rnclab-5f6ec56cfa6f-default.md",
+      "sha256": "33a9b6db8ec6110156d7a9b9adf1c7247c7356b03a77c9a56885cea3909f8d54"
+    },
+    {
+      "bytes": 629313,
+      "path": "baseline-20261112/superseded/gitleaks-5f6ec56-docker-amd64-rnclab-oldpath.json",
+      "sha256": "8d895ad35e2c7ddb1873e1b24c2be393102143c3141c6a7a0fdae8bdf6518937"
+    },
+    {
+      "bytes": 25316,
+      "path": "baseline-20261112/superseded/gitleaks-5f6ec56-docker-amd64-rnclab-oldpath.md",
+      "sha256": "4ca372f34eb1050919c841ab5d5ac4afc9855500391a0ffae9bc46fd80e532ef"
+    },
+    {
+      "bytes": 586827,
+      "path": "baseline-20261112/superseded/gitleaks-5f6ec56-native-rnclab-5f6ec56cfa6f-default.json",
+      "sha256": "9de7ac55ab14f7c1df632f9360313269b3a1bc2b1acb8bbb51ba7feb97c4257d"
+    },
+    {
+      "bytes": 22368,
+      "path": "baseline-20261112/superseded/gitleaks-5f6ec56-native-rnclab-5f6ec56cfa6f-default.md",
+      "sha256": "abb5b9541f1c1e7aa34db84c7d14ffaa810f68b77c841a4b3f48b1c6c9179032"
+    },
+    {
+      "bytes": 930931,
+      "path": "baseline-20261112/superseded/rnc-5391d84-native-all-old.json",
+      "sha256": "48d34700dedc58b1b0887645921398a0adeb0660df3dbcb7c9c129e1de933b4c"
+    },
+    {
+      "bytes": 21337,
+      "path": "baseline-20261112/superseded/rnc-5391d84-native-all-old.md",
+      "sha256": "098041f3a0b1653fce102b6db43ccebed72784f78c8250c60786d0e9bae5bbb8"
+    },
+    {
+      "bytes": 931070,
+      "path": "baseline-20261112/superseded/rnc-5391d84-native-all-old2.json",
+      "sha256": "f30bba53346dda267f62e0494f2d9c9a55fc4eac7e4db717fa3562eaa59a3b68"
+    },
+    {
+      "bytes": 21339,
+      "path": "baseline-20261112/superseded/rnc-5391d84-native-all-old2.md",
+      "sha256": "70c131adf8a27585c0a48d1994947764d3450a907c56fa80087660b18d679c5b"
+    },
+    {
+      "bytes": 438106,
+      "path": "baseline-20261112/superseded/rnc-5391d84-native-rnclab-old.json",
+      "sha256": "42fc0ef19ebd0d97c3fd03d6c6b52d7a47929194cd62d583036ddc518c76c0fb"
+    },
+    {
+      "bytes": 23278,
+      "path": "baseline-20261112/superseded/rnc-5391d84-native-rnclab-old.md",
+      "sha256": "af9c6ed5215523dc77f8b0709e9f5fe4d5cb9507b92c4d0d56bec61fba08f552"
+    },
+    {
+      "bytes": 179442,
+      "path": "baseline-20261112/superseded/rnc-93b4dda-native-rnclab-93b4dda909cb-default.json",
+      "sha256": "11e0ed58b41a1a1bc066d6b3616c0056ea3d9a307f3699455fe6ad2b9f680a4c"
+    },
+    {
+      "bytes": 18316,
+      "path": "baseline-20261112/superseded/rnc-93b4dda-native-rnclab-93b4dda909cb-default.md",
+      "sha256": "a75e8d2a1573546c68477f367aecd0418f06315a011be4cd821905630423fd8f"
+    },
+    {
+      "bytes": 34298,
+      "path": "consolidated/consolidated-5f6ec56.json",
+      "sha256": "dbbaec506dc768e333ea6ac127dee8e6dd46ab1904fd9add5636fd3dcd9a0718"
+    },
+    {
+      "bytes": 1778,
+      "path": "consolidated/consolidated-5f6ec56.md",
+      "sha256": "6d7ab079bde6d0eb0861b9d2a20ed85a4562d80faf51db8b03f51b95939877b1"
+    },
+    {
+      "bytes": 610474,
+      "path": "consolidated/cp1b-both.json",
+      "sha256": "4dc836e7ce6075f24f6bf5afab83c81607b3f931c5d580bdf2fe9143d31e937d"
+    },
+    {
+      "bytes": 3453,
+      "path": "consolidated/cp1b-both.md",
+      "sha256": "b5675998b45b505b89749c71e8c91013806426dfa5d30c2efd960f0ae84bb409"
+    },
+    {
+      "bytes": 332136,
+      "path": "consolidated/cp1b-docker.json",
+      "sha256": "a1bd9c1aad2eb7c5984a38e57b2f9115bea08e53ebc8bf2681d547754f7fce8b"
+    },
+    {
+      "bytes": 3357,
+      "path": "consolidated/cp1b-docker.md",
+      "sha256": "39ca5e4918ffb901a0648b8b56176fc1b6dbe07cb9e439263e1fed558cddbf76"
+    },
+    {
+      "bytes": 321917,
+      "path": "consolidated/cp1b-executable.json",
+      "sha256": "a6587a03409d2c3dadf36037974b2f85c4fe090338f3b8afc58710e859752a21"
+    },
+    {
+      "bytes": 3042,
+      "path": "consolidated/cp1b-executable.md",
+      "sha256": "2cbf66b0835e35b6e3e5551c02c13f728ef611476b13471019369d40219f410e"
+    },
+    {
+      "bytes": 6121,
+      "path": "CP1-stub-negative-clean.json",
+      "sha256": "a960516422f9be3438cea0c0eeabfc2417b383815d1585e30f26480abcac7757"
+    },
+    {
+      "bytes": 3830,
+      "path": "CP1-stub-negative-clean.md",
+      "sha256": "74f8f88a363aaa0f1e09b12dea70bdec767378481e3f7935839f0e3669655bb5"
+    },
+    {
+      "bytes": 24957,
+      "path": "CP1-stub-validation.json",
+      "sha256": "59d8ce1619f69d7728a79f406e5ab0a8f5ef7efd88fa995d2e1eedff72c85498"
+    },
+    {
+      "bytes": 5337,
+      "path": "CP1-stub-validation.md",
+      "sha256": "2a8c2c5d31ca43f62a71c358be4ffcf71915f92da8dd48e1892c450cdee4a545"
+    },
+    {
+      "bytes": 81441,
+      "path": "cp11/gitleaks-bad-5f6ec56cfa6f-default.json",
+      "sha256": "b9d43ab80fe7cfc97505e6946dd515ab670b80c03c58db76418ac8f2bc4f48ca"
+    },
+    {
+      "bytes": 7746,
+      "path": "cp11/gitleaks-bad-5f6ec56cfa6f-default.md",
+      "sha256": "0ade6c2a60afab9029ba8d30fd8983754e7c3b375808c46a7daffbdccaf1ea12"
+    },
+    {
+      "bytes": 82481,
+      "path": "cp11/gitleaks-local-levain-5f6ec56cfa6f-default.json",
+      "sha256": "cd63a18f96fb34111f97d44896beccc03f74a43518449fbaa1a74ef6c3a1286a"
+    },
+    {
+      "bytes": 14733,
+      "path": "cp11/gitleaks-local-levain-5f6ec56cfa6f-default.md",
+      "sha256": "cd2ce3dcbeceb0145a5300c90fbfdc4aeb2aa62461984160472e17a056449e1f"
+    },
+    {
+      "bytes": 2464,
+      "path": "cp11/README.md",
+      "sha256": "c8cad45b5d028d7793d44b54399a865fbc3f82657e6773df48a5f5fbfd091e2b"
+    },
+    {
+      "bytes": 125306,
+      "path": "cp11/rnc-cp3-native-smoke-5391d8457ea0-default.json",
+      "sha256": "6d0681ad9349c8276f536ad9352de6543e1be2c03447eb51950f8d01f5475103"
+    },
+    {
+      "bytes": 19576,
+      "path": "cp11/rnc-cp3-native-smoke-5391d8457ea0-default.md",
+      "sha256": "342ee357b89dc74e1fde07361dabed26fb8e6a44f3c43807d9bc19c9872d9c02"
+    },
+    {
+      "bytes": 52706,
+      "path": "cp11/rnc-cp4a-docker-synthetic-93b4dda909cb-default.json",
+      "sha256": "e92b9ad0f61b7fd1a9ae365d790e47f6d061e68b62596471934e5db6b138484c"
+    },
+    {
+      "bytes": 9709,
+      "path": "cp11/rnc-cp4a-docker-synthetic-93b4dda909cb-default.md",
+      "sha256": "a03ded947db420eb13e8d1384c3f5e1ab60a2d9188ab89e61a25af31372a6a4a"
+    },
+    {
+      "bytes": 2392,
+      "path": "CP1A-build-metadata.json",
+      "sha256": "b45f6901645738f2724d1d22306ec5cbea487f695a858002cc2bd70e7e2c1bc6"
+    },
+    {
+      "bytes": 41659,
+      "path": "CP1A-gitleaks-baseline.json",
+      "sha256": "5776e23d5b07d198feb656072773eb4b06468181b569e506c886829e2c792cdb"
+    },
+    {
+      "bytes": 11240,
+      "path": "CP1A-gitleaks-baseline.md",
+      "sha256": "d6536f35d9072e7810b87562494edcd2e1064cb2d61b959304e15e84e2d51ea7"
+    },
+    {
+      "bytes": 56612,
+      "path": "cp1c/cp1c-all-builds.json",
+      "sha256": "32a6225d72e5ef2ff7c75ab73e7770b53b623f52eca1ed161344dd56e0879084"
+    },
+    {
+      "bytes": 2521,
+      "path": "cp1c/cp1c-all-builds.md",
+      "sha256": "fcc7921b1acd2db316d9da7c00183ce68072781c6a99750e8cd8a91fab97c37a"
+    },
+    {
+      "bytes": 184403,
+      "path": "cp1c/cp1c-both.json",
+      "sha256": "e3a1d76fb7063b5957324a2a595059b7cb26065fa6f4908da370bab3ad80b82b"
+    },
+    {
+      "bytes": 4852,
+      "path": "cp1c/cp1c-both.md",
+      "sha256": "524ad8f627a0f58a0fcf001cd092dbbc4544aba0dd04a5a6af25ab8390f09226"
+    },
+    {
+      "bytes": 2119834,
+      "path": "cp1d/cp1d-baseline.json",
+      "sha256": "8d4244b1ecc1afc6a52346e8eec87eeec6894d6777fda0f258f3804bff76af28"
+    },
+    {
+      "bytes": 18365,
+      "path": "cp1d/cp1d-baseline.md",
+      "sha256": "9367eca1c47e922b520f1effebd8ec26542f10eea65d1110abc0bb3e5bc13dde"
+    },
+    {
+      "bytes": 2127367,
+      "path": "cp1d/cp1d-comparison.json",
+      "sha256": "30a6938357f463d86699a17d7a55d83fd036099b09b7509351e0f257743c47be"
+    },
+    {
+      "bytes": 18336,
+      "path": "cp1d/cp1d-comparison.md",
+      "sha256": "e889ca6c80eadb9ef98eb15dd9b7789a188a6f5f0dd19cbb11035ddbaa4185c5"
+    },
+    {
+      "bytes": 14648,
+      "path": "cp1d/leaky-truth-reconciliation.json",
+      "sha256": "3881e3eb93d780292d642aa47756f81d1aabb55376c51522ce57ca3c2afb1f93"
+    },
+    {
+      "bytes": 40596,
+      "path": "cp1d/synthetic-scoring-validation.json",
+      "sha256": "bee8aca96415ba5893fddcc2b08d3dea3dbd70815e885cb91550781b32b49f87"
+    },
+    {
+      "bytes": 3490,
+      "path": "cp1d/synthetic-scoring-validation.md",
+      "sha256": "d815dde2829357efa80defd560560614526522357ecf167aca753345972134cc"
+    },
+    {
+      "bytes": 440925,
+      "path": "cp1e/cp1e-baseline.json",
+      "sha256": "9039734455c995481d3fe47d202db046a22542891bc9e92a0d356011d66416ec"
+    },
+    {
+      "bytes": 13152,
+      "path": "cp1e/cp1e-baseline.md",
+      "sha256": "e37dcb32b71d296b3295c775887dd67ab93d98351432ad6da369bef8aec1a614"
+    },
+    {
+      "bytes": 4925,
+      "path": "cp1e/history-accountability.json",
+      "sha256": "ec61b4d7043bc0ca859f0a17617c902e8b7c0149ca8b91f8298370ac8b49a542"
+    },
+    {
+      "bytes": 1178,
+      "path": "cp1e/history-accountability.md",
+      "sha256": "99cb9aadd9297af25e8f58a5596b0a239fbeefeda4f09dc76a18ca327acf72bf"
+    },
+    {
+      "bytes": 29881,
+      "path": "cp1e/performance.json",
+      "sha256": "ca72ddbc6138fce0d95deac98ed66e33290d41540584b98cbac460e49152cf6c"
+    },
+    {
+      "bytes": 809,
+      "path": "cp1e/performance.md",
+      "sha256": "5c964f51d90b4702884027e1a335e7f616b89fee2d49b22ed14fa76decabe0e2"
+    },
+    {
+      "bytes": 54297,
+      "path": "cp1e/synthetic-scoring-validation.json",
+      "sha256": "1a0c594c9bc7fc67b9ea6bc57534579f4a6d99bc1c6519fa10b22452da4416e2"
+    },
+    {
+      "bytes": 3866,
+      "path": "cp1e/synthetic-scoring-validation.md",
+      "sha256": "a3f9fff7d1bfaf10918140033b1e635ae9c2a48aa2fd27e6493bd4a8d259e074"
+    },
+    {
+      "bytes": 42436,
+      "path": "cp2/comparative.json",
+      "sha256": "da727d0400d38ac5af877e9a4af1415b59f135ac0cab1b4b93f94629e5c11fe7"
+    },
+    {
+      "bytes": 2456,
+      "path": "cp2/comparative.md",
+      "sha256": "0ae06760d852133167473f62f9625bfa824213e09d74562c9851e051e97eefb2"
+    },
+    {
+      "bytes": 93401,
+      "path": "cp2/performance.json",
+      "sha256": "36ffeb6a05069a1169edad8a76cdf8a38b5c99ad3b383c929a04c85b1611de3c"
+    },
+    {
+      "bytes": 1159,
+      "path": "cp2/performance.md",
+      "sha256": "ed55b30fb3fd3e29922bdb9c849704d8ce4b047dce247643696c326a3530bbdf"
+    },
+    {
+      "bytes": 948335,
+      "path": "cp3/betterleaks-5eab483-docker-amd64-5eab48332cc4-default.json",
+      "sha256": "0eaaa58d328bad558748abd7c2180b5b5329ad43bd7512fa6cc2ff7716332ab8"
+    },
+    {
+      "bytes": 18873,
+      "path": "cp3/betterleaks-5eab483-docker-amd64-5eab48332cc4-default.md",
+      "sha256": "eaa5e200ff3ceb5ea762546e59633ef70ad795f883bf6c02647d64cd7f1aa542"
+    },
+    {
+      "bytes": 955827,
+      "path": "cp3/betterleaks-5eab483-native-5eab48332cc4-default.json",
+      "sha256": "7f41b0d79e5272187d034a4a9f87d0950e4b5e2ae8326ecacde72630123c4d71"
+    },
+    {
+      "bytes": 18724,
+      "path": "cp3/betterleaks-5eab483-native-5eab48332cc4-default.md",
+      "sha256": "5091fa6ac0d3fa7271925340651f00e080816d2085409ffb5d5504bc54e2a46c"
+    },
+    {
+      "bytes": 7779,
+      "path": "cp3/default-profile-isolation.json",
+      "sha256": "5bc424bb24755a7cefaf8fd08b2fea060c454a87b52d4df4e409eb5f22146605"
+    },
+    {
+      "bytes": 932657,
+      "path": "cp3/gitleaks-5f6ec56-docker-amd64-5f6ec56cfa6f-default.json",
+      "sha256": "ce1e8713fa1af662e156069c89c821357173f2e44d658a163794d42f4ef45707"
+    },
+    {
+      "bytes": 19296,
+      "path": "cp3/gitleaks-5f6ec56-docker-amd64-5f6ec56cfa6f-default.md",
+      "sha256": "514140a3012bb6be327b24468ddc48d1f8d2394ffb877aa4da5461245a9d600c"
+    },
+    {
+      "bytes": 57030,
+      "path": "cp3/gitleaks-5f6ec56-docker-arm64-5f6ec56cfa6f-default.json",
+      "sha256": "37e53a0c3c3587d023a250d0025900d60c698729855789ebccdf5ff03d07cc72"
+    },
+    {
+      "bytes": 5305,
+      "path": "cp3/gitleaks-5f6ec56-docker-arm64-5f6ec56cfa6f-default.md",
+      "sha256": "594c4967c6e5ec861c3999a96a1dd4310dda4d82e91d9c1af7d1414767bc696d"
+    },
+    {
+      "bytes": 936755,
+      "path": "cp3/gitleaks-5f6ec56-native-5f6ec56cfa6f-default.json",
+      "sha256": "e681f869262c8074eee1a59b07e2a62c9b19017a22cbf85ad78d252c2214a4d6"
+    },
+    {
+      "bytes": 19199,
+      "path": "cp3/gitleaks-5f6ec56-native-5f6ec56cfa6f-default.md",
+      "sha256": "8a6bc90ac24225db6155a0eddd4f93bd8d68320bcbf968e191feb0afbc57c5e8"
+    },
+    {
+      "bytes": 8891,
+      "path": "cp3/incorrect-commit-000000000000-default.json",
+      "sha256": "a15f860e287eb566a10c4bc176a4e456dbe398a3f82d1cc637c9e93865ce46c9"
+    },
+    {
+      "bytes": 5564,
+      "path": "cp3/incorrect-commit-000000000000-default.md",
+      "sha256": "adcd1ea42207a6afec7e47c7753fc22d436902d7c0721dd4bb1f70c05cccbe81"
+    },
+    {
+      "bytes": 148955,
+      "path": "cp5c/betterleaks-docker-amd64-history.json",
+      "sha256": "a742c2a0d4fbedde205b33743337229fb86c42360c7d6d885a8781a83e47e525"
+    },
+    {
+      "bytes": 148950,
+      "path": "cp5c/betterleaks-native-history.json",
+      "sha256": "97dce2592c5a01f1d67987ea17758de6fbf10bf41ff10fb8515dcd4da998230d"
+    },
+    {
+      "bytes": 12663,
+      "path": "cp5c/cross-scanner-rescore.json",
+      "sha256": "46ea951957d0dc672a0c36a1e5f842ae07414f38972e434ed0072235c979a342"
+    },
+    {
+      "bytes": 142960,
+      "path": "cp5c/gitleaks-docker-amd64-history.json",
+      "sha256": "2cf09f062b803d3ed66c322bb05edec6ac77fc79ebf412af02c029bff16b0318"
+    },
+    {
+      "bytes": 142955,
+      "path": "cp5c/gitleaks-native-history.json",
+      "sha256": "4e9424909ffc31d924a12f37f7347cfc187d6173376dbd72cb9b6352135d270d"
+    },
+    {
+      "bytes": 8537,
+      "path": "cp5c/proposed-negative-additions.json",
+      "sha256": "677c765c01dd722d7aae7493e780306ef9bdf5f0f1d03f090699cce9f97c197e"
+    },
+    {
+      "bytes": 3345,
+      "path": "cp5c/README.md",
+      "sha256": "a6018481f7a3fa3b19d32ab995da26c509ff58ced1b5d72b40b5484ad357bf03"
+    },
+    {
+      "bytes": 11385,
+      "path": "cp5c/rnc-19-reconciliation.json",
+      "sha256": "719c059acc6ba4a8899fa3f9f08b8ddfe1d107584bddda0b22d853dad90123b8"
+    },
+    {
+      "bytes": 384023,
+      "path": "cp5c/rnc-docker-amd64-history.json",
+      "sha256": "7f4c4fbb26a5109c12778a997a3a830a5355b704f2d8807c67791f1b44194fd9"
+    },
+    {
+      "bytes": 384018,
+      "path": "cp5c/rnc-native-history.json",
+      "sha256": "b7c047ddbe4d06f4c69eb48c0c3a3fc9aaeebe6bd91a2efec4e2f3c0c9bdd6fc"
+    },
+    {
+      "bytes": 150369,
+      "path": "cp5d/betterleaks-docker-amd64-history.json",
+      "sha256": "e48cac23b85f948f592dfa3caac10447e3cde2a608f3e5416289fde22f6f6add"
+    },
+    {
+      "bytes": 150364,
+      "path": "cp5d/betterleaks-native-history.json",
+      "sha256": "3ae062e585032256e7364d9bd41f2d254550350ffe6ef7c7d634ece15a61d773"
+    },
+    {
+      "bytes": 10528,
+      "path": "cp5d/cross-scanner-rescore.json",
+      "sha256": "125c4942517c694762ec01db375799c08f9156393621eb556dd35f7ca14df456"
+    },
+    {
+      "bytes": 14955,
+      "path": "cp5d/finding-accountability.json",
+      "sha256": "0558d1bf6832398f126ca2ec184658a6130bd45955fc1ec109bbaa41670bab06"
+    },
+    {
+      "bytes": 144374,
+      "path": "cp5d/gitleaks-docker-amd64-history.json",
+      "sha256": "0c10d234b03b967bb10a8c52fa36132766dd2ea4504be85bd5bad64232a1196b"
+    },
+    {
+      "bytes": 144369,
+      "path": "cp5d/gitleaks-native-history.json",
+      "sha256": "9e89160b83890353320df76fa2e74ba59e0bcd02521416b6b22ee254691a8da6"
+    },
+    {
+      "bytes": 11131,
+      "path": "cp5d/proposed-oracle-migration.json",
+      "sha256": "9e0ceaed7cad53164f169de6537c8b12c3663d7cbeabad96293c2326a332525b"
+    },
+    {
+      "bytes": 2757,
+      "path": "cp5d/README.md",
+      "sha256": "c32e92c4823cbb436e550034212de7ec1364b3da7646b3e33a4a550d78d0bea8"
+    },
+    {
+      "bytes": 385437,
+      "path": "cp5d/rnc-docker-amd64-history.json",
+      "sha256": "cc635b2d9133172c5c2adc0ad0236cff5c23b7c63baab93344ead876b85ed4cf"
+    },
+    {
+      "bytes": 385432,
+      "path": "cp5d/rnc-native-history.json",
+      "sha256": "88ebb22fda6b1a5c25b3611a0ee35727317aae6d285b01d50e1c41157d711878"
+    },
+    {
+      "bytes": 150369,
+      "path": "cp5d1/betterleaks-docker-amd64-history.json",
+      "sha256": "e48cac23b85f948f592dfa3caac10447e3cde2a608f3e5416289fde22f6f6add"
+    },
+    {
+      "bytes": 150364,
+      "path": "cp5d1/betterleaks-native-history.json",
+      "sha256": "3ae062e585032256e7364d9bd41f2d254550350ffe6ef7c7d634ece15a61d773"
+    },
+    {
+      "bytes": 7805,
+      "path": "cp5d1/cross-scanner-rescore.json",
+      "sha256": "78f39115c834174fddd9468ccead4f60537c699b863ae5b40cc394c51bdd6da8"
+    },
+    {
+      "bytes": 144374,
+      "path": "cp5d1/gitleaks-docker-amd64-history.json",
+      "sha256": "0c10d234b03b967bb10a8c52fa36132766dd2ea4504be85bd5bad64232a1196b"
+    },
+    {
+      "bytes": 144369,
+      "path": "cp5d1/gitleaks-native-history.json",
+      "sha256": "9e89160b83890353320df76fa2e74ba59e0bcd02521416b6b22ee254691a8da6"
+    },
+    {
+      "bytes": 3303,
+      "path": "cp5d1/proposal-validation.json",
+      "sha256": "34c6811a520029dc8d99d78f82f8fecfc0fa85007749054e614588d5fbe66b6f"
+    },
+    {
+      "bytes": 2484,
+      "path": "cp5d1/README.md",
+      "sha256": "85495fbcec695f3f36c31120f7ef66a5cf6173d4368e1be5649c23ccb6bcb25c"
+    },
+    {
+      "bytes": 385437,
+      "path": "cp5d1/rnc-docker-amd64-history.json",
+      "sha256": "cc635b2d9133172c5c2adc0ad0236cff5c23b7c63baab93344ead876b85ed4cf"
+    },
+    {
+      "bytes": 385432,
+      "path": "cp5d1/rnc-native-history.json",
+      "sha256": "88ebb22fda6b1a5c25b3611a0ee35727317aae6d285b01d50e1c41157d711878"
+    },
+    {
+      "bytes": 148955,
+      "path": "history/betterleaks-5eab483-docker-amd64-history.json",
+      "sha256": "a742c2a0d4fbedde205b33743337229fb86c42360c7d6d885a8781a83e47e525"
+    },
+    {
+      "bytes": 148950,
+      "path": "history/betterleaks-5eab483-native-history.json",
+      "sha256": "97dce2592c5a01f1d67987ea17758de6fbf10bf41ff10fb8515dcd4da998230d"
+    },
+    {
+      "bytes": 142960,
+      "path": "history/gitleaks-5f6ec56-docker-amd64-history.json",
+      "sha256": "2cf09f062b803d3ed66c322bb05edec6ac77fc79ebf412af02c029bff16b0318"
+    },
+    {
+      "bytes": 142955,
+      "path": "history/gitleaks-5f6ec56-native-history.json",
+      "sha256": "4e9424909ffc31d924a12f37f7347cfc187d6173376dbd72cb9b6352135d270d"
+    },
+    {
+      "bytes": 2404,
+      "path": "history/README.md",
+      "sha256": "18bbfa604be29316482180536f89b901da75809bbd1d6d47714e6ef8e301dfb6"
+    },
+    {
+      "bytes": 888530,
+      "path": "rnc/rnc-corrective-docker-amd64-5391d8457ea0-default.json",
+      "sha256": "155ff80b69718585eb9b70baa566197b00f9d51ae42ecd8ff76d5401797e928a"
+    },
+    {
+      "bytes": 18509,
+      "path": "rnc/rnc-corrective-docker-amd64-5391d8457ea0-default.md",
+      "sha256": "28c355e60ba82e59d64584bc95ab08ff8addd20d2e95b0d8651e58a1ed2b60c4"
+    },
+    {
+      "bytes": 886494,
+      "path": "rnc/rnc-corrective-native-5391d8457ea0-default.json",
+      "sha256": "71fe3ee23e100cce2bc57b759225a1f98aa503b242439559c23dcff52118d845"
+    },
+    {
+      "bytes": 18372,
+      "path": "rnc/rnc-corrective-native-5391d8457ea0-default.md",
+      "sha256": "6c86f7effe1d190933fe7c02a42333ef173e4db25bb6e62e4f4f0057f5302eea"
+    },
+    {
+      "bytes": 37666,
+      "path": "rnc-cp5/needs-review.json",
+      "sha256": "0aa6241437dbfdea679857bd4f44d582e9699d15f64824920228e76df7047aa5"
+    },
+    {
+      "bytes": 4816,
+      "path": "rnc-cp5/needs-review.md",
+      "sha256": "e567f4e6258c7e3ac1d17dd859c3fe993eec9a9572519f3f9756a335db4b5145"
+    },
+    {
+      "bytes": 4232,
+      "path": "rnc-cp5/README.md",
+      "sha256": "a9a3cd9fb29b24fcd4d93f800e672c8c8ed5a8f5df4a9a6afbf20340822ec747"
+    },
+    {
+      "bytes": 4485991,
+      "path": "rnc-cp5/rnc-93b4dda-official-93b4dda909cb-default.json",
+      "sha256": "8c7fdeabfed21b96ce9f98cda63054088cc0fa6ce4c2f48c682beb5685390759"
+    },
+    {
+      "bytes": 21141,
+      "path": "rnc-cp5/rnc-93b4dda-official-93b4dda909cb-default.md",
+      "sha256": "d5822ba9485a7a6782b1f63209e85581bdcccfd2fd7d5f3e87d5aefda229f50d"
+    }
+  ],
+  "entry_count": 143,
+  "epoch": "pre-scoring-integrity-remediation",
+  "generated_at": "2026-11-16T00:03:47.403738+00:00",
+  "reason": "Reports produced under the pre-remediation scoring implementation; not current baselines.",
+  "schema": "rnc-pre-scoring-fix-archive/1"
+}

@@ -8,7 +8,8 @@
 > records the exact scanner command for every invocation, writes one experiment
 > report, and removes only run-created temporary resources. The harness never
 > clones scanner source, compiles a scanner, builds an image, or pulls an image.
-> Cross-scanner execution and comparison remain retired. Leaky Repo history is
+> Cross-scanner execution remains retired; the separate read-only
+> `detection-gaps` analysis compares retained reports. Leaky Repo history is
 > scored against the **owner-approved 184-record / 65-occurrence / 53-group
 > source oracle** when the selected artifact declares Git-history capability;
 > reviewed negatives are not exhaustive, so history precision/F1 remain
@@ -205,6 +206,9 @@ python -m harness experiment `
 # Certified RNC Synthetic Secrets Lab v3, including 5x/10x load profiles.
 python -m harness experiment --build rnc-cp4a --platforms windows-amd64 --suites rnclab --warmups 1 --runs 5
 
+# CP4C with the requested explicit worker mode, no profiler.
+python -m harness experiment --build rnc-cp4c --platforms windows-amd64 --suites levain,leaky-repo,rnclab --warmups 1 --runs 3 "--scanner-args=--workers auto"
+
 # Gitleaks functional fixtures only; no performance workload.
 python -m harness experiment --build gitleaks-5f6ec56 --platforms docker-linux-amd64 --suites gitleaks
 
@@ -228,12 +232,37 @@ python -m harness prepare    # fetch/verify the pinned Levain corpus
 python -m harness verify     # verify cache offline
 python -m harness status     # dataset readiness
 python -m harness synthetic  # independent scoring-engine validation
+python -m harness matrix --experiment cp4c --out-dir run/reports/cp4c-matrix0  # CP4C worker/profiler Matrix 0
+python -m harness detection-gaps --out-dir reports/detection-gaps  # retained-evidence target analysis
 python -m harness interactive
 ```
 
 `harness.toml.example` is the committed configuration template. `harness.toml`
 is Git-ignored. `run/manifest.toml`, executable artifacts, rules, dataset caches,
 and temporary scan artifacts remain ignored.
+
+## Detection-gap analysis
+
+`detection-gaps` is a read-only analysis command. It reads the retained
+current-scoring reports and frozen oracles; it does not execute a scanner, edit a
+rule, rewrite an oracle, or alter scoring. It reconstructs every expected
+positive target, joins provider/source context, and writes one report set per
+scanner plus a shared target-overlap report.
+
+```powershell
+python -m harness detection-gaps --out-dir reports/detection-gaps
+```
+
+The default inputs are the retained reports under
+`run/reports/all-windows-baselines/` and the frozen Levain, Leaky Repo and RNC
+Synthetic Secrets Lab v3 caches. The command currently generates CP4C, RNC-Mod
+V14 and RNC-Mod V16 reports. Each report directory contains the human-readable
+assessment, complete target and miss inventories, provider context, location
+analysis, root causes, prioritized backlog and machine summary. RNC Lab and
+Leaky Git precision/F1 are not claimed; their negative oracles are incomplete.
+
+Raw source evidence stays under Git-ignored `run/`. Tracked reports use target
+IDs, redacted structural context, and nonsecret source locators only.
 
 ## Invocation evidence
 
@@ -315,6 +344,8 @@ See [`datasets/manifest.toml`](datasets/manifest.toml) and
 | `run-manifest.example.toml` | Tracked example of the Git-ignored `run/manifest.toml` |
 | `harness/artifacts.py` | Local artifact manifest parsing, executable/image/rules verification |
 | `harness/experiment.py` | One-registered-build orchestration, performance, and report assembly |
+| `harness/cp4c_matrix.py` | CP4C Matrix 0 worker/profiler experiment and evidence report |
+| `harness/profiler_contract.py` | CP4C schema-v1 profile ingestion and validation |
 | `harness/workspace.py` | Run-owned temporary workspace and container-only cleanup |
 | `harness/adapters/` | Adapter contract, Gitleaks/Betterleaks/RNC adapters |
 | `harness/profile.py` | DEFAULT/CUSTOM profiles and provenance |

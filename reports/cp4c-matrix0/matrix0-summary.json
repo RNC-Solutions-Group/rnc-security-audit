@@ -1,0 +1,2118 @@
+{
+  "accepted_measured_count": 160,
+  "artifact": {
+    "executable_sha256": "170bd1df345c4985043ff449051c247f22a1012fe9c054cae5c2edcc190fb1cb",
+    "manifest_sha256": "c43792964fd8b07317ff8e3bc8fb75c63f175387d27d2b5855814ecebd4d132b",
+    "rules_sha256": "2eb315fa40553ab1e133322a1f0a014a4593ab2ca6164152149eb59c1197a6b7",
+    "source_commit": "805e3bb79276b94de636e27024f38773da303b44"
+  },
+  "configurations": [
+    {
+      "key": "rnclab-filesystem-w1-profile-off",
+      "measured_runs": 5,
+      "profiler": false,
+      "warmups": 2,
+      "workers": 1,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "key": "rnclab-filesystem-w1-profile-on",
+      "measured_runs": 5,
+      "profiler": true,
+      "warmups": 2,
+      "workers": 1,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "key": "rnclab-filesystem-w2-profile-off",
+      "measured_runs": 5,
+      "profiler": false,
+      "warmups": 2,
+      "workers": 2,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "key": "rnclab-filesystem-w2-profile-on",
+      "measured_runs": 5,
+      "profiler": true,
+      "warmups": 2,
+      "workers": 2,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "key": "rnclab-filesystem-w4-profile-off",
+      "measured_runs": 5,
+      "profiler": false,
+      "warmups": 2,
+      "workers": 4,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "key": "rnclab-filesystem-w4-profile-on",
+      "measured_runs": 5,
+      "profiler": true,
+      "warmups": 2,
+      "workers": 4,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "key": "rnclab-filesystem-w8-profile-off",
+      "measured_runs": 5,
+      "profiler": false,
+      "warmups": 2,
+      "workers": 8,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "key": "rnclab-filesystem-w8-profile-on",
+      "measured_runs": 5,
+      "profiler": true,
+      "warmups": 2,
+      "workers": 8,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "key": "rnclab-git-w1-profile-off",
+      "measured_runs": 5,
+      "profiler": false,
+      "warmups": 2,
+      "workers": 1,
+      "workload": "rnclab-git"
+    },
+    {
+      "key": "rnclab-git-w1-profile-on",
+      "measured_runs": 5,
+      "profiler": true,
+      "warmups": 2,
+      "workers": 1,
+      "workload": "rnclab-git"
+    },
+    {
+      "key": "rnclab-git-w2-profile-off",
+      "measured_runs": 5,
+      "profiler": false,
+      "warmups": 2,
+      "workers": 2,
+      "workload": "rnclab-git"
+    },
+    {
+      "key": "rnclab-git-w2-profile-on",
+      "measured_runs": 5,
+      "profiler": true,
+      "warmups": 2,
+      "workers": 2,
+      "workload": "rnclab-git"
+    },
+    {
+      "key": "rnclab-git-w4-profile-off",
+      "measured_runs": 5,
+      "profiler": false,
+      "warmups": 2,
+      "workers": 4,
+      "workload": "rnclab-git"
+    },
+    {
+      "key": "rnclab-git-w4-profile-on",
+      "measured_runs": 5,
+      "profiler": true,
+      "warmups": 2,
+      "workers": 4,
+      "workload": "rnclab-git"
+    },
+    {
+      "key": "rnclab-git-w8-profile-off",
+      "measured_runs": 5,
+      "profiler": false,
+      "warmups": 2,
+      "workers": 8,
+      "workload": "rnclab-git"
+    },
+    {
+      "key": "rnclab-git-w8-profile-on",
+      "measured_runs": 5,
+      "profiler": true,
+      "warmups": 2,
+      "workers": 8,
+      "workload": "rnclab-git"
+    },
+    {
+      "key": "legacy-5x-w1-profile-off",
+      "measured_runs": 5,
+      "profiler": false,
+      "warmups": 1,
+      "workers": 1,
+      "workload": "legacy-5x"
+    },
+    {
+      "key": "legacy-5x-w1-profile-on",
+      "measured_runs": 5,
+      "profiler": true,
+      "warmups": 1,
+      "workers": 1,
+      "workload": "legacy-5x"
+    },
+    {
+      "key": "legacy-5x-w2-profile-off",
+      "measured_runs": 5,
+      "profiler": false,
+      "warmups": 1,
+      "workers": 2,
+      "workload": "legacy-5x"
+    },
+    {
+      "key": "legacy-5x-w2-profile-on",
+      "measured_runs": 5,
+      "profiler": true,
+      "warmups": 1,
+      "workers": 2,
+      "workload": "legacy-5x"
+    },
+    {
+      "key": "legacy-5x-w4-profile-off",
+      "measured_runs": 5,
+      "profiler": false,
+      "warmups": 1,
+      "workers": 4,
+      "workload": "legacy-5x"
+    },
+    {
+      "key": "legacy-5x-w4-profile-on",
+      "measured_runs": 5,
+      "profiler": true,
+      "warmups": 1,
+      "workers": 4,
+      "workload": "legacy-5x"
+    },
+    {
+      "key": "legacy-5x-w8-profile-off",
+      "measured_runs": 5,
+      "profiler": false,
+      "warmups": 1,
+      "workers": 8,
+      "workload": "legacy-5x"
+    },
+    {
+      "key": "legacy-5x-w8-profile-on",
+      "measured_runs": 5,
+      "profiler": true,
+      "warmups": 1,
+      "workers": 8,
+      "workload": "legacy-5x"
+    },
+    {
+      "key": "legacy-10x-w1-profile-off",
+      "measured_runs": 5,
+      "profiler": false,
+      "warmups": 1,
+      "workers": 1,
+      "workload": "legacy-10x"
+    },
+    {
+      "key": "legacy-10x-w1-profile-on",
+      "measured_runs": 5,
+      "profiler": true,
+      "warmups": 1,
+      "workers": 1,
+      "workload": "legacy-10x"
+    },
+    {
+      "key": "legacy-10x-w2-profile-off",
+      "measured_runs": 5,
+      "profiler": false,
+      "warmups": 1,
+      "workers": 2,
+      "workload": "legacy-10x"
+    },
+    {
+      "key": "legacy-10x-w2-profile-on",
+      "measured_runs": 5,
+      "profiler": true,
+      "warmups": 1,
+      "workers": 2,
+      "workload": "legacy-10x"
+    },
+    {
+      "key": "legacy-10x-w4-profile-off",
+      "measured_runs": 5,
+      "profiler": false,
+      "warmups": 1,
+      "workers": 4,
+      "workload": "legacy-10x"
+    },
+    {
+      "key": "legacy-10x-w4-profile-on",
+      "measured_runs": 5,
+      "profiler": true,
+      "warmups": 1,
+      "workers": 4,
+      "workload": "legacy-10x"
+    },
+    {
+      "key": "legacy-10x-w8-profile-off",
+      "measured_runs": 5,
+      "profiler": false,
+      "warmups": 1,
+      "workers": 8,
+      "workload": "legacy-10x"
+    },
+    {
+      "key": "legacy-10x-w8-profile-on",
+      "measured_runs": 5,
+      "profiler": true,
+      "warmups": 1,
+      "workers": 8,
+      "workload": "legacy-10x"
+    }
+  ],
+  "cp4b_artifact": {
+    "executable_sha256": "d5dc4a1620da8b4a9a38f298933bbcc2bd094de89fe96cde3ebd551edcba61f4",
+    "source_commit": "d00f71f1e2cf16ce58beb07d8b960c5ad056f915"
+  },
+  "cp4b_equivalence": {
+    "rnclab-filesystem": {
+      "canonical_signature_sha256": "e71fb4fced81159477c3326b6469e2cbc39045b3961dcaca7d3662d5574035b4",
+      "cp4c_w1_off_median_seconds": 0.633,
+      "current_true_positives": 347,
+      "equivalent": true,
+      "published_median_seconds": 0.487,
+      "published_true_positives": 297,
+      "reference_cp4b_findings": 371,
+      "reference_cp4c_findings": 371
+    },
+    "rnclab-git": {
+      "canonical_signature_sha256": "7181cd6ee82c58abd9c2e7ac39206540d2285465e39779e2009e4b67243758c1",
+      "cp4c_w1_off_median_seconds": 8.04,
+      "current_true_positives": 120,
+      "equivalent": true,
+      "published_median_seconds": 6.515,
+      "published_true_positives": 110,
+      "reference_cp4b_findings": 126,
+      "reference_cp4c_findings": 126
+    }
+  },
+  "detection": [
+    {
+      "bytes_inspected": 61306560,
+      "coverage": "PARTIAL",
+      "reference_findings": 3710,
+      "signature_state": "PASS",
+      "units_inspected": 3609,
+      "workload": "legacy-10x"
+    },
+    {
+      "bytes_inspected": 60013688,
+      "coverage": "PARTIAL",
+      "reference_findings": 1855,
+      "signature_state": "PASS",
+      "units_inspected": 1809,
+      "workload": "legacy-5x"
+    },
+    {
+      "bytes_inspected": 258574,
+      "coverage": "PARTIAL",
+      "reference_findings": 371,
+      "signature_state": "PASS",
+      "units_inspected": 360,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "bytes_inspected": 43879,
+      "coverage": "COMPLETE",
+      "reference_findings": 126,
+      "signature_state": "PASS",
+      "units_inspected": 116,
+      "workload": "rnclab-git"
+    }
+  ],
+  "environment": {
+    "description": "contended developer workstation; preliminary timing",
+    "mode": "DEV",
+    "stability_cv_threshold": 0.25
+  },
+  "experiment": "cp4c-matrix0",
+  "generated_at": "2026-11-15T23:09:50.264189+00:00",
+  "harness_source_commit": "cfc1cb001eeb95cfccc57bb41c30ea156988ccb2",
+  "harness_version": "0.6.0",
+  "host": {
+    "capacity": {
+      "cpu_count": 8,
+      "disk": {
+        "free_bytes": 125673451520,
+        "total_bytes": 1997447098368,
+        "used_bytes": 1871773646848,
+        "used_percent": 93.71
+      },
+      "load_average": null,
+      "memory_available_bytes": 11353829376,
+      "memory_bytes": 34047959040,
+      "memory_load_percent": 66,
+      "method": "stdlib"
+    },
+    "cpu_count": 8,
+    "hostname_kind": "redacted",
+    "machine": "AMD64",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+    "python": "3.13.5",
+    "system": "Windows"
+  },
+  "host_load": {
+    "available": true,
+    "disk_free_bytes": {
+      "coefficient_of_variation": 0.001142,
+      "count": 184,
+      "maximum": 125677289472.0,
+      "mean": 125437806703.30435,
+      "median": 125438236672.0,
+      "minimum": 125236248576.0,
+      "stdev": 143310866.746855
+    },
+    "memory_load_percent": {
+      "coefficient_of_variation": 0.020343,
+      "count": 184,
+      "maximum": 71.0,
+      "mean": 66.608696,
+      "median": 66.0,
+      "minimum": 64.0,
+      "stdev": 1.354995
+    },
+    "sample_count": 184,
+    "source": "harness telemetry host_capacity sampled every 10 s during the experiment"
+  },
+  "integrity_audit": {
+    "accepted": 208,
+    "available": true,
+    "by_workload": {
+      "legacy-10x": {
+        "finding_count": 3710,
+        "finding_signature": "2529a435aeaa7a913aed33d804be04b68634fddad80e6c501925652e6a054e38",
+        "unit_count": 3610,
+        "unit_signature": "e10ea42263e72c310e41b3b8ba84cdbedbaa88b7b1084a5e51e3c1ee44818cc8"
+      },
+      "legacy-5x": {
+        "finding_count": 1855,
+        "finding_signature": "b2643808145e49950f515df8825276b7d289cc75382877901853f850ce671a4f",
+        "unit_count": 1810,
+        "unit_signature": "01feb6522147dab26de12ed68af4f621960bf1edf402c8bc4fdf03e44b39f68b"
+      },
+      "rnclab-filesystem": {
+        "finding_count": 371,
+        "finding_signature": "6f4b2ed56ee32d0467d68d1292d1eabd664961aab7046452745294545ac5c679",
+        "unit_count": 371,
+        "unit_signature": "64fb88c5493fb450a903ec9f1a1a76e33777188e0c2b54d4e4e651406047c5ce"
+      },
+      "rnclab-git": {
+        "finding_count": 126,
+        "finding_signature": "42db9d0b171e44be9313f352ce8f3aab1b5156b4ce633f7c870550321037e1ac",
+        "unit_count": 116,
+        "unit_signature": "67ab6d287446813201e5e601afa791be578e697d6b68061d813c16f4951d3c63"
+      }
+    },
+    "command_flags_equal": true,
+    "cp4b_cp4c_reference": {
+      "rnclab-filesystem": {
+        "cp4b_current_tp": 347,
+        "cp4c_current_tp": 347,
+        "findings_equal": true,
+        "target_ids_equal": true,
+        "units_equal": true
+      },
+      "rnclab-git": {
+        "cp4b_current_tp": 120,
+        "cp4c_current_tp": 120,
+        "findings_equal": true,
+        "target_ids_equal": true,
+        "units_equal": true
+      }
+    },
+    "failed": 0,
+    "findings_equal": true,
+    "first_started_at": "2026-11-15T22:09:36.679438+00:00",
+    "generated_at": "2026-11-15T22:38:08.582831+00:00",
+    "last_finished_at": "2026-11-15T22:36:48.281233+00:00",
+    "measured": 160,
+    "off_first_blocks": 41,
+    "on_first_blocks": 39,
+    "overlaps": [],
+    "pair_blocks": 80,
+    "profile_counters_equal": true,
+    "profiles_present": true,
+    "profiles_valid": true,
+    "raw_reports_present": true,
+    "records": 208,
+    "sequential": true,
+    "span_minutes": 27.193,
+    "unit_dispositions_equal": true,
+    "warmups": 48
+  },
+  "interpretation": [
+    "Median profiling overhead at eight workers is +1.05% (observed range -9.44% to +4.76% across all worker/workload pairs).",
+    "Profiling overhead does not show a consistent positive concurrency trend: the deltas are small and frequently negative, so there is no evidence of a shared profiling mutex or serialization penalty that grows with worker count. Sub-second filesystem measurements remain the noisiest.",
+    "Worst eight-worker parallel efficiency is 0.148; scaling is bounded by serial discovery/rules work rather than pure worker count.",
+    "legacy-10x at 8 workers: serial non-scan time is 1422.3 ms of 5477.7 ms (26.0%); worker busy/scan ratio is 7.224.",
+    "legacy-5x at 8 workers: serial non-scan time is 906.9 ms of 4686.9 ms (19.4%); worker busy/scan ratio is 7.177.",
+    "rnclab-filesystem at 8 workers: serial non-scan time is 346.8 ms of 438.0 ms (79.2%); worker busy/scan ratio is 6.432.",
+    "rnclab-git at 8 workers: serial non-scan time is 2920.1 ms of 4539.6 ms (64.3%); worker busy/scan ratio is 7.529.",
+    "legacy-10x peak scanner memory rises 3.04x from one to two workers (123.6 to 375.7 MiB), then stays near that level through eight workers.",
+    "legacy-5x peak scanner memory rises 3.39x from one to two workers (104.5 to 354.5 MiB), then stays near that level through eight workers.",
+    "rnclab-filesystem peak scanner memory rises 3.68x from one to two workers (89.5 to 329.5 MiB), then stays near that level through eight workers.",
+    "rnclab-git peak scanner memory rises 3.73x from one to two workers (84.2 to 314.3 MiB), then stays near that level through eight workers.",
+    "RNC Lab Git profiling overhead ranges from -1.80% to +2.69%.",
+    "Independent post-run audit: 160 measured runs, 0 failures, unit dispositions equal=True, profile counters equal=True, command flags equal=True."
+  ],
+  "limitations": [
+    "DEV environment: contended developer workstation; timings are preliminary and not release evidence.",
+    "Scanner CPU and peak memory are scanner-process measurements; child Git CPU/memory are unavailable and not treated as process-tree totals.",
+    "Profile worker-phase times are accumulated across workers and are not wall elapsed time.",
+    "Profile wall phases are internal attribution; the external harness clock is authoritative for primary wall time.",
+    "The RNC Lab filesystem lane includes 11 scanner-declared symlink aliases that are not followed; canonical units still reconcile.",
+    "Legacy x5/x10 workloads are performance-only and are not scored against the canonical accuracy oracle.",
+    "CP4C writes reports/profiles outside the scan root; the harness uses the OS temporary directory and copies evidence into the experiment directory.",
+    "System-wide CPU utilization and thermal state were not independently instrumented; the host was declared DEV with 64-71% memory load and stable free disk during sampling.",
+    "CP4C rejected report/profile parent handles under the workspace path with access denied; the harness wrote to the OS temporary directory and copied every artifact into this evidence tree.",
+    "The published CP4B 297/640 filesystem and 110/160 Git counts use the pre-remediation scorer; the preserved CP4B raw findings equal CP4C raw findings and current scoring yields 347/640 and 120/160.",
+    "Child Git process CPU/memory were not sampled; scanner-process CPU is reported separately and must not be interpreted as a process-tree total."
+  ],
+  "memory_step": [
+    {
+      "ratio": 3.041,
+      "w1_mib": 123.562,
+      "w2_mib": 375.715,
+      "workload": "legacy-10x"
+    },
+    {
+      "ratio": 3.394,
+      "w1_mib": 104.461,
+      "w2_mib": 354.527,
+      "workload": "legacy-5x"
+    },
+    {
+      "ratio": 3.683,
+      "w1_mib": 89.473,
+      "w2_mib": 329.539,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "ratio": 3.735,
+      "w1_mib": 84.156,
+      "w2_mib": 314.344,
+      "workload": "rnclab-git"
+    }
+  ],
+  "overhead": [
+    {
+      "absolute_delta_ms": 195.0,
+      "off_cv": 0.027202,
+      "off_median_seconds": 15.273,
+      "on_cv": 0.052294,
+      "on_median_seconds": 15.468,
+      "paired_median_delta_ms": 340.0,
+      "paired_median_percent": 2.226,
+      "percent_delta": 1.277,
+      "workers": 1,
+      "workload": "legacy-10x"
+    },
+    {
+      "absolute_delta_ms": -10.0,
+      "off_cv": 0.037282,
+      "off_median_seconds": 11.899,
+      "on_cv": 0.035551,
+      "on_median_seconds": 11.889,
+      "paired_median_delta_ms": 112.0,
+      "paired_median_percent": 0.941,
+      "percent_delta": -0.084,
+      "workers": 2,
+      "workload": "legacy-10x"
+    },
+    {
+      "absolute_delta_ms": 102.0,
+      "off_cv": 0.041174,
+      "off_median_seconds": 7.419,
+      "on_cv": 0.047702,
+      "on_median_seconds": 7.521,
+      "paired_median_delta_ms": 123.0,
+      "paired_median_percent": 1.658,
+      "percent_delta": 1.375,
+      "workers": 4,
+      "workload": "legacy-10x"
+    },
+    {
+      "absolute_delta_ms": -167.0,
+      "off_cv": 0.04125,
+      "off_median_seconds": 5.713,
+      "on_cv": 0.035979,
+      "on_median_seconds": 5.546,
+      "paired_median_delta_ms": -174.0,
+      "paired_median_percent": -3.046,
+      "percent_delta": -2.923,
+      "workers": 8,
+      "workload": "legacy-10x"
+    },
+    {
+      "absolute_delta_ms": -240.0,
+      "off_cv": 0.026485,
+      "off_median_seconds": 13.374,
+      "on_cv": 0.030338,
+      "on_median_seconds": 13.134,
+      "paired_median_delta_ms": -310.0,
+      "paired_median_percent": -2.318,
+      "percent_delta": -1.795,
+      "workers": 1,
+      "workload": "legacy-5x"
+    },
+    {
+      "absolute_delta_ms": -25.0,
+      "off_cv": 0.032376,
+      "off_median_seconds": 10.566,
+      "on_cv": 0.023521,
+      "on_median_seconds": 10.541,
+      "paired_median_delta_ms": -300.0,
+      "paired_median_percent": -2.839,
+      "percent_delta": -0.237,
+      "workers": 2,
+      "workload": "legacy-5x"
+    },
+    {
+      "absolute_delta_ms": -46.0,
+      "off_cv": 0.043366,
+      "off_median_seconds": 6.431,
+      "on_cv": 0.025897,
+      "on_median_seconds": 6.385,
+      "paired_median_delta_ms": -52.0,
+      "paired_median_percent": -0.809,
+      "percent_delta": -0.715,
+      "workers": 4,
+      "workload": "legacy-5x"
+    },
+    {
+      "absolute_delta_ms": 79.0,
+      "off_cv": 0.026122,
+      "off_median_seconds": 4.688,
+      "on_cv": 0.049008,
+      "on_median_seconds": 4.767,
+      "paired_median_delta_ms": 79.0,
+      "paired_median_percent": 1.685,
+      "percent_delta": 1.685,
+      "workers": 8,
+      "workload": "legacy-5x"
+    },
+    {
+      "absolute_delta_ms": -21.0,
+      "off_cv": 0.052805,
+      "off_median_seconds": 0.633,
+      "on_cv": 0.030115,
+      "on_median_seconds": 0.612,
+      "paired_median_delta_ms": -39.0,
+      "paired_median_percent": -6.161,
+      "percent_delta": -3.318,
+      "workers": 1,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "absolute_delta_ms": -66.0,
+      "off_cv": 0.097803,
+      "off_median_seconds": 0.699,
+      "on_cv": 0.225102,
+      "on_median_seconds": 0.633,
+      "paired_median_delta_ms": -21.0,
+      "paired_median_percent": -3.004,
+      "percent_delta": -9.442,
+      "workers": 2,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "absolute_delta_ms": 28.0,
+      "off_cv": 0.199422,
+      "off_median_seconds": 0.588,
+      "on_cv": 0.068566,
+      "on_median_seconds": 0.616,
+      "paired_median_delta_ms": 9.0,
+      "paired_median_percent": 1.531,
+      "percent_delta": 4.762,
+      "workers": 4,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "absolute_delta_ms": 12.0,
+      "off_cv": 0.131914,
+      "off_median_seconds": 0.504,
+      "on_cv": 0.074785,
+      "on_median_seconds": 0.516,
+      "paired_median_delta_ms": -8.0,
+      "paired_median_percent": -1.587,
+      "percent_delta": 2.381,
+      "workers": 8,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "absolute_delta_ms": -57.0,
+      "off_cv": 0.046064,
+      "off_median_seconds": 8.04,
+      "on_cv": 0.015109,
+      "on_median_seconds": 7.983,
+      "paired_median_delta_ms": 100.0,
+      "paired_median_percent": 1.244,
+      "percent_delta": -0.709,
+      "workers": 1,
+      "workload": "rnclab-git"
+    },
+    {
+      "absolute_delta_ms": -110.0,
+      "off_cv": 0.031691,
+      "off_median_seconds": 6.121,
+      "on_cv": 0.024854,
+      "on_median_seconds": 6.011,
+      "paired_median_delta_ms": -57.0,
+      "paired_median_percent": -0.931,
+      "percent_delta": -1.797,
+      "workers": 2,
+      "workload": "rnclab-git"
+    },
+    {
+      "absolute_delta_ms": 149.0,
+      "off_cv": 0.064674,
+      "off_median_seconds": 5.544,
+      "on_cv": 0.041675,
+      "on_median_seconds": 5.693,
+      "paired_median_delta_ms": 64.0,
+      "paired_median_percent": 1.154,
+      "percent_delta": 2.688,
+      "workers": 4,
+      "workload": "rnclab-git"
+    },
+    {
+      "absolute_delta_ms": 19.0,
+      "off_cv": 0.050684,
+      "off_median_seconds": 4.579,
+      "on_cv": 0.042475,
+      "on_median_seconds": 4.598,
+      "paired_median_delta_ms": 15.0,
+      "paired_median_percent": 0.328,
+      "percent_delta": 0.415,
+      "workers": 8,
+      "workload": "rnclab-git"
+    }
+  ],
+  "phase_summary": [
+    {
+      "busy_wall_ratio": 7.224,
+      "discovery_ns": 1077909500,
+      "execution_ns": 5477702600,
+      "queue_wait_ns": 272129100,
+      "reporting_ns": 55773100,
+      "rules_load_ns": 217546000,
+      "scan_ns": 4055437100,
+      "serial_fraction": 0.2596,
+      "serial_ns": 1422265500,
+      "worker_busy_ns": 29298427500,
+      "workers": 8,
+      "workload": "legacy-10x"
+    },
+    {
+      "busy_wall_ratio": 7.177,
+      "discovery_ns": 574604000,
+      "execution_ns": 4686926500,
+      "queue_wait_ns": 144127100,
+      "reporting_ns": 31554200,
+      "rules_load_ns": 250143400,
+      "scan_ns": 3779988900,
+      "serial_fraction": 0.1935,
+      "serial_ns": 906937600,
+      "worker_busy_ns": 27130474700,
+      "workers": 8,
+      "workload": "legacy-5x"
+    },
+    {
+      "busy_wall_ratio": 6.432,
+      "discovery_ns": 108533700,
+      "execution_ns": 437993600,
+      "queue_wait_ns": 33276800,
+      "reporting_ns": 7752100,
+      "rules_load_ns": 224566400,
+      "scan_ns": 91226100,
+      "serial_fraction": 0.7917,
+      "serial_ns": 346767500,
+      "worker_busy_ns": 586752300,
+      "workers": 8,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "busy_wall_ratio": 7.529,
+      "discovery_ns": 2705503600,
+      "execution_ns": 4539604900,
+      "queue_wait_ns": 11862700,
+      "reporting_ns": 6143600,
+      "rules_load_ns": 245526400,
+      "scan_ns": 1619463100,
+      "serial_fraction": 0.6433,
+      "serial_ns": 2920141800,
+      "worker_busy_ns": 12193729400,
+      "workers": 8,
+      "workload": "rnclab-git"
+    }
+  ],
+  "profile_phases": {
+    "legacy-10x / w1": [
+      {
+        "kind": "wall",
+        "median_ns": 15420015700,
+        "phase": "execution"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 13695854600,
+        "phase": "scan"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 11704097900,
+        "phase": "matching.regex"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 1160062300,
+        "phase": "discovery"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 1160055900,
+        "phase": "discovery.filesystem"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 208596000,
+        "phase": "rules.load"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 62135100,
+        "phase": "reporting"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 34423200,
+        "phase": "reporting.serialize"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 21532500,
+        "phase": "scan.validation"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 17165700,
+        "phase": "scan.findings"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 14229200,
+        "phase": "reporting.write"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 1216400,
+        "phase": "startup.config"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 793100,
+        "phase": "scan.context"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 27700,
+        "phase": "startup.cli"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 3800,
+        "phase": "rules.plan"
+      }
+    ],
+    "legacy-10x / w8": [
+      {
+        "kind": "worker",
+        "median_ns": 29298427500,
+        "phase": "scheduling.worker_busy"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 25506151000,
+        "phase": "matching.regex"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 5477702600,
+        "phase": "execution"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 4055437100,
+        "phase": "scan"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 1077909500,
+        "phase": "discovery"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 1077902700,
+        "phase": "discovery.filesystem"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 272129100,
+        "phase": "scheduling.queue_wait"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 217546000,
+        "phase": "rules.load"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 55773100,
+        "phase": "reporting"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 33018000,
+        "phase": "reporting.serialize"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 31846700,
+        "phase": "scan.validation"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 25109200,
+        "phase": "scan.findings"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 12102100,
+        "phase": "reporting.write"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 1468200,
+        "phase": "startup.config"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 887700,
+        "phase": "scan.context"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 27300,
+        "phase": "startup.cli"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 3300,
+        "phase": "rules.plan"
+      }
+    ],
+    "legacy-5x / w1": [
+      {
+        "kind": "wall",
+        "median_ns": 13092454900,
+        "phase": "execution"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 12088617200,
+        "phase": "scan"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 11052198800,
+        "phase": "matching.regex"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 563350900,
+        "phase": "discovery"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 563343800,
+        "phase": "discovery.filesystem"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 227855900,
+        "phase": "rules.load"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 27991200,
+        "phase": "reporting"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 15233700,
+        "phase": "reporting.serialize"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 10242500,
+        "phase": "scan.validation"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 8113600,
+        "phase": "scan.findings"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 7636700,
+        "phase": "reporting.write"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 1165700,
+        "phase": "startup.config"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 369100,
+        "phase": "scan.context"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 28400,
+        "phase": "startup.cli"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 3500,
+        "phase": "rules.plan"
+      }
+    ],
+    "legacy-5x / w8": [
+      {
+        "kind": "worker",
+        "median_ns": 27130474700,
+        "phase": "scheduling.worker_busy"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 25114257000,
+        "phase": "matching.regex"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 4686926500,
+        "phase": "execution"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 3779988900,
+        "phase": "scan"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 574604000,
+        "phase": "discovery"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 574595900,
+        "phase": "discovery.filesystem"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 250143400,
+        "phase": "rules.load"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 144127100,
+        "phase": "scheduling.queue_wait"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 31554200,
+        "phase": "reporting"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 16268900,
+        "phase": "scan.validation"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 16075700,
+        "phase": "reporting.serialize"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 12875100,
+        "phase": "scan.findings"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 8543100,
+        "phase": "reporting.write"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 1197400,
+        "phase": "startup.config"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 459600,
+        "phase": "scan.context"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 36300,
+        "phase": "startup.cli"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 3400,
+        "phase": "rules.plan"
+      }
+    ],
+    "rnclab-filesystem / w1": [
+      {
+        "kind": "wall",
+        "median_ns": 573355200,
+        "phase": "execution"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 235501000,
+        "phase": "scan"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 215041800,
+        "phase": "rules.load"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 101377500,
+        "phase": "discovery"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 101373700,
+        "phase": "discovery.filesystem"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 76999200,
+        "phase": "matching.regex"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 7985200,
+        "phase": "reporting"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 4953700,
+        "phase": "reporting.write"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 2201100,
+        "phase": "reporting.serialize"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 2010700,
+        "phase": "scan.validation"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 1605200,
+        "phase": "scan.findings"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 1233800,
+        "phase": "startup.config"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 76600,
+        "phase": "scan.context"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 26600,
+        "phase": "startup.cli"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 2900,
+        "phase": "rules.plan"
+      }
+    ],
+    "rnclab-filesystem / w8": [
+      {
+        "kind": "worker",
+        "median_ns": 586752300,
+        "phase": "scheduling.worker_busy"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 437993600,
+        "phase": "execution"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 281771900,
+        "phase": "matching.regex"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 224566400,
+        "phase": "rules.load"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 108533700,
+        "phase": "discovery"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 108529700,
+        "phase": "discovery.filesystem"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 91226100,
+        "phase": "scan"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 33276800,
+        "phase": "scheduling.queue_wait"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 7752100,
+        "phase": "reporting"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 4404900,
+        "phase": "reporting.write"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 2929600,
+        "phase": "scan.validation"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 2581800,
+        "phase": "scan.findings"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 2418500,
+        "phase": "reporting.serialize"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 1313600,
+        "phase": "startup.config"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 96300,
+        "phase": "scan.context"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 27100,
+        "phase": "startup.cli"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 2700,
+        "phase": "rules.plan"
+      }
+    ],
+    "rnclab-git / w1": [
+      {
+        "kind": "wall",
+        "median_ns": 7948943700,
+        "phase": "execution"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 5085006500,
+        "phase": "scan"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 5047721000,
+        "phase": "git.acquire.process"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 2687947300,
+        "phase": "discovery"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 2687943100,
+        "phase": "discovery.git"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 2369371800,
+        "phase": "git.deltas"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 244676400,
+        "phase": "git.command"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 233626900,
+        "phase": "rules.load"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 43094300,
+        "phase": "git.open"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 42879300,
+        "phase": "git.enumerate"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 33813500,
+        "phase": "matching.regex"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 4825400,
+        "phase": "reporting"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 3831600,
+        "phase": "reporting.write"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 1260100,
+        "phase": "scan.validation"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 1188600,
+        "phase": "startup.config"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 889500,
+        "phase": "scan.findings"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 702500,
+        "phase": "reporting.serialize"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 66000,
+        "phase": "scan.context"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 43400,
+        "phase": "startup.cli"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 3100,
+        "phase": "rules.plan"
+      }
+    ],
+    "rnclab-git / w8": [
+      {
+        "kind": "worker",
+        "median_ns": 12193729400,
+        "phase": "scheduling.worker_busy"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 12055330800,
+        "phase": "git.acquire.process"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 4539604900,
+        "phase": "execution"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 2705503600,
+        "phase": "discovery"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 2705500000,
+        "phase": "discovery.git"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 2354113300,
+        "phase": "git.deltas"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 1619463100,
+        "phase": "scan"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 250555400,
+        "phase": "git.command"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 245526400,
+        "phase": "rules.load"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 132776500,
+        "phase": "matching.regex"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 42746700,
+        "phase": "git.enumerate"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 42566600,
+        "phase": "git.open"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 11862700,
+        "phase": "scheduling.queue_wait"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 6143600,
+        "phase": "reporting"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 4510600,
+        "phase": "reporting.write"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 1573100,
+        "phase": "scan.validation"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 1540200,
+        "phase": "startup.config"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 1269900,
+        "phase": "scan.findings"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 976900,
+        "phase": "reporting.serialize"
+      },
+      {
+        "kind": "worker",
+        "median_ns": 79400,
+        "phase": "scan.context"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 32400,
+        "phase": "startup.cli"
+      },
+      {
+        "kind": "wall",
+        "median_ns": 2800,
+        "phase": "rules.plan"
+      }
+    ]
+  },
+  "recommendations": [
+    "Profiling overhead is small at the measured production-scale workloads; retain profile-on as a diagnostic control but preserve profile-off as the primary timing condition.",
+    "Do not add more than eight workers. Keep workers 1/2/4/8 in the full matrix and report efficiency; the data do not justify a larger fan-out.",
+    "Budget for the serial floor: rules load, discovery and reporting do not scale with workers. The full matrix should report that floor separately from scan-phase speedup.",
+    "Do not use canonical RNC Lab filesystem as the primary worker-scaling workload: its fixed startup/rules/discovery cost dominates a sub-second scan. Use x5/x10 for throughput scaling and filesystem only for regression.",
+    "Git whole-history scaling is capped by serial discovery and `git.deltas`; the full matrix should treat process/batch and whole/diff as the primary Git variables rather than expecting workers alone to remove that floor.",
+    "Plan for a step increase in scanner working set at two workers (observed roughly 3-4x the single-worker value); it was flat through eight workers on this host but must be monitored at every full-matrix configuration.",
+    "Use five measured repetitions for the full matrix, with two canonical warmups and one load warmup; retain all outliers.",
+    "Treat the legacy x5/x10 results as throughput/memory scaling evidence only; do not score them against the canonical oracle."
+  ],
+  "resources": [
+    {
+      "cpu_median_seconds": 14.96875,
+      "cpu_utilization_percent": 98.008,
+      "mib_per_second": 3.828,
+      "peak_memory_mib": 123.562,
+      "profile": "off",
+      "units_per_second": 236.299,
+      "workers": 1,
+      "workload": "legacy-10x"
+    },
+    {
+      "cpu_median_seconds": 15.21875,
+      "cpu_utilization_percent": 98.389,
+      "mib_per_second": 3.78,
+      "peak_memory_mib": 123.621,
+      "profile": "on",
+      "units_per_second": 233.32,
+      "workers": 1,
+      "workload": "legacy-10x"
+    },
+    {
+      "cpu_median_seconds": 18.328125,
+      "cpu_utilization_percent": 154.031,
+      "mib_per_second": 4.914,
+      "peak_memory_mib": 375.715,
+      "profile": "off",
+      "units_per_second": 303.303,
+      "workers": 2,
+      "workload": "legacy-10x"
+    },
+    {
+      "cpu_median_seconds": 18.28125,
+      "cpu_utilization_percent": 153.766,
+      "mib_per_second": 4.918,
+      "peak_memory_mib": 375.656,
+      "profile": "on",
+      "units_per_second": 303.558,
+      "workers": 2,
+      "workload": "legacy-10x"
+    },
+    {
+      "cpu_median_seconds": 22.078125,
+      "cpu_utilization_percent": 297.589,
+      "mib_per_second": 7.881,
+      "peak_memory_mib": 376.562,
+      "profile": "off",
+      "units_per_second": 486.454,
+      "workers": 4,
+      "workload": "legacy-10x"
+    },
+    {
+      "cpu_median_seconds": 22.375,
+      "cpu_utilization_percent": 297.5,
+      "mib_per_second": 7.774,
+      "peak_memory_mib": 376.492,
+      "profile": "on",
+      "units_per_second": 479.856,
+      "workers": 4,
+      "workload": "legacy-10x"
+    },
+    {
+      "cpu_median_seconds": 24.640625,
+      "cpu_utilization_percent": 431.308,
+      "mib_per_second": 10.234,
+      "peak_memory_mib": 376.629,
+      "profile": "off",
+      "units_per_second": 631.717,
+      "workers": 8,
+      "workload": "legacy-10x"
+    },
+    {
+      "cpu_median_seconds": 24.390625,
+      "cpu_utilization_percent": 439.788,
+      "mib_per_second": 10.542,
+      "peak_memory_mib": 376.883,
+      "profile": "on",
+      "units_per_second": 650.739,
+      "workers": 8,
+      "workload": "legacy-10x"
+    },
+    {
+      "cpu_median_seconds": 13.0625,
+      "cpu_utilization_percent": 97.671,
+      "mib_per_second": 4.279,
+      "peak_memory_mib": 104.461,
+      "profile": "off",
+      "units_per_second": 135.262,
+      "workers": 1,
+      "workload": "legacy-5x"
+    },
+    {
+      "cpu_median_seconds": 12.96875,
+      "cpu_utilization_percent": 98.742,
+      "mib_per_second": 4.358,
+      "peak_memory_mib": 104.5,
+      "profile": "on",
+      "units_per_second": 137.734,
+      "workers": 1,
+      "workload": "legacy-5x"
+    },
+    {
+      "cpu_median_seconds": 16.59375,
+      "cpu_utilization_percent": 157.049,
+      "mib_per_second": 5.417,
+      "peak_memory_mib": 354.527,
+      "profile": "off",
+      "units_per_second": 171.21,
+      "workers": 2,
+      "workload": "legacy-5x"
+    },
+    {
+      "cpu_median_seconds": 16.203125,
+      "cpu_utilization_percent": 153.715,
+      "mib_per_second": 5.43,
+      "peak_memory_mib": 354.809,
+      "profile": "on",
+      "units_per_second": 171.616,
+      "workers": 2,
+      "workload": "legacy-5x"
+    },
+    {
+      "cpu_median_seconds": 20.28125,
+      "cpu_utilization_percent": 315.367,
+      "mib_per_second": 8.9,
+      "peak_memory_mib": 355.059,
+      "profile": "off",
+      "units_per_second": 281.294,
+      "workers": 4,
+      "workload": "legacy-5x"
+    },
+    {
+      "cpu_median_seconds": 20.046875,
+      "cpu_utilization_percent": 313.968,
+      "mib_per_second": 8.964,
+      "peak_memory_mib": 354.527,
+      "profile": "on",
+      "units_per_second": 283.32,
+      "workers": 4,
+      "workload": "legacy-5x"
+    },
+    {
+      "cpu_median_seconds": 22.4375,
+      "cpu_utilization_percent": 478.616,
+      "mib_per_second": 12.209,
+      "peak_memory_mib": 355.324,
+      "profile": "off",
+      "units_per_second": 385.879,
+      "workers": 8,
+      "workload": "legacy-5x"
+    },
+    {
+      "cpu_median_seconds": 22.828125,
+      "cpu_utilization_percent": 478.878,
+      "mib_per_second": 12.006,
+      "peak_memory_mib": 354.977,
+      "profile": "on",
+      "units_per_second": 379.484,
+      "workers": 8,
+      "workload": "legacy-5x"
+    },
+    {
+      "cpu_median_seconds": 0.59375,
+      "cpu_utilization_percent": 93.799,
+      "mib_per_second": 0.39,
+      "peak_memory_mib": 89.473,
+      "profile": "off",
+      "units_per_second": 568.72,
+      "workers": 1,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "cpu_median_seconds": 0.609375,
+      "cpu_utilization_percent": 99.571,
+      "mib_per_second": 0.403,
+      "peak_memory_mib": 89.617,
+      "profile": "on",
+      "units_per_second": 588.235,
+      "workers": 1,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "cpu_median_seconds": 0.8125,
+      "cpu_utilization_percent": 116.237,
+      "mib_per_second": 0.353,
+      "peak_memory_mib": 329.539,
+      "profile": "off",
+      "units_per_second": 515.021,
+      "workers": 2,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "cpu_median_seconds": 0.78125,
+      "cpu_utilization_percent": 123.42,
+      "mib_per_second": 0.39,
+      "peak_memory_mib": 329.223,
+      "profile": "on",
+      "units_per_second": 568.72,
+      "workers": 2,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "cpu_median_seconds": 0.859375,
+      "cpu_utilization_percent": 146.152,
+      "mib_per_second": 0.419,
+      "peak_memory_mib": 330.137,
+      "profile": "off",
+      "units_per_second": 612.245,
+      "workers": 4,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "cpu_median_seconds": 0.890625,
+      "cpu_utilization_percent": 144.582,
+      "mib_per_second": 0.4,
+      "peak_memory_mib": 330.699,
+      "profile": "on",
+      "units_per_second": 584.416,
+      "workers": 4,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "cpu_median_seconds": 0.890625,
+      "cpu_utilization_percent": 176.711,
+      "mib_per_second": 0.489,
+      "peak_memory_mib": 330.766,
+      "profile": "off",
+      "units_per_second": 714.286,
+      "workers": 8,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "cpu_median_seconds": 0.921875,
+      "cpu_utilization_percent": 178.658,
+      "mib_per_second": 0.478,
+      "peak_memory_mib": 330.652,
+      "profile": "on",
+      "units_per_second": 697.674,
+      "workers": 8,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "cpu_median_seconds": 1.078125,
+      "cpu_utilization_percent": 13.41,
+      "mib_per_second": 0.005,
+      "peak_memory_mib": 84.156,
+      "profile": "off",
+      "units_per_second": 14.428,
+      "workers": 1,
+      "workload": "rnclab-git"
+    },
+    {
+      "cpu_median_seconds": 1.03125,
+      "cpu_utilization_percent": 12.918,
+      "mib_per_second": 0.005,
+      "peak_memory_mib": 84.207,
+      "profile": "on",
+      "units_per_second": 14.531,
+      "workers": 1,
+      "workload": "rnclab-git"
+    },
+    {
+      "cpu_median_seconds": 1.171875,
+      "cpu_utilization_percent": 19.145,
+      "mib_per_second": 0.007,
+      "peak_memory_mib": 314.344,
+      "profile": "off",
+      "units_per_second": 18.951,
+      "workers": 2,
+      "workload": "rnclab-git"
+    },
+    {
+      "cpu_median_seconds": 1.125,
+      "cpu_utilization_percent": 18.716,
+      "mib_per_second": 0.007,
+      "peak_memory_mib": 314.285,
+      "profile": "on",
+      "units_per_second": 19.298,
+      "workers": 2,
+      "workload": "rnclab-git"
+    },
+    {
+      "cpu_median_seconds": 1.265625,
+      "cpu_utilization_percent": 22.829,
+      "mib_per_second": 0.008,
+      "peak_memory_mib": 314.484,
+      "profile": "off",
+      "units_per_second": 20.924,
+      "workers": 4,
+      "workload": "rnclab-git"
+    },
+    {
+      "cpu_median_seconds": 1.34375,
+      "cpu_utilization_percent": 23.604,
+      "mib_per_second": 0.007,
+      "peak_memory_mib": 314.285,
+      "profile": "on",
+      "units_per_second": 20.376,
+      "workers": 4,
+      "workload": "rnclab-git"
+    },
+    {
+      "cpu_median_seconds": 1.375,
+      "cpu_utilization_percent": 30.028,
+      "mib_per_second": 0.009,
+      "peak_memory_mib": 314.898,
+      "profile": "off",
+      "units_per_second": 25.333,
+      "workers": 8,
+      "workload": "rnclab-git"
+    },
+    {
+      "cpu_median_seconds": 1.34375,
+      "cpu_utilization_percent": 29.225,
+      "mib_per_second": 0.009,
+      "peak_memory_mib": 314.656,
+      "profile": "on",
+      "units_per_second": 25.228,
+      "workers": 8,
+      "workload": "rnclab-git"
+    }
+  ],
+  "run_count": 208,
+  "scaling": [
+    {
+      "efficiency_w8": 0.334,
+      "profile": "off",
+      "speedup_w8": 2.673,
+      "w1": 15.273,
+      "w2": 11.899,
+      "w4": 7.419,
+      "w8": 5.713,
+      "workload": "legacy-10x"
+    },
+    {
+      "efficiency_w8": 0.349,
+      "profile": "on",
+      "speedup_w8": 2.789,
+      "w1": 15.468,
+      "w2": 11.889,
+      "w4": 7.521,
+      "w8": 5.546,
+      "workload": "legacy-10x"
+    },
+    {
+      "efficiency_w8": 0.357,
+      "profile": "off",
+      "speedup_w8": 2.853,
+      "w1": 13.374,
+      "w2": 10.566,
+      "w4": 6.431,
+      "w8": 4.688,
+      "workload": "legacy-5x"
+    },
+    {
+      "efficiency_w8": 0.344,
+      "profile": "on",
+      "speedup_w8": 2.755,
+      "w1": 13.134,
+      "w2": 10.541,
+      "w4": 6.385,
+      "w8": 4.767,
+      "workload": "legacy-5x"
+    },
+    {
+      "efficiency_w8": 0.157,
+      "profile": "off",
+      "speedup_w8": 1.256,
+      "w1": 0.633,
+      "w2": 0.699,
+      "w4": 0.588,
+      "w8": 0.504,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "efficiency_w8": 0.148,
+      "profile": "on",
+      "speedup_w8": 1.186,
+      "w1": 0.612,
+      "w2": 0.633,
+      "w4": 0.616,
+      "w8": 0.516,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "efficiency_w8": 0.22,
+      "profile": "off",
+      "speedup_w8": 1.756,
+      "w1": 8.04,
+      "w2": 6.121,
+      "w4": 5.544,
+      "w8": 4.579,
+      "workload": "rnclab-git"
+    },
+    {
+      "efficiency_w8": 0.217,
+      "profile": "on",
+      "speedup_w8": 1.736,
+      "w1": 7.983,
+      "w2": 6.011,
+      "w4": 5.693,
+      "w8": 4.598,
+      "workload": "rnclab-git"
+    }
+  ],
+  "schema": "rnc-cp4c-matrix0/1",
+  "summary": {
+    "accepted_measured_runs": 160,
+    "complete_configurations": 32,
+    "cp4b_equivalent": true,
+    "detection_equivalent": true,
+    "executive_outcome": "Matrix 0 completed with all configurations accepted and detection equivalence preserved.",
+    "expected_configurations": 32,
+    "expected_measured_runs": 160,
+    "median_profile_overhead_w8_percent": 1.05,
+    "profiles_valid": true,
+    "stable_configurations": 32,
+    "total_configurations_in_variability": 32,
+    "worst_w8_parallel_efficiency": 0.148
+  },
+  "variability": [
+    {
+      "profile": "off",
+      "stable": true,
+      "wall_cv": 0.027202,
+      "workers": 1,
+      "workload": "legacy-10x"
+    },
+    {
+      "profile": "on",
+      "stable": true,
+      "wall_cv": 0.052294,
+      "workers": 1,
+      "workload": "legacy-10x"
+    },
+    {
+      "profile": "off",
+      "stable": true,
+      "wall_cv": 0.037282,
+      "workers": 2,
+      "workload": "legacy-10x"
+    },
+    {
+      "profile": "on",
+      "stable": true,
+      "wall_cv": 0.035551,
+      "workers": 2,
+      "workload": "legacy-10x"
+    },
+    {
+      "profile": "off",
+      "stable": true,
+      "wall_cv": 0.041174,
+      "workers": 4,
+      "workload": "legacy-10x"
+    },
+    {
+      "profile": "on",
+      "stable": true,
+      "wall_cv": 0.047702,
+      "workers": 4,
+      "workload": "legacy-10x"
+    },
+    {
+      "profile": "off",
+      "stable": true,
+      "wall_cv": 0.04125,
+      "workers": 8,
+      "workload": "legacy-10x"
+    },
+    {
+      "profile": "on",
+      "stable": true,
+      "wall_cv": 0.035979,
+      "workers": 8,
+      "workload": "legacy-10x"
+    },
+    {
+      "profile": "off",
+      "stable": true,
+      "wall_cv": 0.026485,
+      "workers": 1,
+      "workload": "legacy-5x"
+    },
+    {
+      "profile": "on",
+      "stable": true,
+      "wall_cv": 0.030338,
+      "workers": 1,
+      "workload": "legacy-5x"
+    },
+    {
+      "profile": "off",
+      "stable": true,
+      "wall_cv": 0.032376,
+      "workers": 2,
+      "workload": "legacy-5x"
+    },
+    {
+      "profile": "on",
+      "stable": true,
+      "wall_cv": 0.023521,
+      "workers": 2,
+      "workload": "legacy-5x"
+    },
+    {
+      "profile": "off",
+      "stable": true,
+      "wall_cv": 0.043366,
+      "workers": 4,
+      "workload": "legacy-5x"
+    },
+    {
+      "profile": "on",
+      "stable": true,
+      "wall_cv": 0.025897,
+      "workers": 4,
+      "workload": "legacy-5x"
+    },
+    {
+      "profile": "off",
+      "stable": true,
+      "wall_cv": 0.026122,
+      "workers": 8,
+      "workload": "legacy-5x"
+    },
+    {
+      "profile": "on",
+      "stable": true,
+      "wall_cv": 0.049008,
+      "workers": 8,
+      "workload": "legacy-5x"
+    },
+    {
+      "profile": "off",
+      "stable": true,
+      "wall_cv": 0.052805,
+      "workers": 1,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "profile": "on",
+      "stable": true,
+      "wall_cv": 0.030115,
+      "workers": 1,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "profile": "off",
+      "stable": true,
+      "wall_cv": 0.097803,
+      "workers": 2,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "profile": "on",
+      "stable": true,
+      "wall_cv": 0.225102,
+      "workers": 2,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "profile": "off",
+      "stable": true,
+      "wall_cv": 0.199422,
+      "workers": 4,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "profile": "on",
+      "stable": true,
+      "wall_cv": 0.068566,
+      "workers": 4,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "profile": "off",
+      "stable": true,
+      "wall_cv": 0.131914,
+      "workers": 8,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "profile": "on",
+      "stable": true,
+      "wall_cv": 0.074785,
+      "workers": 8,
+      "workload": "rnclab-filesystem"
+    },
+    {
+      "profile": "off",
+      "stable": true,
+      "wall_cv": 0.046064,
+      "workers": 1,
+      "workload": "rnclab-git"
+    },
+    {
+      "profile": "on",
+      "stable": true,
+      "wall_cv": 0.015109,
+      "workers": 1,
+      "workload": "rnclab-git"
+    },
+    {
+      "profile": "off",
+      "stable": true,
+      "wall_cv": 0.031691,
+      "workers": 2,
+      "workload": "rnclab-git"
+    },
+    {
+      "profile": "on",
+      "stable": true,
+      "wall_cv": 0.024854,
+      "workers": 2,
+      "workload": "rnclab-git"
+    },
+    {
+      "profile": "off",
+      "stable": true,
+      "wall_cv": 0.064674,
+      "workers": 4,
+      "workload": "rnclab-git"
+    },
+    {
+      "profile": "on",
+      "stable": true,
+      "wall_cv": 0.041675,
+      "workers": 4,
+      "workload": "rnclab-git"
+    },
+    {
+      "profile": "off",
+      "stable": true,
+      "wall_cv": 0.050684,
+      "workers": 8,
+      "workload": "rnclab-git"
+    },
+    {
+      "profile": "on",
+      "stable": true,
+      "wall_cv": 0.042475,
+      "workers": 8,
+      "workload": "rnclab-git"
+    }
+  ]
+}

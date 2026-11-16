@@ -745,6 +745,7 @@ def run(
     compact: bool = False,
     benchmark_environment: str | None = None,
     stress_profile: str | None = None,
+    scanner_extra_args: tuple[str, ...] = (),
 ) -> dict:
     config = config or load_config(config_path)
     manifest = load_manifest(artifact_manifest or config.artifact.manifest)
@@ -755,6 +756,7 @@ def run(
             f"not {scanner!r}"
         )
     adapter = get_adapter(selected.scanner)
+    adapter.default_extra_args = tuple(scanner_extra_args)
     profile = load_profile(adapter, profile_name, scanner_config)
     benchmark_environment_record = performance.environment_for(
         benchmark_environment or config.benchmark_environment,
@@ -1076,6 +1078,7 @@ def run(
             "include_skipped": config.reports.include_skipped,
             "include_not_applicable": config.reports.include_not_applicable,
             "include_baseline_deltas": config.reports.include_baseline_deltas,
+            "scanner_extra_args": list(scanner_extra_args),
         },
     }
     if fatal_traceback:

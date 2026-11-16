@@ -81,11 +81,31 @@ class CliTests(unittest.TestCase):
                 "rnc-cp4a",
                 "--suites",
                 "rnclab",
+                "--scanner-args=--workers auto",
             ]
         )
         self.assertEqual(args.build, "rnc-cp4a")
+        self.assertEqual(args.scanner_args, "--workers auto")
         self.assertFalse(hasattr(args, "commit"))
         self.assertFalse(hasattr(args, "repo"))
+
+    def test_detection_gaps_cli_accepts_retained_evidence_options(self):
+        parser = build_parser()
+        args = parser.parse_args(
+            [
+                "detection-gaps",
+                "--scanners",
+                "cp4c,v14",
+                "--comparators",
+                "gitleaks,betterleaks",
+                "--out-dir",
+                "reports/detection-gaps",
+            ]
+        )
+        self.assertEqual(args.command, "detection-gaps")
+        self.assertEqual(args.scanners, "cp4c,v14")
+        self.assertEqual(args.out_dir, "reports/detection-gaps")
+        self.assertFalse(hasattr(args, "commit"))
 
     def test_unknown_config_is_a_harness_error(self):
         with tempfile.TemporaryDirectory() as tmp:

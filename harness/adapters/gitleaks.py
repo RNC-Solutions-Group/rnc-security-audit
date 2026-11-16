@@ -90,7 +90,7 @@ class GitleaksAdapter(ScannerAdapter):
         )
         if config is not None:
             argv.extend(["--config", str(Path(config).resolve())])
-        argv.extend(extra_args)
+        argv.extend((*self.default_extra_args, *extra_args))
         invocation = run_process(
             argv,
             binary_path=str(binary),
@@ -176,7 +176,7 @@ class GitleaksAdapter(ScannerAdapter):
         )
         if config is not None:
             argv.extend(["--config", "/config.toml"])
-        argv.extend(extra_args)
+        argv.extend((*self.default_extra_args, *extra_args))
         try:
             invocation = run_process(
                 argv,

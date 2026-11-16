@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shlex
 import sys
 from dataclasses import replace
 from pathlib import Path
@@ -100,6 +101,7 @@ def _experiment(args: argparse.Namespace) -> int:
     from .experiment import run as run_experiment
 
     config = load_config(args.config)
+    scanner_extra_args = tuple(shlex.split(args.scanner_args or ""))
     if args.out_dir:
         config = replace(
             config,
@@ -134,6 +136,7 @@ def _experiment(args: argparse.Namespace) -> int:
         compact=args.compact,
         benchmark_environment=args.benchmark_environment,
         stress_profile=args.stress_profile,
+        scanner_extra_args=scanner_extra_args,
     )
     if config.reports.console:
         print(document["_paths"]["console"])
@@ -146,6 +149,64 @@ def _interactive(args: argparse.Namespace) -> int:
     from .interactive import run_interactive
 
     return run_interactive(config_path=args.config, offline=args.offline)
+
+
+def _matrix(args: argparse.Namespace) -> int:
+    from . import cp4c_matrix
+
+    command = [
+        "python",
+        "-m",
+        "harness",
+        "matrix",
+        "--experiment",
+        args.experiment,
+        "--out-dir",
+        args.out_dir,
+        "--cache-dir",
+        args.cache_dir,
+        "--build",
+        args.build,
+        "--cp4b-build",
+        args.cp4b_build,
+        "--seed",
+        str(args.seed),
+        "--repetitions",
+        str(args.repetitions),
+    ]
+    if args.artifact_manifest:
+        command.extend(["--artifact-manifest", args.artifact_manifest])
+    if args.resume:
+        command.append("--resume")
+    if args.report_only:
+        command.append("--report-only")
+    if args.reference_only:
+        command.append("--reference-only")
+    document = cp4c_matrix.run_matrix(
+        out_dir=Path(args.out_dir),
+        cache_dir=Path(args.cache_dir),
+        manifest_path=Path(args.artifact_manifest) if args.artifact_manifest else None,
+        build_id=args.build,
+        cp4b_build_id=args.cp4b_build,
+        seed=args.seed,
+        repetitions=args.repetitions,
+        resume=args.resume,
+        report_only=args.report_only,
+        reference_only=args.reference_only,
+        command=command,
+    )
+    if args.report_only:
+        print(Path(args.out_dir) / "matrix0-summary.md")
+    elif args.reference_only:
+        print("Matrix 0 reference equivalence: PASS")
+        print(Path(args.out_dir) / "matrix0-reference.json")
+    else:
+        print(
+            f"Matrix 0: {document['summary']['executive_outcome']}\n"
+            f"Report: {Path(args.out_dir) / 'matrix0-summary.md'}"
+        )
+    return 0
+
 
 
 def _synthetic(args: argparse.Namespace) -> int:
@@ -166,6 +227,76 @@ def _synthetic(args: argparse.Namespace) -> int:
     if markdown_path:
         print(f"Markdown: {markdown_path}")
     return 0 if summary["incorrect"] == 0 else 1
+
+
+def _detection_gaps(args: argparse.Namespace) -> int:
+    from .detection_gaps import (
+        SourceResolver,
+        analyse_scanner,
+        build_cross_scanner,
+        generate_reports,
+        load_canonical_targets,
+        load_scanner_evidence,
+    )
+    from .detection_gaps.analysis import load_cp4c_rules
+    from .detection_gaps.sources import find_report, repo_root
+
+    root = repo_root()
+    cache = Path(args.cache_dir).expanduser()
+    rnclab_root = Path(args.rnclab_root).expanduser() if args.rnclab_root else cache / "rnc-synth-lab"
+    levain_root = Path(args.levain_root).expanduser() if args.levain_root else cache / "levain"
+    if args.leaky_root:
+        leaky_root = Path(args.leaky_root).expanduser()
+    else:
+        candidates = sorted((cache / "leaky-repo").glob("*/source"))
+        if not candidates:
+            raise HarnessError("Leaky Repo source cache is missing; pass --leaky-root")
+        leaky_root = candidates[-1]
+    leaky_truth = Path(args.leaky_truth).expanduser() if args.leaky_truth else root / "datasets" / "leaky-repo.rnc-truth.json"
+    leaky_oracle = Path(args.leaky_oracle).expanduser() if args.leaky_oracle else root / "datasets" / "leaky-repo.history-oracle.json"
+    selected = [item.strip() for item in (args.scanners or "cp4c,v14,v16").split(",") if item.strip()]
+    comparators = [item.strip() for item in (args.comparators or "gitleaks,betterleaks").split(",") if item.strip()]
+    allowed = {"cp4c", "v14", "v16", "gitleaks", "betterleaks"}
+    unknown = [item for item in [*selected, *comparators] if item not in allowed]
+    if unknown:
+        raise HarnessError(f"unknown scanner key(s): {', '.join(unknown)}")
+    report_paths = {
+        "cp4c": args.cp4c_report,
+        "v14": args.v14_report,
+        "v16": args.v16_report,
+        "gitleaks": args.gitleaks_report,
+        "betterleaks": args.betterleaks_report,
+    }
+    resolver = SourceResolver(rnclab_root=rnclab_root, leaky_root=leaky_root, levain_root=levain_root)
+    targets = load_canonical_targets(
+        rnclab_root=rnclab_root,
+        leaky_root=leaky_root,
+        levain_root=levain_root,
+        leaky_truth=leaky_truth,
+        leaky_oracle=leaky_oracle,
+        resolver=resolver,
+    )
+    all_evidence = {
+        key: load_scanner_evidence(key, find_report(key, report_paths.get(key)), targets)
+        for key in dict.fromkeys([*selected, *comparators])
+    }
+    rules_path = Path(args.cp4c_rules).expanduser() if args.cp4c_rules else root / "run" / "rules" / "rnc-cp4c-providers-v1.json"
+    cp4c_rules = load_cp4c_rules(rules_path)
+    analyses = {
+        key: analyse_scanner(evidence, targets, cp4c_rules, all_evidence)
+        for key, evidence in all_evidence.items()
+    }
+    cross = build_cross_scanner(analyses, targets)
+    written = generate_reports(analyses=analyses, cross=cross, output_dir=Path(args.out_dir).expanduser())
+    print(f"Target universe: {len(targets)}")
+    for key in selected:
+        if key in analyses:
+            summary = analyses[key]["stats"]
+            print(f"{analyses[key]['label']}: {summary['matched']}/{summary['expected']} matched, {summary['missed']} missed")
+    print(f"All-scanner common misses: {cross['counts']['all_scanner_misses']}")
+    print(f"Reports: {Path(args.out_dir).expanduser()}")
+    print(f"Validation: {written['validation']}")
+    return 0
 
 
 def _rescore_history(args: argparse.Namespace) -> int:
@@ -263,6 +394,11 @@ def build_parser() -> argparse.ArgumentParser:
     experiment_parser.add_argument(
         "--scanner-config", default=None, help="CUSTOM profile scanner configuration"
     )
+    experiment_parser.add_argument(
+        "--scanner-args",
+        default=None,
+        help="experiment-owned extra scanner arguments as a shell-like string, e.g. \"--workers auto\"",
+    )
     experiment_parser.add_argument("--config", default=None, help="harness TOML configuration")
     experiment_parser.add_argument("--warmups", type=int, default=None)
     experiment_parser.add_argument("--runs", type=int, default=None)
@@ -293,6 +429,27 @@ def build_parser() -> argparse.ArgumentParser:
     experiment_parser.add_argument("--name", default=None, help="report stem prefix")
     experiment_parser.set_defaults(func=_experiment)
 
+    gaps_parser = subparsers.add_parser(
+        "detection-gaps",
+        help="generate target-level detection-gap reports from retained current-scoring evidence",
+    )
+    gaps_parser.add_argument("--out-dir", default="reports/detection-gaps")
+    gaps_parser.add_argument("--cache-dir", default=str(DEFAULT_CACHE))
+    gaps_parser.add_argument("--scanners", default="cp4c,v14,v16")
+    gaps_parser.add_argument("--comparators", default="gitleaks,betterleaks")
+    gaps_parser.add_argument("--cp4c-report", default=None)
+    gaps_parser.add_argument("--v14-report", default=None)
+    gaps_parser.add_argument("--v16-report", default=None)
+    gaps_parser.add_argument("--gitleaks-report", default=None)
+    gaps_parser.add_argument("--betterleaks-report", default=None)
+    gaps_parser.add_argument("--rnclab-root", default=None)
+    gaps_parser.add_argument("--leaky-root", default=None)
+    gaps_parser.add_argument("--levain-root", default=None)
+    gaps_parser.add_argument("--leaky-truth", default=None)
+    gaps_parser.add_argument("--leaky-oracle", default=None)
+    gaps_parser.add_argument("--cp4c-rules", default=None)
+    gaps_parser.set_defaults(func=_detection_gaps)
+
     rescore_parser = subparsers.add_parser(
         "rescore-history",
         help="rescore retained Leaky Repo history findings without rerunning a scanner",
@@ -317,6 +474,26 @@ def build_parser() -> argparse.ArgumentParser:
     )
     synthetic_parser.add_argument("--out-dir", default="reports/cp1d")
     synthetic_parser.set_defaults(func=_synthetic)
+
+    matrix_parser = subparsers.add_parser(
+        "matrix", help="run or report the CP4C Matrix 0 worker/profiler experiment"
+    )
+    matrix_parser.add_argument("--experiment", choices=("cp4c",), default="cp4c")
+    matrix_parser.add_argument(
+        "--out-dir", default="run/reports/cp4c-matrix0"
+    )
+    matrix_parser.add_argument(
+        "--cache-dir", default="datasets/cache/rnc-synth-lab"
+    )
+    matrix_parser.add_argument("--artifact-manifest", default=None)
+    matrix_parser.add_argument("--build", default="rnc-cp4c")
+    matrix_parser.add_argument("--cp4b-build", default="rnc-cp4b")
+    matrix_parser.add_argument("--seed", type=int, default=20261115)
+    matrix_parser.add_argument("--repetitions", type=int, default=5)
+    matrix_parser.add_argument("--resume", action="store_true")
+    matrix_parser.add_argument("--report-only", action="store_true")
+    matrix_parser.add_argument("--reference-only", action="store_true")
+    matrix_parser.set_defaults(func=_matrix)
     return parser
 
 

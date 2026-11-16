@@ -225,6 +225,10 @@ class ScannerAdapter(ABC):
     def __init__(self) -> None:
         self.run_id: str = f"adhoc-{uuid.uuid4().hex[:8]}"
         self.invocations: list[dict] = []
+        # Optional experiment-owned scanner flags (for example RNC CP4C
+        # ``--workers auto``).  Empty by default so adapter behavior is
+        # unchanged unless an experiment explicitly opts in.
+        self.default_extra_args: tuple[str, ...] = ()
 
     def bind_run(self, run_id: str) -> None:
         """Bind run-owned Docker labels and names without changing the contract."""

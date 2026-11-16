@@ -1,0 +1,218 @@
+{
+  "analysis_version": "1.0.0",
+  "generated_at": "2026-11-16T03:08:16+00:00",
+  "scanner_summaries": {
+    "cp4c": "cp4c/cp4c-summary.json",
+    "v14": "rnc-mod-v14/v14-summary.json",
+    "v16": "rnc-mod-v16/v16-summary.json"
+  },
+  "schema_version": 1,
+  "validation": {
+    "all_missed_targets_have_evidence": true,
+    "all_root_causes_reconcile": true,
+    "all_scanner_counts_reconcile": true,
+    "archives_not_treated_as_members": true,
+    "category_partition": {
+      "by_category": {
+        "api_key": 37,
+        "hmac_secret": 121,
+        "informative_reference": 87,
+        "otp_seed": 12,
+        "password": 549,
+        "payment_data": 2,
+        "private_key": 49,
+        "provider_token": 248,
+        "unknown_credential": 20
+      },
+      "expected": 1125,
+      "sums_to_target_universe": true
+    },
+    "category_percentages_use_lane_denominators": true,
+    "container_partition": {
+      "archive_members": 10,
+      "binary_files": 4,
+      "by_container": {
+        "archive_member": 10,
+        "binary_file": 4,
+        "database_record": 12,
+        "git_blob": 225,
+        "ordinary_file": 874
+      },
+      "database_records": 12,
+      "not_treated_as_plaintext": 26
+    },
+    "cross_scanner_counts": {
+      "all_scanner_misses": 368,
+      "betterleaks_only_vs_cp4c_v14": 26,
+      "missed_by": {
+        "betterleaks": 408,
+        "cp4c": 555,
+        "gitleaks": 536,
+        "v14": 534,
+        "v16": 533
+      },
+      "missing_both": {
+        "cp4c_v14": 395,
+        "cp4c_v16": 394,
+        "v14_v16": 533
+      },
+      "only_missed": {
+        "betterleaks": 5,
+        "cp4c": 158,
+        "gitleaks": 0,
+        "v14": 0,
+        "v16": 0
+      },
+      "unique_successes": {
+        "betterleaks": 26,
+        "cp4c": 30,
+        "gitleaks": 0,
+        "v14": 0,
+        "v16": 1
+      }
+    },
+    "empty_evidence_targets": [],
+    "generator_mode": "read-only over retained reports and frozen oracles",
+    "informative_references_separated": true,
+    "oracle_or_scoring_changed": false,
+    "private_key_substitution_rejected": true,
+    "reconstructed_counts": {
+      "betterleaks": {
+        "expected": 1125,
+        "matched": 717,
+        "matched_by_lane": {
+          "leaky_filesystem": 37,
+          "leaky_git": 36,
+          "levain": 48,
+          "rnclab_filesystem": 438,
+          "rnclab_git": 158
+        },
+        "missed": 408,
+        "report_metrics": {
+          "leaky_filesystem": 37,
+          "leaky_git": 36,
+          "levain": 48,
+          "rnclab_filesystem": 438,
+          "rnclab_git": 158
+        },
+        "root_cause_total": 408,
+        "root_causes_reconcile": true
+      },
+      "cp4c": {
+        "expected": 1125,
+        "matched": 570,
+        "matched_by_lane": {
+          "leaky_filesystem": 32,
+          "leaky_git": 28,
+          "levain": 43,
+          "rnclab_filesystem": 347,
+          "rnclab_git": 120
+        },
+        "missed": 555,
+        "report_metrics": {
+          "leaky_filesystem": 32,
+          "leaky_git": 28,
+          "levain": 43,
+          "rnclab_filesystem": 347,
+          "rnclab_git": 120
+        },
+        "root_cause_total": 555,
+        "root_causes_reconcile": true
+      },
+      "gitleaks": {
+        "expected": 1125,
+        "matched": 589,
+        "matched_by_lane": {
+          "leaky_filesystem": 22,
+          "leaky_git": 21,
+          "levain": 47,
+          "rnclab_filesystem": 369,
+          "rnclab_git": 130
+        },
+        "missed": 536,
+        "report_metrics": {
+          "leaky_filesystem": 22,
+          "leaky_git": 21,
+          "levain": 47,
+          "rnclab_filesystem": 369,
+          "rnclab_git": 130
+        },
+        "root_cause_total": 536,
+        "root_causes_reconcile": true
+      },
+      "v14": {
+        "expected": 1125,
+        "matched": 591,
+        "matched_by_lane": {
+          "leaky_filesystem": 22,
+          "leaky_git": 21,
+          "levain": 49,
+          "rnclab_filesystem": 369,
+          "rnclab_git": 130
+        },
+        "missed": 534,
+        "report_metrics": {
+          "leaky_filesystem": 22,
+          "leaky_git": 21,
+          "levain": 49,
+          "rnclab_filesystem": 369,
+          "rnclab_git": 130
+        },
+        "root_cause_total": 534,
+        "root_causes_reconcile": true
+      },
+      "v16": {
+        "expected": 1125,
+        "matched": 592,
+        "matched_by_lane": {
+          "leaky_filesystem": 22,
+          "leaky_git": 21,
+          "levain": 50,
+          "rnclab_filesystem": 369,
+          "rnclab_git": 130
+        },
+        "missed": 533,
+        "report_metrics": {
+          "leaky_filesystem": 22,
+          "leaky_git": 21,
+          "levain": 50,
+          "rnclab_filesystem": 369,
+          "rnclab_git": 130
+        },
+        "root_cause_total": 533,
+        "root_causes_reconcile": true
+      }
+    },
+    "risk_partition": {
+      "informative": 87,
+      "risk_bearing": 1038,
+      "sums_to_target_universe": true
+    },
+    "target_universe": {
+      "by_lane": {
+        "leaky_filesystem": 175,
+        "leaky_git": 65,
+        "levain": 85,
+        "rnclab_filesystem": 640,
+        "rnclab_git": 160
+      },
+      "observed_by_lane": {
+        "leaky_filesystem": 175,
+        "leaky_git": 65,
+        "levain": 85,
+        "rnclab_filesystem": 640,
+        "rnclab_git": 160
+      },
+      "sum_matches_expected": true,
+      "total": 1125
+    },
+    "unique_identity_checks": {
+      "leaky_git_occurrences": 65,
+      "leaky_git_unique_groups": 53,
+      "leaky_git_unique_groups_expected": 53,
+      "rnclab_occurrences": 800,
+      "rnclab_unique_groups": 496,
+      "rnclab_unique_groups_expected": 496
+    }
+  }
+}

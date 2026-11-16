@@ -702,6 +702,7 @@ class RNCAdapterTests(unittest.TestCase):
             )
             adapter._rules_path = rules_path
             adapter._history_supported = True
+            adapter.default_extra_args = ("--workers", "auto")
             fake = execution.Invocation(
                 binary_path="rnc",
                 binary_sha256="a" * 64,
@@ -727,6 +728,7 @@ class RNCAdapterTests(unittest.TestCase):
                 self.assertIn("--history", argv)
                 self.assertIn("--ref", argv)
                 self.assertEqual(argv[argv.index("--ref") + 1], "HEAD")
+                self.assertEqual(argv[argv.index("--workers") + 1], "auto")
 
             image = "rnc-test-image"
             with patch("harness.adapters.rnc.run_process", return_value=fake) as run:
@@ -743,6 +745,7 @@ class RNCAdapterTests(unittest.TestCase):
                 self.assertEqual(argv[argv.index("--network") + 1], "none")
                 self.assertIn("target=/scan,readonly", " ".join(argv))
                 self.assertIn("HOME=/tmp", argv)
+                self.assertEqual(argv[argv.index("--workers") + 1], "auto")
 
     def test_manifest_rules_are_used_without_a_source_checkout(self):
         adapter = get_adapter("rnc")
