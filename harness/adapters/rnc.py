@@ -729,6 +729,7 @@ class RNCAdapter(ScannerAdapter):
                 "private",
                 "--run-id",
                 str(self.run_id),
+                *self.default_extra_args,
                 *extra_args,
             ]
         )
@@ -835,6 +836,7 @@ class RNCAdapter(ScannerAdapter):
                 "private",
                 "--run-id",
                 str(self.run_id),
+                *self.default_extra_args,
                 *extra_args,
             ]
         )

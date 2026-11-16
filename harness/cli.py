@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shlex
 import sys
 from dataclasses import replace
 from pathlib import Path
@@ -100,6 +101,7 @@ def _experiment(args: argparse.Namespace) -> int:
     from .experiment import run as run_experiment
 
     config = load_config(args.config)
+    scanner_extra_args = tuple(shlex.split(args.scanner_args or ""))
     if args.out_dir:
         config = replace(
             config,
@@ -134,6 +136,7 @@ def _experiment(args: argparse.Namespace) -> int:
         compact=args.compact,
         benchmark_environment=args.benchmark_environment,
         stress_profile=args.stress_profile,
+        scanner_extra_args=scanner_extra_args,
     )
     if config.reports.console:
         print(document["_paths"]["console"])
@@ -320,6 +323,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     experiment_parser.add_argument(
         "--scanner-config", default=None, help="CUSTOM profile scanner configuration"
+    )
+    experiment_parser.add_argument(
+        "--scanner-args",
+        default=None,
+        help="experiment-owned extra scanner arguments as a shell-like string, e.g. \"--workers auto\"",
     )
     experiment_parser.add_argument("--config", default=None, help="harness TOML configuration")
     experiment_parser.add_argument("--warmups", type=int, default=None)

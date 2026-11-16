@@ -205,6 +205,9 @@ python -m harness experiment `
 # Certified RNC Synthetic Secrets Lab v3, including 5x/10x load profiles.
 python -m harness experiment --build rnc-cp4a --platforms windows-amd64 --suites rnclab --warmups 1 --runs 5
 
+# CP4C with the requested explicit worker mode, no profiler.
+python -m harness experiment --build rnc-cp4c --platforms windows-amd64 --suites levain,leaky-repo,rnclab --warmups 1 --runs 3 "--scanner-args=--workers auto"
+
 # Gitleaks functional fixtures only; no performance workload.
 python -m harness experiment --build gitleaks-5f6ec56 --platforms docker-linux-amd64 --suites gitleaks
 

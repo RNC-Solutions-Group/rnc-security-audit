@@ -81,9 +81,11 @@ class CliTests(unittest.TestCase):
                 "rnc-cp4a",
                 "--suites",
                 "rnclab",
+                "--scanner-args=--workers auto",
             ]
         )
         self.assertEqual(args.build, "rnc-cp4a")
+        self.assertEqual(args.scanner_args, "--workers auto")
         self.assertFalse(hasattr(args, "commit"))
         self.assertFalse(hasattr(args, "repo"))
 
