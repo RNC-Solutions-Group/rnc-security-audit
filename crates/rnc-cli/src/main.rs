@@ -27,7 +27,7 @@ Scan options:
   --max-history-commits N       Fail closed beyond this commit count
   --max-history-units N         Fail closed beyond this commit/path revision count
   --workers 1|2|4|8|auto        Configurable scan workers (default: 1)
-  --git-io process|batch        Git object acquisition strategy (default: process)
+  --git-io process|batch        Git object acquisition strategy (default: batch)
   --history-mode whole|diff     Full revisions or introduced-line scanning
   --context-lines 0|1|3|5       Diff context; requires --history-mode diff
   --profile-output PATH         Opt-in JSON performance profile (outside root)
@@ -282,7 +282,7 @@ fn parse_scan_args(arguments: &[String]) -> Result<ScanArgs, String> {
             return Err("--context-lines requires --history-mode diff".to_string());
         }
     }
-    let git_io = git_io.unwrap_or(GitIoMode::Process);
+    let git_io = git_io.unwrap_or(GitIoMode::Batch);
     let history_mode = history_mode.unwrap_or(GitHistoryMode::Whole);
     if context_lines.is_some() && history_mode != GitHistoryMode::Diff {
         return Err("--context-lines requires --history-mode diff".to_string());
@@ -792,6 +792,16 @@ mod tests {
         assert_eq!(parsed.context_lines, 3);
         assert_eq!(parsed.workers, WorkerSetting::Auto);
         assert_eq!(parsed.profile_output, Some(PathBuf::from("profile.json")));
+    }
+
+    #[test]
+    fn history_defaults_to_batch_object_acquisition() {
+        let mut args = base_args();
+        args.push("--history".to_string());
+        let parsed = parse_scan_args(&args).expect("valid history arguments");
+        assert_eq!(parsed.git_io, GitIoMode::Batch);
+        assert_eq!(parsed.history_mode, GitHistoryMode::Whole);
+        assert_eq!(parsed.workers, WorkerSetting::Fixed(1));
     }
 
     #[test]

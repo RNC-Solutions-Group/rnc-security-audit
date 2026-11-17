@@ -177,7 +177,7 @@ fn hex_lengths_and_qualified_names_are_contextually_classified() {
     ] {
         let finding = value_bytes(&findings, value);
         assert_eq!(finding.rule_id, "generic-secret-assignment");
-        assert_eq!(finding.rule_version, "2026.11.5");
+        assert_eq!(finding.rule_version, "2026.11.6");
         assert_eq!(finding.confidence, "low");
         assert!(finding
             .validation

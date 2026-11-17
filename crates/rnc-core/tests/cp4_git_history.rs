@@ -697,7 +697,7 @@ fn history_applies_contextual_generic_validation() {
                     .expect("unit");
                 assert_eq!(unit.locator, format!("commit/{introduced}/config.env"));
                 assert_eq!(finding.rule_id, "generic-secret-assignment");
-                assert_eq!(finding.rule_version, "2026.11.5");
+                assert_eq!(finding.rule_version, "2026.11.6");
                 assert_eq!(finding.evidence_digest, evidence(value));
                 assert_eq!(
                     finding.finding_id,

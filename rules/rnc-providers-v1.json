@@ -1,7 +1,7 @@
 {
   "schema_version": "0.2.0",
   "ruleset_id": "rnc-providers-v1",
-  "ruleset_version": "2026.11.5",
+  "ruleset_version": "2026.11.6",
   "rules": [
     {
       "rule_id": "aws-access-key-id",
@@ -496,13 +496,13 @@
     },
     {
       "rule_id": "generic-secret-assignment",
-      "rule_version": "2026.11.5",
+      "rule_version": "2026.11.6",
       "category": "generic-credential",
       "provider": "generic",
       "family": "generic-secret-assignment",
       "credential_type": "assigned-secret",
       "context": "assignment",
-      "pattern": "(?i-u)(?:^|[\\r\\n;{,<(]|[ \\t]{1,8}(?:const|let|var|static|final|public|private|protected|String|char|SET)[ \\t]{1,8}|[ \\t]{1,8})[ \\t]{0,8}(?:export[ \\t]{1,8})?(?:-e[ \\t]{1,8})?(?:define[ \\t]{0,8}\\([ \\t]{0,8})?(?:(?:const|let|var|static|final|public|private|protected|String|char|string|bytes32)[ \\t]{1,8}){0,3}[ \\t]{0,8}-?[ \\t]{0,8}(?:\\$|@)?[\"']?([A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET[_-]?(?:KEY|TOKEN|VALUE)|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|BEARER[_-]?TOKEN|PRIVATE[_-]?KEY|CREDENTIALS?)(?:(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))|(?:[_-]?BASE))?[0-9]{0,2})[\"']?[ \\t]{0,8}(?:\\][ \\t]{0,8})?(?::=|=>|=|:|,)[ \\t]{0,8}(\"((?:\\\\.|[^\"\\\\\\r\\n]){6,512})\"|'((?:\\\\.|[^'\\\\\\r\\n]){6,512})'|`((?:\\\\.|[^`\\\\\\r\\n]){6,512})`|([^\\s\"\\'#,;)\\]}>]{6,512}))",
+      "pattern": "(?i-u)(?:^|[\\r\\n;{,<(]|[ \\t]{1,8}(?:const|let|var|static|final|public|private|protected|String|char|SET)[ \\t]{1,8}|[ \\t]{1,8})[ \\t]{0,8}(?:export[ \\t]{1,8})?(?:-e[ \\t]{1,8})?(?:define[ \\t]{0,8}\\([ \\t]{0,8})?(?:(?:const|let|var|static|final|public|private|protected|String|char|string|bytes32)[ \\t]{1,8}){0,3}[ \\t]{0,8}-?[ \\t]{0,8}(?:\\$|@)?[\"']?([A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET[_-]?(?:KEY|TOKEN|VALUE)|SIGNING[_-]?KEY|HMAC[_-]?(?:KEY|SECRET)|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|BEARER[_-]?TOKEN|PRIVATE[_-]?KEY|CREDENTIALS?)(?:(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))|(?:[_-]?BASE))?[0-9]{0,2})[\"']?[ \\t]{0,8}(?:\\][ \\t]{0,8})?(?::=|=>|=|:|,)[ \\t]{0,8}(\"((?:\\\\.|[^\"\\\\\\r\\n]){6,512})\"|'((?:\\\\.|[^'\\\\\\r\\n]){6,512})'|`((?:\\\\.|[^`\\\\\\r\\n]){6,512})`|([^\\s\"\\'#,;)\\]}>]{6,512}))",
       "capture_group": 2,
       "validators": [
         "ASCII_ONLY",
@@ -530,13 +530,13 @@
     },
     {
       "rule_id": "generic-array-assignment",
-      "rule_version": "2026.11.5",
+      "rule_version": "2026.11.6",
       "category": "generic-credential",
       "provider": "generic",
       "family": "generic-assignment",
       "credential_type": "assigned-secret",
       "context": "assignment",
-      "pattern": "(?i-u)(?:^|[\\r\\n;{,<(]|\\[)[ \\t]{0,8}[\"\\']?([A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET[_-]?(?:KEY|TOKEN|VALUE)|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|BEARER[_-]?TOKEN|PRIVATE[_-]?KEY|CREDENTIALS?)(?:(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))|(?:[_-]?BASE))?[0-9]{0,2})[\"\\']?[ \\t]{0,8}\\][ \\t]{0,8}(?::=|=>|=)[ \\t]{0,8}(\"((?:\\\\.|[^\"\\\\\\r\\n]){6,512})\"|'((?:\\\\.|[^'\\\\\\r\\n]){6,512})'|`((?:\\\\.|[^`\\\\\\r\\n]){6,512})`|([^\\s\"'#,;)\\]}>]{6,512}))",
+      "pattern": "(?i-u)(?:^|[\\r\\n;{,<(]|\\[)[ \\t]{0,8}[\"\\']?([A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET[_-]?(?:KEY|TOKEN|VALUE)|SIGNING[_-]?KEY|HMAC[_-]?(?:KEY|SECRET)|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|BEARER[_-]?TOKEN|PRIVATE[_-]?KEY|CREDENTIALS?)(?:(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))|(?:[_-]?BASE))?[0-9]{0,2})[\"\\']?[ \\t]{0,8}\\][ \\t]{0,8}(?::=|=>|=)[ \\t]{0,8}(\"((?:\\\\.|[^\"\\\\\\r\\n]){6,512})\"|'((?:\\\\.|[^'\\\\\\r\\n]){6,512})'|`((?:\\\\.|[^`\\\\\\r\\n]){6,512})`|([^\\s\"'#,;)\\]}>]{6,512}))",
       "capture_group": 2,
       "value_capture_groups": [
         3,
@@ -566,7 +566,7 @@
       "category": "generic-credential",
       "provider": "generic",
       "family": "generic-assignment",
-      "rule_version": "2026.11.5",
+      "rule_version": "2026.11.6",
       "confidence": "low",
       "max_match_bytes": 8192,
       "max_candidate_bytes": 6000,
@@ -583,7 +583,7 @@
       "rule_id": "generic-multiline-assignment",
       "credential_type": "multiline-assigned-secret",
       "context": "assignment",
-      "pattern": "(?i-u)(?:^|[\\r\\n;{,<(]|[ \\t]{1,8}(?:const|let|var|static|final|public|private|protected|String|char|SET)[ \\t]{1,8}|[ \\t]{1,8})[ \\t]{0,8}(?:export[ \\t]{1,8})?(?:-e[ \\t]{1,8})?(?:define[ \\t]{0,8}\\([ \\t]{0,8})?(?:(?:const|let|var|static|final|public|private|protected|String|char|string|bytes32)[ \\t]{1,8}){0,3}[ \\t]{0,8}-?[ \\t]{0,8}(?:\\$|@)?[\"']?([A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET[_-]?(?:KEY|TOKEN|VALUE)|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|BEARER[_-]?TOKEN|PRIVATE[_-]?KEY|CREDENTIALS?)(?:(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))|(?:[_-]?BASE))?[0-9]{0,2})[\"']?[ \\t]{0,8}(?:\\][ \\t]{0,8})?(?::=|=>|=|:|,)[ \\t]{0,8}[|>][-+]?\\r?\\n((?:[ \\t]{1,256}[^\\r\\n]{1,256}\\r?\\n){1,10})",
+      "pattern": "(?i-u)(?:^|[\\r\\n;{,<(]|[ \\t]{1,8}(?:const|let|var|static|final|public|private|protected|String|char|SET)[ \\t]{1,8}|[ \\t]{1,8})[ \\t]{0,8}(?:export[ \\t]{1,8})?(?:-e[ \\t]{1,8})?(?:define[ \\t]{0,8}\\([ \\t]{0,8})?(?:(?:const|let|var|static|final|public|private|protected|String|char|string|bytes32)[ \\t]{1,8}){0,3}[ \\t]{0,8}-?[ \\t]{0,8}(?:\\$|@)?[\"']?([A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET[_-]?(?:KEY|TOKEN|VALUE)|SIGNING[_-]?KEY|HMAC[_-]?(?:KEY|SECRET)|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|BEARER[_-]?TOKEN|PRIVATE[_-]?KEY|CREDENTIALS?)(?:(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))|(?:[_-]?BASE))?[0-9]{0,2})[\"']?[ \\t]{0,8}(?:\\][ \\t]{0,8})?(?::=|=>|=|:|,)[ \\t]{0,8}[|>][-+]?\\r?\\n((?:[ \\t]{1,256}[^\\r\\n]{1,256}\\r?\\n){1,10})",
       "capture_group": 2,
       "validators": [
         "ASCII_ONLY",
@@ -595,7 +595,7 @@
       "category": "generic-credential",
       "provider": "generic",
       "family": "generic-assignment",
-      "rule_version": "2026.11.5",
+      "rule_version": "2026.11.6",
       "confidence": "low",
       "max_match_bytes": 4096,
       "max_candidate_bytes": 1200,
@@ -612,7 +612,7 @@
       "rule_id": "generic-xml-assignment",
       "credential_type": "assigned-secret",
       "context": "assignment",
-      "pattern": "(?i-u)<([A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET[_-]?(?:KEY|TOKEN|VALUE)|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|CREDENTIALS?)(?:(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))|(?:[_-]?BASE))?[0-9]{0,2})[ \\t]{0,8}>[ \\t]{0,8}([^<\\r\\n]{6,512})[ \\t]{0,8}</",
+      "pattern": "(?i-u)<([A-Z0-9_.-]{0,64}(?:PASSWORD|PASSWD|PWD|(?:CLIENT|JWT|SESSION)[_-]?SECRET|SECRET[_-]?(?:KEY|TOKEN|VALUE)|SIGNING[_-]?KEY|HMAC[_-]?(?:KEY|SECRET)|API[_-]?(?:KEY|TOKEN|SECRET)|ACCESS[_-]?TOKEN|AUTH[_-]?TOKEN|CREDENTIALS?)(?:(?:[_-](?:VALUE|SECRET|KEY|PROD|DEV|STAGING|TEST|1|2))|(?:[_-]?BASE))?[0-9]{0,2})[ \\t]{0,8}>[ \\t]{0,8}([^<\\r\\n]{6,512})[ \\t]{0,8}</",
       "capture_group": 2,
       "validators": [
         "ASCII_ONLY",
@@ -1030,6 +1030,41 @@
         "ASCII_ONLY",
         "OPENAI_API_KEY"
       ]
+    },
+    {
+      "rule_id": "wordpress-auth-key-salt",
+      "rule_version": "2026.11.6",
+      "category": "generic-credential",
+      "provider": "wordpress",
+      "family": "wordpress-authentication",
+      "credential_type": "auth-key-salt",
+      "context": "assignment",
+      "pattern": "(?i-u)(?:^|[\\r\\n;{,<(]|[ \\t]{1,8}(?:const|let|var|static|final|public|private|protected|String|char|SET)[ \\t]{1,8}|[ \\t]{1,8})[ \\t]{0,8}(?:export[ \\t]{1,8})?(?:-e[ \\t]{1,8})?(?:define[ \\t]{0,8}\\([ \\t]{0,8})?(?:(?:const|let|var|static|final|public|private|protected|String|char|string|bytes32)[ \\t]{1,8}){0,3}[ \\t]{0,8}-?[ \\t]{0,8}(?:\\$|@)?[\\\"']?([A-Z0-9_.-]{0,64}(?:SECURE[_-]?AUTH[_-]?(?:KEY|SALT)|LOGGED[_-]?IN[_-]?(?:KEY|SALT)|NONCE[_-]?(?:KEY|SALT)|AUTH[_-]?(?:KEY|SALT)|WP[_-]?SALT[_-]?[0-9]{1,2}))[\\\"']?[ \\t]{0,8}(?:\\][ \\t]{0,8})?(?::=|=>|=|:|,)[ \\t]{0,64}(\\\"((?:\\\\.|[^\\\"\\\\\\r\\n]){6,512})\\\"|'((?:\\\\.|[^'\\\\\\r\\n]){6,512})'|`((?:\\\\.|[^`\\\\\\r\\n]){6,512})`|([^\\s\\\"'#,;)\\]}>]{6,512}))",
+      "capture_group": 2,
+      "validators": [
+        "ASCII_ONLY",
+        "WORDPRESS_SALT"
+      ],
+      "confidence": "medium",
+      "max_match_bytes": 4096,
+      "max_candidate_bytes": 1200,
+      "fixture_set": "tests/fixtures/providers/cp5-wordpress",
+      "value_capture_groups": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "identifier_capture_group": 1,
+      "provenance": {
+        "source": "vendor-documentation",
+        "references": [
+          "https://developer.wordpress.org/apis/security/keys/",
+          "https://api.wordpress.org/secret-key/1.1/salt/"
+        ],
+        "reviewed": "2026-11-16",
+        "notes": "WordPress authentication keys and salts in PHP define() and assignment representations. Values are structural only; no network verification."
+      }
     }
   ]
 }

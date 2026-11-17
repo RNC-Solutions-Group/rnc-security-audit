@@ -1,6 +1,5 @@
 //! CP1 scan orchestration: coverage accounting around the detection pipeline.
 
-use std::path::Path;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
@@ -14,8 +13,8 @@ use crate::git::GitReadError;
 use crate::input::{Discovery, GitHistoryInfo, PreScanScope, ScanLimits};
 use crate::rules::LoadedBundle;
 use crate::stream::{
-    scan_content_diff, scan_content_profiled, scan_file_profiled, FileScanError, ScanContentConfig,
-    ScanFileConfig, ScanMode,
+    scan_content_diff, scan_content_profiled, scan_file_contained, FileScanError,
+    ScanContentConfig, ScanFileConfig, ScanMode,
 };
 use crate::structured::StructuredEvidence;
 
@@ -247,6 +246,7 @@ pub fn scan_with_options(
         execution.add_fatal(code);
     }
     let source_root = discovery.root;
+    let contained_root = crate::stream::ContainedRoot::new(&source_root);
     let units = discovery.units;
     let mut total_bytes = 0u64;
     let mut timed_out = false;
@@ -254,7 +254,7 @@ pub fn scan_with_options(
     if workers > 1 {
         timed_out = scan_parallel_units(
             &units,
-            &source_root,
+            &contained_root,
             git_source.as_ref(),
             &plan,
             config,
@@ -443,8 +443,8 @@ pub fn scan_with_options(
                             ScanMode::Auto => ScanMode::Whole,
                             mode => mode,
                         };
-                        scan_file_profiled(
-                            &source_root,
+                        scan_file_contained(
+                            &contained_root,
                             &unit.locator,
                             &unit.unit_id,
                             &config.run_id,
@@ -636,7 +636,7 @@ pub fn scan_with_options(
 #[allow(clippy::too_many_arguments)]
 fn scan_unit(
     unit: &crate::input::DiscoveredUnit,
-    source_root: &std::path::Path,
+    source_root: &crate::stream::ContainedRoot,
     git_source: Option<&crate::git::GitHistorySource>,
     plan: &crate::backend::MatchPlan<'_>,
     config: &RunConfig,
@@ -690,7 +690,7 @@ fn scan_unit(
             ScanMode::Auto => ScanMode::Whole,
             mode => mode,
         };
-        scan_file_profiled(
+        scan_file_contained(
             source_root,
             &unit.locator,
             &unit.unit_id,
@@ -721,7 +721,7 @@ enum BatchOutcome {
 #[allow(clippy::too_many_arguments)]
 fn scan_parallel_units(
     units: &[crate::input::DiscoveredUnit],
-    source_root: &Path,
+    source_root: &crate::stream::ContainedRoot,
     git_source: Option<&crate::git::GitHistorySource>,
     plan: &crate::backend::MatchPlan<'_>,
     config: &RunConfig,

@@ -77,7 +77,7 @@ impl fmt::Display for FileScanError {
 /// replacing an ancestor with a symlink after discovery cannot redirect the
 /// read. The final component is also opened with `O_NOFOLLOW`.
 #[cfg(unix)]
-fn open_contained(root: &Path, locator: &str) -> std::io::Result<File> {
+fn open_contained(root: &ContainedRoot, locator: &str) -> std::io::Result<File> {
     use std::ffi::CString;
     use std::os::fd::{FromRawFd, RawFd};
     use std::os::unix::ffi::OsStrExt;
@@ -95,7 +95,7 @@ fn open_contained(root: &Path, locator: &str) -> std::io::Result<File> {
         }
         Ok(opened)
     }
-    let root_name = cstring(root.as_os_str())?;
+    let root_name = cstring(root.path().as_os_str())?;
     let root_fd = unsafe {
         libc::open(
             root_name.as_ptr(),
@@ -148,22 +148,51 @@ fn open_contained(root: &Path, locator: &str) -> std::io::Result<File> {
 }
 
 #[cfg(windows)]
-fn path_within_root(root: &Path, candidate: &Path) -> bool {
-    let root = fs::canonicalize(root).unwrap_or_else(|_| root.to_path_buf());
-    let candidate = fs::canonicalize(candidate).unwrap_or_else(|_| candidate.to_path_buf());
-    let normalize = |path: &Path| {
-        path.to_string_lossy()
-            .replace("\\\\?\\", "")
-            .replace('/', "\\")
-            .to_ascii_lowercase()
-    };
-    let root = normalize(&root);
-    let candidate = normalize(&candidate);
-    if candidate == root {
+fn normalize_root_path(path: &Path) -> String {
+    path.to_string_lossy()
+        .replace("\\\\?\\", "")
+        .replace('/', "\\")
+        .to_ascii_lowercase()
+}
+
+/// Canonical scan root and its normalized comparison form.
+///
+/// The canonical form is computed once per scan rather than once per opened
+/// file. `open_contained` still verifies every opened handle's final path, so
+/// containment is unchanged.
+#[derive(Debug, Clone)]
+pub struct ContainedRoot {
+    path: std::path::PathBuf,
+    #[cfg(windows)]
+    normalized: String,
+}
+
+impl ContainedRoot {
+    pub fn new(root: &Path) -> Self {
+        let path = fs::canonicalize(root).unwrap_or_else(|_| root.to_path_buf());
+        #[cfg(windows)]
+        let normalized = normalize_root_path(&path);
+        Self {
+            path,
+            #[cfg(windows)]
+            normalized,
+        }
+    }
+
+    pub fn path(&self) -> &Path {
+        &self.path
+    }
+}
+
+#[cfg(windows)]
+fn path_within_root(root: &ContainedRoot, candidate: &Path) -> bool {
+    let candidate = normalize_root_path(candidate);
+    let root = &root.normalized;
+    if &candidate == root {
         return true;
     }
     let prefix = if root.ends_with('\\') {
-        root
+        root.clone()
     } else {
         format!("{root}\\")
     };
@@ -175,15 +204,20 @@ fn final_handle_path(file: &File) -> std::io::Result<std::path::PathBuf> {
     use std::os::windows::ffi::OsStringExt;
     use std::os::windows::io::AsRawHandle;
     let handle = file.as_raw_handle();
-    let length = unsafe { GetFinalPathNameByHandleW(handle, std::ptr::null_mut(), 0, 0) };
-    if length == 0 {
-        return Err(std::io::Error::last_os_error());
-    }
-    let mut buffer = vec![0u16; length as usize + 1];
-    let written =
+    let mut buffer = vec![0u16; 512];
+    let mut written =
         unsafe { GetFinalPathNameByHandleW(handle, buffer.as_mut_ptr(), buffer.len() as u32, 0) };
     if written == 0 {
         return Err(std::io::Error::last_os_error());
+    }
+    if written as usize >= buffer.len() {
+        buffer.resize(written as usize + 1, 0);
+        written = unsafe {
+            GetFinalPathNameByHandleW(handle, buffer.as_mut_ptr(), buffer.len() as u32, 0)
+        };
+        if written == 0 {
+            return Err(std::io::Error::last_os_error());
+        }
     }
     buffer.truncate(written as usize);
     Ok(std::ffi::OsString::from_wide(&buffer).into())
@@ -204,13 +238,13 @@ extern "system" {
 /// the canonical root. This closes ancestor substitution for the content read;
 /// reparse-point attributes are also rejected before opening.
 #[cfg(windows)]
-fn open_contained(root: &Path, locator: &str) -> std::io::Result<File> {
+fn open_contained(root: &ContainedRoot, locator: &str) -> std::io::Result<File> {
     use std::os::windows::fs::MetadataExt;
     const FILE_ATTRIBUTE_REPARSE_POINT: u32 = 0x0400;
     // The locator is canonical and relative, so root.join(locator) is
     // lexically contained. Check every component for a reparse point before
     // opening the final component without following a substituted link.
-    let mut ancestor = root.to_path_buf();
+    let mut ancestor = root.path().to_path_buf();
     let mut components = std::path::Path::new(locator).components().peekable();
     while let Some(component) = components.next() {
         let std::path::Component::Normal(value) = component else {
@@ -250,8 +284,8 @@ fn open_contained(root: &Path, locator: &str) -> std::io::Result<File> {
 }
 
 #[cfg(not(any(unix, windows)))]
-fn open_contained(root: &Path, locator: &str) -> std::io::Result<File> {
-    let candidate = fs::canonicalize(root.join(locator))?;
+fn open_contained(root: &ContainedRoot, locator: &str) -> std::io::Result<File> {
+    let candidate = fs::canonicalize(root.path().join(locator))?;
     if !path_within_root(root, &candidate) {
         return Err(std::io::Error::new(
             std::io::ErrorKind::PermissionDenied,
@@ -297,6 +331,32 @@ pub fn scan_file(
 #[allow(clippy::too_many_arguments)]
 pub fn scan_file_profiled(
     root: &Path,
+    locator: &str,
+    unit_id: &str,
+    run_id: &str,
+    plan: &MatchPlan,
+    config: &ScanFileConfig,
+    expected_size: u64,
+    expected_modified: Option<SystemTime>,
+    profile: Option<&Profiler>,
+) -> Result<ScanFileResult, FileScanError> {
+    let root = ContainedRoot::new(root);
+    scan_file_contained(
+        &root,
+        locator,
+        unit_id,
+        run_id,
+        plan,
+        config,
+        expected_size,
+        expected_modified,
+        profile,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn scan_file_contained(
+    root: &ContainedRoot,
     locator: &str,
     unit_id: &str,
     run_id: &str,
@@ -560,7 +620,7 @@ fn metadata_changed(
 
 #[allow(clippy::too_many_arguments)]
 fn scan_whole(
-    root: &Path,
+    root: &ContainedRoot,
     locator: &str,
     unit_id: &str,
     run_id: &str,
@@ -573,12 +633,20 @@ fn scan_whole(
     if Instant::now() >= config.deadline {
         return Err(FileScanError::Timeout);
     }
+    let open_started = Instant::now();
     let file = open_contained(root, locator).map_err(|_| FileScanError::Io("open"))?;
+    if let Some(profiler) = profile {
+        profiler.record_worker("scan.open", open_started.elapsed(), 0, 1);
+    }
+    let read_started = Instant::now();
     let mut reader: Take<File> = file.take(config.max_file_bytes.saturating_add(1));
     let mut data = Vec::with_capacity(expected_size.min(config.max_file_bytes) as usize);
     reader
         .read_to_end(&mut data)
         .map_err(|_| FileScanError::Io("whole_read"))?;
+    if let Some(profiler) = profile {
+        profiler.record_worker("scan.read", read_started.elapsed(), data.len() as u64, 1);
+    }
     if data.len() as u64 > config.max_file_bytes {
         return Err(FileScanError::TooLarge);
     }
@@ -600,7 +668,16 @@ fn scan_whole(
     let mut findings = Vec::new();
     let mut components = Vec::new();
     let mut seen = HashSet::new();
+    let index_started = Instant::now();
     let line_index = LineIndex::new(&data);
+    if let Some(profiler) = profile {
+        profiler.record_worker(
+            "scan.line_index",
+            index_started.elapsed(),
+            data.len() as u64,
+            1,
+        );
+    }
     scan_window(
         &data,
         0,
@@ -617,10 +694,15 @@ fn scan_whole(
         config.deadline,
         profile,
     )?;
+    let hash_started = Instant::now();
+    let content_sha256 = sha256_hex(&data);
+    if let Some(profiler) = profile {
+        profiler.record_worker("scan.hash", hash_started.elapsed(), data.len() as u64, 1);
+    }
     Ok(ScanFileResult {
         findings,
         components,
-        content_sha256: sha256_hex(&data),
+        content_sha256,
         line_count: line_count(&data),
         bytes_read: data.len() as u64,
     })
@@ -628,7 +710,7 @@ fn scan_whole(
 
 #[allow(clippy::too_many_arguments)]
 fn scan_stream(
-    root: &Path,
+    root: &ContainedRoot,
     locator: &str,
     unit_id: &str,
     run_id: &str,

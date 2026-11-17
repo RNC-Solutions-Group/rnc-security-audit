@@ -98,7 +98,7 @@ impl Default for GitHistoryOptions {
             refs: Vec::new(),
             max_commits: DEFAULT_MAX_COMMITS,
             max_units: DEFAULT_MAX_UNITS,
-            io: GitIoMode::Process,
+            io: GitIoMode::Batch,
             history_mode: GitHistoryMode::Whole,
             context_lines: 0,
             profiler: None,
@@ -238,8 +238,22 @@ impl GitRunner {
         I: IntoIterator<Item = S>,
         S: AsRef<OsStr>,
     {
+        self.run_named_input(name, args, None, max_output)
+    }
+
+    fn run_named_input<I, S>(
+        &self,
+        name: &str,
+        args: I,
+        input: Option<&[u8]>,
+        max_output: usize,
+    ) -> Result<Vec<u8>, GitFailure>
+    where
+        I: IntoIterator<Item = S>,
+        S: AsRef<OsStr>,
+    {
         let started = Instant::now();
-        let result = self.run_inner(args, max_output);
+        let result = self.run_inner(args, input, max_output);
         if let Some(profiler) = &self.profiler {
             let phase = format!("git.{name}");
             let bytes = result.as_ref().map(|value| value.len() as u64).unwrap_or(0);
@@ -254,18 +268,33 @@ impl GitRunner {
         result
     }
 
-    fn run_inner<I, S>(&self, args: I, max_output: usize) -> Result<Vec<u8>, GitFailure>
+    fn run_inner<I, S>(
+        &self,
+        args: I,
+        input: Option<&[u8]>,
+        max_output: usize,
+    ) -> Result<Vec<u8>, GitFailure>
     where
         I: IntoIterator<Item = S>,
         S: AsRef<OsStr>,
     {
-        let mut child = self
-            .command()
-            .args(args)
-            .spawn()
-            .map_err(|_| GitFailure::Spawn)?;
+        let mut command = self.command();
+        if input.is_some() {
+            command.stdin(Stdio::piped());
+        }
+        let mut child = command.args(args).spawn().map_err(|_| GitFailure::Spawn)?;
         let stdout = child.stdout.take().ok_or(GitFailure::Spawn)?;
         let stderr = child.stderr.take().ok_or(GitFailure::Spawn)?;
+        let writer = match input {
+            Some(bytes) => {
+                let mut stdin = child.stdin.take().ok_or(GitFailure::Spawn)?;
+                let bytes = bytes.to_vec();
+                Some(std::thread::spawn(move || {
+                    let _ = stdin.write_all(&bytes);
+                }))
+            }
+            None => None,
+        };
         let exceeded = Arc::new(AtomicBool::new(false));
         let stdout_flag = Arc::clone(&exceeded);
         let stdout_reader =
@@ -279,6 +308,9 @@ impl GitRunner {
                 let _ = child.wait();
                 let _ = stdout_reader.join();
                 let _ = stderr_reader.join();
+                if let Some(writer) = writer {
+                    let _ = writer.join();
+                }
                 return Err(GitFailure::OutputLimit);
             }
             if Instant::now() >= self.deadline {
@@ -286,6 +318,9 @@ impl GitRunner {
                 let _ = child.wait();
                 let _ = stdout_reader.join();
                 let _ = stderr_reader.join();
+                if let Some(writer) = writer {
+                    let _ = writer.join();
+                }
                 return Err(GitFailure::Timeout);
             }
             match child.try_wait() {
@@ -296,6 +331,9 @@ impl GitRunner {
                     let _ = child.wait();
                     let _ = stdout_reader.join();
                     let _ = stderr_reader.join();
+                    if let Some(writer) = writer {
+                        let _ = writer.join();
+                    }
                     return Err(GitFailure::Spawn);
                 }
             }
@@ -305,6 +343,9 @@ impl GitRunner {
             .map_err(|_| GitFailure::Spawn)?
             .map_err(|_| GitFailure::OutputLimit)?;
         let _ = stderr_reader.join();
+        if let Some(writer) = writer {
+            let _ = writer.join();
+        }
         if !status.success() {
             return Err(GitFailure::Status);
         }
@@ -676,6 +717,314 @@ fn parse_hunk_header(line: &str) -> Option<(usize, usize)> {
 }
 
 #[derive(Debug)]
+struct GitDelta {
+    old_mode: String,
+    new_mode: String,
+    new_oid: String,
+    status: String,
+    path: String,
+}
+
+fn single_diff_args(commit: &str, parent: Option<&str>) -> Vec<OsString> {
+    let mut args: Vec<OsString> = vec![
+        OsString::from("diff-tree"),
+        OsString::from("--no-commit-id"),
+        OsString::from("--no-renames"),
+        OsString::from("--no-ext-diff"),
+        OsString::from("--no-textconv"),
+        OsString::from("-r"),
+        OsString::from("--raw"),
+        OsString::from("-z"),
+    ];
+    if parent.is_none() {
+        args.push(OsString::from("--root"));
+    }
+    if let Some(parent) = parent {
+        args.push(OsString::from(parent));
+    }
+    args.push(OsString::from(commit));
+    args
+}
+
+fn parse_git_delta(metadata: &[u8], path: &[u8]) -> Result<GitDelta, GitFailure> {
+    if !metadata.starts_with(b":") {
+        return Err(GitFailure::InvalidData);
+    }
+    let fields = std::str::from_utf8(metadata)
+        .map_err(|_| GitFailure::InvalidData)?
+        .trim_start_matches(':')
+        .split(' ')
+        .collect::<Vec<_>>();
+    if fields.len() < 5 {
+        return Err(GitFailure::InvalidData);
+    }
+    let path = std::str::from_utf8(path)
+        .map_err(|_| GitFailure::InvalidData)?
+        .to_string();
+    Ok(GitDelta {
+        old_mode: fields[0].to_string(),
+        new_mode: fields[1].to_string(),
+        new_oid: fields[3].to_string(),
+        status: fields[4].to_string(),
+        path,
+    })
+}
+
+fn parse_diff_tree_records(output: &[u8]) -> Result<Vec<GitDelta>, GitFailure> {
+    let mut deltas = Vec::new();
+    let mut tokens = output.split(|byte| *byte == 0);
+    loop {
+        let Some(metadata) = tokens.next() else {
+            break;
+        };
+        if metadata.is_empty() {
+            continue;
+        }
+        let path = tokens.next().ok_or(GitFailure::InvalidData)?;
+        deltas.push(parse_git_delta(metadata, path)?);
+    }
+    Ok(deltas)
+}
+
+/// Parse `git diff-tree --stdin` output. Each commit is introduced by its object
+/// ID, followed by the same raw records emitted for a single commit.
+fn parse_diff_tree_batch(
+    output: &[u8],
+) -> Result<std::collections::BTreeMap<String, Vec<GitDelta>>, GitFailure> {
+    let mut commits: std::collections::BTreeMap<String, Vec<GitDelta>> =
+        std::collections::BTreeMap::new();
+    let mut current: Option<String> = None;
+    let mut tokens = output.split(|byte| *byte == 0);
+    loop {
+        let Some(token) = tokens.next() else {
+            break;
+        };
+        if token.is_empty() {
+            continue;
+        }
+        if token.starts_with(b":") {
+            let path = tokens.next().ok_or(GitFailure::InvalidData)?;
+            let delta = parse_git_delta(token, path)?;
+            let commit = current.as_ref().ok_or(GitFailure::InvalidData)?;
+            commits.entry(commit.clone()).or_default().push(delta);
+        } else {
+            let oid = std::str::from_utf8(token).map_err(|_| GitFailure::InvalidData)?;
+            if !valid_oid(oid) {
+                return Err(GitFailure::InvalidData);
+            }
+            current = Some(oid.to_string());
+            commits.entry(oid.to_string()).or_default();
+        }
+    }
+    Ok(commits)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn fetch_single_deltas(
+    runner: &GitRunner,
+    commit: &str,
+    parent: Option<&str>,
+) -> Result<Vec<GitDelta>, GitFailure> {
+    let output = runner.run_named("deltas", single_diff_args(commit, parent), 32 * 1024 * 1024)?;
+    parse_diff_tree_records(&output)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn flush_delta_batch(
+    runner: &GitRunner,
+    batch: &[(&str, Option<&str>)],
+    discovery: &mut Discovery,
+    max_units: usize,
+    seen_units: &mut BTreeSet<(String, String)>,
+    history_mode: GitHistoryMode,
+    context_lines: usize,
+    source_id: &str,
+    deadline: Instant,
+) -> Result<(), GitFailure> {
+    if batch.is_empty() {
+        return Ok(());
+    }
+    let mut input = String::with_capacity(batch.len().saturating_mul(49));
+    for (commit, _) in batch {
+        input.push_str(commit);
+        input.push('\n');
+    }
+    let mut args: Vec<OsString> = vec![
+        OsString::from("diff-tree"),
+        OsString::from("--stdin"),
+        OsString::from("--root"),
+        OsString::from("--no-renames"),
+        OsString::from("--no-ext-diff"),
+        OsString::from("--no-textconv"),
+        OsString::from("-r"),
+        OsString::from("--raw"),
+        OsString::from("-z"),
+    ];
+    let result = runner.run_named_input(
+        "deltas",
+        args.drain(..),
+        Some(input.as_bytes()),
+        32 * 1024 * 1024,
+    );
+    let mut parsed = match result {
+        Ok(output) => Some(parse_diff_tree_batch(&output)?),
+        // A batch can exceed the per-invocation output bound even when each
+        // commit's diff is individually acceptable. Fall back to the exact
+        // single-commit path so acceptance behavior is unchanged.
+        Err(GitFailure::OutputLimit) => None,
+        Err(error) => return Err(error),
+    };
+    for (commit, parent) in batch {
+        if Instant::now() >= deadline {
+            return Err(GitFailure::Timeout);
+        }
+        let deltas = match parsed.as_mut() {
+            Some(map) => map.remove(*commit).unwrap_or_default(),
+            None => fetch_single_deltas(runner, commit, *parent)?,
+        };
+        apply_git_deltas(
+            discovery,
+            commit,
+            *parent,
+            &deltas,
+            runner,
+            history_mode,
+            context_lines,
+            source_id,
+            max_units,
+            seen_units,
+        )?;
+    }
+    Ok(())
+}
+
+#[allow(clippy::too_many_arguments)]
+fn apply_git_deltas(
+    discovery: &mut Discovery,
+    commit: &str,
+    parent: Option<&str>,
+    deltas: &[GitDelta],
+    runner: &GitRunner,
+    history_mode: GitHistoryMode,
+    context_lines: usize,
+    source_id: &str,
+    max_units: usize,
+    seen_units: &mut BTreeSet<(String, String)>,
+) -> Result<(), GitFailure> {
+    for delta in deltas {
+        if let Some(history) = &mut discovery.git_history {
+            history.changed_paths += 1;
+        }
+        if delta.status.starts_with('D') {
+            if let Some(history) = &mut discovery.git_history {
+                history.deleted_paths += 1;
+            }
+            // A deletion is not a new content revision. The parent commit is
+            // also traversed, so credentials that only existed before removal
+            // are still inspected there.
+            continue;
+        }
+        if delta.status.starts_with('U') {
+            return Err(GitFailure::InvalidData);
+        }
+        let path = delta.path.as_str();
+        if path.is_empty()
+            || path.starts_with('/')
+            || path
+                .split('/')
+                .any(|part| part.is_empty() || part == "." || part == "..")
+        {
+            return Err(GitFailure::InvalidData);
+        }
+        let locator_text = format!("commit/{commit}/{path}");
+        let Ok(locator) = crate::path::canonical_locator(&locator_text) else {
+            return Err(GitFailure::InvalidData);
+        };
+        let mode = delta.new_mode.as_str();
+        let blob_oid = delta.new_oid.as_str();
+        if mode == "160000" || mode == "040000" {
+            push_skipped_git_unit(
+                discovery,
+                commit,
+                locator,
+                "GIT_SUBMODULE_NOT_TRAVERSED",
+                seen_units,
+                max_units,
+            )?;
+            continue;
+        }
+        if mode == "120000" {
+            push_skipped_git_unit(
+                discovery,
+                commit,
+                locator,
+                "GIT_SYMLINK_NOT_FOLLOWED",
+                seen_units,
+                max_units,
+            )?;
+            continue;
+        }
+        if !valid_oid(blob_oid) || delta.old_mode.is_empty() {
+            return Err(GitFailure::InvalidData);
+        }
+        let git_diff = if history_mode == GitHistoryMode::Diff {
+            match diff_for_unit(runner, commit, parent, path, context_lines)? {
+                DiffAvailability::Text(spec) => Some(spec),
+                DiffAvailability::Binary => {
+                    push_skipped_git_unit(
+                        discovery,
+                        commit,
+                        locator,
+                        "GIT_DIFF_BINARY_UNSUPPORTED",
+                        seen_units,
+                        max_units,
+                    )?;
+                    continue;
+                }
+                DiffAvailability::NoIntroduced => {
+                    // Deletion-only and mode-only changes introduce no content
+                    // revision to scan; they are not a coverage gap in diff mode.
+                    continue;
+                }
+            }
+        } else {
+            None
+        };
+        let key = (commit.to_string(), locator.to_string());
+        if !seen_units.insert(key) {
+            continue;
+        }
+        if discovery.units.len() >= max_units {
+            return Err(GitFailure::UnitLimit);
+        }
+        let unit_id =
+            crate::path::unit_id(source_id, locator).map_err(|_| GitFailure::InvalidData)?;
+        discovery.units.push(crate::input::DiscoveredUnit {
+            unit_id,
+            source_id: source_id.to_string(),
+            source_kind: GIT_SOURCE_KIND.to_string(),
+            locator: locator.to_string(),
+            path: PathBuf::new(),
+            size: 0,
+            modified: None,
+            required_scope: true,
+            scope: PreScanScope::Inspect,
+            block_matches: Vec::new(),
+            block_request_id: None,
+            git: Some(GitBlobRef {
+                commit: commit.to_string(),
+                blob_oid: blob_oid.to_string(),
+            }),
+            git_diff,
+        });
+        if let Some(history) = &mut discovery.git_history {
+            history.units_seen = discovery.units.len();
+        }
+    }
+    Ok(())
+}
+
+#[derive(Debug)]
 pub struct GitHistorySource {
     repo: PathBuf,
     source_id: String,
@@ -689,6 +1038,7 @@ pub struct GitHistorySource {
     context_lines: usize,
     profiler: Option<Arc<crate::profile::Profiler>>,
     batch: Arc<Mutex<Option<BatchReader>>>,
+    batch_disabled: Arc<AtomicBool>,
     empty: bool,
 }
 
@@ -707,6 +1057,7 @@ impl Clone for GitHistorySource {
             context_lines: self.context_lines,
             profiler: self.profiler.clone(),
             batch: Arc::clone(&self.batch),
+            batch_disabled: Arc::clone(&self.batch_disabled),
             empty: self.empty,
         }
     }
@@ -878,6 +1229,7 @@ impl GitHistorySource {
             context_lines: options.context_lines,
             profiler: options.profiler.clone(),
             batch: Arc::new(Mutex::new(None)),
+            batch_disabled: Arc::new(AtomicBool::new(false)),
             empty: empty && options.refs.is_empty(),
         })
     }
@@ -976,6 +1328,11 @@ impl GitHistorySource {
         }
 
         let mut seen_units = BTreeSet::new();
+        // Non-merge commits can be read through one persistent
+        // `diff-tree --stdin` process. Merge commits keep the exact two-tree
+        // invocation so first-parent semantics are unchanged.
+        const BATCH_COMMITS: usize = 256;
+        let mut batch: Vec<(&str, Option<&str>)> = Vec::new();
         for fields in commits {
             let Some(commit) = fields.first().filter(|value| valid_oid(value)) else {
                 return Err(GitFailure::InvalidData);
@@ -984,162 +1341,64 @@ impl GitHistorySource {
                 return Err(GitFailure::InvalidData);
             }
             let parent = fields.get(1).copied();
-            let mut diff_args: Vec<OsString> = vec![
-                OsString::from("diff-tree"),
-                OsString::from("--no-commit-id"),
-                OsString::from("--no-renames"),
-                OsString::from("--no-ext-diff"),
-                OsString::from("--no-textconv"),
-                OsString::from("-r"),
-                OsString::from("--raw"),
-                OsString::from("-z"),
-            ];
-            if parent.is_none() {
-                diff_args.push(OsString::from("--root"));
-            }
-            if let Some(parent) = parent {
-                diff_args.push(OsString::from(parent));
-            }
-            diff_args.push(OsString::from(commit));
-            let diff = runner.run_named("deltas", diff_args, 32 * 1024 * 1024)?;
-            let mut records = diff.split(|byte| *byte == 0);
-            loop {
-                let Some(metadata) = records.next() else {
-                    break;
-                };
-                if metadata.is_empty() {
-                    continue;
-                }
-                let path = records.next().ok_or(GitFailure::InvalidData)?;
-                if !metadata.starts_with(b":") {
-                    return Err(GitFailure::InvalidData);
-                }
-                let fields = std::str::from_utf8(metadata)
-                    .map_err(|_| GitFailure::InvalidData)?
-                    .trim_start_matches(':')
-                    .split(' ')
-                    .collect::<Vec<_>>();
-                if fields.len() < 5 {
-                    return Err(GitFailure::InvalidData);
-                }
-                let status = fields[4];
-                let old_mode = fields[0];
-                let new_mode = fields[1];
-                let new_oid = fields[3];
-                if let Some(history) = &mut discovery.git_history {
-                    history.changed_paths += 1;
-                }
-                if status.starts_with('D') {
-                    if let Some(history) = &mut discovery.git_history {
-                        history.deleted_paths += 1;
-                    }
-                    // A deletion is not a new content revision. The parent
-                    // commit is also traversed, so credentials that only existed
-                    // before removal are still inspected there.
-                    continue;
-                }
-                if status.starts_with('U') {
-                    return Err(GitFailure::InvalidData);
-                }
-                let path = std::str::from_utf8(path).map_err(|_| GitFailure::InvalidData)?;
-                if path.is_empty()
-                    || path.starts_with('/')
-                    || path
-                        .split('/')
-                        .any(|part| part.is_empty() || part == "." || part == "..")
-                {
-                    return Err(GitFailure::InvalidData);
-                }
-                let locator_text = format!("commit/{commit}/{path}");
-                let Ok(locator) = crate::path::canonical_locator(&locator_text) else {
-                    return Err(GitFailure::InvalidData);
-                };
-                let mode = new_mode;
-                let blob_oid = new_oid;
-                if mode == "160000" || mode == "040000" {
-                    push_skipped_git_unit(
+            if fields.len() > 2 {
+                flush_delta_batch(
+                    &runner,
+                    &batch,
+                    discovery,
+                    self.max_units,
+                    &mut seen_units,
+                    self.history_mode,
+                    self.context_lines,
+                    &self.source_id,
+                    deadline,
+                )?;
+                batch.clear();
+                let deltas = fetch_single_deltas(&runner, commit, parent)?;
+                apply_git_deltas(
+                    discovery,
+                    commit,
+                    parent,
+                    &deltas,
+                    &runner,
+                    self.history_mode,
+                    self.context_lines,
+                    &self.source_id,
+                    self.max_units,
+                    &mut seen_units,
+                )?;
+            } else {
+                batch.push((commit, parent));
+                if batch.len() >= BATCH_COMMITS {
+                    flush_delta_batch(
+                        &runner,
+                        &batch,
                         discovery,
-                        commit,
-                        locator,
-                        "GIT_SUBMODULE_NOT_TRAVERSED",
-                        &mut seen_units,
                         self.max_units,
-                    )?;
-                    continue;
-                }
-                if mode == "120000" {
-                    push_skipped_git_unit(
-                        discovery,
-                        commit,
-                        locator,
-                        "GIT_SYMLINK_NOT_FOLLOWED",
                         &mut seen_units,
-                        self.max_units,
+                        self.history_mode,
+                        self.context_lines,
+                        &self.source_id,
+                        deadline,
                     )?;
-                    continue;
-                }
-                if !valid_oid(blob_oid) || old_mode.is_empty() {
-                    return Err(GitFailure::InvalidData);
-                }
-                let git_diff = if self.history_mode == GitHistoryMode::Diff {
-                    match diff_for_unit(&runner, commit, parent, path, self.context_lines)? {
-                        DiffAvailability::Text(spec) => Some(spec),
-                        DiffAvailability::Binary => {
-                            push_skipped_git_unit(
-                                discovery,
-                                commit,
-                                locator,
-                                "GIT_DIFF_BINARY_UNSUPPORTED",
-                                &mut seen_units,
-                                self.max_units,
-                            )?;
-                            continue;
-                        }
-                        DiffAvailability::NoIntroduced => {
-                            // Deletion-only and mode-only changes introduce no
-                            // content revision to scan; they are not a coverage
-                            // gap in diff mode.
-                            continue;
-                        }
-                    }
-                } else {
-                    None
-                };
-                let key = (commit.to_string(), locator.to_string());
-                if !seen_units.insert(key) {
-                    continue;
-                }
-                if discovery.units.len() >= self.max_units {
-                    return Err(GitFailure::UnitLimit);
-                }
-                let unit_id = crate::path::unit_id(&self.source_id, locator)
-                    .map_err(|_| GitFailure::InvalidData)?;
-                discovery.units.push(crate::input::DiscoveredUnit {
-                    unit_id,
-                    source_id: self.source_id.clone(),
-                    source_kind: GIT_SOURCE_KIND.to_string(),
-                    locator: locator.to_string(),
-                    path: PathBuf::new(),
-                    size: 0,
-                    modified: None,
-                    required_scope: true,
-                    scope: PreScanScope::Inspect,
-                    block_matches: Vec::new(),
-                    block_request_id: None,
-                    git: Some(GitBlobRef {
-                        commit: commit.to_string(),
-                        blob_oid: blob_oid.to_string(),
-                    }),
-                    git_diff,
-                });
-                if let Some(history) = &mut discovery.git_history {
-                    history.units_seen = discovery.units.len();
+                    batch.clear();
                 }
             }
             if Instant::now() >= deadline {
                 return Err(GitFailure::Timeout);
             }
         }
+        flush_delta_batch(
+            &runner,
+            &batch,
+            discovery,
+            self.max_units,
+            &mut seen_units,
+            self.history_mode,
+            self.context_lines,
+            &self.source_id,
+            deadline,
+        )?;
         discovery
             .units
             .sort_by(|left, right| left.unit_id.cmp(&right.unit_id));
@@ -1158,12 +1417,21 @@ impl GitHistorySource {
         if !valid_oid(oid) {
             return Err(GitReadError::ObjectUnavailable);
         }
-        let limit = usize::try_from(max_bytes)
-            .unwrap_or(usize::MAX)
-            .saturating_add(1);
         if self.io == GitIoMode::Batch {
             return self.read_blob_batch(oid, max_bytes, deadline);
         }
+        self.read_blob_process(oid, max_bytes, deadline)
+    }
+
+    fn read_blob_process(
+        &self,
+        oid: &str,
+        max_bytes: u64,
+        deadline: Instant,
+    ) -> Result<Vec<u8>, GitReadError> {
+        let limit = usize::try_from(max_bytes)
+            .unwrap_or(usize::MAX)
+            .saturating_add(1);
         let runner = GitRunner::with_profile(
             &self.repo,
             deadline,
@@ -1188,15 +1456,25 @@ impl GitHistorySource {
         if !valid_oid(oid) {
             return Err(GitReadError::ObjectUnavailable);
         }
+        if self.batch_disabled.load(Ordering::Relaxed) {
+            return self.read_blob_process(oid, max_bytes, deadline);
+        }
         let mut guard = self
             .batch
             .lock()
             .unwrap_or_else(|poisoned| poisoned.into_inner());
         if guard.is_none() {
-            *guard = Some(
-                BatchReader::start(&self.repo, deadline, self.profiler.clone())
-                    .map_err(map_batch_error)?,
-            );
+            match BatchReader::start(&self.repo, deadline, self.profiler.clone()) {
+                Ok(reader) => *guard = Some(reader),
+                Err(_) => {
+                    // A platform or Git build without `cat-file --batch` falls
+                    // back to the exact process path instead of failing closed
+                    // on an acquisition strategy the caller did not explicitly
+                    // select.
+                    self.batch_disabled.store(true, Ordering::Relaxed);
+                    return self.read_blob_process(oid, max_bytes, deadline);
+                }
+            }
         }
         let result = guard
             .as_ref()
@@ -1270,6 +1548,39 @@ fn source_id_for(repository_id: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn diff_tree_batch_parser_associates_records_with_commit_ids() {
+        let output = b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\0\
+                       :100644 100644 1111111111111111111111111111111111111111 \
+                       2222222222222222222222222222222222222222 M\0path/one\0\
+                       :000000 100644 0000000000000000000000000000000000000000 \
+                       3333333333333333333333333333333333333333 A\0path/two\0\
+                       bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\0\
+                       :100644 000000 4444444444444444444444444444444444444444 \
+                       0000000000000000000000000000000000000000 D\0path/three\0";
+        let parsed = parse_diff_tree_batch(output).unwrap();
+        assert_eq!(parsed.len(), 2);
+        assert_eq!(parsed["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"].len(), 2);
+        assert_eq!(parsed["bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"].len(), 1);
+        assert_eq!(
+            parsed["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"][0].path,
+            "path/one"
+        );
+        assert_eq!(
+            parsed["bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"][0].status,
+            "D"
+        );
+    }
+
+    #[test]
+    fn diff_tree_batch_parser_rejects_malformed_framing() {
+        assert!(parse_diff_tree_batch(b"not-an-object-id\0").is_err());
+        assert!(parse_diff_tree_batch(b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\0").is_ok());
+        assert!(
+            parse_diff_tree_batch(b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\0:100644\0").is_err()
+        );
+    }
 
     #[test]
     fn diff_parser_tracks_introduced_and_context_lines() {

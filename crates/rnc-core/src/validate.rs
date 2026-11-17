@@ -67,6 +67,7 @@ pub enum Validator {
     GenericAssignedSecret,
     MultilineAssignedSecret,
     SqlPassword,
+    WordpressSalt,
 }
 
 impl Validator {
@@ -114,6 +115,7 @@ impl Validator {
             Self::GenericAssignedSecret => "GENERIC_ASSIGNED_SECRET",
             Self::MultilineAssignedSecret => "MULTILINE_ASSIGNED_SECRET",
             Self::SqlPassword => "SQL_PASSWORD",
+            Self::WordpressSalt => "WORDPRESS_SALT",
         }
     }
 
@@ -213,6 +215,7 @@ impl Validator {
             Self::GenericAssignedSecret => validate_generic_assigned_secret(candidate, context),
             Self::MultilineAssignedSecret => validate_multiline_assigned_secret(candidate),
             Self::SqlPassword => validate_sql_password(candidate, context),
+            Self::WordpressSalt => validate_wordpress_salt(candidate),
         }
     }
 }
@@ -1624,6 +1627,58 @@ fn validate_generic_assigned_secret(
     }
     Ok(ValidatorVerdict::plausible(
         "ASSIGNMENT_CONTEXT_AND_VALUE_STRUCTURE_ONLY",
+    ))
+}
+
+/// WordPress authentication keys and salts are generated as long random
+/// printable-ASCII strings. Unlike the generic assignment validator, this
+/// family must accept punctuation and internal spaces that occur in the values
+/// published by WordPress' salt generator and in real `wp-config.php` files.
+/// It still rejects variables, placeholders, control characters and short or
+/// obviously non-random values.
+fn validate_wordpress_salt(candidate: &[u8]) -> Result<ValidatorVerdict, ValidationError> {
+    let decoded = decode_escaped_string(candidate).ok_or_else(|| {
+        ValidationError::invalid(
+            Validator::WordpressSalt,
+            "WordPress authentication value has unsupported or truncated escaping",
+        )
+    })?;
+    let text = std::str::from_utf8(&decoded).map_err(|_| {
+        ValidationError::invalid(
+            Validator::WordpressSalt,
+            "WordPress authentication value is not valid UTF-8",
+        )
+    })?;
+    // Generated WordPress keys and salts are 64 printable characters; the
+    // Kubernetes representation is the 88-character base64 form.
+    if !(32..=512).contains(&text.len())
+        || text.trim() != text
+        || text.chars().any(char::is_control)
+        || text.contains('\r')
+        || text.contains('\n')
+        || text.contains("://")
+    {
+        return Err(ValidationError::invalid(
+            Validator::WordpressSalt,
+            "WordPress authentication value is outside the supported literal bounds",
+        ));
+    }
+    if is_variable_reference(text)
+        || is_placeholder_wrapper(text)
+        || is_common_benign_value(text)
+        || is_known_placeholder(&decoded)
+        || looks_like_nonsecret_setting(text)
+    {
+        return Err(ValidationError::benign(
+            Validator::WordpressSalt,
+            "WordPress authentication value is a placeholder, variable or nonsecret setting",
+        ));
+    }
+    if shannon_entropy(&decoded) < 2.5 {
+        return Ok(ValidatorVerdict::plausible("LOW_ENTROPY"));
+    }
+    Ok(ValidatorVerdict::plausible(
+        "WORDPRESS_AUTH_MATERIAL_STRUCTURE_ONLY",
     ))
 }
 

@@ -56,7 +56,7 @@ fn profile_is_written_outside_root_and_contains_no_secret() {
             .unwrap()
             >= 1
     );
-    assert_eq!(document["settings"]["effective"]["strategy"], "regex");
+    assert_eq!(document["settings"]["effective"]["strategy"], "prefilter");
     assert!(document["phases"]["execution"]["ns"].as_u64().unwrap() > 0);
     assert!(document["worker_phases"]["scan.validation"]["ns"]
         .as_u64()
