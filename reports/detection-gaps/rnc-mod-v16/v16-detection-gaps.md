@@ -8,7 +8,7 @@ RNC-Mod V16 missed **533 of 1125 expected positive occurrences** (47.38%) across
 
 Largest missed families: database_password (119 risk); wordpress_salt (93 risk); application_password (71 risk); generic_api_key (16 risk); smtp_password (12 risk); ftp_password (12 risk).
 
-Confirmed mechanisms account for **123** misses, of which **37** are risk-bearing; **379** are probable and **31** remain unresolved. The largest actionable family is `wordpress_authentication_material` (93 risk-bearing targets).
+Confirmed mechanisms account for **86** misses, of which **0** are risk-bearing; **390** are probable and **57** remain unresolved. The largest actionable family is `wordpress_authentication_material` (93 risk-bearing targets).
 
 ## Evidence and identity
 
@@ -21,13 +21,13 @@ Confirmed mechanisms account for **123** misses, of which **37** are risk-bearin
 | Executable SHA-256 | d561ec675ac265240ff7002adf0019a9b1644f4df6d854a86be67b58b789bb72 |
 | Rules/configuration | compiled/default |
 | Rules SHA-256 | not exposed |
-| Retained report | C:\Dev\rnc-benchmark-harness\run\reports\all-windows-baselines\gl-rnc-mod-v16\gl-rnc-mod-v16-current-baseline-11897cd27e57-full-11897cd27e57-default.json |
+| Retained report | run/reports/all-windows-baselines/gl-rnc-mod-v16/gl-rnc-mod-v16-current-baseline-11897cd27e57-full-11897cd27e57-default.json |
 | Report SHA-256 | c82cab9e710676b689412c43843cdc2a593f248f0dd687271cd0843b19e93969 |
 | Run ID | 20261116T022413Z-04c1ef8c |
 | Configuration profile | default |
 | Scoring epoch | Current post-scoring-integrity remediation |
 | Platform | Windows AMD64 |
-| Analysis version | 1.0.0 |
+| Analysis version | 2.0.0 |
 
 The harness is an independent evaluator. This analysis consumed frozen oracles and retained scanner reports; it did not rebuild either scanner, change a rule, rewrite an oracle, or alter the scoring policy.
 
@@ -95,14 +95,14 @@ Every expected target is in `rnc-mod-v16-target-inventory.csv`; every uncredited
 | Root cause | Missed | Risk misses | Confirmed | Probable |
 | --- | --- | --- | --- | --- |
 | IDENTIFIER_MISMATCH | 167 | 167 | 0 | 167 |
-| FORMAT_UNSUPPORTED | 112 | 112 | 10 | 102 |
+| FORMAT_UNSUPPORTED | 112 | 112 | 0 | 112 |
 | INFORMATIVE_REFERENCE | 86 | 0 | 86 | 0 |
 | CONTEXT_INSUFFICIENT | 72 | 72 | 0 | 72 |
 | RULE_ABSENT | 34 | 34 | 0 | 34 |
 | UNKNOWN | 31 | 31 | 0 | 0 |
-| SOURCE_UNSUPPORTED | 26 | 26 | 26 | 0 |
+| SOURCE_INSPECTION_UNVERIFIED | 26 | 26 | 0 | 0 |
 | VALIDATOR_REJECTION | 4 | 4 | 0 | 4 |
-| CAPTURE_MISMATCH | 1 | 1 | 1 | 0 |
+| CAPTURE_MISMATCH | 1 | 1 | 0 | 1 |
 
 ## Required focused investigations
 
@@ -125,8 +125,8 @@ Every expected target is in `rnc-mod-v16-target-inventory.csv`; every uncredited
 
 | Lane | Target | Subtype | Representation | Identifier | Cause | Confidence | Rule evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| filesystem | RNC-SL-POS-000130 | application_hmac_key | sqlite_table_cell | value | SOURCE_UNSUPPORTED | CONFIRMED | observed-subtype:generic-api-key |
-| filesystem | RNC-SL-POS-000135 | application_hmac_key | sqlite_table_cell | value | SOURCE_UNSUPPORTED | CONFIRMED | observed-subtype:generic-api-key |
+| filesystem | RNC-SL-POS-000130 | application_hmac_key | sqlite_table_cell | value | SOURCE_INSPECTION_UNVERIFIED | UNRESOLVED | observed-subtype:generic-api-key |
+| filesystem | RNC-SL-POS-000135 | application_hmac_key | sqlite_table_cell | value | SOURCE_INSPECTION_UNVERIFIED | UNRESOLVED | observed-subtype:generic-api-key |
 | filesystem | RNC-SL-POS-000203 | application_hmac_key | env_value | JWT_SIGNING_KEY | VALIDATOR_REJECTION | PROBABLE | observed-subtype:generic-api-key |
 | filesystem | RNC-SL-POS-000485 | jwt_signing_key | env_value | SESSION_SECRET | VALIDATOR_REJECTION | PROBABLE | observed-subtype:generic-api-key |
 | Git | RNC-SL-POS-000671 | application_signing_key | env_value | SIGNING_KEY | VALIDATOR_REJECTION | PROBABLE | observed-subtype:generic-api-key |
@@ -190,9 +190,9 @@ The remaining password misses are not explained by one identifier. They combine 
 | api_key \| generic_api_key \| Unidentified API provider \| compose_environment_value \| ordinary_file \| RULE_ABSENT | 5 | observed-subtype:generic-api-key | RNC-SL-POS-000045 |
 | api_key \| generic_api_key \| Unidentified API provider \| env_value \| ordinary_file \| RULE_ABSENT | 5 | observed-subtype:generic-api-key | RNC-SL-POS-000040 |
 | otp_seed \| totp_seed \| TOTP / OTP \| otpauth_secret \| ordinary_file \| RULE_ABSENT | 5 | no-observed-rule | RNC-SL-POS-000047 |
-| api_key \| generic_api_key \| Unidentified API provider \| sqlite_table_cell \| database_record \| SOURCE_UNSUPPORTED | 4 | observed-subtype:generic-api-key | RNC-SL-POS-000128 |
-| api_key \| generic_api_key \| Unidentified API provider \| bson_string_value \| database_record \| SOURCE_UNSUPPORTED | 1 | observed-subtype:generic-api-key | RNC-SL-POS-000127 |
-| api_key \| generic_api_key \| Unidentified API provider \| env_value \| archive_member \| SOURCE_UNSUPPORTED | 1 | observed-subtype:generic-api-key | RNC-SL-POS-000032 |
+| api_key \| generic_api_key \| Unidentified API provider \| sqlite_table_cell \| database_record \| SOURCE_INSPECTION_UNVERIFIED | 4 | observed-subtype:generic-api-key | RNC-SL-POS-000128 |
+| api_key \| generic_api_key \| Unidentified API provider \| bson_string_value \| database_record \| SOURCE_INSPECTION_UNVERIFIED | 1 | observed-subtype:generic-api-key | RNC-SL-POS-000127 |
+| api_key \| generic_api_key \| Unidentified API provider \| env_value \| archive_member \| SOURCE_INSPECTION_UNVERIFIED | 1 | observed-subtype:generic-api-key | RNC-SL-POS-000032 |
 | provider_token \| twilio_auth_token \| Twilio \| yaml_value \| git_blob \| UNKNOWN | 1 | observed-subtype:generic-api-key | RNC-SL-POS-000777 |
 
 - Twilio auth-token values are not covered by a provider rule; verify the documented shape before adding one.
@@ -223,7 +223,7 @@ The remaining password misses are not explained by one identifier. They combine 
 | tls_private_key_pkcs8 \| kubeconfig_client_key \| ordinary_file | 1 | 1 | 0 | 100.00% |
 | tls_private_key_pkcs8 \| kubernetes_tls_key \| ordinary_file | 1 | 1 | 0 | 100.00% |
 
-Most remaining private-key failures are format/container gaps: PuTTY PPK v2 and PKCS#12 are not PEM blocks, and archived PEM material never reaches the matcher. Wallet seed phrases are a distinct mnemonic credential and should not be counted as private-key material. Do not mark a public-key-only, SPKI-only, encrypted-container-only or filename-only observation as private-key credit. The existing PEM findings that are credited must remain credited; no historical scoring artifact is being reclassified as a new false negative here.
+Most remaining private-key failures are representation or source-acquisition hypotheses: PuTTY PPK v2 and PKCS#12 are not PEM blocks, and the retained reports do not prove that archived PEM members were inspected. Wallet seed phrases are a distinct mnemonic credential and should not be counted as private-key material. Do not mark a public-key-only, SPKI-only, encrypted-container-only or filename-only observation as private-key credit. The existing PEM findings that are credited must remain credited; no historical scoring artifact is being reclassified as a new false negative here.
 
 Private-key passphrases are counted separately as password targets when the oracle models them as such; a passphrase is not interchangeable with the key material.
 
@@ -283,17 +283,21 @@ Private-key passphrases are counted separately as password targets when the orac
 | compose_command_arg | 8 | 8 | 0 |
 | compose_environment_value | 8 | 8 | 3 |
 
-| Inspection disposition | Expected | Matched | Missed |
+| Inspection state | Expected | Matched | Missed |
 | --- | --- | --- | --- |
-| INSPECTED | 949 | 521 | 428 |
-| INSPECTED_UNVERIFIED | 150 | 71 | 79 |
-| UNSUPPORTED_CONTAINER | 26 | 0 | 26 |
+| INSPECTION_UNVERIFIED | 533 | 0 | 533 |
+| INSPECTED_VERIFIED | 592 | 592 | 0 |
+
+| Source capability declaration | Expected | Matched | Missed |
+| --- | --- | --- | --- |
+| CLAIMED_SUPPORTED | 1099 | 592 | 507 |
+| NOT_DECLARED | 26 | 0 | 26 |
 
 26 expected positives live in a non-plaintext container. Of these, 10 are archive members, 12 are database records and 4 are binary key containers.
 
-The scanner emitted no finding with a non-null archive member, database row or PKCS#12 container across this run. A miss in this category is therefore classified as `SOURCE_UNSUPPORTED`, not as a regex false negative. An archive file being encountered is not evidence that its members were scanned.
+The retained report contains no unit/member/record evidence for these targets. That does **not** prove the scanner failed to inspect the container. They are therefore classified as `SOURCE_INSPECTION_UNVERIFIED` / `UNRESOLVED`, not as confirmed `SOURCE_UNSUPPORTED`. A validated capability declaration or a source-unit probe that records member inspection is required before that stronger claim is permitted.
 
-Eligible-but-uninspected expected positives: 0. The RNC Lab filesystem lane reports 11 uninspected symlink aliases; none of them is an expected positive target in the frozen oracle. That is a scanner coverage caveat, not a positive-recall gap.
+Eligible-but-uninspected expected positives with proof: 0. Expected positives whose inspection is not independently verified: 533. The RNC Lab filesystem lane reports 11 uninspected symlink aliases; none of them is an expected positive target in the frozen oracle. That is a scanner coverage caveat, not a positive-recall gap.
 
 ### Load-replicated evidence (not canonical accuracy)
 
@@ -331,7 +335,7 @@ Regression fixtures available for proposed changes: the RNC Lab oracle has 400 n
 
 ## Root-cause interpretation
 
-A target is marked `SOURCE_UNSUPPORTED` only when the same run produced no credited finding in that container class. `SOURCE_NOT_INSPECTED` requires a coverage record, not merely an absent finding. `CAPTURE_MISMATCH` requires a retained same-location observation whose value evidence failed. `SCORING_MISMATCH` requires a usable scanner observation rejected by the scorer. `IDENTIFIER_MISMATCH`, `RULE_ABSENT`, `FORMAT_UNSUPPORTED`, `CONTEXT_INSUFFICIENT`, `VALIDATOR_REJECTION` and `UNKNOWN` are kept distinct because they imply different development work.
+A target is marked `SOURCE_UNSUPPORTED` only when a scanner/source capability declaration or an independently validated capability contract says the source type is unsupported. `SOURCE_INSPECTION_UNVERIFIED` is used when the specific member/record/unit has no retained inspection evidence and no capability declaration; it is not proof of a scanner failure. `SOURCE_NOT_INSPECTED` requires a coverage record, not merely an absent finding. `CAPTURE_MISMATCH` requires a retained same-location observation whose value evidence failed. `SCORING_MISMATCH` requires a usable scanner observation rejected by the scorer. `IDENTIFIER_MISMATCH`, `RULE_ABSENT`, `FORMAT_UNSUPPORTED`, `CONTEXT_INSUFFICIENT`, `VALIDATOR_REJECTION` and `UNKNOWN` are kept distinct because they imply different development work.
 
 See the standalone root-cause dossier for the full evidence and reproduction table.
 
@@ -361,7 +365,7 @@ The detailed backlog is in the companion file; it ranks by recoverable count, se
 - This is an independent evaluator report. No scanner rule, source file, oracle, or scoring policy was modified.
 - Leaky Repo filesystem is a line-level detection benchmark without a complete negative oracle; precision and F1 are not certified.
 - Leaky Repo Git precision/F1 are not certified; 65 source occurrences and 53 unique groups are separate denominators.
-- Leaky Git source units are marked INSPECTED_UNVERIFIED for adapters that do not return a true coverage attestation; this is not evidence that a unit was skipped.
+- Leaky Git source units are marked INSPECTION_UNVERIFIED for adapters that do not return a true coverage attestation; this is not evidence that a unit was skipped.
 - RNC Lab precision/F1 are not certified; the 640 filesystem and 160 Git positive denominators are separate and are not combined.
 - The 11 RNC Lab symlink aliases are not followed by the scanner. They contain no expected positive target in this oracle, so they do not change the positive recall denominator.
 - Provider and subtype labels for Leaky Repo and Levain are source-context inferences because those oracles do not expose the Lab's fine-grained subtype taxonomy. RNC Lab labels come directly from its oracle.

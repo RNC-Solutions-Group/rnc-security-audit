@@ -6,8 +6,9 @@ written only under ignored paths (`reports/raw/`, `reports/local/`) when a calle
 explicitly opts in.
 
 > **Baseline epochs:** reports in this tree other than `baselines-20261115/`,
-> `cp4c-matrix0/`, and `rnc-mod-v14-vs-gitleaks/` predate the scoring-integrity
-> remediation. They are indexed with file hashes in
+> `cp4c-matrix0/`, `rnc-mod-v14-vs-gitleaks/`, and the derived
+> `detection-gaps/` set predate the scoring-integrity remediation. They are
+> indexed with file hashes in
 > [`archive/pre-scoring-fix/`](archive/pre-scoring-fix/README.md) and are not
 > current baselines. Use `baselines-20261115/` for current-scoring comparisons.
 
@@ -17,6 +18,7 @@ explicitly opts in.
 | [`archive/pre-scoring-fix/`](archive/pre-scoring-fix/README.md) | Historical | Immutable zip and hash index of reports predating the scoring-integrity remediation; originals preserved at historical paths |
 | [`rnc-mod-v14-vs-gitleaks/`](rnc-mod-v14-vs-gitleaks/README.md) | RNC-MOD-v14 vs Gitleaks 8.25.0 | **RNC Lab comparison:** canonical filesystem/Git detection and x5/x10 load performance; 1 warmup + 3 measured runs, primary and reverse-order control, DEV only |
 | [`cp4c-matrix0/`](cp4c-matrix0/README.md) | RNC CP4C `805e3bb` | **CP4C Matrix 0:** native Windows AMD64 worker scaling and schema-v1 profiler overhead across 640/160 canonical items and x5/x10 loads; DEV evidence, not release timing |
+| [`detection-gaps/`](detection-gaps/README.md) | CP4C / RNC-Mod V14 / V16 | **Derived target-level gap analysis:** pinned input SHA-256s, root causes, source-inspection states, complete inventories, and a `publication.json` completion manifest. Analysis-only; scores unchanged |
 | [`cp11/`](cp11/README.md) | Gitleaks / RNC CP3 | **CP11 local-artifact execution evidence:** executable/image verification, exact invocation commands, blocked-hash behavior, and the CP3 native smoke |
 | [`baseline-20261112/`](baseline-20261112/README.md) | Gitleaks / RNC / Betterleaks (blocked) | **Historical CP10 source-build baseline:** native/Docker experiments, RNC Lab canonical and load testing, consolidated index, and explicit blocked cells. Preserved for comparison; not directly reproducible under CP11 without operator artifacts |
 | [`cp5d1/`](cp5d1/) | RNC / Gitleaks / Betterleaks | CP5D.1 rename-lineage hardening, exact negative identities, official 184/89 proposal validation, and retained rescoring |
@@ -45,6 +47,13 @@ explicitly opts in.
 | [`CP1A-build-metadata.json`](CP1A-build-metadata.json) | — | Source, toolchain, build, binary, and CLI identity |
 | [`CP1-stub-validation.md`](CP1-stub-validation.md) | stub (`all-lines`) | Historical CP1 helper-validation report |
 | [`CP1-stub-negative-clean.md`](CP1-stub-negative-clean.md) | stub (`control-only`) | Historical CP1 witnessed-clean report |
+
+**Lifecycle:** current baselines, the pre-scoring-fix archive, and historical
+checkpoint reports are immutable. Derived detection-gap output is regenerable and
+is published as a complete set only when `publication.json` says `COMPLETE` with
+verified file hashes. Raw scanner output remains Git-ignored. See
+[report lifecycle](../docs/report-lifecycle.md); no deletion or bulk-artifact
+migration is approved by CP-HI1.
 
 **CP5D.1:** Rename identity is carried through the rooted lineage graph instead of
 a renamed-path exact-line fallback. The three proposed negatives now carry exact

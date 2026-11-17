@@ -44,6 +44,8 @@ class RunResult:
     unattributed: tuple[str, ...]
     notes: tuple[str, ...]
     coverage: dict | None = None
+    invocation_id: str | None = None
+    command_sha256: str | None = None
 
 
 def materialize(

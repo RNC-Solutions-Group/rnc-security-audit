@@ -8,6 +8,7 @@ import re
 from pathlib import Path
 
 from .config import HarnessConfig, validate_raw_destination
+from .safe_text import markdown_cell, markdown_code
 from .util import atomic_write_bytes, atomic_write_text, sha256_bytes, utc_now
 
 _SAFE = re.compile(r"[^A-Za-z0-9_.-]+")
@@ -167,8 +168,209 @@ def _status_line(label: str, value) -> str:
 
 
 def _code(value) -> str:
-    text = str(value if value is not None else "—")
-    return "`" + text.replace("`", "'").replace("|", "\\|") + "`"
+    return markdown_code(value if value is not None else "—")
+
+
+def _md(value) -> str:
+    return markdown_cell(value)
+
+
+def _execution_section(document: dict) -> list[str]:
+    provenance = document.get("execution_provenance") or {}
+    policy = provenance.get("argument_policy") or (document.get("profile") or {}).get(
+        "argument_policy"
+    ) or {}
+    invocations = provenance.get("scanner_invocations") or document.get("invocations") or []
+    auxiliary = provenance.get("auxiliary_commands") or []
+    if not provenance and not invocations:
+        return []
+    lines = [
+        "## Scanner invocations: execution commands and effective configuration",
+        "",
+        "This section separates the command used to invoke the harness, the "
+        "commands the harness executed against the scanner, and auxiliary "
+        "operations.  The per-run command is the sanitized argument vector that "
+        "was actually passed to the process; the normalized template is derived "
+        "for display only.",
+        "",
+        "### Configuration comparability",
+        "",
+        "| Dimension | Value |",
+        "| --- | --- |",
+        f"| Detection configuration | {_md(policy.get('detection_configuration', 'UNKNOWN'))} |",
+        f"| Execution/performance configuration | {_md(policy.get('execution_configuration', 'UNKNOWN'))} |",
+        f"| Source scope | {_md(policy.get('source_scope_configuration', 'UNKNOWN'))} |",
+        f"| Reporting configuration | {_md(policy.get('reporting_configuration', 'UNKNOWN'))} |",
+        f"| Comparability | **{_md(policy.get('comparability', 'UNKNOWN'))}** |",
+        f"| Baseline metrics included | {_md(policy.get('baseline_metrics_included'))} |",
+        f"| Argument origin | {_md(policy.get('argument_origin', 'none'))} |",
+    ]
+    if policy.get("reasons"):
+        lines.extend(["", "Comparability limitations:"])
+        for reason in policy["reasons"]:
+            lines.append(f"- {reason}")
+    arguments = policy.get("arguments") or []
+    lines.extend(
+        [
+            "",
+            "### Explicit scanner overrides",
+            "",
+        ]
+    )
+    if arguments:
+        lines.extend(
+            [
+                "| Flag | Category | Origin | Requested | Effective | Accepted | Baseline effect |",
+                "| --- | --- | --- | --- | --- | --- | --- |",
+            ]
+        )
+        for item in arguments:
+            per_run = [
+                argument
+                for invocation in invocations
+                for argument in (invocation.get("supplied_arguments") or [])
+                if argument.get("flag") == item.get("flag")
+            ]
+            effective = item.get("effective")
+            if effective is None:
+                effective = next(
+                    (
+                        argument.get("effective")
+                        for argument in per_run
+                        if argument.get("effective") is not None
+                    ),
+                    None,
+                )
+            effective_text = (
+                effective
+                if effective is not None
+                else "not independently observable from retained artifact"
+            )
+            accepted_values = {argument.get("accepted") for argument in per_run}
+            if accepted_values == {True}:
+                accepted_text = f"yes ({len(per_run)} process completion(s))"
+            elif False in accepted_values:
+                accepted_text = "no (at least one process was not accepted)"
+            else:
+                accepted_text = "unverified"
+            lines.append(
+                f"| {_code(item.get('flag'))} | {_md(item.get('category'))} | "
+                f"{_md(item.get('origin'))} | {_code(item.get('value') if item.get('value') is not None else '(switch)')} | "
+                f"{_md(effective_text)} | {_md(accepted_text)} | "
+                f"{'neutral to detection' if item.get('baseline_neutral') else 'may limit baseline comparability'} |"
+            )
+    else:
+        lines.append(
+            "No experiment-owned `--scanner-args` were supplied.  The scanner "
+            "received only harness/adapter-generated arguments and its registered "
+            "rules/configuration."
+        )
+
+    lines.extend(
+        [
+            "",
+            "### Command templates by workload and phase",
+            "",
+            "Templates replace volatile target/report/workspace paths and run IDs. "
+            "They are labels for grouping, not literal executed commands.",
+            "",
+            "| Suite | Workload | Phase | Runs | Invocation IDs | Normalized template |",
+            "| --- | --- | --- | ---: | --- | --- |",
+        ]
+    )
+    groups: dict[tuple[str, str, str, str], list[dict]] = {}
+    for item in invocations:
+        key = (
+            str(item.get("suite") or ""),
+            str(item.get("workload") or ""),
+            str(item.get("phase") or item.get("invocation_type") or ""),
+            str(item.get("command_template") or ""),
+        )
+        groups.setdefault(key, []).append(item)
+    for (suite, workload, phase, template), items in groups.items():
+        ids = ", ".join(str(item.get("invocation_id") or item.get("sequence")) for item in items)
+        suite_label = suite or (
+            "artifact-verification" if phase == "verification" else "none"
+        )
+        workload_label = workload or "none"
+        lines.append(
+            f"| {_code(suite_label)} | {_code(workload_label)} | {_md(phase)} | "
+            f"{len(items)} | {_md(ids)} | {_code(template or 'not recorded')} |"
+        )
+    if not groups:
+        lines.append("| — | — | — | 0 | — | no scanner invocation was launched |")
+
+    lines.extend(
+        [
+            "",
+            "### Per-run sanitized argv and evidence",
+            "",
+            "| Invocation | Phase | Status | Exit | Duration (s) | Report SHA-256 | Sanitized actual command |",
+            "| --- | --- | --- | ---: | ---: | --- | --- |",
+        ]
+    )
+    for item in invocations:
+        rendered = (item.get("command_rendered") or {}).get("powershell")
+        if not rendered:
+            rendered = " ".join(str(token) for token in item.get("command") or [])
+        lines.append(
+            f"| {_code(item.get('invocation_id') or item.get('sequence'))} | "
+            f"{_md(item.get('phase') or item.get('invocation_type'))} | "
+            f"{_md(item.get('status'))} | {item.get('exit_code')} | "
+            f"{item.get('duration_seconds')} | "
+            f"{_code(item.get('report_sha256') or '—')} | {_code(rendered)} |"
+        )
+    if not invocations:
+        lines.append("| — | — | NOT RUN | — | — | — | no scanner process was launched |")
+
+    failures = [
+        item
+        for item in invocations
+        if item.get("status") != "PASS" or item.get("timed_out") or item.get("error_code")
+    ]
+    lines.extend(["", "### Failed, skipped and blocked invocations", ""])
+    if failures:
+        lines.extend(
+            [
+                "| Invocation | Phase | Launched? | Status | Error |",
+                "| --- | --- | --- | --- | --- |",
+            ]
+        )
+        for item in failures:
+            lines.append(
+                f"| {_code(item.get('invocation_id') or item.get('sequence'))} | "
+                f"{_md(item.get('phase') or item.get('invocation_type'))} | "
+                f"{'yes' if item.get('process_started') else 'no'} | "
+                f"{_md(item.get('status'))} | {_md(item.get('error_code') or item.get('error_message') or '—')} |"
+            )
+    else:
+        lines.append("No failed, skipped, or blocked scanner invocation was recorded.")
+    if auxiliary:
+        lines.extend(
+            [
+                "",
+                "### Auxiliary harness operations (not scanner invocations)",
+                "",
+                "| Operation | Status | Exit | Command |",
+                "| --- | --- | ---: | --- |",
+            ]
+        )
+        for item in auxiliary:
+            lines.append(
+                f"| {_md(item.get('operation'))} | {_md(item.get('status'))} | "
+                f"{item.get('exit_code')} | {_code(item.get('command_rendered') or ' '.join(item.get('command') or []))} |"
+            )
+    harness_command = provenance.get("harness_command") or {}
+    if harness_command:
+        lines.extend(
+            [
+                "",
+                "Harness invocation (not a scanner command): "
+                + _code(harness_command.get("rendered") or " ".join(harness_command.get("argv") or [])),
+            ]
+        )
+    lines.append("")
+    return lines
 
 
 def render_markdown(document: dict) -> str:
@@ -341,8 +543,8 @@ def render_markdown(document: dict) -> str:
                     for item in workloads
                 ),
                 "",
-                "| Product | Workload | Median s | Min/max s | CV | CPU s | Peak MiB | Files | Stability |",
-                "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+                "| Product | Workload | Median s | Min/max s | CV | CPU s | Peak MiB | Files | Stability | Measured invocation IDs |",
+                "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |",
             ]
         )
         for item in perf["products"]:
@@ -350,13 +552,18 @@ def render_markdown(document: dict) -> str:
             workload_key = item.get("workload_key") or "leaky-repo-filesystem"
             if item.get("status") == "BLOCKED":
                 lines.append(
-                    f"| `{platform}` | `{workload_key}` | BLOCKED | — | — | — | — | — | — |"
+                    f"| `{platform}` | `{workload_key}` | BLOCKED | — | — | — | — | — | — | — |"
                 )
                 continue
             total = item.get("summary") or {}
             runtime = total.get("runtime_seconds") or {}
             cpu = (total.get("cpu_total_seconds") or {}).get("median")
             memory = (total.get("peak_memory_bytes") or {}).get("max")
+            invocation_ids = [
+                str(run.get("invocation_id"))
+                for run in (item.get("runs") or [])
+                if run.get("phase") == "measured" and run.get("invocation_id")
+            ]
             lines.append(
                 f"| `{platform}` | `{workload_key}` | {runtime.get('median')} | "
                 f"{runtime.get('minimum')}/{runtime.get('maximum')} | "
@@ -364,7 +571,8 @@ def render_markdown(document: dict) -> str:
                 f"{cpu if cpu is not None else 'unavailable'} | "
                 f"{round(memory / 1048576, 2) if memory else 'unavailable'} | "
                 f"{total.get('files_inspected')}/{total.get('files_eligible')} | "
-                f"{total.get('stability')} |"
+                f"{total.get('stability')} | "
+                f"{_md(', '.join(invocation_ids) or 'not recorded')} |"
             )
         lines.append("")
         scaling = [
@@ -397,55 +605,16 @@ def render_markdown(document: dict) -> str:
                     lines.append(
                         f"- `{item['product']['platform']}` "
                         f"`{item.get('workload_key') or 'workload'}` run "
-                        f"{run.get('run_index')}: {run.get('duration_seconds')} s, "
+                        f"{run.get('run_index')} "
+                        f"(invocation `{run.get('invocation_id') or 'not recorded'}`): "
+                        f"{run.get('duration_seconds')} s, "
                         f"exit={run.get('exit_code')}, telemetry={run.get('telemetry_method')}"
                     )
     else:
         lines.append(
             f"Not available: {perf.get('reason') or 'no performance measurement'}"
         )
-    invocations = document.get("invocations") or []
-    if invocations:
-        lines.extend(
-            [
-                "",
-                "## Scanner invocations",
-                "",
-                "Every row records the actual executed argument vector (not a "
-                "reconstructed command), in execution order. Credential-bearing "
-                "argument values are redacted only when a sensitive flag such as "
-                "`--password` or `--token` is present; the original argv digest is "
-                "retained in the JSON report.",
-                "",
-                "| # | Type | Suite | Workload | Platform | Build | Artifact identity | Exit | Duration (s) | Timeout/error | Command |",
-                "| ---: | --- | --- | --- | --- | --- | --- | ---: | ---: | --- | --- |",
-            ]
-        )
-        for item in invocations:
-            identity = item.get("executable_sha256") or item.get("docker_image_id") or "—"
-            problem = (
-                "TIMEOUT"
-                if item.get("timed_out")
-                else item.get("error_code")
-                or item.get("error_message")
-                or "none"
-            )
-            lines.append(
-                f"| {item.get('sequence')} | {item.get('invocation_type')} | "
-                f"`{item.get('suite') or '—'}` | `{item.get('workload') or '—'}` | "
-                f"`{item.get('platform') or '—'}` | `{item.get('build_id') or '—'}` | "
-                f"`{identity}` | {item.get('exit_code')} | "
-                f"{item.get('duration_seconds')} | {problem} | "
-                f"{_code(' '.join(item.get('command') or []))} |"
-            )
-        lines.extend(
-            [
-                "",
-                "Invocation types: `detection`, `warmup`, `measured`, and "
-                "`verification` for artifact/ruleset validation. Detection and "
-                "performance commands use the same registered executable or image.",
-            ]
-        )
+    lines.extend(_execution_section(document))
     lines.extend(["", "## Cleanup", ""])
     lines.append(f"- Status: **{cleanup.get('status', 'UNKNOWN')}**")
     lines.append(f"- Retained by request: {cleanup.get('retained', False)}")

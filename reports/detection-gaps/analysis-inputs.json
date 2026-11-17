@@ -1,0 +1,109 @@
+{
+  "datasets": {
+    "leaky_history_oracle": {
+      "path": "datasets/leaky-repo.history-oracle.json",
+      "sha256": "bb6d24bfecd53c7208c2915c105a5b501cbb3af3390fac7a4e5fcf92e50a078c"
+    },
+    "leaky_truth": {
+      "path": "datasets/leaky-repo.rnc-truth.json",
+      "sha256": "621d3ad39929b7143e0c799883da03123d8ca6da2f174ef330aec3590365c8a9"
+    },
+    "levain_manifest": {
+      "path": "datasets/manifest.toml",
+      "sha256": "3fe1da96dfdeefd4c7d36f3fc7302b3b95aab56a2a7faa1837196e7ea6f80eb3"
+    },
+    "rnclab_lab": {
+      "path": "datasets/cache/rnc-synth-lab/lab.toml",
+      "sha256": "6962aecd309ea01bb3a2062430484ac896a7579d2ffa86b789443d2485f3df01"
+    },
+    "rnclab_oracle": {
+      "path": "datasets/cache/rnc-synth-lab/oracle/oracle.jsonl",
+      "sha256": "83dea16b343ff7a9340ff463513f4bdb454cea6faaf3234696a78fe8e6b85214"
+    }
+  },
+  "harness_source_commit": "b14bd526ee06d6ea40d814a37c3c7176c0bda5b7",
+  "harness_version": "0.6.0",
+  "reports": {
+    "betterleaks": {
+      "build_id": "betterleaks-lts",
+      "docker_image_id": null,
+      "executable_sha256": "727820f1a9f9264319cc50458b99f01acbb93e93df7a39b8eaa2715a7b1aaed5",
+      "generated_at": "2026-11-16T00:01:28Z",
+      "path": "run/reports/all-windows-baselines/betterleaks-lts/betterleaks-lts-current-baseline-5eab48332cc4-default.json",
+      "profile": "default",
+      "run_id": "20261115T235951Z-407bdf96",
+      "scanner": "betterleaks",
+      "scanner_extra_args": [],
+      "scanner_extra_args_redacted": false,
+      "scanner_extra_args_sha256": null,
+      "sha256": "e484374e52dd5ccea93418fe3b65e78d2e34fbb39d6132d06fab418a03b689d6",
+      "source_commit": "5eab48332cc48565864514e3bc6de89df091a7c4"
+    },
+    "cp4c": {
+      "build_id": "rnc-cp4c",
+      "docker_image_id": null,
+      "executable_sha256": "170bd1df345c4985043ff449051c247f22a1012fe9c054cae5c2edcc190fb1cb",
+      "generated_at": "2026-11-15T23:57:44Z",
+      "path": "run/reports/all-windows-baselines/rnc-cp4c/rnc-cp4c-current-baseline-805e3bb79276-default.json",
+      "profile": "default",
+      "run_id": "20261115T235444Z-dbf46367",
+      "scanner": "rnc",
+      "scanner_extra_args": [
+        "--workers",
+        "auto"
+      ],
+      "scanner_extra_args_redacted": false,
+      "scanner_extra_args_sha256": null,
+      "sha256": "ec2f5efe50d3dddd9e0b7b1a1e03628ccd97c748b3cf2b38a7deab806902b1f8",
+      "source_commit": "805e3bb79276b94de636e27024f38773da303b44"
+    },
+    "gitleaks": {
+      "build_id": "gitleaks-master",
+      "docker_image_id": null,
+      "executable_sha256": "e0831964099a20be3edaa5187f4f11a802821c2eea66a37acc6c09e0587724f2",
+      "generated_at": "2026-11-15T23:59:50Z",
+      "path": "run/reports/all-windows-baselines/gitleaks-master/gitleaks-master-current-baseline-5f6ec56cfa6f-default.json",
+      "profile": "default",
+      "run_id": "20261115T235801Z-0198709c",
+      "scanner": "gitleaks",
+      "scanner_extra_args": [],
+      "scanner_extra_args_redacted": false,
+      "scanner_extra_args_sha256": null,
+      "sha256": "fa80019006f9a515ee82ae107122dbd7871602e3fc5c2461587a4cfa397f2569",
+      "source_commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c"
+    },
+    "v14": {
+      "build_id": "gl-rnc-mod-v14",
+      "docker_image_id": null,
+      "executable_sha256": "7f1c9bd6f61c3ae414ab7df7688aeef04bd03312ac624127a13d39aa15238bfb",
+      "generated_at": "2026-11-16T00:06:02Z",
+      "path": "run/reports/all-windows-baselines/gl-rnc-mod-v14/gl-rnc-mod-v14-current-baseline-7d7492184111-default.json",
+      "profile": "default",
+      "run_id": "20261116T000424Z-080efee1",
+      "scanner": "gitleaks",
+      "scanner_extra_args": [],
+      "scanner_extra_args_redacted": false,
+      "scanner_extra_args_sha256": null,
+      "sha256": "1480f1bb80ef77dc303fe61527ef7d930823c6287dc92557f6b36115fe02151a",
+      "source_commit": "7d74921841114be7677a423cf60620210e832bf7"
+    },
+    "v16": {
+      "build_id": "gl-rnc-mod-v16",
+      "docker_image_id": null,
+      "executable_sha256": "d561ec675ac265240ff7002adf0019a9b1644f4df6d854a86be67b58b789bb72",
+      "generated_at": "2026-11-16T02:25:52Z",
+      "path": "run/reports/all-windows-baselines/gl-rnc-mod-v16/gl-rnc-mod-v16-current-baseline-11897cd27e57-full-11897cd27e57-default.json",
+      "profile": "default",
+      "run_id": "20261116T022413Z-04c1ef8c",
+      "scanner": "gitleaks",
+      "scanner_extra_args": [],
+      "scanner_extra_args_redacted": false,
+      "scanner_extra_args_sha256": null,
+      "sha256": "c82cab9e710676b689412c43843cdc2a593f248f0dd687271cd0843b19e93969",
+      "source_commit": "11897cd27e57d5eee7262c9d053a4356bca59cd8"
+    }
+  },
+  "schema_version": 1,
+  "scoring_epoch": "current-scoring-20261115",
+  "selection_policy": "Exact path and SHA-256. No modification-time selection. Explicit overrides are labelled and identity-checked but are not treated as locked."
+}

@@ -147,6 +147,7 @@ class RncLabSuite(TestingSuite):
             }
         metrics = scored["metrics"]
         metrics["invocation"] = {
+            "invocation_id": getattr(context.adapter, "last_invocation_id", None),
             "exit_code": invocation.exit_code,
             "timed_out": invocation.timed_out,
             "duration_seconds": invocation.duration_seconds,

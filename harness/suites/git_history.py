@@ -120,6 +120,7 @@ class GitHistorySuite(TestingSuite):
                     "status": statuses.PASS,
                     "scoring_status": result.scoring_status,
                     "execution_status": result.execution_status,
+                    "invocation_id": getattr(context.adapter, "last_invocation_id", None),
                     "duration_seconds": invocation.duration_seconds,
                     "exit_code": invocation.exit_code,
                     "commits_scanned": corpus.commits,

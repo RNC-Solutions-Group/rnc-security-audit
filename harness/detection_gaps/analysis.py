@@ -217,6 +217,7 @@ def _layer_for(code: str) -> str:
         "VALIDATOR_REJECTION": "VALUE_VALIDATOR",
         "SOURCE_NOT_INSPECTED": "SOURCE_ACQUISITION",
         "SOURCE_UNSUPPORTED": "SOURCE_ACQUISITION",
+        "SOURCE_INSPECTION_UNVERIFIED": "SOURCE_ACQUISITION",
         "GIT_SCOPE_OR_ATTRIBUTION": "SOURCE_ATTRIBUTION",
         "SCORING_MISMATCH": "SCORER",
         "INFORMATIVE_REFERENCE": "ORACLE_CLASSIFICATION",
@@ -227,7 +228,7 @@ def _layer_for(code: str) -> str:
 def _priority(target: Target, code: str, cross: list[str], confidence: str) -> str:
     if target.informative:
         return "LOW"
-    if code in {"SOURCE_UNSUPPORTED", "UNKNOWN"}:
+    if code in {"SOURCE_UNSUPPORTED", "SOURCE_INSPECTION_UNVERIFIED", "UNKNOWN"}:
         return "MEDIUM" if cross else "LOW"
     if cross or confidence == "CONFIRMED":
         return "HIGH"
@@ -244,7 +245,7 @@ def _short_source(target: Target) -> str:
     return target.path
 
 
-def classify_miss(
+def _classify_miss_after_source(
     target: Target,
     observation: Observation,
     capability: dict[str, Any],
@@ -255,15 +256,7 @@ def classify_miss(
     same_representation_matches: int,
     cross: list[str],
 ) -> tuple[str, str, str, str, str]:
-    """Return (code, confidence, layer, evidence, reproduction)."""
-    if target.informative:
-        return (
-            "INFORMATIVE_REFERENCE",
-            "CONFIRMED",
-            "ORACLE_CLASSIFICATION",
-            "oracle classifies this occurrence as informative, not a risk-bearing secret",
-            "no detection change is proposed for an informative reference",
-        )
+    """Classify a miss after source-inspection gating has been applied."""
     if target.target_id in VALUE_REPRODUCTIONS.get(scanner_key, {}):
         return (
             "VALIDATOR_REJECTION",
@@ -271,23 +264,6 @@ def classify_miss(
             "VALUE_VALIDATOR",
             VALUE_REPRODUCTIONS[scanner_key][target.target_id],
             "controlled standalone-file A/B reproduction in ignored run/detection-gaps/repro/",
-        )
-    if target.container_kind in {"archive_member", "database_record", "binary_file"} and not observation.matched:
-        if container_tp == 0:
-            return (
-                "SOURCE_UNSUPPORTED",
-                "CONFIRMED",
-                "SOURCE_ACQUISITION",
-                f"scanner produced no credited finding in any {target.container_kind} unit across the same lane/run",
-                "extract the same member/record to a temporary plain file and rescan; no corpus change",
-            )
-    if observation.source_inspected == "UNINSPECTED":
-        return (
-            "SOURCE_NOT_INSPECTED",
-            "CONFIRMED",
-            "SOURCE_ACQUISITION",
-            "harness coverage record marks the source unit uninspected (symlink alias or unsupported unit)",
-            "inspect the symlink target explicitly in a temporary scan root",
         )
     if observation.disposition == "UNVERIFIED_EVIDENCE":
         if "LOCATION" in observation.reason_code.upper():
@@ -523,6 +499,110 @@ def classify_miss(
     return code, confidence, _layer_for(code), evidence, reproduction
 
 
+def classify_miss(
+    target: Target,
+    observation: Observation,
+    capability: dict[str, Any],
+    *,
+    scanner_key: str,
+    container_tp: int,
+    same_subtype_matches: int,
+    same_representation_matches: int,
+    cross: list[str],
+) -> tuple[str, str, str, str, str]:
+    """Classify a miss with source inspection as a first-class constraint.
+
+    Absence of a finding is not proof that a container or source unit was not
+    inspected.  A source-unit capability declaration or scanner-native coverage
+    record is required for a CONFIRMED source claim.  If inspection is merely
+    unverified, the detection hypothesis is retained but downgraded and labelled
+    as evidence-limited.
+    """
+    observation = observation
+    if target.informative:
+        return (
+            "INFORMATIVE_REFERENCE",
+            "CONFIRMED",
+            "ORACLE_CLASSIFICATION",
+            "oracle classifies this occurrence as informative, not a risk-bearing secret",
+            "no detection change is proposed for an informative reference",
+        )
+    if observation.source_inspected == "NOT_INSPECTED_VERIFIED":
+        return (
+            "SOURCE_NOT_INSPECTED",
+            "CONFIRMED",
+            "SOURCE_ACQUISITION",
+            observation.inspection_evidence
+            or "scanner coverage record proves the source unit was not inspected",
+            "inspect the skipped unit explicitly in a temporary scan root",
+        )
+    if (
+        observation.source_inspected == "UNSUPPORTED_VERIFIED"
+        or observation.source_capability == "DECLARED_UNSUPPORTED"
+    ):
+        return (
+            "SOURCE_UNSUPPORTED",
+            "CONFIRMED",
+            "SOURCE_ACQUISITION",
+            observation.inspection_evidence
+            or "a validated scanner/source capability contract excludes this source type",
+            "extract the same member/record to a temporary plain file and rescan; no corpus change",
+        )
+    if observation.source_inspected == "NOT_APPLICABLE":
+        return (
+            "SOURCE_UNSUPPORTED",
+            "PROBABLE",
+            "SOURCE_ACQUISITION",
+            observation.inspection_evidence
+            or "the scanner lane is not applicable, but a source-unit capability contract was not retained",
+            "execute the lane with a scanner that supports this source type, or retain an explicit capability declaration",
+        )
+    if observation.source_inspected == "INSPECTION_UNVERIFIED":
+        if target.container_kind in {"archive_member", "database_record", "binary_file"}:
+            return (
+                "SOURCE_INSPECTION_UNVERIFIED",
+                "UNRESOLVED",
+                "SOURCE_ACQUISITION",
+                (
+                    "the expected positive is inside a "
+                    f"{target.container_kind}; the retained report does not prove the "
+                    "specific member/record was reached, and no validated capability "
+                    "contract declares the container unsupported"
+                ),
+                (
+                    "run a controlled source-unit probe that records container member "
+                    "inspection, or extract the member to a plain file and rescan"
+                ),
+            )
+        code, confidence, layer, evidence, reproduction = _classify_miss_after_source(
+            target,
+            observation,
+            capability,
+            scanner_key=scanner_key,
+            container_tp=container_tp,
+            same_subtype_matches=same_subtype_matches,
+            same_representation_matches=same_representation_matches,
+            cross=cross,
+        )
+        if confidence == "CONFIRMED":
+            confidence = "PROBABLE"
+        limited = (
+            "source inspection is not independently verified by the retained report; "
+            "the detection hypothesis is evidence-limited. " + evidence
+        )
+        return code, confidence, layer, limited, reproduction
+    return _classify_miss_after_source(
+        target,
+        observation,
+        capability,
+        scanner_key=scanner_key,
+        container_tp=container_tp,
+        same_subtype_matches=same_subtype_matches,
+        same_representation_matches=same_representation_matches,
+        cross=cross,
+    )
+
+
 def _stats(rows: Iterable[AnalysisRow]) -> dict[str, Any]:
     rows = list(rows)
     misses = [r for r in rows if not r.observation.matched]
@@ -535,11 +615,24 @@ def _stats(rows: Iterable[AnalysisRow]) -> dict[str, Any]:
         "unverified": sum(1 for r in misses if r.observation.disposition == "UNVERIFIED_EVIDENCE"),
         "risk_misses": sum(1 for r in misses if r.target.risk_bearing),
         "informative_misses": sum(1 for r in misses if r.target.informative),
-        "uninspected": sum(1 for r in misses if r.observation.source_inspected == "UNINSPECTED"),
-        "unsupported_container": sum(1 for r in misses if r.observation.source_inspected == "UNSUPPORTED_CONTAINER"),
+        "uninspected": sum(
+            1 for r in misses if r.observation.source_inspected == "NOT_INSPECTED_VERIFIED"
+        ),
+        "inspection_unverified": sum(
+            1 for r in misses if r.observation.source_inspected == "INSPECTION_UNVERIFIED"
+        ),
+        "unsupported_verified": sum(
+            1 for r in misses if r.observation.source_inspected == "UNSUPPORTED_VERIFIED"
+        ),
         "confirmed_causes": sum(1 for r in misses if r.confidence == "CONFIRMED"),
         "probable_causes": sum(1 for r in misses if r.confidence == "PROBABLE"),
         "unresolved_causes": sum(1 for r in misses if r.confidence not in {"CONFIRMED", "PROBABLE"}),
+        "inspection_states": dict(
+            collections.Counter(r.observation.source_inspected for r in misses).most_common()
+        ),
+        "source_capabilities": dict(
+            collections.Counter(r.observation.source_capability for r in misses).most_common()
+        ),
     }
 
 
@@ -576,8 +669,6 @@ def analyse_scanner(
     rows: list[AnalysisRow] = []
     for target in targets:
         obs = evidence.observations.get(target.target_id) or Observation()
-        if target.container_kind in {"archive_member", "database_record", "binary_file"} and not obs.matched:
-            obs.source_inspected = "UNSUPPORTED_CONTAINER"
         capability = _capability(
             target,
             evidence,

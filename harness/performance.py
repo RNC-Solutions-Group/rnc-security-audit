@@ -115,6 +115,9 @@ class RunRecord:
     coverage_caveat: dict | None = None
     command: list[str] | None = None
     command_sha256: str | None = None
+    invocation_id: str | None = None
+    command_template: str | None = None
+    command_redacted: bool = False
 
 
 def _stats(values: list[float]) -> dict:
@@ -195,6 +198,11 @@ def _run_once(
             if not partial:
                 raise RuntimeError(problem)
         metrics = invocation.resource_metrics or {}
+        record = (
+            adapter.invocations[-1]
+            if getattr(adapter, "invocations", None)
+            else {}
+        )
         return RunRecord(
             run_index=index,
             phase=phase,
@@ -209,7 +217,11 @@ def _run_once(
             sequence_index=sequence_index,
             cache_state=cache_state,
             coverage_caveat=partial,
-            command=list(invocation.argv),
+            command=list(record.get("command") or invocation.argv),
+            command_sha256=record.get("command_sha256"),
+            invocation_id=record.get("invocation_id"),
+            command_template=record.get("command_template"),
+            command_redacted=bool(record.get("command_redacted")),
         )
     except Exception as exc:
         return RunRecord(

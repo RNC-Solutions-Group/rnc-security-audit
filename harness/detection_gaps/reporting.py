@@ -6,12 +6,21 @@ import collections
 import csv
 import datetime as dt
 import hashlib
-import html
 import json
+import shutil
+import tempfile
 from pathlib import Path
 from typing import Any, Callable, Iterable
 
+from ..util import atomic_write_bytes, atomic_write_text, sha256_bytes
+
 from .model import (
+    INSPECTION_INSPECTED_VERIFIED,
+    INSPECTION_NOT_APPLICABLE,
+    INSPECTION_NOT_INSPECTED_VERIFIED,
+    INSPECTION_STATES,
+    INSPECTION_UNSUPPORTED_VERIFIED,
+    INSPECTION_UNVERIFIED,
     LANE_DENOMINATORS,
     LANE_ORDER,
     LANE_TITLES,
@@ -19,9 +28,17 @@ from .model import (
     AnalysisRow,
     Target,
 )
+from ..safe_text import (
+    csv_cell,
+    markdown_cell,
+    markdown_code,
+    redact_text,
+    safe_message,
+    safe_path,
+)
 from .sources import DetectionGapError
 
-ANALYSIS_VERSION = "1.0.0"
+ANALYSIS_VERSION = "2.0.0"
 
 
 def _yes(value: bool) -> str:
@@ -43,16 +60,30 @@ def _pct(numerator: int, denominator: int) -> str:
 
 
 def _md(value: Any) -> str:
-    return html.escape(_text(value)).replace("|", "\\|")
+    return markdown_cell(value)
+
+
+def _code(value: Any) -> str:
+    return markdown_code(value)
 
 
 def _write_csv(path: Path, columns: list[str], rows: Iterable[dict[str, Any]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=columns, extrasaction="ignore")
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=columns,
+            extrasaction="ignore",
+            lineterminator="\n",
+        )
         writer.writeheader()
         for row in rows:
-            writer.writerow({column: _text(row.get(column)) for column in columns})
+            writer.writerow(
+                {
+                    column: csv_cell(_text(row.get(column)))
+                    for column in columns
+                }
+            )
 
 
 def _write_text(path: Path, content: str) -> None:
@@ -69,7 +100,7 @@ def _table(headers: list[str], rows: Iterable[Iterable[Any]]) -> str:
 
 def _sample_targets(rows: Iterable[AnalysisRow], limit: int = 12) -> str:
     ids = [row.target.target_id for row in list(rows)[:limit]]
-    return ", ".join(f"`{target_id}`" for target_id in ids) if ids else "-"
+    return ", ".join(markdown_code(target_id) for target_id in ids) if ids else "-"
 
 
 def _lane_stats(rows: list[AnalysisRow]) -> list[dict[str, Any]]:
@@ -135,6 +166,8 @@ def _specific_key(row: AnalysisRow) -> str:
         return "informative_reference"
     if row.root_cause == "SOURCE_UNSUPPORTED":
         return "structured_container"
+    if row.root_cause == "SOURCE_INSPECTION_UNVERIFIED":
+        return "container_inspection_evidence"
     if target.subtype == "wordpress_salt":
         return "wordpress_authentication_material"
     if target.context.identifier_family in {"HMAC", "SIGNING"} or target.subtype in {
@@ -222,7 +255,7 @@ def target_inventory_rows(analysis: dict[str, Any]) -> list[dict[str, Any]]:
                 "provider": target.provider,
                 "provider_confidence": target.provider_confidence,
                 "credential_purpose": target.purpose,
-                "path": target.path,
+                "path": safe_path(target.path),
                 "file_type": target.file_type,
                 "source_container": target.container_kind,
                 "container_format": target.container_format,
@@ -240,6 +273,8 @@ def target_inventory_rows(analysis: dict[str, Any]) -> list[dict[str, Any]]:
                 "identifier_family": target.context.identifier_family,
                 "scanner_scope": "GIT" if target.container_kind == "git_blob" else "FILESYSTEM",
                 "inspection_status": observation.source_inspected,
+                "source_capability": observation.source_capability,
+                "inspection_evidence": observation.inspection_evidence,
                 "rule_id": observation.rule_id,
                 "finding_id": observation.finding_id,
                 "match_classification": observation.capture if observation.matched else ("UNVERIFIED" if observation.disposition == "UNVERIFIED_EVIDENCE" else "NO_OBSERVATION"),
@@ -249,8 +284,8 @@ def target_inventory_rows(analysis: dict[str, Any]) -> list[dict[str, Any]]:
                 "root_cause": row.root_cause,
                 "root_cause_confidence": row.confidence,
                 "responsible_layer": row.layer,
-                "evidence_summary": row.evidence,
-                "reproduction": row.reproduction,
+                "evidence_summary": safe_message(row.evidence),
+                "reproduction": safe_message(row.reproduction),
                 "cross_scanner_matches": row.cross_scanners,
                 "development_priority": row.priority,
             }
@@ -283,7 +318,7 @@ def missed_rows(analysis: dict[str, Any]) -> list[dict[str, Any]]:
                 "provider": target.provider,
                 "provider_confidence": target.provider_confidence,
                 "credential_purpose": target.purpose,
-                "path": target.path,
+                "path": safe_path(target.path),
                 "file_type": target.file_type,
                 "source_container": target.container_kind,
                 "container_format": target.container_format,
@@ -297,18 +332,20 @@ def missed_rows(analysis: dict[str, Any]) -> list[dict[str, Any]]:
                 "identifier_key": target.context.identifier,
                 "identifier_family": target.context.identifier_family,
                 "inspection_status": observation.source_inspected,
+                "source_capability": observation.source_capability,
+                "inspection_evidence": observation.inspection_evidence,
                 "overlap_finding": _yes(observation.overlap),
                 "overlap_rule_id": observation.rule_id if observation.overlap else "",
                 "overlap_capture": observation.capture if observation.overlap else "",
                 "score_disposition": observation.disposition,
-                "scoring_reason": observation.reason,
+                "scoring_reason": safe_message(observation.reason),
                 "scoring_reason_code": observation.reason_code,
                 "scoring_stage": observation.stage,
                 "root_cause": row.root_cause,
                 "root_cause_confidence": row.confidence,
                 "responsible_layer": row.layer,
-                "evidence_summary": row.evidence,
-                "smallest_reproduction": row.reproduction,
+                "evidence_summary": safe_message(row.evidence),
+                "smallest_reproduction": safe_message(row.reproduction),
                 "existing_rule_capability": _capability_text(row),
                 "cross_scanner_matches": row.cross_scanners,
                 "cross_scanner_rules": ";".join(f"{key}:{rule}" for key, rule in sorted(row.cross_rules.items()) if rule),
@@ -408,7 +445,7 @@ def location_rows(analysis: dict[str, Any]) -> list[dict[str, Any]]:
                 "database_rowid": target.database_rowid,
                 "binary_format": target.container_format if target.container_kind == "binary_file" else "",
                 "git_commit": target.commit,
-                "path": target.path,
+                "path": safe_path(target.path),
                 "line": target.line,
                 "byte_start": target.byte_start,
                 "byte_end": target.byte_end,
@@ -418,12 +455,14 @@ def location_rows(analysis: dict[str, Any]) -> list[dict[str, Any]]:
                 "normalization": target.normalization,
                 "scanner_scope": "GIT" if target.container_kind == "git_blob" else "FILESYSTEM",
                 "inspection_status": row.observation.source_inspected,
+                "source_capability": row.observation.source_capability,
+                "inspection_evidence": row.observation.inspection_evidence,
                 "source_eligibility": {
-                    "INSPECTED": "ELIGIBLE_INSPECTED",
-                    "INSPECTED_UNVERIFIED": "ELIGIBLE_INSPECTION_UNVERIFIED",
-                    "UNINSPECTED": "ELIGIBLE_UNINSPECTED",
-                    "UNSUPPORTED_CONTAINER": "UNSUPPORTED_CONTAINER",
-                    "NOT_APPLICABLE": "NOT_APPLICABLE",
+                    INSPECTION_INSPECTED_VERIFIED: "ELIGIBLE_INSPECTED_VERIFIED",
+                    INSPECTION_UNVERIFIED: "ELIGIBLE_INSPECTION_UNVERIFIED",
+                    INSPECTION_NOT_INSPECTED_VERIFIED: "ELIGIBLE_UNINSPECTED_VERIFIED",
+                    INSPECTION_UNSUPPORTED_VERIFIED: "UNSUPPORTED_VERIFIED",
+                    INSPECTION_NOT_APPLICABLE: "NOT_APPLICABLE",
                 }.get(row.observation.source_inspected, "UNKNOWN"),
                 "root_cause": row.root_cause,
                 "root_cause_confidence": row.confidence,
@@ -679,8 +718,6 @@ def _recommendation(opportunity: dict[str, Any]) -> dict[str, str]:
 def build_scanner_summary(
     analysis: dict[str, Any],
     cross: dict[str, Any],
-    *,
-    generated_at: str,
 ) -> dict[str, Any]:
     rows = analysis["rows"]
     evidence = analysis["evidence"]
@@ -689,9 +726,8 @@ def build_scanner_summary(
     meta = evidence.metadata
     report = evidence.report
     summary = {
-        "schema_version": 1,
+        "schema_version": 2,
         "analysis_version": ANALYSIS_VERSION,
-        "generated_at": generated_at,
         "scanner": analysis["label"],
         "scanner_key": analysis["key"],
         "build_id": meta["build_id"],
@@ -708,6 +744,9 @@ def build_scanner_summary(
         "scoring_epoch": "current post-scoring-integrity remediation (2026-11-15)",
         "configuration_profile": meta["profile"],
         "scanner_extra_args": meta.get("scanner_extra_args"),
+        "scanner_extra_args_sha256": meta.get("scanner_extra_args_sha256"),
+        "argument_policy": meta.get("argument_policy"),
+        "input_selection": meta.get("input_selection"),
         "target_universe": {
             "total": len(rows),
             "by_lane": {lane: sum(1 for row in rows if row.target.lane == lane) for lane in LANE_ORDER},
@@ -731,6 +770,18 @@ def build_scanner_summary(
             "confirmed_causes": sum(1 for row in misses if row.confidence == "CONFIRMED"),
             "probable_causes": sum(1 for row in misses if row.confidence == "PROBABLE"),
             "unresolved_causes": sum(1 for row in misses if row.confidence not in {"CONFIRMED", "PROBABLE"}),
+            "inspection_states": {
+                state: sum(
+                    1 for row in misses if row.observation.source_inspected == state
+                )
+                for state in INSPECTION_STATES
+            },
+            "source_capabilities": {
+                state: sum(
+                    1 for row in misses if row.observation.source_capability == state
+                )
+                for state in ("CLAIMED_SUPPORTED", "DECLARED_UNSUPPORTED", "NOT_DECLARED")
+            },
         },
         "lanes": _lane_stats(rows),
         "breakdowns": {
@@ -764,7 +815,7 @@ def _limitations(analysis: dict[str, Any]) -> list[str]:
         "This is an independent evaluator report. No scanner rule, source file, oracle, or scoring policy was modified.",
         "Leaky Repo filesystem is a line-level detection benchmark without a complete negative oracle; precision and F1 are not certified.",
         "Leaky Repo Git precision/F1 are not certified; 65 source occurrences and 53 unique groups are separate denominators.",
-        "Leaky Git source units are marked INSPECTED_UNVERIFIED for adapters that do not return a true coverage attestation; this is not evidence that a unit was skipped.",
+        "Leaky Git source units are marked INSPECTION_UNVERIFIED for adapters that do not return a true coverage attestation; this is not evidence that a unit was skipped.",
         "RNC Lab precision/F1 are not certified; the 640 filesystem and 160 Git positive denominators are separate and are not combined.",
         "The 11 RNC Lab symlink aliases are not followed by the scanner. They contain no expected positive target in this oracle, so they do not change the positive recall denominator.",
         "Provider and subtype labels for Leaky Repo and Levain are source-context inferences because those oracles do not expose the Lab's fine-grained subtype taxonomy. RNC Lab labels come directly from its oracle.",
@@ -1022,7 +1073,7 @@ def _private_key_section(analysis: dict[str, Any]) -> str:
     missed = [row for row in rows if not row.observation.matched]
     if missed:
         lines.append(
-            "Most remaining private-key failures are format/container gaps: PuTTY PPK v2 and PKCS#12 are not PEM blocks, and archived PEM material never reaches the matcher. "
+            "Most remaining private-key failures are representation or source-acquisition hypotheses: PuTTY PPK v2 and PKCS#12 are not PEM blocks, and the retained reports do not prove that archived PEM members were inspected. "
             "Wallet seed phrases are a distinct mnemonic credential and should not be counted as private-key material. "
             "Do not mark a public-key-only, SPKI-only, encrypted-container-only or filename-only observation as private-key credit. "
             "The existing PEM findings that are credited must remain credited; no historical scoring artifact is being reclassified as a new false negative here."
@@ -1055,7 +1106,18 @@ def _source_section(analysis: dict[str, Any]) -> str:
     lines.append(_table(["Representation", "Missed", "Risk misses", "Cross-scanner found"], [[item["key"], item["missed"], item["risk_misses"], item["cross_found"]] for item in rep_table]))
     lines.append("")
     inspection = _breakdown(rows, lambda row: row.observation.source_inspected)
-    lines.append(_table(["Inspection disposition", "Expected", "Matched", "Missed"], [[item["key"], item["expected"], item["matched"], item["missed"]] for item in inspection]))
+    lines.append(_table(["Inspection state", "Expected", "Matched", "Missed"], [[item["key"], item["expected"], item["matched"], item["missed"]] for item in inspection]))
+    lines.append("")
+    capability = _breakdown(rows, lambda row: row.observation.source_capability)
+    lines.append(
+        _table(
+            ["Source capability declaration", "Expected", "Matched", "Missed"],
+            [
+                [item["key"], item["expected"], item["matched"], item["missed"]]
+                for item in capability
+            ],
+        )
+    )
     lines.append("")
     structured = [row for row in missed if row.target.container_kind in {"archive_member", "database_record", "binary_file"}]
     if structured:
@@ -1067,14 +1129,26 @@ def _source_section(analysis: dict[str, Any]) -> str:
         )
         lines.append("")
         lines.append(
-            "The scanner emitted no finding with a non-null archive member, database row or PKCS#12 container across this run. "
-            "A miss in this category is therefore classified as `SOURCE_UNSUPPORTED`, not as a regex false negative. "
-            "An archive file being encountered is not evidence that its members were scanned."
+            "The retained report contains no unit/member/record evidence for these "
+            "targets. That does **not** prove the scanner failed to inspect the "
+            "container. They are therefore classified as "
+            "`SOURCE_INSPECTION_UNVERIFIED` / `UNRESOLVED`, not as confirmed "
+            "`SOURCE_UNSUPPORTED`. A validated capability declaration or a "
+            "source-unit probe that records member inspection is required before "
+            "that stronger claim is permitted."
         )
-    uninspected = [row for row in missed if row.observation.source_inspected == "UNINSPECTED"]
+    uninspected = [
+        row for row in missed
+        if row.observation.source_inspected == INSPECTION_NOT_INSPECTED_VERIFIED
+    ]
+    unverified = [
+        row for row in missed
+        if row.observation.source_inspected == INSPECTION_UNVERIFIED
+    ]
     lines.append("")
     lines.append(
-        f"Eligible-but-uninspected expected positives: {len(uninspected)}. "
+        f"Eligible-but-uninspected expected positives with proof: {len(uninspected)}. "
+        f"Expected positives whose inspection is not independently verified: {len(unverified)}. "
         "The RNC Lab filesystem lane reports 11 uninspected symlink aliases; none of them is an expected positive target in the frozen oracle. "
         "That is a scanner coverage caveat, not a positive-recall gap."
     )
@@ -1141,7 +1215,7 @@ def _load_evidence_section(analysis: dict[str, Any], analyses: dict[str, dict[st
             lines.append(
                 f"- **{row['profile']}:** {row['files_inspected']}/{row['files_eligible']} files inspected; "
                 f"caveat `{row['coverage_reason'] or 'none'}`; exemplar uninspected unit(s): "
-                + ", ".join(f"`{unit}`" for unit in row["uninspected"][:4])
+                + ", ".join(markdown_code(unit) for unit in row["uninspected"][:4])
                 + "."
             )
     else:
@@ -1169,7 +1243,21 @@ def _fp_section(analysis: dict[str, Any]) -> str:
     if overlaps:
         lines.append(f"{len(overlaps)} missed target(s) have a same-location scanner observation that the scorer did not credit (`UNVERIFIED_EVIDENCE`). These are not silent regex misses.")
         lines.append("")
-        lines.append(_table(["Target", "Rule", "Stage", "Reason code"], [[row.target.target_id, row.observation.rule_id, row.observation.stage, row.observation.reason_code or row.observation.reason] for row in overlaps[:12]]))
+        lines.append(
+            _table(
+                ["Target", "Rule", "Stage", "Reason code"],
+                [
+                    [
+                        row.target.target_id,
+                        row.observation.rule_id,
+                        row.observation.stage,
+                        row.observation.reason_code
+                        or safe_message(row.observation.reason),
+                    ]
+                    for row in overlaps[:12]
+                ],
+            )
+        )
         lines.append("")
     lines.append(
         "Regression fixtures available for proposed changes: the RNC Lab oracle has 400 negative-ordinary and 202 negative-trap items (162 trap items in the filesystem lane and 40 in Git); "
@@ -1277,6 +1365,7 @@ def _layer_for_code(code: str) -> str:
         "VALIDATOR_REJECTION": "VALUE_VALIDATOR",
         "SOURCE_NOT_INSPECTED": "SOURCE_ACQUISITION",
         "SOURCE_UNSUPPORTED": "SOURCE_ACQUISITION",
+        "SOURCE_INSPECTION_UNVERIFIED": "SOURCE_ACQUISITION",
         "GIT_SCOPE_OR_ATTRIBUTION": "SOURCE_ATTRIBUTION",
         "SCORING_MISMATCH": "SCORER",
         "INFORMATIVE_REFERENCE": "ORACLE_CLASSIFICATION",
@@ -1309,7 +1398,11 @@ def _backlog_markdown(analysis: dict[str, Any], summary: dict[str, Any]) -> str:
         lines.append(f"- **Change:** {recommendation['action']}")
         lines.append(f"- **False-positive risk:** {recommendation['fp_risk']}; **complexity:** {recommendation['complexity']}.")
         lines.append(f"- **Reuse:** {recommendation['reuse']}")
-        lines.append(f"- **Examples:** {', '.join(f'`{target}' for target in item['sample_targets'][:8])}.")
+        lines.append(
+            f"- **Examples:** "
+            + ", ".join(markdown_code(target) for target in item["sample_targets"][:8])
+            + "."
+        )
         lines.append("")
     lines.append("## Full opportunity table")
     lines.append("")
@@ -1469,7 +1562,8 @@ def _detection_gaps_markdown(analysis: dict[str, Any], summary: dict[str, Any], 
     lines.append("## Root-cause interpretation")
     lines.append("")
     lines.append(
-        "A target is marked `SOURCE_UNSUPPORTED` only when the same run produced no credited finding in that container class. "
+        "A target is marked `SOURCE_UNSUPPORTED` only when a scanner/source capability declaration or an independently validated capability contract says the source type is unsupported. "
+        "`SOURCE_INSPECTION_UNVERIFIED` is used when the specific member/record/unit has no retained inspection evidence and no capability declaration; it is not proof of a scanner failure. "
         "`SOURCE_NOT_INSPECTED` requires a coverage record, not merely an absent finding. `CAPTURE_MISMATCH` requires a retained same-location observation whose value evidence failed. "
         "`SCORING_MISMATCH` requires a usable scanner observation rejected by the scorer. `IDENTIFIER_MISMATCH`, `RULE_ABSENT`, `FORMAT_UNSUPPORTED`, `CONTEXT_INSUFFICIENT`, `VALIDATOR_REJECTION` and `UNKNOWN` are kept distinct because they imply different development work."
     )
@@ -1572,14 +1666,24 @@ def _overlap_markdown(cross: dict[str, Any], analyses: dict[str, dict[str, Any]]
     lines.append("")
     if all_misses:
         sample = [by_target[tid]["target"] for tid in all_misses[:12]]
-        lines.append("Examples: " + ", ".join(f"`{target.target_id}`" for target in sample) + ".")
+        lines.append(
+            "Examples: "
+            + ", ".join(markdown_code(target.target_id) for target in sample)
+            + "."
+        )
         lines.append("")
     lines.append("## Unique misses and complementary coverage")
     lines.append("")
     unique_rows = []
     for key in keys:
         target_ids = cross["only_missed"].get(key, [])
-        unique_rows.append([analyses[key]["label"], len(target_ids), ", ".join(f"`{tid}`" for tid in target_ids[:8]) or "-"])
+        unique_rows.append(
+            [
+                analyses[key]["label"],
+                len(target_ids),
+                ", ".join(markdown_code(tid) for tid in target_ids[:8]) or "-",
+            ]
+        )
     lines.append(_table(["Scanner", "Only this scanner missed", "Example target IDs"], unique_rows))
     lines.append("")
     lines.append("A target listed here is credited by every other compared scanner and missed by this scanner. It is the strongest evidence of a scanner-specific coverage gap rather than an unreadable source or an oracle ambiguity.")
@@ -1628,7 +1732,9 @@ def _overlap_markdown(cross: dict[str, Any], analyses: dict[str, dict[str, Any]]
         lines.append("")
         lines.append(_table(["Subtype", "Count"], [[key, count] for key, count in by_subtype.most_common(12)]))
         lines.append("")
-        lines.append("Examples: " + ", ".join(f"`{tid}`" for tid in only_ids[:15]) + ".")
+        lines.append(
+            "Examples: " + ", ".join(markdown_code(tid) for tid in only_ids[:15]) + "."
+        )
         lines.append("")
         lines.append(
             "This is the most useful external-detection signal for both RNC scanners, but it is not a drop-in rule. Betterleaks has a different rule vocabulary, different source scope and a different negative oracle. "
@@ -1750,6 +1856,8 @@ def _validation_block(analyses: dict[str, dict[str, Any]], cross: dict[str, Any]
             "root_cause_total": sum(analysis["stats"]["root_causes"].values()),
             "root_causes_reconcile": sum(analysis["stats"]["root_causes"].values())
             == sum(1 for row in analysis["rows"] if not row.observation.matched),
+            "inspection_states": analysis["stats"]["inspection_states"],
+            "source_capabilities": analysis["stats"]["source_capabilities"],
             "report_metrics": analysis["evidence"].metrics["_report_metrics"],
         }
     all_reconcile = all(
@@ -1816,6 +1924,30 @@ def _validation_block(analyses: dict[str, dict[str, Any]], cross: dict[str, Any]
         "all_root_causes_reconcile": all(item["root_causes_reconcile"] for item in counts.values()),
         "all_missed_targets_have_evidence": not empty_evidence,
         "empty_evidence_targets": empty_evidence[:10],
+        "source_attribution": {
+            "confirmed_unsupported_claims": sum(
+                1
+                for analysis in analyses.values()
+                for row in analysis["rows"]
+                if not row.observation.matched
+                and row.root_cause == "SOURCE_UNSUPPORTED"
+                and row.confidence == "CONFIRMED"
+            ),
+            "inspection_unverified_misses": sum(
+                1
+                for analysis in analyses.values()
+                for row in analysis["rows"]
+                if not row.observation.matched
+                and row.root_cause == "SOURCE_INSPECTION_UNVERIFIED"
+            ),
+            "verified_not_inspected_misses": sum(
+                1
+                for analysis in analyses.values()
+                for row in analysis["rows"]
+                if not row.observation.matched
+                and row.root_cause == "SOURCE_NOT_INSPECTED"
+            ),
+        },
         "cross_scanner_counts": cross["counts"],
         "oracle_or_scoring_changed": False,
         "category_percentages_use_lane_denominators": True,
@@ -1826,26 +1958,148 @@ def _validation_block(analyses: dict[str, dict[str, Any]], cross: dict[str, Any]
     }
 
 
+def _publication_guard(out: Path, *, replace: bool) -> None:
+    if not out.exists() or not any(out.iterdir()):
+        return
+    marker = out / "publication.json"
+    if marker.is_file():
+        try:
+            document = json.loads(marker.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            document = {}
+        if document.get("schema_version") == 1:
+            return
+    if not replace:
+        raise DetectionGapError(
+            f"output directory {out} is non-empty and is not a finalized "
+            "detection-gap report set. Pass --replace to overwrite it, or choose "
+            "a new --out-dir. Historical evidence is never replaced implicitly."
+        )
+
+
+def _validate_generated(root: Path, expected: Iterable[Path]) -> dict[str, Any]:
+    expected_paths = sorted(Path(item) for item in expected)
+    missing = [str(path) for path in expected_paths if not path.is_file()]
+    if missing:
+        raise DetectionGapError(
+            "generated report set is incomplete: " + ", ".join(missing[:10])
+        )
+    for path in expected_paths:
+        if path.suffix != ".json":
+            continue
+        try:
+            json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            raise DetectionGapError(f"generated JSON is invalid: {path}: {exc}") from exc
+    validation_path = root / "analysis-validation.json"
+    validation = json.loads(validation_path.read_text(encoding="utf-8"))
+    checks = validation.get("validation") or {}
+    failed = [
+        name
+        for name in (
+            "all_missed_targets_have_evidence",
+            "all_root_causes_reconcile",
+            "all_scanner_counts_reconcile",
+            "archives_not_treated_as_members",
+        )
+        if checks.get(name) is not True
+    ]
+    if failed:
+        raise DetectionGapError(
+            "generated report validation failed: " + ", ".join(failed)
+        )
+    return validation
+
+
+def _publish_staged(
+    staging: Path,
+    out: Path,
+    *,
+    replace: bool,
+    generated_at: str,
+    run_metadata: dict[str, Any],
+) -> None:
+    _publication_guard(out, replace=replace)
+    out.mkdir(parents=True, exist_ok=True)
+    in_progress = {
+        "schema_version": 1,
+        "status": "IN_PROGRESS",
+        "generated_at": generated_at,
+        "run_metadata": run_metadata,
+        "warning": (
+            "This report set is incomplete. Do not treat any file as final until "
+            "status is COMPLETE with a verified file manifest."
+        ),
+    }
+    atomic_write_text(
+        out / "publication.json",
+        json.dumps(in_progress, indent=2, sort_keys=True) + "\n",
+    )
+    files: list[dict[str, Any]] = []
+    for source in sorted(staging.rglob("*")):
+        if not source.is_file() or source.name == "publication.json":
+            continue
+        relative = source.relative_to(staging)
+        destination = out / relative
+        data = source.read_bytes()
+        atomic_write_bytes(destination, data)
+        files.append(
+            {
+                "path": relative.as_posix(),
+                "sha256": sha256_bytes(data),
+                "bytes": len(data),
+            }
+        )
+    complete = {
+        "schema_version": 1,
+        "status": "COMPLETE",
+        "generated_at": generated_at,
+        "analysis_version": ANALYSIS_VERSION,
+        "run_metadata": run_metadata,
+        "files": files,
+        "completion_marker": "publication.json",
+        "note": (
+            "Final only when status is COMPLETE and every file hash matches. "
+            "An IN_PROGRESS marker means the directory must not be consumed as "
+            "a finalized report set."
+        ),
+    }
+    atomic_write_text(
+        out / "publication.json",
+        json.dumps(complete, indent=2, sort_keys=True) + "\n",
+    )
+
+
 def generate_reports(
     *,
     analyses: dict[str, dict[str, Any]],
     cross: dict[str, Any],
     output_dir: str | Path,
     generated_at: str | None = None,
+    run_metadata: dict[str, Any] | None = None,
+    replace: bool = False,
 ) -> dict[str, Path]:
-    out = Path(output_dir)
-    out.mkdir(parents=True, exist_ok=True)
+    final_out = Path(output_dir)
+    _publication_guard(final_out, replace=replace)
+    final_out.parent.mkdir(parents=True, exist_ok=True)
     timestamp = generated_at or dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat()
+    staging = Path(
+        tempfile.mkdtemp(prefix=".detection-gaps-staging-", dir=str(final_out.parent))
+    )
+    out = staging
     written: dict[str, Path] = {}
+    staging_written: dict[str, Path] = {}
     summaries: dict[str, dict[str, Any]] = {}
     for key in ("cp4c", "v14", "v16"):
         if key not in analyses:
             continue
         analysis = analyses[key]
-        summary = build_scanner_summary(analysis, cross, generated_at=timestamp)
+        summary = build_scanner_summary(analysis, cross)
         summaries[key] = summary
-        directory = out / SCANNER_DIRS[key]
+        directory = staging / SCANNER_DIRS[key]
         directory.mkdir(parents=True, exist_ok=True)
+        written[f"{key}_dir"] = final_out / SCANNER_DIRS[key]
+        staging_written[f"{key}_dir"] = directory
         stem = analysis["key"]
         inventory = target_inventory_rows(analysis)
         missed = missed_rows(analysis)
@@ -1861,7 +2115,8 @@ def generate_reports(
                 "credential_purpose", "path", "file_type", "source_container", "container_format",
                 "archive_member", "archive_depth", "database_table", "database_column", "git_commit",
                 "line", "byte_start", "byte_end", "representation", "normalization", "identifier_key",
-                "identifier_family", "scanner_scope", "inspection_status", "rule_id", "finding_id",
+                "identifier_family", "scanner_scope", "inspection_status", "source_capability",
+                "inspection_evidence", "rule_id", "finding_id",
                 "match_classification", "overlapping_finding", "scorer_disposition", "rejected_or_pending",
                 "root_cause", "root_cause_confidence", "responsible_layer", "evidence_summary",
                 "reproduction", "cross_scanner_matches", "development_priority",
@@ -1876,7 +2131,8 @@ def generate_reports(
                 "category", "subtype", "provider", "provider_confidence", "credential_purpose", "path",
                 "file_type", "source_container", "container_format", "archive_member", "database_table",
                 "database_column", "git_commit", "line", "representation", "normalization",
-                "identifier_key", "identifier_family", "inspection_status", "overlap_finding",
+                "identifier_key", "identifier_family", "inspection_status",
+                "source_capability", "inspection_evidence", "overlap_finding",
                 "overlap_rule_id", "overlap_capture", "score_disposition", "scoring_reason",
                 "scoring_reason_code", "scoring_stage", "root_cause", "root_cause_confidence",
                 "responsible_layer", "evidence_summary", "smallest_reproduction",
@@ -1906,7 +2162,8 @@ def generate_reports(
                 "container_format", "archive_format", "archive_depth", "archive_member", "database_table",
                 "database_column", "database_rowid", "binary_format", "git_commit", "path", "line",
                 "byte_start", "byte_end", "file_type", "representation", "representation_family",
-                "normalization", "scanner_scope", "inspection_status", "source_eligibility",
+                "normalization", "scanner_scope", "inspection_status", "source_capability",
+                "inspection_evidence", "source_eligibility",
                 "root_cause", "root_cause_confidence", "responsible_layer", "cross_scanner_matches",
             ],
             location,
@@ -1928,39 +2185,83 @@ def generate_reports(
             directory / f"{stem}-summary.json",
             json.dumps(summary, indent=2, sort_keys=True) + "\n",
         )
-        written[f"{stem}_md"] = directory / f"{stem}-detection-gaps.md"
-        written[f"{stem}_summary"] = directory / f"{stem}-summary.json"
+        written[f"{stem}_md"] = final_out / SCANNER_DIRS[key] / f"{stem}-detection-gaps.md"
+        written[f"{stem}_summary"] = final_out / SCANNER_DIRS[key] / f"{stem}-summary.json"
     overlap_md = out / "cp4c-v14-target-overlap.md"
     _write_text(overlap_md, _overlap_markdown(cross, analyses))
-    written["overlap_md"] = overlap_md
+    written["overlap_md"] = final_out / "cp4c-v14-target-overlap.md"
     columns, rows = _overlap_csv(cross)
     overlap_csv = out / "cp4c-v14-target-overlap.csv"
     _write_csv(overlap_csv, columns, rows)
-    written["overlap_csv"] = overlap_csv
+    written["overlap_csv"] = final_out / "cp4c-v14-target-overlap.csv"
     validation = {
-        "schema_version": 1,
+        "schema_version": 2,
         "analysis_version": ANALYSIS_VERSION,
-        "generated_at": timestamp,
         "validation": _validation_block(analyses, cross),
         "scanner_summaries": {key: f"{SCANNER_DIRS[key]}/{key}-summary.json" for key in summaries},
     }
     _write_text(out / "analysis-validation.json", json.dumps(validation, indent=2, sort_keys=True) + "\n")
-    written["validation"] = out / "analysis-validation.json"
-    _write_text(out / "README.md", _readme(summaries, cross, timestamp))
-    written["readme"] = out / "README.md"
+    written["validation"] = final_out / "analysis-validation.json"
+    _write_text(out / "README.md", _readme(summaries, cross))
+    written["readme"] = final_out / "README.md"
+    run_document = {
+        "schema_version": 1,
+        "analysis_version": ANALYSIS_VERSION,
+        "generated_at": timestamp,
+        "volatile": True,
+        "note": (
+            "This file is outside the reproducible substantive report set. "
+            "Timestamps and run selection belong here, not in the summaries."
+        ),
+        "run_metadata": run_metadata or {},
+        "input_selections": {
+            key: analyses[key]["evidence"].metadata.get("input_selection")
+            for key in sorted(analyses)
+        },
+    }
+    _write_text(
+        out / "analysis-run.json",
+        json.dumps(run_document, indent=2, sort_keys=True) + "\n",
+    )
+    written["analysis_run"] = final_out / "analysis-run.json"
+    # Manually maintained migration notes are part of the published set when
+    # present.  They are copied unchanged so the completion manifest covers them.
+    for name in ("classification-migration.md", "classification-migration.json"):
+        source = final_out / name
+        if source.is_file():
+            shutil.copy2(source, staging / name)
+    expected = [
+        path.relative_to(staging)
+        for path in staging.rglob("*")
+        if path.is_file()
+    ]
+    _validate_generated(staging, [staging / item for item in expected])
+    try:
+        _publish_staged(
+            staging,
+            final_out,
+            replace=replace,
+            generated_at=timestamp,
+            run_metadata=run_metadata or {},
+        )
+    finally:
+        shutil.rmtree(staging, ignore_errors=True)
     return written
 
 
-def _readme(summaries: dict[str, dict[str, Any]], cross: dict[str, Any], timestamp: str) -> str:
+def _readme(summaries: dict[str, dict[str, Any]], cross: dict[str, Any]) -> str:
     lines = ["# Detection-gap analysis", ""]
     lines.append(
         "Target-level false-negative and source-context investigation for the current-scoring Windows AMD64 baselines. "
         "These reports are generated from retained harness evidence and frozen oracles; no scanner, rule, oracle or scoring policy was modified."
     )
     lines.append("")
-    lines.append(f"Generated: `{timestamp}`")
-    lines.append("")
     lines.append(f"Analysis version: `{ANALYSIS_VERSION}`")
+    lines.append("")
+    lines.append(
+        "Volatile run metadata is isolated in [analysis-run.json](analysis-run.json); "
+        "the substantive report files are deterministic for the pinned input lock."
+    )
     lines.append("")
     lines.append("## Individual reports")
     lines.append("")
@@ -1990,24 +2291,30 @@ def _readme(summaries: dict[str, dict[str, Any]], cross: dict[str, Any], timesta
     lines.append("")
     lines.append("- [CP4C/V14/V16 target overlap](cp4c-v14-target-overlap.md)")
     lines.append("- [Target overlap CSV](cp4c-v14-target-overlap.csv)")
+    lines.append("- [Classification migration: analysis 1.0.0 to 2.0.0](classification-migration.md)")
     lines.append(f"- All-scanner common misses: **{cross['counts']['all_scanner_misses']}**")
     lines.append("")
     lines.append("## Validation")
     lines.append("")
     lines.append("- [Machine validation](analysis-validation.json)")
+    lines.append("- [Publication completion manifest](publication.json); only `status: COMPLETE` is finalized.")
+    lines.append("- [Volatile analysis-run metadata](analysis-run.json); timestamps and input selection are isolated here.")
     lines.append("- Every scanner's reconstructed per-target matched count is checked against its retained report metric, by lane and in total.")
     lines.append("- Root-cause totals equal the reconstructed miss totals for every scanner.")
     lines.append("- The 1,125-target universe is partitioned into 85 Levain, 175 Leaky filesystem, 65 Leaky Git, 640 RNC Lab filesystem and 160 RNC Lab Git targets.")
     lines.append("- Leaky Git preserves 65 occurrences and 53 unique groups; RNC Lab preserves 800 occurrences and 496 unique groups. They are never conflated.")
     lines.append("- The 10 archive members, 12 database records and 4 binary key containers are classified as non-plaintext, not ordinary files.")
+    lines.append("- Container misses are labelled `SOURCE_INSPECTION_UNVERIFIED` unless a scanner/source capability declaration or source-unit probe proves unsupported or uninspected. Absence of a finding is not inspection proof.")
     lines.append("- RNC Lab and Leaky Git precision/F1 are not claimed; their negative oracles are incomplete.")
     lines.append("")
     lines.append("## Regeneration")
     lines.append("")
     lines.append("```powershell")
-    lines.append("python -m harness detection-gaps --out-dir reports/detection-gaps")
-    lines.append("python -m unittest tests.test_detection_gaps -v")
+    lines.append("python -m harness detection-gaps --input-lock reports/detection-gaps/analysis-inputs.json --out-dir reports/detection-gaps --replace")
+    lines.append("python -m unittest tests.test_detection_gaps tests.test_provenance tests.test_integrity -v")
     lines.append("```")
+    lines.append("")
+    lines.append("The analysis input lock is [analysis-inputs.json](analysis-inputs.json). It records each retained report path, SHA-256, build ID, source-commit metadata and run ID. The generator never selects by modification time.")
     lines.append("")
     lines.append("Raw evidence remains under Git-ignored `run/`. Tracked files contain target IDs, redacted structural context and nonsecret source locators only.")
     lines.append("")

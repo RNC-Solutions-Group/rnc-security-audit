@@ -100,11 +100,17 @@ class CliTests(unittest.TestCase):
                 "gitleaks,betterleaks",
                 "--out-dir",
                 "reports/detection-gaps",
+                "--replace",
             ]
         )
         self.assertEqual(args.command, "detection-gaps")
         self.assertEqual(args.scanners, "cp4c,v14")
         self.assertEqual(args.out_dir, "reports/detection-gaps")
+        self.assertTrue(args.replace)
+        self.assertEqual(
+            args.input_lock, "reports/detection-gaps/analysis-inputs.json"
+        )
+        self.assertIsNone(args.write_input_lock)
         self.assertFalse(hasattr(args, "commit"))
 
     def test_unknown_config_is_a_harness_error(self):

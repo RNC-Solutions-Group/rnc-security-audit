@@ -106,7 +106,14 @@ class GitleaksAdapter(ScannerAdapter):
             suite=suite,
             workload=workload,
         )
-        self.record_invocation(invocation, artifact)
+        self.record_invocation(
+            invocation,
+            artifact,
+            target_path=target,
+            config_path=config,
+            supplied_args=(*self.default_extra_args, *extra_args),
+            argument_origin=self.argument_origin,
+        )
         return invocation
 
     def invoke_container(
@@ -195,7 +202,14 @@ class GitleaksAdapter(ScannerAdapter):
         except BaseException:
             self._remove_container(container)
             raise
-        self.record_invocation(invocation, artifact)
+        self.record_invocation(
+            invocation,
+            artifact,
+            target_path=target,
+            config_path=config,
+            supplied_args=(*self.default_extra_args, *extra_args),
+            argument_origin=self.argument_origin,
+        )
         if invocation.timed_out or invocation.error_code:
             self._remove_container(container)
         return invocation
@@ -260,6 +274,16 @@ class GitleaksAdapter(ScannerAdapter):
         lane = gitleaks_fixtures.run_docker(
             fixtures, artifact.image_tag, artifact.image_id, work_dir, timeout
         )
+        auxiliary = lane.get("command")
+        if isinstance(auxiliary, list) and auxiliary:
+            self.record_auxiliary(
+                operation="docker-fixture-validator",
+                argv=auxiliary,
+                exit_code=lane.get("exit_code"),
+                duration_seconds=lane.get("duration_seconds"),
+                status=lane.get("status") or "BLOCKED",
+                error=lane.get("reason"),
+            )
         for item in lane.get("invocations") or []:
             command = item.get("command")
             if not isinstance(command, list) or not command:
@@ -280,6 +304,12 @@ class GitleaksAdapter(ScannerAdapter):
                 invocation_type="detection",
                 suite="gitleaks",
                 workload=f"gitleaks-fixtures:{item.get('id')}",
+                process_started=True,
             )
-            self.record_invocation(invocation, artifact)
+            self.record_invocation(
+                invocation,
+                artifact,
+                direct_execution=False,
+                execution_origin="nested-docker-validator",
+            )
         return lane
