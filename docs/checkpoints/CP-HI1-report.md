@@ -4,7 +4,8 @@
 
 CP-HI1 is implemented on `feat/harness-integrity-hardening`, based on the merged
 `benchmark-harness` commit `094394e`. PR #16 and PR #17 were verified merged before
-the branch was created.
+the branch was created. Implementation commit: `b14bd52`; evidence-lock revision
+commit: `ebc9132`.
 
 The change preserves the certified scoring engine, frozen oracles, scanner rules,
 scanner artifacts, and historical reports. Betterleaks v2 remains deferred; no v2
@@ -193,7 +194,7 @@ No check is marked PASS solely because a test was skipped or blocked.
 
 | Check | Outcome | Evidence |
 | --- | --- | --- |
-| Full regression | PASS | 424 tests, `OK (skipped=1)`, exit 0; `run/hi1/full-suite-final.log` |
+| Full regression | PASS | 424 tests, `OK (skipped=1)`, exit 0; `run/hi1/full-suite-final.log` and `full-suite-final.exit` |
 | Named targeted regression | PASS | 118 tests, OK; `run/hi1/targeted-tests.log` |
 | CLI provenance | PASS | V16 and CP4C live reports, per-run invocation IDs and argv |
 | Argument classification | PASS | `tests/test_provenance.py`; live default, `--workers auto`, `--workers 1`, duplicate, reserved and sensitive cases |
@@ -205,7 +206,7 @@ No check is marked PASS solely because a test was skipped or blocked.
 | Historical evidence invariance | PASS | unchanged `reports/baselines-20261115/`, `reports/archive/`, `reports/cp4c-matrix0/` |
 | Scoring invariance | PASS | live V16/CP4C figures match references |
 | Matrix/profiler modules | PASS | `tests.test_cp4c_matrix`, `tests.test_profile`, 20 tests; report-only render |
-| Git/worktree hygiene | PENDING COMMIT | final commit |
+| Git/worktree hygiene | PASS | Clean worktree after commit; publication hashes match Git blobs. Implementation `b14bd52`; lock revision `ebc9132`; final docs commit follows. |
 
 ## Deferred / remaining limitations
 
