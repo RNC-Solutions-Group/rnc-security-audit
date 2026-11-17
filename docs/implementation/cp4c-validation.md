@@ -1,5 +1,12 @@
 # CP4C — instrumented performance and benchmark integration
 
+> **CP5 follow-on:** CP5 promotes the prefilter to `auto`, batches Git delta
+> enumeration, defaults Git object acquisition to `batch` and adds detection
+> recovery. The CP4C reference remains
+> `--workers 1 --git-io process --history-mode whole --strategy regex`. Current
+> evidence is in [CP5 validation](cp5-validation.md); this document preserves
+> the CP4C checkpoint record.
+
 > **Status:** Implementation and local Windows validation complete; controlled
 > 50-configuration benchmark and operator review pending. CP4C changes execution,
 > Git acquisition, history scope and profiling only. Detection rules, validators,

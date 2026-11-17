@@ -1,6 +1,6 @@
 # Adaptive matching architecture
 
-> **Implemented in CP2, extended in CP3.** One scanner, three portable strategies, one immutable evidence contract.
+> **Implemented in CP2, extended in CP3 and CP5.** One scanner, three portable strategies, one immutable evidence contract.
 
 ## Boundaries
 
@@ -21,18 +21,24 @@ authorized source
 
 | Strategy | Mechanism | Correctness guarantee |
 | --- | --- | --- |
-| `regex` | Each rule's exact `regex::bytes::Regex` | Reference; always available |
+| `regex` | Each rule's exact `regex::bytes::Regex` | Reference oracle; always available |
 | `regexset` | A `RegexSet` of proven required literals selects eligible rules; exact regex extracts candidates | Exact extraction; presence is not a finding; no-literal rules always use exact regex |
 | `prefilter` | Sound required-literal Aho-Corasick filter; exact regex for eligible rules | No-literal rules always use exact regex; literals are proven |
-| `auto` | Conservative planning | Currently reference regex |
+| `auto` | Resolves to `prefilter` (CP5) | Same exact extraction; `regex` remains the explicit oracle |
 
 The CP3 regexset change was necessary because a full-pattern `RegexSet` over large bounded provider patterns was correct but pathologically slow. The literal-filter set preserves the same candidate contract and is differential-tested against reference regex.
 
 ## Required-literal extraction
 
-The planner accepts a literal only when every match must contain it. Extraction recursively handles literals, concatenation, captures, bounded repetition with `min >= 1`, single-byte classes and alternation common prefixes. A required literal may occur anywhere in the match, not only at the prefix; concatenation requires every part, so a literal proven by any mandatory part is safe. If any branch lacks a common literal, or a construct is not provably literal, the result is `None` and the rule remains on exact regex.
+The planner accepts a **set** of literals such that every match must contain at least one member. Extraction recursively handles literals, concatenation (choose the most selective mandatory part), captures, bounded repetition with `min >= 1`, small byte classes and alternation (union across branches, provided every branch has a proof). A member containing a shorter proven member is removed.
 
-This is intentionally conservative. Missing a candidate is a hard correctness failure; evaluating an extra regex is only a performance cost.
+Case-insensitivity flags are removed only for extraction, and the filter is matched ASCII-case-insensitively. A case-insensitive filter can only add eligible rules; every eligible rule is still evaluated by its exact regex. Other flags are preserved, and an unparseable rewrite falls back to the original pattern.
+
+The set is bounded to 64 literals and 4 KiB. If no proof exists the rule remains on exact regex. This is intentionally conservative: missing a candidate is a hard correctness failure; evaluating an extra regex is only a performance cost.
+
+## Candidate budget
+
+The reference `regex` backend enforces the aggregate 100,000-candidate budget across rules, matching `regexset` and `prefilter`. Candidate vectors cannot grow without bound by combining rules that are individually below the limit.
 
 ## Streaming
 
@@ -40,13 +46,7 @@ A match plan is applied to bounded windows. The carry overlap is the bundle's pr
 
 ## Candidate context
 
-`MatchCandidate` now retains the exact full-match span and an optional
-assignment-identifier span in addition to the value span. `context.rs` derives
-a bounded delimiter/quote/`define(...)` view without allocating or changing the
-candidate coordinates. Only rules that declare `identifier_capture_group` use
-the generic syntax gate; all other rules keep their previous validation path.
-The context is never serialized; finding offsets and evidence digests continue
-to describe the captured value only.
+`MatchCandidate` retains the exact full-match span and an optional assignment-identifier span in addition to the value span. `context.rs` derives a bounded delimiter/quote/`define(...)` view without allocating or changing the candidate coordinates. Only rules that declare `identifier_capture_group` use the generic syntax gate; all other rules keep their previous validation path. The context is never serialized; finding offsets and evidence digests continue to describe the captured value only.
 
 ## Provenance
 
@@ -61,8 +61,8 @@ The private evidence bundle includes `execution_plan` and `configuration`; sanit
 
 ## Differential gate
 
-`tools/cp2/integration_check.py` runs every strategy over v0/v1/edge corpora in whole and stream modes. It validates all v0.2 records and requires identical canonical findings, units, result and CI exit. Any divergence fails CI.
+`tools/cp2/integration_check.py` runs every strategy over v0/v1/edge corpora in whole and stream modes. It validates all v0.2 records and requires identical canonical findings, units, result and CI exit. CP5 adds provider-corpus differential evidence for `regex`, `regexset`, `prefilter` and `auto`, including the WordPress and signing fixtures.
 
 ## Deferred
 
-Hyperscan/VectorScan, per-file dynamic routing and parallel strategy execution are deliberately out of scope. See [ADR-012](adr-012-deferred-accelerators.md).
+Hyperscan/VectorScan, per-file dynamic routing and parallel strategy execution are deliberately out of scope. See [ADR-012](adr-012-deferred-accelerators.md). The CP5 decision is recorded in [ADR-018](adr-018-cp5-execution-and-detection.md).

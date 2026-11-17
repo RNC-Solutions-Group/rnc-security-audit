@@ -3,6 +3,13 @@
 > **Status:** Implemented for CP4C; operator review and controlled benchmark
 > execution pending. This is an instrumented execution layer, not a change to
 > detection rules, validators, backend selection heuristics or report schemas.
+>
+> **CP5 update:** Git object acquisition now defaults to `batch` (with a process
+> fallback), non-merge delta enumeration is batched through one persistent
+> `diff-tree --stdin` process, and `auto` selects the prefilter. The CP4C worker,
+> diff and profiler semantics remain as described here. See
+> [CP5 optimization architecture](cp5-optimization-architecture.md) and
+> [ADR-018](adr-018-cp5-execution-and-detection.md).
 
 ## Scope
 

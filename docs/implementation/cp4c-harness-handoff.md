@@ -1,5 +1,9 @@
 # CP4C independent-harness integration handoff
 
+> **CP5 follow-on:** use [CP5 harness handoff](cp5-harness-handoff.md) for the
+> current executable, source revision, default changes and re-evaluation
+> contract. This CP4C document remains the historical matrix definition.
+
 > The independent RNC Scanner Harness owns the CP4C matrix, scoring, OS
 > telemetry and consolidated performance report. This document defines the
 > scanner-side contract only. It does not authorize scanner-side scoring or a

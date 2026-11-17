@@ -1,6 +1,6 @@
 # ADR-009 — Portable multi-strategy matching architecture
 
-- **Status:** Accepted for CP2
+- **Status:** Accepted for CP2; backend default superseded by [ADR-018](adr-018-cp5-execution-and-detection.md) in CP5
 - **Date:** 11 November 2026
 - **Checkpoint:** CP2
 
@@ -15,7 +15,7 @@ Introduce a narrow backend boundary:
 1. `LoadedBundle` owns rule definitions, exact regexes and a conservatively derived required literal.
 2. `MatchPlan` owns a selected backend and emits `MatchCandidate { rule_index, start, end }` spans with capture semantics already applied.
 3. `stream.rs` owns acquisition windows, candidate validation, deduplication, line mapping and finding construction. Every backend uses this one path.
-4. `BackendRequest` is `regex`, `regexset`, `prefilter` or `auto`. The reference regex backend is always available and remains the default for `auto`.
+4. `BackendRequest` is `regex`, `regexset`, `prefilter` or `auto`. The reference regex backend is always available. CP2 selected it for `auto`; CP5 selects `prefilter` (see [ADR-018](adr-018-cp5-execution-and-detection.md)).
 5. `PlanProvenance` records requested/effective strategy, implementation version, literal coverage, fallback use and fallback reason.
 
 The backend never sees policy, exemptions, report formatting, CI decisions or source locator policy.

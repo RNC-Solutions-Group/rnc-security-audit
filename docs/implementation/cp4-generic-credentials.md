@@ -4,6 +4,8 @@
 > [CP4 validation](cp4-validation.md). CP4B adds bounded candidate context,
 > assignment-syntax checks, `BASE` qualifiers and context-aware hex
 > classification; see [CP4B contextual validation](cp4b-contextual-validation.md).
+> CP5 adds reviewed `SIGNING_KEY` and `HMAC_KEY`/`HMAC_SECRET` identifiers to the
+> same family; see [CP5 validation](cp5-validation.md).
 > A generic finding is a contextual candidate, **not** proof that a credential
 > is active or complete.
 
@@ -182,7 +184,8 @@ digests and finding IDs for:
   authorization.
 - Candidate context is local syntax, not a language or format parser. It does
   not use file extensions and does not prove that a value is active.
-- CP4B generic rule versions are `2026.11.5`; generic finding IDs migrate even
-  when an accepted value's span and digest are unchanged. Provider, private-key
-  and database finding identities do not change.
+- CP4B generic rule versions were `2026.11.5`; CP5 moves the four assignment
+  rules to `2026.11.6`. Generic finding IDs migrate even when an accepted
+  value's span and digest are unchanged. Provider, private-key and database
+  finding identities do not change.
 - Generic confidence does not imply provider verification.

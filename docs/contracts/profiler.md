@@ -1,8 +1,9 @@
-# CP4C execution profile contract
+# Execution profile contract
 
 > **Schema:** [`profiler.schema.json`](profiler.schema.json), profile schema
 > version `1`. Profiling is opt-in with `--profile-output PATH`. It never changes
 > detection policy, finding identity, coverage accounting or CI acceptance.
+> CP5 adds worker phases but does not change the schema version.
 
 ## Privacy
 
@@ -52,7 +53,7 @@ fallback. Requested/effective values include:
 | `discovery.git` | wall | Git repository checks, commit enumeration and deltas |
 | `git.open` | wall | Git repository safety/open checks |
 | `git.enumerate` | wall | `rev-list` traversal |
-| `git.deltas` | wall | `diff-tree` changed-path generation |
+| `git.deltas` | wall | `diff-tree` changed-path generation (batched stdin or per-merge) |
 | `git.diff` | wall | Per-revision unified-diff generation for diff mode |
 | `git.command` | wall | Other bounded Git subprocess operation |
 | `scan` | wall | Candidate scanning and evidence construction |
@@ -62,6 +63,10 @@ fallback. Requested/effective values include:
 | `scan.context` | worker | Candidate context extraction and syntax gate |
 | `scan.validation` | worker | Validator execution |
 | `scan.findings` | worker | Line mapping, hashing, dedupe and finding construction |
+| `scan.open` | worker | Containment open and handle-path verification |
+| `scan.read` | worker | Bounded whole-file read |
+| `scan.line_index` | worker | Line-start index construction |
+| `scan.hash` | worker | Content SHA-256 |
 | `git.acquire.process` | worker | Per-object `git cat-file blob` acquisition |
 | `git.acquire.batch` | worker | Persistent `git cat-file --batch` acquisition |
 | `git.batch.start` | worker | Batch child-process creation |

@@ -1,6 +1,6 @@
 # CP0 architecture decisions — ADR register
 
-Status: **CP0–CP4C decisions recorded; operator review pending.** The production detector language is selected as **Rust** in [ADR-007](adr-007-detector-language.md); CP2 implements portable strategies and policy/reporting boundaries. CP3 adds a separately versioned provider catalog in [ADR-015](adr-015-provider-credential-catalog.md). CP4 adds read-only Git-history acquisition through a controlled local Git process in [ADR-016](adr-016-read-only-git-history.md). CP4B extends ADR-015 with bounded assignment candidate context; it does not add a new backend or report contract. CP4C adds bounded workers, persistent batch Git acquisition, diff history mode and opt-in profiling without changing detection rules.
+Status: **CP0–CP5 decisions recorded; operator review pending.** The production detector language is selected as **Rust** in [ADR-007](adr-007-detector-language.md); CP2 implements portable strategies and policy/reporting boundaries. CP3 adds a separately versioned provider catalog in [ADR-015](adr-015-provider-credential-catalog.md). CP4 adds read-only Git-history acquisition through a controlled local Git process in [ADR-016](adr-016-read-only-git-history.md). CP4B extends ADR-015 with bounded assignment candidate context; it does not add a new backend or report contract. CP4C adds bounded workers, persistent batch Git acquisition, diff history mode and opt-in profiling without changing detection rules. CP5 promotes the proven-literal prefilter to `auto`, batches Git delta enumeration, defaults to batch object acquisition, caches the containment root and adds WordPress/HMAC identifier families in [ADR-018](adr-018-cp5-execution-and-detection.md).
 
 | ID | Decision | Consequence / next check |
 | --- | --- | --- |
@@ -14,13 +14,14 @@ Status: **CP0–CP4C decisions recorded; operator review pending.** The producti
 | ADR-008 | **External harness compatibility is line-addressed with byte metadata sidecar** | Pinned external scoring engine executed on CP0 handoffs; full external corpus integration remains deferred |
 | ADR-009 | **Portable multi-strategy matching behind one candidate contract** | Regex is the reference backend; RegexSet and Aho-Corasick are interchangeable strategies. See [ADR-009](adr-009-portable-matching.md) |
 | ADR-010 | **Exact reference equivalence is a hard gate** | Optimized strategies must reproduce canonical findings, offsets, identity and coverage. See [ADR-010](adr-010-reference-regex-equivalence.md) |
-| ADR-011 | **Conservative planner and explicit fallback** | `auto` stays on reference regex for current bundles; no silent rule skipping. See [ADR-011](adr-011-planner-fallback.md) |
+| ADR-011 | **Conservative planner and explicit fallback** | No silent rule skipping; `auto` selection updated by ADR-018 to the proven-literal prefilter. See [ADR-011](adr-011-planner-fallback.md) |
 | ADR-012 | **Hyperscan/VectorScan deferred** | Portable Rust-only CP2; future native backends require a separate ADR and equivalence evidence. See [ADR-012](adr-012-deferred-accelerators.md) |
 | ADR-013 | **CI acceptance has a trusted authority** | Repository config may narrow only; global or explicit CLI may authorize `ACTIONABLE`. See [ADR-013](adr-013-ci-acceptance-authority.md) |
 | ADR-014 | **Root-contained acquisition and atomic reports** | Unix openat/no-follow chains; Windows reparse checks with documented residual race; atomic publication. See [ADR-014](adr-014-root-contained-acquisition.md) |
 | ADR-015 | **Separate provider credential catalog** | Schema `0.2.0` adds provider/family/credential metadata, bounded candidate captures and offline validators. Synthetic `0.1.0` digests are unchanged. See [ADR-015](adr-015-provider-credential-catalog.md) |
 | ADR-016 | **Read-only Git history through a controlled Git process** | No checkout/index/hook/fetch/submodule operations; bounded outputs and deadline; shallow/partial/alternate histories rejected. See [ADR-016](adr-016-read-only-git-history.md) |
 | ADR-017 | **Configurable execution and opt-in profiling** | Bounded workers account in source-unit order; process/batch Git acquisition are equivalent; diff mode is explicitly scoped; profile schema is versioned and secret-free. See [CP4C architecture](cp4c-execution-architecture.md) |
+| ADR-018 | **Prefilter execution and targeted detection recovery** | `auto` selects the exact prefilter; Git deltas are batched and batch object acquisition is default with process fallback; containment root is cached; WordPress/HMAC families added. See [ADR-018](adr-018-cp5-execution-and-detection.md) |
 
 ## Decision review checkpoints
 

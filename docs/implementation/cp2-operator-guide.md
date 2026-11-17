@@ -27,10 +27,20 @@ The default summary contains counts, backend, result and CI acceptance only. It 
 rnc scan ... --strategy regex       # reference; always available
 rnc scan ... --strategy regexset    # multi-pattern selection + exact extraction
 rnc scan ... --strategy prefilter   # required-literal prefilter + exact extraction
-rnc scan ... --strategy auto        # conservative: reference regex today
+rnc scan ... --strategy auto        # resolved to the exact prefilter (CP5)
 ```
 
-`auto` intentionally does not promote an alternative until it has a defensible whole-workload advantage. `regexset` and `prefilter` remain explicit and are held to exact differential equivalence. `rnc rules validate --strategy ...` prints the effective plan, literal coverage and any fallback.
+`auto` selects the required-literal prefilter: one Aho-Corasick pass chooses
+eligible rules, and every eligible rule still runs its exact regex. `regex`
+remains the explicit equivalence oracle, and `regexset`/`prefilter` remain
+available. All strategies are held to exact differential equivalence.
+`rnc rules validate --strategy ...` prints the effective plan, literal coverage
+and any fallback.
+
+For Git history, `--history` defaults to `--git-io batch` in CP5; explicit
+`--git-io process` preserves the CP4C reference path. `--workers` remains `1` by
+default; `--workers auto` trades additional CPU and memory for wall time on
+large workloads.
 
 ### Reports
 

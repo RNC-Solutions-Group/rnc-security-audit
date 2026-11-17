@@ -1,14 +1,14 @@
-# CP4 detection catalog
+# Provider detection catalog
 
-> **Status:** Implemented CP4 catalog. Recognition of a format is **not** proof
-> that a credential is active, complete, authorized or non-revoked. All
-> validators are offline; no provider API is called.
+> **Status:** Implemented CP4 catalog with CP5 additions. Recognition of a format
+> is **not** proof that a credential is active, complete, authorized or
+> non-revoked. All validators are offline; no provider API is called.
 
 Ruleset: [`rules/rnc-providers-v1.json`](../../rules/rnc-providers-v1.json)<br>
 Schema: [`provider-rule-bundle.schema.json`](../contracts/rules/provider-rule-bundle.schema.json)
-Rules: **37** across **22 families**  
-Ruleset version: `2026.11.5`<br>
-Current digest: `sha256:901008d7cf64ee7387599eb13720bc3b78a2ab8868aae6e779fea1843c22dfb9`
+Rules: **38** across **23 families**<br>
+Ruleset version: `2026.11.6`<br>
+Current digest: `sha256:b893978c4a720c41951a20c0771d67f29bbb54ad1057a6bd5bf0feef68c5de2a`
 
 The digest binds every rule's provider/family/credential/context metadata,
 `value_capture_groups`, optional `component_extractor`, fixture set and
@@ -79,6 +79,7 @@ regression suite or, for CP3 rules, the controlled Tier 2/3/challenge suites.
 | Generic | `generic-assignment` | `http-basic-authorization` | HTTP Basic credentials | `HTTP_BASIC_AUTH` | low | 1 / 3 | Implemented; plausible only |
 | Generic | `generic-assignment` | `http-bearer-opaque` | opaque Bearer token | `HTTP_BEARER_OPAQUE` | low | 1 / 3 | Implemented; plausible only |
 | Generic | `generic-assignment` | `credential-url-userinfo` | URL userinfo | `URL_USERINFO` | low | 1 / 3 | Implemented; plausible only |
+| WordPress | `wordpress-authentication` | `wordpress-auth-key-salt` | authentication key or salt | `WORDPRESS_SALT` | medium | 5 / 5 | Implemented; structural, plausible only |
 | Database | `database-connection-string` | `database-connection-credential` | URI userinfo | `DATABASE_URI` | medium | 3 / 5 | Experimental |
 
 CP4A adds a private-only password component for the database row without
@@ -99,12 +100,23 @@ The generic family has two family names for historical compatibility:
 groups the CP4 context-specific rules. Both are generic-credential categories,
 not verified provider credentials.
 
-The CP4B generic rule versions are `2026.11.5` for
+CP5 adds `wordpress-auth-key-salt` and appends `SIGNING_KEY` and
+`HMAC_KEY`/`HMAC_SECRET` to the four generic assignment identifier families.
+`JWT_SIGNING_KEY`, `PAYMENTS_SIGNING_KEY` and camelCase/hyphenated variants are
+covered by the same suffix; there is no bare `KEY` rule. The WordPress rule
+recognizes the eight core `wp-config.php` names plus `WP_SALT_n` in PHP
+`define()`, assignment, Kubernetes data and quoted values. It requires 32–512
+printable bytes and rejects variables, placeholders, control characters and
+non-secret settings. The Kubernetes finding captures the exact base64 source
+span, not decoded salt bytes. See [CP5 validation](cp5-validation.md).
+
+The CP4B generic rule versions were `2026.11.5` for
 `generic-secret-assignment`, `generic-array-assignment`,
 `generic-multiline-assignment`, `generic-xml-assignment` and
-`generic-sql-password`. Their finding IDs therefore migrate as a controlled
-behavior change; unchanged accepted values retain their exact byte span and
-evidence digest. All non-generic rule versions and finding IDs are unchanged.
+`generic-sql-password`. CP5 moves the four assignment rules to `2026.11.6`; the
+SQL rule retains `2026.11.5`. Their finding IDs migrate as a controlled behavior
+change; unchanged accepted values retain their exact byte span and evidence
+digest. All other rule versions and finding IDs are unchanged.
 
 ## Provider evidence and uncertainty
 

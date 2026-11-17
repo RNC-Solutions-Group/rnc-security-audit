@@ -1,6 +1,6 @@
 # RNC Security Audit
 
-> **Development status - 13 November 2026:** CP0-CP2 provide a working, security-hardened Rust scanner; CP3 adds a first-party provider-credential catalog and independent byte-addressed accuracy assessment; CP4 expands generic extraction, private-key representations and provider families, and adds read-only Git-history acquisition. CP4A adds private database-password component evidence, explicit Windows private-report ACLs, retirement of internal benchmark CI and a reproducible development evaluation package. CP4B adds bounded candidate context, assignment-syntax checks, `BASE`-qualified names and context-aware hex classification. CP4C adds configurable scan workers, process/batch Git acquisition, whole/diff history modes and an opt-in versioned execution profile. The original synthetic bundles remain preserved regression evidence, not production credential accuracy. Provider-format recognition is **not** proof that a credential is active, authorized or complete. No production deployment or public release is claimed.
+> **Development status - 16 November 2026:** CP0-CP2 provide a working, security-hardened Rust scanner; CP3 adds a first-party provider-credential catalog and independent byte-addressed accuracy assessment; CP4 expands generic extraction, private-key representations and provider families, and adds read-only Git-history acquisition. CP4A adds private database-password component evidence, explicit Windows private-report ACLs, retirement of internal benchmark CI and a reproducible development evaluation package. CP4B adds bounded candidate context, assignment-syntax checks, `BASE`-qualified names and context-aware hex classification. CP4C adds configurable scan workers, process/batch Git acquisition, whole/diff history modes and an opt-in versioned execution profile. CP5 adds a required-literal candidate prefilter as the `auto` default, batched Git delta/object acquisition, a cached containment root, WordPress authentication-material support and reviewed HMAC/signing identifiers. The original synthetic bundles remain preserved regression evidence, not production credential accuracy. Provider-format recognition is **not** proof that a credential is active, authorized or complete. No production deployment or public release is claimed.
 
 **RNC Security Audit** is the working home for RNC's security platform. Its first-party secret-detection component is **RNC Scanner**. The wider application will eventually coordinate independent security tools as well. **RNC Security Toolkit** remains the prospective name for a portable distribution, not another codebase.
 
@@ -88,6 +88,10 @@ Reporting reconciles three independently verifiable, append-only logical records
 | [CP4C execution architecture](docs/architecture/cp4c-execution-architecture.md) | Worker model, Git process/batch, diff scope and profiler boundaries |
 | [CP4C validation](docs/implementation/cp4c-validation.md) | CLI, equivalence, profiling and controlled-experiment readiness |
 | [CP4C harness handoff](docs/implementation/cp4c-harness-handoff.md) | 50-configuration matrix and profile-ingestion contract |
+| [CP5 optimization architecture](docs/architecture/cp5-optimization-architecture.md) | Prefilter planning, cached containment, batched Git and memory findings |
+| [CP5 validation](docs/implementation/cp5-validation.md) | Local performance, detection recovery, regressions and limitations |
+| [CP5 harness handoff](docs/implementation/cp5-harness-handoff.md) | Executable provenance, commands and re-evaluation contract |
+| [ADR-018](docs/architecture/adr-018-cp5-execution-and-detection.md) | CP5 execution and detection decisions |
 | [Profiler contract](docs/contracts/profiler.md) | Versioned profile schema, phase names and privacy boundary |
 | [Adaptive matching](docs/architecture/adaptive-matching.md) | Backend boundaries, required literals, streaming and differential gate |
 | [Source acquisition and report publication](docs/architecture/source-acquisition.md) | Root containment, discovery budgets, Git-history controls, atomic report writes and platform guarantees |
@@ -103,7 +107,8 @@ Reporting reconciles three independently verifiable, append-only logical records
 3. **CP2 — integrate detection with control and accountability.** Portable regex/RegexSet/Aho-Corasick strategies; policy, configuration, reporting, five-state outcomes, and security hardening.
 4. **CP3 — validate independently.** Add first-party provider rules and offline validators, author independent byte truth, score exact occurrences, and record external-corpus and comparative evidence.
 5. **CP4 — expand detection and acquisition.** Add generic credential extraction, private-key representations, additional documented provider families and a read-only Git-history source adapter while preserving the same detection, policy, reporting and CI contracts.
-6. **Later — broaden based on evidence.** Additional source adapters, controlled backend experiments and optional third-party audit orchestration.
+6. **CP5 — reduce work and recover high-confidence gaps.** Promote a proven-literal prefilter to `auto`, batch Git delta/object acquisition, remove repeated containment syscalls, and add WordPress and HMAC/signing identifier families.
+7. **Later — broaden based on evidence.** Additional source adapters, controlled backend experiments and optional third-party audit orchestration.
 
 ### Current implementation
 
@@ -117,12 +122,13 @@ Reporting reconciles three independently verifiable, append-only logical records
 | CP4A corrective hardening | **IMPLEMENTED; OPERATOR REVIEW PENDING** | [CP4A hardening](docs/implementation/cp4a-hardening.md), [package builder](tools/package/README.md) |
 | CP4B contextual validation | **IMPLEMENTED; CI COMPLETE; OPERATOR REVIEW PENDING** | [CP4B validation](docs/implementation/cp4b-contextual-validation.md), [generic credentials](docs/implementation/cp4-generic-credentials.md) |
 | CP4C performance execution | **IMPLEMENTED; LOCAL VALIDATION; CONTROLLED EXPERIMENT PENDING** | [CP4C validation](docs/implementation/cp4c-validation.md), [architecture](docs/architecture/cp4c-execution-architecture.md) |
+| CP5 optimization and detection recovery | **CONDITIONAL; OPERATOR REVIEW AND INDEPENDENT RE-EVALUATION PENDING** | [CP5 validation](docs/implementation/cp5-validation.md), [architecture](docs/architecture/cp5-optimization-architecture.md) |
 
-The portable matching system includes a reference Rust regex strategy, a RegexSet-assisted strategy and an Aho-Corasick literal prefilter. All use the same rule, validator and finding contracts. Faster strategies are not promoted at the expense of finding equivalence.
+The portable matching system includes a reference Rust regex strategy, a RegexSet-assisted strategy and an Aho-Corasick literal prefilter. `auto` now selects the prefilter: one literal pass selects eligible rules, and every selected rule still runs its exact regex. All strategies use the same rule, validator and finding contracts. The reference `regex` strategy remains the equivalence oracle.
 
 ### Provider credential catalog
 
-CP3 established [`rules/rnc-providers-v1.json`](rules/rnc-providers-v1.json) and CP4 expands it to a schema `0.2.0` catalog with **37 rules across 22 credential families** in cloud, developer-platform, service, cryptographic, structured and generic categories. Ruleset `2026.11.5` adds bounded assignment-identifier context and updates the five generic rule families for syntax-aware validation; the database URI component extractor and every non-generic rule identity remain unchanged. It includes AWS access-key and sensitive-identifier classification, Google Cloud API keys, GitHub classic/fine-grained/OAuth and App installation tokens, GitLab PATs, Stripe, Slack, SendGrid, npm, Azure Storage, Tailscale, Groq, xAI, Perplexity, Doppler, OpenAI, Slack webhooks, PEM/PGP private-key representations, Bearer JWTs, database URI userinfo and contextual generic extraction. Ordinary IAM resource identifiers such as `AIDA` and `AROA` are not treated as access keys.
+CP3 established [`rules/rnc-providers-v1.json`](rules/rnc-providers-v1.json) and CP4 expands it to a schema `0.2.0` catalog. CP5 brings the catalog to **38 rules across 23 credential families** in cloud, developer-platform, service, cryptographic, structured and generic categories. Ruleset `2026.11.6` adds the WordPress authentication-key/salt family and extends the generic assignment lexicon with `SIGNING_KEY` and `HMAC_KEY`/`HMAC_SECRET`; the four affected generic rule identities and the new WordPress rule are versioned `2026.11.6`. The catalog includes AWS access-key and sensitive-identifier classification, Google Cloud API keys, GitHub classic/fine-grained/OAuth and App installation tokens, GitLab PATs, Stripe, Slack, SendGrid, npm, Azure Storage, Tailscale, Groq, xAI, Perplexity, Doppler, OpenAI, Slack webhooks, WordPress salts, PEM/PGP private-key representations, Bearer JWTs, database URI userinfo and contextual generic extraction. Ordinary IAM resource identifiers such as `AIDA` and `AROA` are not treated as access keys.
 
 Every rule has a finite match bound and declared candidate bound. Validators are offline: no provider API is called, no token is redeemed and no discovered credential is sent over a network. Structural validity is not active-credential verification. The [CP4 detection catalog](docs/implementation/cp4-detection-catalog.md) distinguishes implemented, experimental and unsupported families; the CP3 catalog is preserved as historical evidence.
 
@@ -136,8 +142,10 @@ For database URI findings, the primary finding remains the contextual `username:
 reachable commits, first-parent changed content and original blob bytes. It does
 not check out revisions, modify the index, run hooks, fetch, traverse submodules,
 or scan reflogs/unreachable objects. Historical findings are attributed to
-`commit/<oid>/<path>` units and keep byte-accurate source positions. See the
-[Git-history guide](docs/implementation/cp4-git-history.md) and
+`commit/<oid>/<path>` units and keep byte-accurate source positions. CP5 batches
+non-merge `diff-tree` enumeration through one persistent process and defaults to
+`git cat-file --batch` object acquisition, with an explicit process fallback. See
+the [Git-history guide](docs/implementation/cp4-git-history.md) and
 [ADR-016](docs/architecture/adr-016-read-only-git-history.md). A history scan is
 explicit; a working-tree scan does not become a history scan because `.git`
 exists.

@@ -7,6 +7,6 @@
 - [CP3 detection catalog](../../implementation/cp3-detection-catalog.md) — preserved historical catalog.
 - [`rules/rnc-synthetic-v0.json`](../../../rules/rnc-synthetic-v0.json) — preserved baseline synthetic rules.
 - [`rules/rnc-synthetic-v1.json`](../../../rules/rnc-synthetic-v1.json) — expanded synthetic rules for CP1 integration.
-- [`rules/rnc-providers-v1.json`](../../../rules/rnc-providers-v1.json) — CP4/CP4A/CP4B first-party provider catalog, ruleset `2026.11.5` (37 rules, 22 families).
+- [`rules/rnc-providers-v1.json`](../../../rules/rnc-providers-v1.json) — CP4/CP4A/CP4B/CP5 first-party provider catalog, ruleset `2026.11.6` (38 rules, 23 families).
 
 The synthetic bundles are original RNC test rules, not third-party collections. The provider catalog is first-party detection logic with documented provider provenance; it is not a copy of another scanner's ruleset and is not suitable as proof that a credential is active.

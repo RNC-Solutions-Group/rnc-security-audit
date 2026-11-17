@@ -16,7 +16,7 @@
 | **P1 corrective** | **CP4A — hardening and release preparation** | Structured password-component evidence, Windows private-report ACLs, CI benchmark retirement, documentation and a development evaluation package | Primary finding identities unchanged; component offsets/digests verified; private/sanitized isolation and Windows ACL tests pass; package smoke passes from a clean extraction |
 | **P1 corrective** | **CP4B — contextual candidate validation** | Bounded candidate context, assignment-syntax gate, `BASE` qualifiers and context-aware hex classification | Hex/name/callback/prose classes corrected; exact byte/digest/ID regressions; provider/database identities unchanged; modes/strategies/Git equivalent; CI complete |
 | **P2 performance** | **CP4C — instrumented performance and benchmark integration** | Configurable workers, Git process/batch, whole/diff history modes, diff context and opt-in profile | CP4B baseline equivalence; worker/strategy/mode equivalence; process/batch equivalence; profile schema/secrecy; controlled matrix pending |
-| **PARKED** | **CP5 — audit orchestration integration** | Third-party adapter/orchestration work | Explicitly parked by the operator; no work until the standalone scanner is accepted and independently validated |
+| **P2 performance and recovery** | **CP5 — detection recovery and performance optimization** | Required-literal prefilter execution, cached containment, batched Git delta/object acquisition, WordPress authentication material and HMAC/signing identifiers | Exact CP4C equivalence; measurable wall/CPU/memory improvement; value-verified recovery of WordPress and signing targets; no lost baseline findings; independent harness re-scoring pending |
 | **Later** | **CP6 — portability and interfaces** | Additional source/backends, richer report exports (e.g. SARIF), noninteractive CI packages, optional TUI/GUI and portable RNC Security Toolkit distribution | No duplicated detection or policy logic across interfaces/platforms |
 
 CP0 and CP1 may define interfaces for downstream modules without implementing them. CP2 is the **second major system** after detection, not a detour into dashboard work. CP3's synthetic stub scoring contract is also a prerequisite for trusting any published accuracy comparison, even if the scanner is prototyped earlier.
@@ -116,11 +116,20 @@ CP0 and CP1 may define interfaces for downstream modules without implementing th
 - [ ] Operator-controlled Windows 50-configuration experiment.
 - [ ] Operator review; no merge to `main` by the developer.
 
-### CP5 — parked
+### CP5 — detection recovery and performance optimization
 
-CP5 orchestration work is **explicitly parked** by operator direction. It is not authorized by CP4C and does not begin until the standalone scanner, package and private-evidence security posture are accepted and independently validated.
+- [x] Promote the proven-literal prefilter to `auto` and extract required-literal sets, including case-insensitive patterns.
+- [x] Enforce the aggregate candidate budget in the reference regex backend.
+- [x] Cache the canonical containment root without removing open-handle verification.
+- [x] Batch non-merge Git delta enumeration; retain exact merge semantics and output-limit fallback.
+- [x] Default Git object acquisition to `batch` with a process fallback.
+- [x] Add the WordPress authentication-key/salt family with exact-value validation.
+- [x] Add reviewed `SIGNING_KEY` and `HMAC_KEY`/`HMAC_SECRET` identifiers to generic assignment families.
+- [x] Validate local exact equivalence, performance, detection recovery and negative fixtures.
+- [ ] Independent harness re-scoring and the controlled production matrix.
+- [ ] Operator review; no merge to `main` by the developer.
 
-### CP6 — later
+### Later — orchestration and portability
 
 - Add report formats and CI integrations as consumers of the same records; later choose portable packaging and operator UI from evidence.
 - Expand source adapters and backend experiments only through versioned interfaces.

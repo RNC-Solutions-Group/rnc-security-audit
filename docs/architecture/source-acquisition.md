@@ -61,6 +61,11 @@ first-parent raw tree deltas and object bytes.
   failures are fatal; they cannot produce a clean result.
 - Stdout/stderr are capped, the process is killed on deadline or output excess,
   and `cat-file` content is bounded by the per-file scan limit.
+- CP5 batches non-merge `diff-tree` enumeration through one bounded
+  `--stdin` process per 256 commits and defaults object acquisition to
+  `git cat-file --batch`. Merge commits retain the two-tree invocation. An
+  output-limit batch falls back to the single-commit path, and a batch reader
+  that cannot start falls back to the process path.
 - Commit/path units are assigned `source_id = local-git-history:<hash>` and
   `locator = commit/<oid>/<path>`. Findings retain original blob offsets,
   lines, evidence digests and occurrence identity.

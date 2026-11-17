@@ -59,6 +59,8 @@ accepted_result_codes = [1, 2]
 
 Unknown fields are rejected. All configuration values are validated before source discovery.
 
+`strategy = "auto"` resolves to the exact required-literal prefilter in CP5. `regex` remains the reference oracle, and `regexset`/`prefilter` remain explicit alternatives. Requested and effective strategies are recorded in the execution plan; an unbuildable plan falls back to reference regex with a recorded reason.
+
 ## Legacy migration
 
 `security.config` version 1 supports only the reviewed subset: `secret_detection` (`enabled=true`, `ruleset`, `ruleset_digest`), `exclusions.paths`, `limits`, sanitized reporting and completed-result acceptance. Unsupported fields fail; unsupported legacy reporting cannot be migrated. Exclusions become repository-origin pre-scan block requests under `LEGACY-SECURITY-CONFIG`.

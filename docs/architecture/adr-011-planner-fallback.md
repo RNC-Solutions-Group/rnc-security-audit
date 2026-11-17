@@ -1,11 +1,20 @@
 # ADR-011 — Execution planning and conservative fallback
 
-- **Status:** Accepted for CP2
+- **Status:** Accepted for CP2; `auto` decision superseded by [ADR-018](adr-018-cp5-execution-and-detection.md) in CP5
 - **Date:** 11 November 2026
 
 ## Context
 
 CP2 supports three portable strategies. Automatic selection must not become an opaque performance heuristic that changes findings. The current rule bundle has ten rules, and measured Aho-Corasick/RegexSet results are workload-dependent; neither showed a consistent advantage on every CP2 profile.
+
+## CP5 update
+
+CP5 revisited the literal proof and measured the existing prefilter on the CP4C
+workloads. Required literals are now extracted as a set with case-insensitive
+flag normalization, all 38 current rules have a proof, and `auto` resolves to
+`prefilter`. The original guarantees below remain in force: no rule is skipped
+without a proof, every eligible rule runs its exact regex, and explicit `regex`
+remains the reference oracle. See [ADR-018](adr-018-cp5-execution-and-detection.md).
 
 ## Decision
 
