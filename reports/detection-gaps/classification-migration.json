@@ -1,0 +1,58 @@
+{
+  "analysis_version_before": "1.0.0",
+  "analysis_version_after": "2.0.0",
+  "oracle_or_scoring_changed": false,
+  "target_ids_changed": false,
+  "score_invariance": {
+    "cp4c": {"matched_before": 570, "matched_after": 570, "missed_after": 555},
+    "v14": {"matched_before": 591, "matched_after": 591, "missed_after": 534},
+    "v16": {"matched_before": 592, "matched_after": 592, "missed_after": 533}
+  },
+  "scanners": {
+    "cp4c": {
+      "confidence_before": {"confirmed": 419, "probable": 124, "unresolved": 12},
+      "confidence_after": {"confirmed": 333, "probable": 184, "unresolved": 38},
+      "inspection_before": {"INSPECTED": 529, "UNSUPPORTED_CONTAINER": 26},
+      "inspection_after": {
+        "INSPECTED_VERIFIED": 346,
+        "INSPECTION_UNVERIFIED": 209,
+        "NOT_INSPECTED_VERIFIED": 0,
+        "UNSUPPORTED_VERIFIED": 0,
+        "NOT_APPLICABLE": 0
+      },
+      "source_unsupported_before": 26,
+      "source_unsupported_after": 0,
+      "source_inspection_unverified_after": 26
+    },
+    "v14": {
+      "confidence_before": {"confirmed": 123, "probable": 380, "unresolved": 31},
+      "confidence_after": {"confirmed": 86, "probable": 391, "unresolved": 57},
+      "inspection_before": {"INSPECTED": 428, "INSPECTED_UNVERIFIED": 80, "UNSUPPORTED_CONTAINER": 26},
+      "inspection_after": {
+        "INSPECTED_VERIFIED": 0,
+        "INSPECTION_UNVERIFIED": 534,
+        "NOT_INSPECTED_VERIFIED": 0,
+        "UNSUPPORTED_VERIFIED": 0,
+        "NOT_APPLICABLE": 0
+      },
+      "source_unsupported_before": 26,
+      "source_unsupported_after": 0,
+      "source_inspection_unverified_after": 26
+    },
+    "v16": {
+      "confidence_before": {"confirmed": 123, "probable": 379, "unresolved": 31},
+      "confidence_after": {"confirmed": 86, "probable": 390, "unresolved": 57},
+      "inspection_before": {"INSPECTED": 428, "INSPECTED_UNVERIFIED": 79, "UNSUPPORTED_CONTAINER": 26},
+      "inspection_after": {
+        "INSPECTED_VERIFIED": 0,
+        "INSPECTION_UNVERIFIED": 533,
+        "NOT_INSPECTED_VERIFIED": 0,
+        "UNSUPPORTED_VERIFIED": 0,
+        "NOT_APPLICABLE": 0
+      },
+      "source_unsupported_before": 26,
+      "source_unsupported_after": 0,
+      "source_inspection_unverified_after": 26
+    }
+  }
+}

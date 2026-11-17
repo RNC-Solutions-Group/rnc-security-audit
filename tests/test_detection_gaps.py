@@ -90,7 +90,7 @@ class RedactionTests(unittest.TestCase):
 
 
 class ClassificationTests(unittest.TestCase):
-    def test_source_unsupported_is_confirmed_when_container_has_no_credit(self) -> None:
+    def test_container_without_credit_is_not_confirmed_unsupported(self) -> None:
         target = _target(
             category="private_key",
             subtype="tls_private_key_pkcs8",
@@ -98,9 +98,37 @@ class ClassificationTests(unittest.TestCase):
             archive_member="keys/client.pem",
             representation="pem_pkcs8",
         )
-        code, confidence, layer, _evidence, _reproduction = classify_miss(
+        code, confidence, layer, evidence, _reproduction = classify_miss(
             target,
-            Observation(matched=False, source_inspected="UNSUPPORTED_CONTAINER"),
+            Observation(matched=False, source_inspected="INSPECTION_UNVERIFIED"),
+            {},
+            scanner_key="cp4c",
+            container_tp=0,
+            same_subtype_matches=0,
+            same_representation_matches=0,
+            cross=[],
+        )
+        self.assertEqual(code, "SOURCE_INSPECTION_UNVERIFIED")
+        self.assertEqual(confidence, "UNRESOLVED")
+        self.assertEqual(layer, "SOURCE_ACQUISITION")
+        self.assertIn("does not prove", evidence)
+
+    def test_declared_unsupported_container_is_confirmed_only_with_capability(self) -> None:
+        target = _target(
+            category="private_key",
+            subtype="tls_private_key_pkcs8",
+            container_kind="archive_member",
+            archive_member="keys/client.pem",
+            representation="pem_pkcs8",
+        )
+        code, confidence, _layer, _evidence, _reproduction = classify_miss(
+            target,
+            Observation(
+                matched=False,
+                source_inspected="UNSUPPORTED_VERIFIED",
+                source_capability="DECLARED_UNSUPPORTED",
+                inspection_evidence="capability contract excludes archive members",
+            ),
             {},
             scanner_key="cp4c",
             container_tp=0,
@@ -110,7 +138,61 @@ class ClassificationTests(unittest.TestCase):
         )
         self.assertEqual(code, "SOURCE_UNSUPPORTED")
         self.assertEqual(confidence, "CONFIRMED")
-        self.assertEqual(layer, "SOURCE_ACQUISITION")
+
+    def test_verified_skipped_source_is_confirmed_not_inspected(self) -> None:
+        target = _target()
+        code, confidence, _layer, evidence, _reproduction = classify_miss(
+            target,
+            Observation(
+                matched=False,
+                source_inspected="NOT_INSPECTED_VERIFIED",
+                inspection_evidence="coverage record lists this file as uninspected",
+            ),
+            {},
+            scanner_key="cp4c",
+            container_tp=0,
+            same_subtype_matches=0,
+            same_representation_matches=0,
+            cross=[],
+        )
+        self.assertEqual(code, "SOURCE_NOT_INSPECTED")
+        self.assertEqual(confidence, "CONFIRMED")
+        self.assertIn("coverage record", evidence)
+
+    def test_inspected_source_without_finding_keeps_detection_classification(self) -> None:
+        target = _target()
+        code, confidence, _layer, evidence, _reproduction = classify_miss(
+            target,
+            Observation(matched=False, source_inspected="INSPECTED_VERIFIED"),
+            {},
+            scanner_key="cp4c",
+            container_tp=0,
+            same_subtype_matches=0,
+            same_representation_matches=0,
+            cross=[],
+        )
+        self.assertNotIn(code, {"SOURCE_NOT_INSPECTED", "SOURCE_INSPECTION_UNVERIFIED", "SOURCE_UNSUPPORTED"})
+        self.assertNotIn("source inspection is not independently verified", evidence)
+
+    def test_unverified_ordinary_source_downgrades_confirmed_hypothesis(self) -> None:
+        target = _target(
+            category="password",
+            subtype="wordpress_salt",
+            context=Context(identifier="AUTH_KEY", identifier_family="WORDPRESS"),
+        )
+        code, confidence, _layer, evidence, _reproduction = classify_miss(
+            target,
+            Observation(matched=False, source_inspected="INSPECTION_UNVERIFIED"),
+            {},
+            scanner_key="cp4c",
+            container_tp=0,
+            same_subtype_matches=0,
+            same_representation_matches=0,
+            cross=[],
+        )
+        self.assertEqual(code, "IDENTIFIER_MISMATCH")
+        self.assertEqual(confidence, "PROBABLE")
+        self.assertIn("not independently verified", evidence)
 
     def test_informative_reference_is_not_a_development_gap(self) -> None:
         target = _target(informative=True, risk_bearing=False, category="api_key")
@@ -202,6 +284,22 @@ class RetainedEvidenceTests(unittest.TestCase):
                 for lane in expected
             }
             self.assertEqual(actual, expected)
+            container_misses = [
+                evidence.observations[target.target_id]
+                for target in targets
+                if target.container_kind in {"archive_member", "database_record", "binary_file"}
+                and not evidence.observations[target.target_id].matched
+            ]
+            self.assertTrue(container_misses)
+            self.assertTrue(
+                all(
+                    item.source_inspected == "INSPECTION_UNVERIFIED"
+                    for item in container_misses
+                )
+            )
+            self.assertFalse(
+                any(item.source_capability == "DECLARED_UNSUPPORTED" for item in container_misses)
+            )
 
 
 if __name__ == "__main__":

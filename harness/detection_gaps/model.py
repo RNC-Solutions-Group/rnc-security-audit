@@ -22,6 +22,26 @@ LANE_ORDER = (
     "rnclab_git",
 )
 
+# Source inspection is separate from detection outcome and source capability.
+# Only INSPECTED_VERIFIED and UNSUPPORTED_VERIFIED may support a CONFIRMED claim.
+INSPECTION_INSPECTED_VERIFIED = "INSPECTED_VERIFIED"
+INSPECTION_NOT_INSPECTED_VERIFIED = "NOT_INSPECTED_VERIFIED"
+INSPECTION_UNVERIFIED = "INSPECTION_UNVERIFIED"
+INSPECTION_UNSUPPORTED_VERIFIED = "UNSUPPORTED_VERIFIED"
+INSPECTION_NOT_APPLICABLE = "NOT_APPLICABLE"
+
+INSPECTION_STATES = (
+    INSPECTION_INSPECTED_VERIFIED,
+    INSPECTION_NOT_INSPECTED_VERIFIED,
+    INSPECTION_UNVERIFIED,
+    INSPECTION_UNSUPPORTED_VERIFIED,
+    INSPECTION_NOT_APPLICABLE,
+)
+
+SOURCE_CAPABILITY_SUPPORTED = "CLAIMED_SUPPORTED"
+SOURCE_CAPABILITY_UNSUPPORTED = "DECLARED_UNSUPPORTED"
+SOURCE_CAPABILITY_UNKNOWN = "NOT_DECLARED"
+
 LANE_TITLES = {
     "levain": "Levain credential corpus",
     "leaky_filesystem": "Leaky Repo filesystem",
@@ -721,7 +741,11 @@ class Observation:
     reason_code: str = ""
     stage: str = ""
     duplicate: bool = False
-    source_inspected: str = "INSPECTED"
+    source_inspected: str = INSPECTION_UNVERIFIED
+    source_capability: str = SOURCE_CAPABILITY_UNKNOWN
+    inspection_evidence: str = (
+        "retained report contains no independent proof that this source unit was inspected"
+    )
     score_metric_status: str = "SCORED"
 
     def as_dict(self) -> dict[str, Any]:
@@ -738,6 +762,8 @@ class Observation:
             "stage": self.stage,
             "duplicate": self.duplicate,
             "source_inspected": self.source_inspected,
+            "source_capability": self.source_capability,
+            "inspection_evidence": self.inspection_evidence,
             "score_metric_status": self.score_metric_status,
         }
 

@@ -1,5 +1,6 @@
 {
-  "analysis_version": "1.0.0",
+  "analysis_version": "2.0.0",
+  "argument_policy": null,
   "breakdowns": {
     "category": [
       {
@@ -95,34 +96,34 @@
     ],
     "confidence": [
       {
-        "cross_found": 124,
-        "expected": 380,
+        "cross_found": 129,
+        "expected": 391,
         "informative_misses": 0,
         "key": "PROBABLE",
         "matched": 0,
-        "missed": 380,
+        "missed": 391,
         "recall_percent": 0.0,
-        "risk_misses": 380
+        "risk_misses": 391
       },
       {
-        "cross_found": 13,
-        "expected": 714,
+        "cross_found": 0,
+        "expected": 677,
         "informative_misses": 86,
         "key": "CONFIRMED",
         "matched": 591,
-        "missed": 123,
-        "recall_percent": 82.77,
-        "risk_misses": 37
+        "missed": 86,
+        "recall_percent": 87.3,
+        "risk_misses": 0
       },
       {
-        "cross_found": 29,
-        "expected": 31,
+        "cross_found": 37,
+        "expected": 57,
         "informative_misses": 0,
         "key": "UNRESOLVED",
         "matched": 0,
-        "missed": 31,
+        "missed": 57,
         "recall_percent": 0.0,
-        "risk_misses": 31
+        "risk_misses": 57
       }
     ],
     "container": [
@@ -561,34 +562,24 @@
     ],
     "inspection": [
       {
-        "cross_found": 126,
-        "expected": 949,
+        "cross_found": 166,
+        "expected": 534,
         "informative_misses": 86,
-        "key": "INSPECTED",
-        "matched": 521,
-        "missed": 428,
-        "recall_percent": 54.9,
-        "risk_misses": 342
-      },
-      {
-        "cross_found": 32,
-        "expected": 150,
-        "informative_misses": 0,
-        "key": "INSPECTED_UNVERIFIED",
-        "matched": 70,
-        "missed": 80,
-        "recall_percent": 46.67,
-        "risk_misses": 80
-      },
-      {
-        "cross_found": 8,
-        "expected": 26,
-        "informative_misses": 0,
-        "key": "UNSUPPORTED_CONTAINER",
+        "key": "INSPECTION_UNVERIFIED",
         "matched": 0,
-        "missed": 26,
+        "missed": 534,
         "recall_percent": 0.0,
-        "risk_misses": 26
+        "risk_misses": 448
+      },
+      {
+        "cross_found": 0,
+        "expected": 591,
+        "informative_misses": 0,
+        "key": "INSPECTED_VERIFIED",
+        "matched": 591,
+        "missed": 0,
+        "recall_percent": 100.0,
+        "risk_misses": 0
       }
     ],
     "provider": [
@@ -1750,7 +1741,7 @@
         "cross_found": 8,
         "expected": 26,
         "informative_misses": 0,
-        "key": "SOURCE_UNSUPPORTED",
+        "key": "SOURCE_INSPECTION_UNVERIFIED",
         "matched": 0,
         "missed": 26,
         "recall_percent": 0.0,
@@ -2653,18 +2644,30 @@
   "build_id": "gl-rnc-mod-v14",
   "configuration_profile": "default",
   "counts": {
-    "confirmed_causes": 123,
+    "confirmed_causes": 86,
     "expected": 1125,
     "informative_expected": 87,
     "informative_misses": 86,
+    "inspection_states": {
+      "INSPECTED_VERIFIED": 0,
+      "INSPECTION_UNVERIFIED": 534,
+      "NOT_APPLICABLE": 0,
+      "NOT_INSPECTED_VERIFIED": 0,
+      "UNSUPPORTED_VERIFIED": 0
+    },
     "matched": 591,
     "missed": 534,
-    "probable_causes": 380,
+    "probable_causes": 391,
     "risk_bearing_expected": 1038,
     "risk_bearing_matched": 590,
     "risk_bearing_misses": 448,
     "risk_bearing_recall_percent": 56.84,
-    "unresolved_causes": 31,
+    "source_capabilities": {
+      "CLAIMED_SUPPORTED": 508,
+      "DECLARED_UNSUPPORTED": 0,
+      "NOT_DECLARED": 26
+    },
+    "unresolved_causes": 57,
     "unverified_evidence": 5
   },
   "cross_scanner": {
@@ -2674,7 +2677,6 @@
     "unique_successes": 0
   },
   "executable_sha256": "7f1c9bd6f61c3ae414ab7df7688aeef04bd03312ac624127a13d39aa15238bfb",
-  "generated_at": "2026-11-16T03:08:16+00:00",
   "generated_report_at": "2026-11-16T00:06:02Z",
   "input_evidence": {
     "oracle_files": {
@@ -2685,24 +2687,43 @@
     },
     "reports": {
       "betterleaks": {
+        "argument_policy": null,
         "build_id": "betterleaks-lts",
         "executable_sha256": "727820f1a9f9264319cc50458b99f01acbb93e93df7a39b8eaa2715a7b1aaed5",
         "generated_at": "2026-11-16T00:01:28Z",
         "history_coverage": null,
+        "input_selection": {
+          "build_id": "betterleaks-lts",
+          "key": "betterleaks",
+          "lock_path": "reports/detection-gaps/analysis-inputs.json",
+          "lock_sha256": "2cf4bc857e57f99cf2fa0d44167ba865688f75a919511318ad4f7b73eb246b80",
+          "locked_sha256": "e484374e52dd5ccea93418fe3b65e78d2e34fbb39d6132d06fab418a03b689d6",
+          "override": false,
+          "path": "run/reports/all-windows-baselines/betterleaks-lts/betterleaks-lts-current-baseline-5eab48332cc4-default.json",
+          "profile": "default",
+          "run_id": "20261115T235951Z-407bdf96",
+          "selection": "pinned-lock",
+          "sha256": "e484374e52dd5ccea93418fe3b65e78d2e34fbb39d6132d06fab418a03b689d6",
+          "source_commit": "5eab48332cc48565864514e3bc6de89df091a7c4",
+          "warnings": []
+        },
         "key": "betterleaks",
         "label": "Betterleaks 1.8.1",
         "overall": "COMPLETE_WITH_LIMITATIONS",
         "profile": "default",
-        "report_path": "C:\\Dev\\rnc-benchmark-harness\\run\\reports\\all-windows-baselines\\betterleaks-lts\\betterleaks-lts-current-baseline-5eab48332cc4-default.json",
+        "report_path": "run/reports/all-windows-baselines/betterleaks-lts/betterleaks-lts-current-baseline-5eab48332cc4-default.json",
         "report_sha256": "e484374e52dd5ccea93418fe3b65e78d2e34fbb39d6132d06fab418a03b689d6",
         "rules_file": null,
         "rules_sha256": "",
         "run_id": "20261115T235951Z-407bdf96",
         "scanner_extra_args": [],
+        "scanner_extra_args_redacted": false,
+        "scanner_extra_args_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_commit": "5eab48332cc48565864514e3bc6de89df091a7c4",
         "version": "1.8.1"
       },
       "cp4c": {
+        "argument_policy": null,
         "build_id": "rnc-cp4c",
         "executable_sha256": "170bd1df345c4985043ff449051c247f22a1012fe9c054cae5c2edcc190fb1cb",
         "generated_at": "2026-11-15T23:57:44Z",
@@ -2753,11 +2774,26 @@
           "unit_locator_errors": [],
           "verified": true
         },
+        "input_selection": {
+          "build_id": "rnc-cp4c",
+          "key": "cp4c",
+          "lock_path": "reports/detection-gaps/analysis-inputs.json",
+          "lock_sha256": "2cf4bc857e57f99cf2fa0d44167ba865688f75a919511318ad4f7b73eb246b80",
+          "locked_sha256": "ec2f5efe50d3dddd9e0b7b1a1e03628ccd97c748b3cf2b38a7deab806902b1f8",
+          "override": false,
+          "path": "run/reports/all-windows-baselines/rnc-cp4c/rnc-cp4c-current-baseline-805e3bb79276-default.json",
+          "profile": "default",
+          "run_id": "20261115T235444Z-dbf46367",
+          "selection": "pinned-lock",
+          "sha256": "ec2f5efe50d3dddd9e0b7b1a1e03628ccd97c748b3cf2b38a7deab806902b1f8",
+          "source_commit": "805e3bb79276b94de636e27024f38773da303b44",
+          "warnings": []
+        },
         "key": "cp4c",
         "label": "RNC Scanner CP4C",
         "overall": "COMPLETE_WITH_LIMITATIONS",
         "profile": "default",
-        "report_path": "C:\\Dev\\rnc-benchmark-harness\\run\\reports\\all-windows-baselines\\rnc-cp4c\\rnc-cp4c-current-baseline-805e3bb79276-default.json",
+        "report_path": "run/reports/all-windows-baselines/rnc-cp4c/rnc-cp4c-current-baseline-805e3bb79276-default.json",
         "report_sha256": "ec2f5efe50d3dddd9e0b7b1a1e03628ccd97c748b3cf2b38a7deab806902b1f8",
         "rules_file": "rules/rnc-cp4c-providers-v1.json",
         "rules_sha256": "2eb315fa40553ab1e133322a1f0a014a4593ab2ca6164152149eb59c1197a6b7",
@@ -2766,64 +2802,135 @@
           "--workers",
           "auto"
         ],
+        "scanner_extra_args_redacted": false,
+        "scanner_extra_args_sha256": "df14beabd7ae732b782277c73f7e11d252ad2b88d824eec41313480ca39103c4",
         "source_commit": "805e3bb79276b94de636e27024f38773da303b44",
         "version": "0.1.0"
       },
       "gitleaks": {
+        "argument_policy": null,
         "build_id": "gitleaks-master",
         "executable_sha256": "e0831964099a20be3edaa5187f4f11a802821c2eea66a37acc6c09e0587724f2",
         "generated_at": "2026-11-15T23:59:50Z",
         "history_coverage": null,
+        "input_selection": {
+          "build_id": "gitleaks-master",
+          "key": "gitleaks",
+          "lock_path": "reports/detection-gaps/analysis-inputs.json",
+          "lock_sha256": "2cf4bc857e57f99cf2fa0d44167ba865688f75a919511318ad4f7b73eb246b80",
+          "locked_sha256": "fa80019006f9a515ee82ae107122dbd7871602e3fc5c2461587a4cfa397f2569",
+          "override": false,
+          "path": "run/reports/all-windows-baselines/gitleaks-master/gitleaks-master-current-baseline-5f6ec56cfa6f-default.json",
+          "profile": "default",
+          "run_id": "20261115T235801Z-0198709c",
+          "selection": "pinned-lock",
+          "sha256": "fa80019006f9a515ee82ae107122dbd7871602e3fc5c2461587a4cfa397f2569",
+          "source_commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+          "warnings": []
+        },
         "key": "gitleaks",
         "label": "Gitleaks master",
         "overall": "COMPLETE_WITH_LIMITATIONS",
         "profile": "default",
-        "report_path": "C:\\Dev\\rnc-benchmark-harness\\run\\reports\\all-windows-baselines\\gitleaks-master\\gitleaks-master-current-baseline-5f6ec56cfa6f-default.json",
+        "report_path": "run/reports/all-windows-baselines/gitleaks-master/gitleaks-master-current-baseline-5f6ec56cfa6f-default.json",
         "report_sha256": "fa80019006f9a515ee82ae107122dbd7871602e3fc5c2461587a4cfa397f2569",
         "rules_file": null,
         "rules_sha256": "",
         "run_id": "20261115T235801Z-0198709c",
         "scanner_extra_args": [],
+        "scanner_extra_args_redacted": false,
+        "scanner_extra_args_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
         "version": "8.25.0-local"
       },
       "v14": {
+        "argument_policy": null,
         "build_id": "gl-rnc-mod-v14",
         "executable_sha256": "7f1c9bd6f61c3ae414ab7df7688aeef04bd03312ac624127a13d39aa15238bfb",
         "generated_at": "2026-11-16T00:06:02Z",
         "history_coverage": null,
+        "input_selection": {
+          "build_id": "gl-rnc-mod-v14",
+          "key": "v14",
+          "lock_path": "reports/detection-gaps/analysis-inputs.json",
+          "lock_sha256": "2cf4bc857e57f99cf2fa0d44167ba865688f75a919511318ad4f7b73eb246b80",
+          "locked_sha256": "1480f1bb80ef77dc303fe61527ef7d930823c6287dc92557f6b36115fe02151a",
+          "override": false,
+          "path": "run/reports/all-windows-baselines/gl-rnc-mod-v14/gl-rnc-mod-v14-current-baseline-7d7492184111-default.json",
+          "profile": "default",
+          "run_id": "20261116T000424Z-080efee1",
+          "selection": "pinned-lock",
+          "sha256": "1480f1bb80ef77dc303fe61527ef7d930823c6287dc92557f6b36115fe02151a",
+          "source_commit": "7d74921841114be7677a423cf60620210e832bf7",
+          "warnings": []
+        },
         "key": "v14",
         "label": "RNC-Mod V14",
         "overall": "COMPLETE_WITH_LIMITATIONS",
         "profile": "default",
-        "report_path": "C:\\Dev\\rnc-benchmark-harness\\run\\reports\\all-windows-baselines\\gl-rnc-mod-v14\\gl-rnc-mod-v14-current-baseline-7d7492184111-default.json",
+        "report_path": "run/reports/all-windows-baselines/gl-rnc-mod-v14/gl-rnc-mod-v14-current-baseline-7d7492184111-default.json",
         "report_sha256": "1480f1bb80ef77dc303fe61527ef7d930823c6287dc92557f6b36115fe02151a",
         "rules_file": null,
         "rules_sha256": "",
         "run_id": "20261116T000424Z-080efee1",
         "scanner_extra_args": [],
+        "scanner_extra_args_redacted": false,
+        "scanner_extra_args_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_commit": "7d74921841114be7677a423cf60620210e832bf7",
         "version": "v8.25.0+dev.7d7492184111"
       },
       "v16": {
+        "argument_policy": null,
         "build_id": "gl-rnc-mod-v16",
         "executable_sha256": "d561ec675ac265240ff7002adf0019a9b1644f4df6d854a86be67b58b789bb72",
         "generated_at": "2026-11-16T02:25:52Z",
         "history_coverage": null,
+        "input_selection": {
+          "build_id": "gl-rnc-mod-v16",
+          "key": "v16",
+          "lock_path": "reports/detection-gaps/analysis-inputs.json",
+          "lock_sha256": "2cf4bc857e57f99cf2fa0d44167ba865688f75a919511318ad4f7b73eb246b80",
+          "locked_sha256": "c82cab9e710676b689412c43843cdc2a593f248f0dd687271cd0843b19e93969",
+          "override": false,
+          "path": "run/reports/all-windows-baselines/gl-rnc-mod-v16/gl-rnc-mod-v16-current-baseline-11897cd27e57-full-11897cd27e57-default.json",
+          "profile": "default",
+          "run_id": "20261116T022413Z-04c1ef8c",
+          "selection": "pinned-lock",
+          "sha256": "c82cab9e710676b689412c43843cdc2a593f248f0dd687271cd0843b19e93969",
+          "source_commit": "11897cd27e57d5eee7262c9d053a4356bca59cd8",
+          "warnings": []
+        },
         "key": "v16",
         "label": "RNC-Mod V16",
         "overall": "COMPLETE_WITH_LIMITATIONS",
         "profile": "default",
-        "report_path": "C:\\Dev\\rnc-benchmark-harness\\run\\reports\\all-windows-baselines\\gl-rnc-mod-v16\\gl-rnc-mod-v16-current-baseline-11897cd27e57-full-11897cd27e57-default.json",
+        "report_path": "run/reports/all-windows-baselines/gl-rnc-mod-v16/gl-rnc-mod-v16-current-baseline-11897cd27e57-full-11897cd27e57-default.json",
         "report_sha256": "c82cab9e710676b689412c43843cdc2a593f248f0dd687271cd0843b19e93969",
         "rules_file": null,
         "rules_sha256": "",
         "run_id": "20261116T022413Z-04c1ef8c",
         "scanner_extra_args": [],
+        "scanner_extra_args_redacted": false,
+        "scanner_extra_args_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_commit": "11897cd27e57d5eee7262c9d053a4356bca59cd8",
         "version": "v8.25.0+dev.11897cd27e57"
       }
     }
+  },
+  "input_selection": {
+    "build_id": "gl-rnc-mod-v14",
+    "key": "v14",
+    "lock_path": "reports/detection-gaps/analysis-inputs.json",
+    "lock_sha256": "2cf4bc857e57f99cf2fa0d44167ba865688f75a919511318ad4f7b73eb246b80",
+    "locked_sha256": "1480f1bb80ef77dc303fe61527ef7d930823c6287dc92557f6b36115fe02151a",
+    "override": false,
+    "path": "run/reports/all-windows-baselines/gl-rnc-mod-v14/gl-rnc-mod-v14-current-baseline-7d7492184111-default.json",
+    "profile": "default",
+    "run_id": "20261116T000424Z-080efee1",
+    "selection": "pinned-lock",
+    "sha256": "1480f1bb80ef77dc303fe61527ef7d930823c6287dc92557f6b36115fe02151a",
+    "source_commit": "7d74921841114be7677a423cf60620210e832bf7",
+    "warnings": []
   },
   "lanes": [
     {
@@ -2886,7 +2993,7 @@
     "This is an independent evaluator report. No scanner rule, source file, oracle, or scoring policy was modified.",
     "Leaky Repo filesystem is a line-level detection benchmark without a complete negative oracle; precision and F1 are not certified.",
     "Leaky Repo Git precision/F1 are not certified; 65 source occurrences and 53 unique groups are separate denominators.",
-    "Leaky Git source units are marked INSPECTED_UNVERIFIED for adapters that do not return a true coverage attestation; this is not evidence that a unit was skipped.",
+    "Leaky Git source units are marked INSPECTION_UNVERIFIED for adapters that do not return a true coverage attestation; this is not evidence that a unit was skipped.",
     "RNC Lab precision/F1 are not certified; the 640 filesystem and 160 Git positive denominators are separate and are not combined.",
     "The 11 RNC Lab symlink aliases are not followed by the scanner. They contain no expected positive target in this oracle, so they do not change the positive recall denominator.",
     "Provider and subtype labels for Leaky Repo and Levain are source-context inferences because those oracles do not expose the Lab's fine-grained subtype taxonomy. RNC Lab labels come directly from its oracle.",
@@ -3253,7 +3360,7 @@
       ]
     },
     {
-      "confidence": "CONFIRMED",
+      "confidence": "UNRESOLVED",
       "cross_found": 8,
       "identifiers": [
         "API_TOKEN",
@@ -3271,7 +3378,7 @@
         "rnclab_filesystem"
       ],
       "misses": 26,
-      "opportunity": "structured_container",
+      "opportunity": "container_inspection_evidence",
       "priority": "HIGH",
       "providers": [
         "Administrative account",
@@ -3291,9 +3398,9 @@
         "sqlite_table_cell"
       ],
       "risk_misses": 26,
-      "root_cause": "SOURCE_UNSUPPORTED",
+      "root_cause": "SOURCE_INSPECTION_UNVERIFIED",
       "root_causes": {
-        "SOURCE_UNSUPPORTED": 26
+        "SOURCE_INSPECTION_UNVERIFIED": 26
       },
       "sample_targets": [
         "RNC-SL-POS-000029",
@@ -3571,7 +3678,7 @@
       ]
     },
     {
-      "confidence": "CONFIRMED",
+      "confidence": "PROBABLE",
       "cross_found": 4,
       "identifiers": [
         "encryptedPassword",
@@ -4063,88 +4170,125 @@
       ]
     }
   ],
-  "report_path": "C:\\Dev\\rnc-benchmark-harness\\run\\reports\\all-windows-baselines\\gl-rnc-mod-v14\\gl-rnc-mod-v14-current-baseline-7d7492184111-default.json",
+  "report_path": "run/reports/all-windows-baselines/gl-rnc-mod-v14/gl-rnc-mod-v14-current-baseline-7d7492184111-default.json",
   "report_sha256": "1480f1bb80ef77dc303fe61527ef7d930823c6287dc92557f6b36115fe02151a",
   "rules_file": null,
   "rules_sha256": "",
   "run_id": "20261116T000424Z-080efee1",
   "scanner": "RNC-Mod V14",
   "scanner_extra_args": [],
+  "scanner_extra_args_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
   "scanner_key": "v14",
-  "schema_version": 1,
+  "schema_version": 2,
   "scoring_epoch": "current post-scoring-integrity remediation (2026-11-15)",
   "source_commit": "7d74921841114be7677a423cf60620210e832bf7",
   "source_commit_metadata_only": true,
   "stats": {
     "by_lane": {
       "leaky_filesystem": {
-        "confirmed_causes": 96,
+        "confirmed_causes": 86,
         "expected": 175,
         "informative_misses": 86,
+        "inspection_states": {
+          "INSPECTION_UNVERIFIED": 153
+        },
+        "inspection_unverified": 153,
         "matched": 22,
         "missed": 153,
-        "probable_causes": 54,
+        "probable_causes": 64,
         "recall_percent": 12.57,
         "risk_misses": 67,
+        "source_capabilities": {
+          "CLAIMED_SUPPORTED": 153
+        },
         "uninspected": 0,
         "unresolved_causes": 3,
-        "unsupported_container": 0,
+        "unsupported_verified": 0,
         "unverified": 0
       },
       "leaky_git": {
         "confirmed_causes": 0,
         "expected": 65,
         "informative_misses": 0,
+        "inspection_states": {
+          "INSPECTION_UNVERIFIED": 44
+        },
+        "inspection_unverified": 44,
         "matched": 21,
         "missed": 44,
         "probable_causes": 41,
         "recall_percent": 32.31,
         "risk_misses": 44,
+        "source_capabilities": {
+          "CLAIMED_SUPPORTED": 44
+        },
         "uninspected": 0,
         "unresolved_causes": 3,
-        "unsupported_container": 0,
+        "unsupported_verified": 0,
         "unverified": 0
       },
       "levain": {
         "confirmed_causes": 0,
         "expected": 85,
         "informative_misses": 0,
+        "inspection_states": {
+          "INSPECTION_UNVERIFIED": 36
+        },
+        "inspection_unverified": 36,
         "matched": 49,
         "missed": 36,
         "probable_causes": 36,
         "recall_percent": 57.65,
         "risk_misses": 36,
+        "source_capabilities": {
+          "CLAIMED_SUPPORTED": 36
+        },
         "uninspected": 0,
         "unresolved_causes": 0,
-        "unsupported_container": 0,
+        "unsupported_verified": 0,
         "unverified": 0
       },
       "rnclab_filesystem": {
-        "confirmed_causes": 26,
+        "confirmed_causes": 0,
         "expected": 640,
         "informative_misses": 0,
+        "inspection_states": {
+          "INSPECTION_UNVERIFIED": 271
+        },
+        "inspection_unverified": 271,
         "matched": 369,
         "missed": 271,
         "probable_causes": 235,
         "recall_percent": 57.66,
         "risk_misses": 271,
+        "source_capabilities": {
+          "CLAIMED_SUPPORTED": 245,
+          "NOT_DECLARED": 26
+        },
         "uninspected": 0,
-        "unresolved_causes": 10,
-        "unsupported_container": 26,
+        "unresolved_causes": 36,
+        "unsupported_verified": 0,
         "unverified": 4
       },
       "rnclab_git": {
-        "confirmed_causes": 1,
+        "confirmed_causes": 0,
         "expected": 160,
         "informative_misses": 0,
+        "inspection_states": {
+          "INSPECTION_UNVERIFIED": 30
+        },
+        "inspection_unverified": 30,
         "matched": 130,
         "missed": 30,
-        "probable_causes": 14,
+        "probable_causes": 15,
         "recall_percent": 81.25,
         "risk_misses": 30,
+        "source_capabilities": {
+          "CLAIMED_SUPPORTED": 30
+        },
         "uninspected": 0,
         "unresolved_causes": 15,
-        "unsupported_container": 0,
+        "unsupported_verified": 0,
         "unverified": 1
       }
     },
@@ -4159,11 +4303,11 @@
       "unknown_credential": 67
     },
     "confidence": {
-      "CONFIRMED": 123,
-      "PROBABLE": 380,
-      "UNRESOLVED": 31
+      "CONFIRMED": 86,
+      "PROBABLE": 391,
+      "UNRESOLVED": 57
     },
-    "confirmed_causes": 123,
+    "confirmed_causes": 86,
     "containers": {
       "archive_member": 10,
       "binary_file": 4,
@@ -4207,9 +4351,13 @@
       "zip": 5
     },
     "informative_misses": 86,
+    "inspection_states": {
+      "INSPECTION_UNVERIFIED": 534
+    },
+    "inspection_unverified": 534,
     "matched": 591,
     "missed": 534,
-    "probable_causes": 380,
+    "probable_causes": 391,
     "providers": {
       "Administrative account": 9,
       "Amazon Web Services (AWS)": 10,
@@ -4303,9 +4451,13 @@
       "IDENTIFIER_MISMATCH": 167,
       "INFORMATIVE_REFERENCE": 86,
       "RULE_ABSENT": 35,
-      "SOURCE_UNSUPPORTED": 26,
+      "SOURCE_INSPECTION_UNVERIFIED": 26,
       "UNKNOWN": 31,
       "VALIDATOR_REJECTION": 4
+    },
+    "source_capabilities": {
+      "CLAIMED_SUPPORTED": 508,
+      "NOT_DECLARED": 26
     },
     "subtypes": {
       "admin_password": 9,
@@ -4360,8 +4512,8 @@
       "xai_api_key": 1
     },
     "uninspected": 0,
-    "unresolved_causes": 31,
-    "unsupported_container": 26,
+    "unresolved_causes": 57,
+    "unsupported_verified": 0,
     "unverified": 5
   },
   "target_universe": {
@@ -4446,6 +4598,9 @@
     "reconstructed_counts": {
       "betterleaks": {
         "expected": 1125,
+        "inspection_states": {
+          "INSPECTION_UNVERIFIED": 408
+        },
         "matched": 717,
         "matched_by_lane": {
           "leaky_filesystem": 37,
@@ -4463,10 +4618,18 @@
           "rnclab_git": 158
         },
         "root_cause_total": 408,
-        "root_causes_reconcile": true
+        "root_causes_reconcile": true,
+        "source_capabilities": {
+          "CLAIMED_SUPPORTED": 390,
+          "NOT_DECLARED": 18
+        }
       },
       "cp4c": {
         "expected": 1125,
+        "inspection_states": {
+          "INSPECTED_VERIFIED": 346,
+          "INSPECTION_UNVERIFIED": 209
+        },
         "matched": 570,
         "matched_by_lane": {
           "leaky_filesystem": 32,
@@ -4484,10 +4647,17 @@
           "rnclab_git": 120
         },
         "root_cause_total": 555,
-        "root_causes_reconcile": true
+        "root_causes_reconcile": true,
+        "source_capabilities": {
+          "CLAIMED_SUPPORTED": 529,
+          "NOT_DECLARED": 26
+        }
       },
       "gitleaks": {
         "expected": 1125,
+        "inspection_states": {
+          "INSPECTION_UNVERIFIED": 536
+        },
         "matched": 589,
         "matched_by_lane": {
           "leaky_filesystem": 22,
@@ -4505,10 +4675,17 @@
           "rnclab_git": 130
         },
         "root_cause_total": 536,
-        "root_causes_reconcile": true
+        "root_causes_reconcile": true,
+        "source_capabilities": {
+          "CLAIMED_SUPPORTED": 510,
+          "NOT_DECLARED": 26
+        }
       },
       "v14": {
         "expected": 1125,
+        "inspection_states": {
+          "INSPECTION_UNVERIFIED": 534
+        },
         "matched": 591,
         "matched_by_lane": {
           "leaky_filesystem": 22,
@@ -4526,10 +4703,17 @@
           "rnclab_git": 130
         },
         "root_cause_total": 534,
-        "root_causes_reconcile": true
+        "root_causes_reconcile": true,
+        "source_capabilities": {
+          "CLAIMED_SUPPORTED": 508,
+          "NOT_DECLARED": 26
+        }
       },
       "v16": {
         "expected": 1125,
+        "inspection_states": {
+          "INSPECTION_UNVERIFIED": 533
+        },
         "matched": 592,
         "matched_by_lane": {
           "leaky_filesystem": 22,
@@ -4547,13 +4731,22 @@
           "rnclab_git": 130
         },
         "root_cause_total": 533,
-        "root_causes_reconcile": true
+        "root_causes_reconcile": true,
+        "source_capabilities": {
+          "CLAIMED_SUPPORTED": 507,
+          "NOT_DECLARED": 26
+        }
       }
     },
     "risk_partition": {
       "informative": 87,
       "risk_bearing": 1038,
       "sums_to_target_universe": true
+    },
+    "source_attribution": {
+      "confirmed_unsupported_claims": 0,
+      "inspection_unverified_misses": 122,
+      "verified_not_inspected_misses": 0
     },
     "target_universe": {
       "by_lane": {

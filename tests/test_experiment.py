@@ -218,6 +218,10 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(document["profile"]["name"], "custom")
         self.assertEqual(document["profile"]["config_sha256"], __import__("hashlib").sha256(custom.read_bytes()).hexdigest())
         self.assertFalse(document["summary"]["baseline_metrics_included"])
+        self.assertEqual(document["summary"]["comparability"], "NOT_BASELINE_COMPARABLE")
+        self.assertEqual(
+            document["profile"]["argument_policy"]["detection_configuration"], "CUSTOM"
+        )
 
     def test_blocked_artifact_still_writes_a_blocked_report(self):
         blocked = replace(
@@ -265,6 +269,22 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(document["summary"]["overall"], "COMPLETE_WITH_LIMITATIONS")
         self.assertTrue(
             any("Performance section status" in item for item in document["limitations"])
+        )
+
+    def test_performance_override_is_recorded_without_claiming_detection_change(self):
+        document = self._run(scanner_extra_args=("--workers", "auto"))
+        self.assertEqual(
+            document["summary"]["comparability"],
+            "PERFORMANCE_TUNED_BASELINE_DETECTION",
+        )
+        self.assertTrue(document["summary"]["baseline_detection_comparable"])
+        policy = document["execution_provenance"]["argument_policy"]
+        self.assertEqual(policy["detection_configuration"], "DEFAULT")
+        self.assertEqual(policy["execution_configuration"], "EXPLICIT")
+        self.assertEqual(policy["arguments"][0]["category"], "PERFORMANCE")
+        self.assertIsNone(policy["arguments"][0]["effective"])
+        self.assertEqual(
+            document["report_options"]["scanner_extra_args"], ["--workers", "auto"]
         )
 
     def test_repeated_reports_do_not_overwrite(self):

@@ -10,7 +10,6 @@ and cleanup.
 
 from __future__ import annotations
 
-import json
 import platform
 import shutil
 import uuid
@@ -22,58 +21,20 @@ from ..artifacts import RegisteredBuild, VerifiedArtifact, verify_artifact
 from .. import status as statuses
 from ..contracts import NormalizedFinding
 from ..execution import Invocation, ACCEPTED_EXIT_CODES
-from ..util import sha256_bytes
-
-_SENSITIVE_FLAGS = {
-    "--secret",
-    "--token",
-    "--password",
-    "--passphrase",
-    "--api-key",
-    "--apikey",
-    "--access-key",
-    "--client-secret",
-    "--credential",
-    "--credentials",
-    "--auth",
-}
-
-
-def _redacted_command(argv: list[str]) -> tuple[list[str], list[int]]:
-    """Redact explicit credential-bearing argument values only.
-
-    Scanner commands normally contain no credential values; paths and rule
-    configuration flags remain visible because they are meaningful provenance.
-    The original argv digest is still recorded separately.
-    """
-    rendered: list[str] = []
-    redactions: list[int] = []
-    redact_next = False
-    for index, argument in enumerate(argv):
-        lowered = argument.lower()
-        if redact_next:
-            rendered.append("<redacted>")
-            redactions.append(index)
-            redact_next = False
-            continue
-        if lowered in _SENSITIVE_FLAGS:
-            rendered.append(argument)
-            redact_next = True
-            continue
-        prefix = next(
-            (
-                flag
-                for flag in _SENSITIVE_FLAGS
-                if lowered.startswith(flag + "=")
-            ),
-            None,
-        )
-        if prefix is not None:
-            rendered.append(argument[: argument.index("=") + 1] + "<redacted>")
-            redactions.append(index)
-            continue
-        rendered.append(argument)
-    return rendered, redactions
+from ..provenance import (
+    artifact_identity,
+    command_digest,
+    environment_record,
+    invocation_sequence_label,
+    lane_for_workload,
+    load_profile_from_workload,
+    normalize_command,
+    normalize_replacements,
+    redact_argv,
+    render_command,
+)
+from ..safe_text import safe_message, safe_path
+from ..util import sha256_file
 
 
 @dataclass(frozen=True, order=True)
@@ -224,7 +185,13 @@ class ScannerAdapter(ABC):
 
     def __init__(self) -> None:
         self.run_id: str = f"adhoc-{uuid.uuid4().hex[:8]}"
+        self.experiment_id: str = self.run_id
+        self.workspace_root: Path | None = None
+        self.argument_policy: object | None = None
+        self.argument_origin: str = "cli"
         self.invocations: list[dict] = []
+        self.auxiliary_commands: list[dict] = []
+        self.last_invocation_id: str = ""
         # Optional experiment-owned scanner flags (for example RNC CP4C
         # ``--workers auto``).  Empty by default so adapter behavior is
         # unchanged unless an experiment explicitly opts in.
@@ -233,6 +200,8 @@ class ScannerAdapter(ABC):
     def bind_run(self, run_id: str) -> None:
         """Bind run-owned Docker labels and names without changing the contract."""
         self.run_id = run_id
+        if not self.experiment_id or self.experiment_id.startswith("adhoc-"):
+            self.experiment_id = run_id
 
     def docker_label_args(self) -> tuple[str, ...]:
         return (
@@ -307,26 +276,42 @@ class ScannerAdapter(ABC):
         self,
         invocation: Invocation,
         artifact: BuildArtifact | None = None,
-    ) -> None:
-        """Record the actual executed argument vector and its outcome."""
+        *,
+        target_path: Path | str | None = None,
+        config_path: Path | str | None = None,
+        supplied_args: tuple[str, ...] = (),
+        argument_origin: str | None = None,
+        direct_execution: bool = True,
+        execution_origin: str = "direct",
+    ) -> dict:
+        """Record the actual argument vector, context, and outcome.
+
+        The command is not reconstructed from intended settings: ``argv`` is the
+        vector passed to the process.  A normalized template is derived only for
+        display and is explicitly labelled as such.
+        """
         if not hasattr(self, "invocations"):
             self.invocations = []
         metadata = (artifact.metadata if artifact is not None else {}) or {}
-        platform_key = (
-            artifact.platform.key
-            if artifact is not None
-            else metadata.get("platform")
-        )
-        artifact_kind = (
-            "docker"
-            if artifact is not None and artifact.platform.is_docker
-            else "executable"
-            if artifact is not None
-            else metadata.get("execution_method")
-        )
+        platform = getattr(artifact, "platform", None) if artifact is not None else None
+        platform_key = platform.key if platform is not None else metadata.get("platform")
+        identity = artifact_identity(artifact)
+        if artifact is None:
+            identity.update(
+                {
+                    "kind": metadata.get("execution_method") or "unknown",
+                    "build_id": metadata.get("build_id"),
+                    "source_commit": metadata.get("source_commit"),
+                }
+            )
+        sequence = len(self.invocations) + 1
+        experiment_id = self.experiment_id or self.run_id
+        invocation_id = invocation_sequence_label(experiment_id, sequence)
         command = list(invocation.argv)
-        redacted, redactions = _redacted_command(command)
-        if invocation.timed_out:
+        redacted, redactions = redact_argv(command)
+        if not invocation.process_started:
+            status = statuses.BLOCKED
+        elif invocation.timed_out:
             status = statuses.BLOCKED
         elif invocation.error_code:
             status = statuses.BLOCKED
@@ -334,47 +319,206 @@ class ScannerAdapter(ABC):
             status = statuses.PASS
         else:
             status = statuses.FAIL
+        accepted_exits = list(self.accepted_exit_codes())
+        exit_accepted = (
+            invocation.exit_code in accepted_exits
+            if invocation.exit_code is not None
+            else None
+        )
+        policy = getattr(self, "argument_policy", None)
+        policy_dict = policy.to_dict() if hasattr(policy, "to_dict") else None
+        policy_arguments = policy_dict.get("arguments", []) if policy_dict else []
+        if supplied_args:
+            # Supplied arguments are appended last by every adapter.  Verify the
+            # suffix rather than searching for values, which could be ambiguous.
+            supplied = list(supplied_args)
+            suffix = command[-len(supplied) :] if supplied else []
+            suffix_matches = suffix == supplied
+            argument_records = [
+                dict(item)
+                for item in policy_arguments
+                if 0 <= int(item.get("index", -1)) < len(supplied)
+            ]
+            for item in argument_records:
+                item["accepted"] = (
+                    True
+                    if status == statuses.PASS
+                    else False
+                    if not invocation.process_started
+                    else None
+                )
+                item["acceptance_evidence"] = (
+                    "process launched and completed with an accepted exit status; "
+                    "semantic acceptance of an unknown flag is not independently observable"
+                    if status == statuses.PASS
+                    else "process launched but did not complete with an accepted status"
+                    if invocation.process_started
+                    else "process was not launched"
+                )
+                item["suffix_verified"] = suffix_matches
+        else:
+            argument_records = []
+        config = Path(config_path) if config_path is not None else None
+        config_digest = (
+            sha256_file(config)
+            if config is not None and config.is_file()
+            else None
+        )
+        target = Path(target_path) if target_path is not None else None
+        report_path = Path(invocation.report_path) if invocation.report_path else None
+        replacements = normalize_replacements(
+            repo_root=Path(__file__).resolve().parents[2],
+            workspace_root=self.workspace_root,
+            target_path=target,
+            report_path=report_path,
+            config_path=config,
+            run_id=self.run_id,
+        )
+        lane = lane_for_workload(invocation.workload, invocation.suite)
+        environment = environment_record(
+            invocation.environment_cleared,
+            invocation.environment_overrides,
+        )
+        if command and Path(command[0]).name.lower() == "docker":
+            container_env: list[dict[str, str]] = []
+            index = 0
+            while index < len(command):
+                if command[index] in ("--env", "-e") and index + 1 < len(command):
+                    key, _, value = command[index + 1].partition("=")
+                    container_env.append(
+                        {
+                            "key": key,
+                            "value": value
+                            if not any(
+                                marker in key.upper()
+                                for marker in ("TOKEN", "SECRET", "PASSWORD", "KEY", "AUTH")
+                            )
+                            else "<redacted>",
+                            "origin": "adapter-generated",
+                        }
+                    )
+                    index += 2
+                    continue
+                index += 1
+            environment["container"] = container_env
         record = {
-            "sequence": len(self.invocations) + 1,
+            "schema_version": 1,
+            "invocation_id": invocation_id,
+            "experiment_id": experiment_id,
+            "sequence": sequence,
             "scanner": self.key,
-            "build_id": metadata.get("build_id"),
+            "scanner_name": self.display_name,
+            "adapter": self.key,
+            "build_id": metadata.get("build_id") or identity.get("build_id"),
+            "version": metadata.get("version") or identity.get("version"),
             "platform": platform_key,
-            "artifact_kind": artifact_kind,
-            "executable": (
-                artifact.artifact_path if artifact is not None else None
-            ),
-            "executable_sha256": (
-                artifact.artifact_sha256 if artifact is not None else None
-            ),
-            "docker_image": (
-                artifact.image_tag if artifact is not None else None
-            ),
-            "docker_image_id": (
-                artifact.image_id if artifact is not None else None
-            ),
+            "artifact_kind": identity.get("kind"),
+            "artifact_identity": identity,
+            "executable": safe_path(identity.get("executable")),
+            "executable_sha256": identity.get("executable_sha256"),
+            "docker_image": identity.get("docker_image"),
+            "docker_image_id": identity.get("docker_image_id"),
             "source_commit": metadata.get("source_commit"),
+            "source_identity": metadata.get("source_identity") or "manifest-metadata",
+            "source_commit_verified": False,
             "manifest_sha256": (metadata.get("manifest") or {}).get("sha256"),
             "invocation_type": invocation.invocation_type,
+            "phase": invocation.invocation_type,
             "suite": invocation.suite,
             "workload": invocation.workload,
+            "workload_context": {
+                "suite": invocation.suite,
+                "lane": lane,
+                "load_profile": load_profile_from_workload(invocation.workload),
+                "target": safe_path(target) if target is not None else None,
+                "mode": invocation.mode,
+            },
             "mode": invocation.mode,
+            "direct_execution": direct_execution,
+            "execution_origin": execution_origin,
             "command": redacted,
             "arguments": redacted[1:],
-            "command_sha256": sha256_bytes(
-                json.dumps(command, separators=(",", ":")).encode("utf-8")
+            "supplied_arguments": argument_records,
+            "argument_policy": policy_dict,
+            "command_sha256": command_digest(command),
+            "command_rendered": {
+                "powershell": render_command(redacted, shell="powershell"),
+                "posix": render_command(redacted, shell="posix"),
+            },
+            "command_template": normalize_command(redacted, replacements),
+            "command_template_label": (
+                "normalized display template derived from this invocation; "
+                "not the literal executed command"
             ),
             "command_redacted": bool(redactions),
             "redacted_argument_indexes": redactions,
+            "cwd": safe_path(invocation.cwd),
+            "environment": environment,
+            "configuration": {
+                "profile": getattr(policy, "profile", None),
+                "config_path": safe_path(config) if config is not None else None,
+                "config_sha256": config_digest,
+                "rules_file": metadata.get("rules_file"),
+                "rules_sha256": metadata.get("rules_sha256"),
+                "effective_flags_observable": False,
+            },
             "exit_code": invocation.exit_code,
+            "accepted_exit_codes": accepted_exits,
+            "exit_accepted": exit_accepted,
+            "process_started": invocation.process_started,
             "duration_seconds": invocation.duration_seconds,
             "timeout_seconds": invocation.timeout_seconds,
             "timed_out": invocation.timed_out,
             "error_code": invocation.error_code,
-            "error_message": invocation.error_message,
+            "error_message": safe_message(invocation.error_message),
             "status": status,
+            "timestamps": {
+                "started_at": invocation.started_at or None,
+                "finished_at": invocation.finished_at or None,
+            },
+            "evidence": {
+                "report_path": safe_path(report_path) if report_path is not None else None,
+                "report_sha256": invocation.report_sha256,
+                "stdout_sha256": invocation.stdout_sha256,
+                "stderr_sha256": invocation.stderr_sha256,
+                "raw_evidence": (
+                    "transient run workspace; retained only when --retain-work is set"
+                ),
+            },
             "report_sha256": invocation.report_sha256,
         }
         self.invocations.append(record)
+        self.last_invocation_id = invocation_id
+        return record
+
+    def record_auxiliary(
+        self,
+        *,
+        operation: str,
+        argv: list[str] | tuple[str, ...],
+        exit_code: int | None,
+        duration_seconds: float | None = None,
+        status: str = statuses.PASS,
+        error: str | None = None,
+    ) -> dict:
+        """Record a harness auxiliary operation without calling it a scanner run."""
+        command = [str(item) for item in argv]
+        redacted, redactions = redact_argv(command)
+        record = {
+            "schema_version": 1,
+            "operation": operation,
+            "command": redacted,
+            "command_sha256": command_digest(command),
+            "command_rendered": render_command(redacted),
+            "command_redacted": bool(redactions),
+            "redacted_argument_indexes": redactions,
+            "exit_code": exit_code,
+            "duration_seconds": duration_seconds,
+            "status": status,
+            "error": safe_message(error),
+        }
+        self.auxiliary_commands.append(record)
+        return record
 
     @abstractmethod
     def invoke_native(

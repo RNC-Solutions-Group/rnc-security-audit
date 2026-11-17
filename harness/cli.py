@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
-import shlex
+import subprocess
 import sys
 from dataclasses import replace
 from pathlib import Path
@@ -99,9 +99,10 @@ def _status(args: argparse.Namespace) -> int:
 
 def _experiment(args: argparse.Namespace) -> int:
     from .experiment import run as run_experiment
+    from .provenance import split_arguments
 
     config = load_config(args.config)
-    scanner_extra_args = tuple(shlex.split(args.scanner_args or ""))
+    scanner_extra_args = split_arguments(args.scanner_args)
     if args.out_dir:
         config = replace(
             config,
@@ -137,6 +138,7 @@ def _experiment(args: argparse.Namespace) -> int:
         benchmark_environment=args.benchmark_environment,
         stress_profile=args.stress_profile,
         scanner_extra_args=scanner_extra_args,
+        harness_argv=getattr(args, "harness_argv", None),
     )
     if config.reports.console:
         print(document["_paths"]["console"])
@@ -239,7 +241,8 @@ def _detection_gaps(args: argparse.Namespace) -> int:
         load_scanner_evidence,
     )
     from .detection_gaps.analysis import load_cp4c_rules
-    from .detection_gaps.sources import find_report, repo_root
+    from .detection_gaps.inputs import select_report
+    from .detection_gaps.sources import repo_root
 
     root = repo_root()
     cache = Path(args.cache_dir).expanduser()
@@ -267,6 +270,58 @@ def _detection_gaps(args: argparse.Namespace) -> int:
         "gitleaks": args.gitleaks_report,
         "betterleaks": args.betterleaks_report,
     }
+    if args.write_input_lock:
+        from .detection_gaps.inputs import REPORT_GLOBS, build_lock, write_lock
+
+        paths: dict[str, Path] = {}
+        lock_target = Path(args.write_input_lock).expanduser()
+        if not lock_target.is_absolute():
+            lock_target = root / lock_target
+        for key in dict.fromkeys([*selected, *comparators]):
+            explicit = report_paths.get(key)
+            if explicit:
+                paths[key] = Path(explicit).expanduser()
+                continue
+            existing_lock = Path(args.input_lock).expanduser()
+            if not existing_lock.is_absolute():
+                existing_lock = root / existing_lock
+            if existing_lock.exists():
+                paths[key] = select_report(
+                    key, lock_path=existing_lock, root=root
+                ).path
+                continue
+            matches = sorted(
+                path
+                for path in root.glob(REPORT_GLOBS[key])
+                if path.is_file()
+            )
+            if len(matches) != 1:
+                raise HarnessError(
+                    f"cannot pin {key}: expected exactly one matching retained report, "
+                    f"found {len(matches)}. Pass an explicit report path."
+                )
+            paths[key] = matches[0]
+        try:
+            head = subprocess.run(
+                ["git", "-C", str(root), "rev-parse", "HEAD"],
+                capture_output=True,
+                text=True,
+                timeout=30,
+            )
+            harness_commit = head.stdout.strip() if head.returncode == 0 else None
+        except (OSError, subprocess.TimeoutExpired):
+            harness_commit = None
+        from . import __version__
+
+        document = build_lock(
+            paths,
+            root=root,
+            harness_version=__version__,
+            harness_source_commit=harness_commit,
+        )
+        write_lock(lock_target, document)
+        print(f"Analysis input lock: {lock_target}")
+        return 0
     resolver = SourceResolver(rnclab_root=rnclab_root, leaky_root=leaky_root, levain_root=levain_root)
     targets = load_canonical_targets(
         rnclab_root=rnclab_root,
@@ -276,10 +331,22 @@ def _detection_gaps(args: argparse.Namespace) -> int:
         leaky_oracle=leaky_oracle,
         resolver=resolver,
     )
-    all_evidence = {
-        key: load_scanner_evidence(key, find_report(key, report_paths.get(key)), targets)
-        for key in dict.fromkeys([*selected, *comparators])
-    }
+    selections = {}
+    all_evidence = {}
+    for key in dict.fromkeys([*selected, *comparators]):
+        lock_path = Path(args.input_lock).expanduser() if args.input_lock else None
+        if lock_path is not None and not lock_path.is_absolute():
+            lock_path = root / lock_path
+        selection = select_report(
+            key,
+            explicit=report_paths.get(key),
+            lock_path=lock_path,
+            root=root,
+        )
+        selections[key] = selection
+        all_evidence[key] = load_scanner_evidence(
+            key, selection.path, targets, selection=selection
+        )
     rules_path = Path(args.cp4c_rules).expanduser() if args.cp4c_rules else root / "run" / "rules" / "rnc-cp4c-providers-v1.json"
     cp4c_rules = load_cp4c_rules(rules_path)
     analyses = {
@@ -287,7 +354,26 @@ def _detection_gaps(args: argparse.Namespace) -> int:
         for key, evidence in all_evidence.items()
     }
     cross = build_cross_scanner(analyses, targets)
-    written = generate_reports(analyses=analyses, cross=cross, output_dir=Path(args.out_dir).expanduser())
+    from .provenance import redact_argv
+
+    command, command_redactions = redact_argv(
+        ["python", "-m", "harness", "detection-gaps", *sys.argv[1:]]
+    )
+    run_metadata = {
+        "command": command,
+        "command_redacted": bool(command_redactions),
+        "input_lock": str(args.input_lock or "reports/detection-gaps/analysis-inputs.json"),
+        "input_selections": {
+            key: selection.to_dict() for key, selection in selections.items()
+        },
+    }
+    written = generate_reports(
+        analyses=analyses,
+        cross=cross,
+        output_dir=Path(args.out_dir).expanduser(),
+        run_metadata=run_metadata,
+        replace=args.replace,
+    )
     print(f"Target universe: {len(targets)}")
     for key in selected:
         if key in analyses:
@@ -434,6 +520,21 @@ def build_parser() -> argparse.ArgumentParser:
         help="generate target-level detection-gap reports from retained current-scoring evidence",
     )
     gaps_parser.add_argument("--out-dir", default="reports/detection-gaps")
+    gaps_parser.add_argument(
+        "--input-lock",
+        default="reports/detection-gaps/analysis-inputs.json",
+        help="pinned report-input lock; modification-time selection is never used",
+    )
+    gaps_parser.add_argument(
+        "--replace",
+        action="store_true",
+        help="replace an existing non-finalized output directory",
+    )
+    gaps_parser.add_argument(
+        "--write-input-lock",
+        default=None,
+        help="pin the selected report paths and hashes to this JSON lock, then exit",
+    )
     gaps_parser.add_argument("--cache-dir", default=str(DEFAULT_CACHE))
     gaps_parser.add_argument("--scanners", default="cp4c,v14,v16")
     gaps_parser.add_argument("--comparators", default="gitleaks,betterleaks")
@@ -512,6 +613,9 @@ def main(argv: list[str] | None = None) -> int:
         parser.print_help()
         return 2
     args = parser.parse_args(effective)
+    # Preserve the exact harness invocation separately from scanner argv.  The
+    # program name is the current Python executable; the rest is the parsed argv.
+    args.harness_argv = [sys.executable, "-m", "harness", *effective]
     try:
         return args.func(args)
     except HarnessError as exc:

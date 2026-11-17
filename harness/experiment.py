@@ -14,6 +14,13 @@ from .artifacts import RegisteredBuild, load_manifest, toolchain_metadata
 from .config import HarnessConfig, load_config, validate_raw_destination
 from .errors import HarnessError
 from .profile import load_profile
+from .provenance import (
+    ORIGIN_CLI,
+    build_argument_policy,
+    redact_argv,
+    render_command,
+    command_digest,
+)
 from .reporting import compact_document, render_console, write_experiment_reports
 from .suites import resolve_suites
 from .suites.base import SuiteContext
@@ -746,6 +753,7 @@ def run(
     benchmark_environment: str | None = None,
     stress_profile: str | None = None,
     scanner_extra_args: tuple[str, ...] = (),
+    harness_argv: list[str] | tuple[str, ...] | None = None,
 ) -> dict:
     config = config or load_config(config_path)
     manifest = load_manifest(artifact_manifest or config.artifact.manifest)
@@ -756,8 +764,15 @@ def run(
             f"not {scanner!r}"
         )
     adapter = get_adapter(selected.scanner)
-    adapter.default_extra_args = tuple(scanner_extra_args)
     profile = load_profile(adapter, profile_name, scanner_config)
+    argument_policy = build_argument_policy(
+        selected.scanner,
+        scanner_extra_args,
+        profile=profile.name,
+        origin=ORIGIN_CLI,
+    )
+    adapter.default_extra_args = tuple(scanner_extra_args)
+    adapter.argument_policy = argument_policy
     benchmark_environment_record = performance.environment_for(
         benchmark_environment or config.benchmark_environment,
         stress_profile=stress_profile or config.stress_profile,
@@ -772,6 +787,8 @@ def run(
     workspace = RunWorkspace.create(run_id, retain=retain_work)
     workspace.prepare()
     adapter.bind_run(run_id)
+    adapter.experiment_id = run_id
+    adapter.workspace_root = workspace.root
     work_dir = workspace.evidence
     started_at = utc_now()
     builds: dict[str, BuildArtifact] = {}
@@ -923,6 +940,12 @@ def run(
         limitations.extend(item.get("limitations", []))
     if profile.limitations:
         limitations.extend(profile.limitations)
+    if not argument_policy.baseline_detection_comparable:
+        limitations.append(
+            "This experiment is not certified-baseline comparable under the "
+            f"argument policy ({argument_policy.comparability}): "
+            + " ".join(argument_policy.reasons)
+        )
     if fatal_error:
         limitations.append(f"Experiment failed before completion: {fatal_error}")
     if cleanup.get("status") != statuses.PASS:
@@ -971,6 +994,15 @@ def run(
         profile_document.setdefault("applied_settings", {})["rules_sha256"] = (
             scanner_ruleset.get("sha256")
         )
+    profile_document["argument_policy"] = argument_policy.to_dict()
+    profile_document["baseline_metrics_included"] = (
+        argument_policy.baseline_metrics_included
+    )
+    redacted_scanner_args, _redactions = redact_argv(list(scanner_extra_args))
+    harness_command = [
+        str(item) for item in (harness_argv or ["python", "-m", "harness"])
+    ]
+    redacted_harness_command, harness_redactions = redact_argv(harness_command)
     source_document = {
         "repository": selected.source_repository,
         "commit": selected.source_commit,
@@ -1031,6 +1063,35 @@ def run(
         "detection_by_product": _detection_by_product(suite_results, builds),
         "performance": performance_document,
         "cleanup": cleanup,
+        "execution_provenance": {
+            "schema_version": 1,
+            "experiment_id": run_id,
+            "harness_command": {
+                "argv": redacted_harness_command,
+                "argv_sha256": command_digest(harness_command),
+                "rendered": render_command(redacted_harness_command),
+                "origin": "harness-process",
+                "redacted": bool(harness_redactions),
+                "redacted_argument_indexes": harness_redactions,
+                "note": (
+                    "Command used to invoke the harness, not a scanner process. "
+                    "The per-run scanner argv is recorded below."
+                ),
+            },
+            "argument_policy": argument_policy.to_dict(),
+            "scanner_invocations": list(getattr(adapter, "invocations", [])),
+            "auxiliary_commands": list(getattr(adapter, "auxiliary_commands", [])),
+            "direct_scanner_invocation_count": sum(
+                1
+                for item in getattr(adapter, "invocations", [])
+                if item.get("direct_execution")
+            ),
+            "nested_scanner_invocation_count": sum(
+                1
+                for item in getattr(adapter, "invocations", [])
+                if not item.get("direct_execution")
+            ),
+        },
         "invocations": list(adapter.invocations),
         "summary": {
             "overall": overall,
@@ -1043,7 +1104,14 @@ def run(
             "artifact_manifest_sha256": manifest.sha256,
             "invocation_count": len(adapter.invocations),
             "profile": profile.name,
-            "baseline_metrics_included": profile.is_default,
+            "baseline_metrics_included": argument_policy.baseline_metrics_included,
+            "baseline_detection_comparable": (
+                argument_policy.baseline_detection_comparable
+            ),
+            "comparability": argument_policy.comparability,
+            "execution_configuration": argument_policy.execution_configuration,
+            "detection_configuration": argument_policy.detection_configuration,
+            "source_scope_configuration": argument_policy.source_scope_configuration,
             "suites": {key: item["status"] for key, item in suite_results.items()},
             "outcomes": {key: item["outcome"] for key, item in suite_results.items()},
             "builds": {key: item.status for key, item in builds.items()},
@@ -1078,7 +1146,12 @@ def run(
             "include_skipped": config.reports.include_skipped,
             "include_not_applicable": config.reports.include_not_applicable,
             "include_baseline_deltas": config.reports.include_baseline_deltas,
-            "scanner_extra_args": list(scanner_extra_args),
+            "scanner_extra_args": redacted_scanner_args,
+            "scanner_extra_args_sha256": command_digest(list(scanner_extra_args)),
+            "scanner_extra_args_redacted": bool(_redactions),
+            "scanner_extra_args_origin": argument_policy.origin,
+            "argument_policy": argument_policy.to_dict(),
+            "comparability": argument_policy.comparability,
         },
     }
     if fatal_traceback:
@@ -1110,6 +1183,9 @@ def run(
 
 def main(argv: list[str] | None = None) -> int:
     import argparse
+    import sys
+
+    effective_argv = list(sys.argv[1:] if argv is None else argv)
 
     parser = argparse.ArgumentParser(
         description="One-scanner registered-artifact experiment."
@@ -1147,8 +1223,9 @@ def main(argv: list[str] | None = None) -> int:
         choices=("none", "cpu", "memory", "io", "network"),
         default="none",
     )
-    args = parser.parse_args(argv)
+    args = parser.parse_args(effective_argv)
     document = run(
+        harness_argv=["python", "-m", "harness.experiment", *effective_argv],
         build=args.build,
         artifact_manifest=args.artifact_manifest,
         scanner=args.scanner,

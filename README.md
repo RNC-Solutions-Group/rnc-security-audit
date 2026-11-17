@@ -21,6 +21,18 @@
 > [history/accountability report](docs/checkpoints/CP4-history-accountability-report.md),
 > [architecture](docs/architecture.md), and
 > [CP5D.1 evidence](reports/cp5d1/).
+>
+> **CP-HI1 hardening:** every scanner invocation now records the actual sanitized
+> argv, phase, cwd, environment isolation, artifact identity, outcome and a
+> normalized template; experiment-owned flags are classified as performance,
+> detection, scope, output, security or unknown; harness-controlled flags are
+> rejected rather than silently overridden. Detection-gap inputs are pinned by
+> SHA-256 in [`analysis-inputs.json`](reports/detection-gaps/analysis-inputs.json),
+> and its report set is published only through a `COMPLETE` marker. See
+> [execution provenance](docs/contracts/execution-provenance.md),
+> [detection-gap evidence](docs/contracts/detection-gap-evidence.md), and
+> [report lifecycle](docs/report-lifecycle.md). Betterleaks v2 remains deferred;
+> no v2 adapter or substitute artifact is part of this work.
 
 ## Purpose
 
@@ -225,6 +237,14 @@ python -m harness experiment --build rnc-cp4a --profile custom --scanner-config 
 python -m harness experiment --build rnc-cp4a --retain-work
 ```
 
+`--scanner-args` is a shell-like argument string, not an opaque command. It is
+split without corrupting Windows paths, classified by effect, and rejected when it
+tries to override a harness-controlled source, output, rules, configuration or
+run identity. `--workers auto` is a performance/execution override: the report
+shows `DEFAULT` detection with explicit execution tuning and records the requested
+worker value. An effective worker count is reported only if a scanner profile
+exposes it. See [execution provenance](docs/contracts/execution-provenance.md).
+
 Other active commands:
 
 ```sh
@@ -233,7 +253,7 @@ python -m harness verify     # verify cache offline
 python -m harness status     # dataset readiness
 python -m harness synthetic  # independent scoring-engine validation
 python -m harness matrix --experiment cp4c --out-dir run/reports/cp4c-matrix0  # CP4C worker/profiler Matrix 0
-python -m harness detection-gaps --out-dir reports/detection-gaps  # retained-evidence target analysis
+python -m harness detection-gaps --input-lock reports/detection-gaps/analysis-inputs.json --out-dir reports/detection-gaps --replace
 python -m harness interactive
 ```
 
@@ -251,35 +271,71 @@ scanner plus a shared target-overlap report.
 
 ```powershell
 python -m harness detection-gaps --out-dir reports/detection-gaps
+# Pin a new explicit baseline set (refuses ambiguous matching reports):
+python -m harness detection-gaps --write-input-lock reports/detection-gaps/analysis-inputs.json --cp4c-report <path> --v14-report <path> --v16-report <path>
 ```
 
-The default inputs are the retained reports under
-`run/reports/all-windows-baselines/` and the frozen Levain, Leaky Repo and RNC
-Synthetic Secrets Lab v3 caches. The command currently generates CP4C, RNC-Mod
-V14 and RNC-Mod V16 reports. Each report directory contains the human-readable
-assessment, complete target and miss inventories, provider context, location
-analysis, root causes, prioritized backlog and machine summary. RNC Lab and
-Leaky Git precision/F1 are not claimed; their negative oracles are incomplete.
+The default input is the pinned
+[`analysis-inputs.json`](reports/detection-gaps/analysis-inputs.json), which records
+each report path, SHA-256, build ID, run ID, source-commit metadata and dataset
+digests. Selection is fail-closed and never uses filesystem modification time.
+`--cp4c-report`, `--v14-report`, etc. are explicit overrides; they are identity
+checked and recorded as unpinned.
+
+The command currently generates CP4C, RNC-Mod V14 and RNC-Mod V16 reports. Each
+report directory contains the human-readable assessment, complete target and miss
+inventories, provider context, location analysis, root causes, prioritized backlog
+and machine summary. RNC Lab and Leaky Git precision/F1 are not claimed; their
+negative oracles are incomplete.
+
+Container misses are not automatically called `SOURCE_UNSUPPORTED`. Unless a
+scanner/source capability declaration or source-unit probe proves the member,
+record or unit was inspected or unsupported, they are
+`SOURCE_INSPECTION_UNVERIFIED` / `UNRESOLVED`. The old "no credited finding in this
+container class" inference was removed. See
+[detection-gap evidence](docs/contracts/detection-gap-evidence.md).
+
+The output is a staged report set. `publication.json` is `IN_PROGRESS` while files
+are being replaced and becomes `COMPLETE` only with a full file/hash manifest. A
+non-empty directory without that marker requires explicit `--replace`. Volatile
+run metadata is isolated in `analysis-run.json`, so substantive files reproduce
+from the same lock.
 
 Raw source evidence stays under Git-ignored `run/`. Tracked reports use target
 IDs, redacted structural context, and nonsecret source locators only.
 
 ## Invocation evidence
 
-Every scanner invocation is recorded with:
+Every scanner invocation records:
 
-- scanner and registered manifest build ID;
-- executable SHA-256 or Docker image ID;
-- suite, workload, platform, and invocation type (`detection`, `warmup`,
-  `measured`, or `verification`);
-- the exact executed argv or full `docker run` command, in execution order;
-- exit code, duration, timeout/error status, and report SHA-256.
+- the actual sanitized argv (not a reconstruction), plus separately labelled
+  PowerShell/POSIX renderings and a derived normalized template;
+- experiment/invocation IDs, scanner/adapter/build/version and verified executable
+  SHA-256 or Docker image ID;
+- manifest source-commit metadata, explicitly not a source checkout;
+- suite, workload, lane, load profile and target identity;
+- phase (`detection`, `warmup`, `measured`, `verification`, `reference`);
+- actual working directory and cleared scanner-config environment;
+- profile/config/rules identity and supplied-argument classification;
+- exit code, accepted-exit interpretation, timeout/error, whether the process
+  actually started, duration and report/stdout/stderr SHA-256;
+- a normalized command template that is explicitly **not** the literal command.
 
-The JSON report includes the invocation records as `invocations`. The Markdown
-report includes a readable command/execution table. Credential-bearing argument
-values are redacted only when an explicit sensitive flag such as `--password` or
-`--token` is present; the original argv digest is retained. No raw matched
-secret values are serialized.
+The JSON report includes `execution_provenance`, `invocations`, and
+`auxiliary_commands`. The Markdown report includes a "Scanner invocations" section
+with configuration comparability, explicit overrides, templates, per-run argv,
+failures, and auxiliary operations. Credential-bearing argument values and URL
+userinfo are redacted; the unredacted argv digest is retained. No raw matched
+secret values are serialized. See
+[execution provenance](docs/contracts/execution-provenance.md).
+
+## Report lifecycle
+
+Tracked current baselines and historical reports are immutable. CP-HI1 did not
+delete or rewrite them. Detection-gap reports are derived and versioned; raw
+scanner output remains ignored. Current tracked report volume is recorded in
+[report lifecycle](docs/report-lifecycle.md), along with the proposal for future
+bulk-artifact storage. No migration or retention change is approved.
 
 ## Cleanup and safety
 
@@ -359,6 +415,8 @@ See [`datasets/manifest.toml`](datasets/manifest.toml) and
 | `harness/performance.py`, `harness/telemetry.py` | Repeated measurements, environment profiles, and OS/container telemetry |
 | `harness/reporting.py` | Markdown/JSON reports including exact invocation evidence |
 | `docs/checkpoints/` | CP1A–CP11 reports |
+| `docs/contracts/` | Execution provenance, profiler, and detection-gap evidence contracts |
+| `docs/report-lifecycle.md` | Tracked/ignored evidence roles, retention, and future bulk-artifact proposal |
 | `reports/baseline-20261112/` | Authoritative retained baseline evidence |
 
 Historical CP1A–CP10 reports remain intact. No application source is modified, no

@@ -125,7 +125,14 @@ class BetterleaksAdapter(ScannerAdapter):
             suite=suite,
             workload=workload,
         )
-        self.record_invocation(invocation, artifact)
+        self.record_invocation(
+            invocation,
+            artifact,
+            target_path=target,
+            config_path=config,
+            supplied_args=(*self.default_extra_args, *extra_args),
+            argument_origin=self.argument_origin,
+        )
         return invocation
 
     def invoke_container(
@@ -218,7 +225,14 @@ class BetterleaksAdapter(ScannerAdapter):
         except BaseException:
             self._remove_container(container)
             raise
-        self.record_invocation(invocation, artifact)
+        self.record_invocation(
+            invocation,
+            artifact,
+            target_path=target,
+            config_path=config,
+            supplied_args=(*self.default_extra_args, *extra_args),
+            argument_origin=self.argument_origin,
+        )
         if invocation.timed_out or invocation.error_code:
             self._remove_container(container)
         return invocation

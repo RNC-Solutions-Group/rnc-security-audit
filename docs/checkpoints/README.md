@@ -7,8 +7,9 @@ current when the work was performed.
 **Current execution model:** CP11 and later use operator-provided executables,
 rules, and locally retained Docker images registered in `run/manifest.toml`.
 Scanner source is not cloned, checked out, compiled, or built by the harness.
-See [`CP11-local-artifact-execution-report.md`](CP11-local-artifact-execution-report.md)
-and [`docs/architecture.md`](../architecture.md).
+See [`CP11-local-artifact-execution-report.md`](CP11-local-artifact-execution-report.md),
+[`CP-HI1-report.md`](CP-HI1-report.md), and
+[`docs/architecture.md`](../architecture.md).
 
 Historical references to `test/scan-harness`, `RNC-Solutions-Group/gitleaks`,
 `--repo`, `--commit`, disposable checkouts, or source-built images describe the

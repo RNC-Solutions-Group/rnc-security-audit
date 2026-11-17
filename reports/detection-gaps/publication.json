@@ -1,0 +1,258 @@
+{
+  "analysis_version": "2.0.0",
+  "completion_marker": "publication.json",
+  "files": [
+    {
+      "bytes": 8422,
+      "path": "analysis-run.json",
+      "sha256": "58ccf487f5a4ae8706c63a6ef4549150885f4255ed74b95c63c5be94f5baea47"
+    },
+    {
+      "bytes": 6802,
+      "path": "analysis-validation.json",
+      "sha256": "d8fc482b9fbc871a65c3f6a2a7b5331cd956c7f09ad237dc72b5fb345c465194"
+    },
+    {
+      "bytes": 2260,
+      "path": "classification-migration.json",
+      "sha256": "bb15c0d619c375c293332c86b3812e6ee42c47281c2288b9f84d55ba6af5954f"
+    },
+    {
+      "bytes": 4441,
+      "path": "classification-migration.md",
+      "sha256": "fb77d9019476fe40778672a63aa30f54d3d4cfd55b67454d7361b7c9868828e9"
+    },
+    {
+      "bytes": 32475,
+      "path": "cp4c/cp4c-detection-gaps.md",
+      "sha256": "58a898118f11b43b15898062d5397597743f57139e2815e46222a72efa199535"
+    },
+    {
+      "bytes": 10573,
+      "path": "cp4c/cp4c-development-backlog.md",
+      "sha256": "4d5dbbdd43e69eb74f8174fc3325ece92bbce1b4646615c792843939eb89d869"
+    },
+    {
+      "bytes": 245917,
+      "path": "cp4c/cp4c-location-analysis.csv",
+      "sha256": "2ece25ba7d934308a291cc37163ec7ff4665a57a671bc530e136fb27db9e780c"
+    },
+    {
+      "bytes": 484702,
+      "path": "cp4c/cp4c-missed-targets.csv",
+      "sha256": "c2e597f7e3d8345cff3fa88b33cf851599dbe061280be23f6ab2bdb291788080"
+    },
+    {
+      "bytes": 301676,
+      "path": "cp4c/cp4c-provider-context.csv",
+      "sha256": "d1cfff86130fe786d5088237a62aeae70f8fabe76da3a9df88eec2872109fbbe"
+    },
+    {
+      "bytes": 11122,
+      "path": "cp4c/cp4c-root-causes.md",
+      "sha256": "a3af20233b9a5b4ad136e0a90684694c6f559c55dc4a3b9f4ca9d8ee1c0d781a"
+    },
+    {
+      "bytes": 124840,
+      "path": "cp4c/cp4c-summary.json",
+      "sha256": "b7a9561369fc252f1e9aaf6440ccd4b979c801d2bd20097bcf1595bd052e354e"
+    },
+    {
+      "bytes": 891836,
+      "path": "cp4c/cp4c-target-inventory.csv",
+      "sha256": "83222dc43251b18d2f304176157afdbfec5e10807ec88a021ba508d94a438fc2"
+    },
+    {
+      "bytes": 243855,
+      "path": "cp4c-v14-target-overlap.csv",
+      "sha256": "0043f22b816a6ebe7ff4341f014b58a8480cf00e253c139d2c14cedbe3c1f7a6"
+    },
+    {
+      "bytes": 18041,
+      "path": "cp4c-v14-target-overlap.md",
+      "sha256": "4e9a4a35b1ed8e0fe67b0e3f47f5d1c14a9197492a0cdb06e1584cbac8193797"
+    },
+    {
+      "bytes": 4195,
+      "path": "README.md",
+      "sha256": "1e0ade18866ac44ef360cac951e6ca4c79742ccea367d44465d799602638e70b"
+    },
+    {
+      "bytes": 25510,
+      "path": "rnc-mod-v14/v14-detection-gaps.md",
+      "sha256": "1edc5a9f6a38e9cbc4b9428265c22eded0487405d1f03d04c8df19b093bfcdf3"
+    },
+    {
+      "bytes": 10571,
+      "path": "rnc-mod-v14/v14-development-backlog.md",
+      "sha256": "089620f6c48c3a5ede91192b0b2944808a09435d8a186feb4f8f9cc7e179f6d0"
+    },
+    {
+      "bytes": 220892,
+      "path": "rnc-mod-v14/v14-location-analysis.csv",
+      "sha256": "8b05413be6cefd1ea704b7b130e74d0b6597f8d755e749100510be66f8b56999"
+    },
+    {
+      "bytes": 467089,
+      "path": "rnc-mod-v14/v14-missed-targets.csv",
+      "sha256": "52f495bb185d3c6c45b308d09973b99d037c02ebc250de6362847136e468860f"
+    },
+    {
+      "bytes": 282038,
+      "path": "rnc-mod-v14/v14-provider-context.csv",
+      "sha256": "07db70ae6950bff8210f2f9fb1cc823642b9bbc319469d39676d3170ef8b075d"
+    },
+    {
+      "bytes": 9208,
+      "path": "rnc-mod-v14/v14-root-causes.md",
+      "sha256": "8e1f5f5e1730b1b348f3350585fe61619be14c6c16004dbc3e0f3c99428e0a75"
+    },
+    {
+      "bytes": 122290,
+      "path": "rnc-mod-v14/v14-summary.json",
+      "sha256": "4aeec2be25abaa4056458174f493c0fe31c379ec4a050cafc1066e2c61ce30be"
+    },
+    {
+      "bytes": 898191,
+      "path": "rnc-mod-v14/v14-target-inventory.csv",
+      "sha256": "21f7b1cba22c44bf8e68fcfbe8bc5c74cb76380249ee3eb0d75e9507cdbabd91"
+    },
+    {
+      "bytes": 25527,
+      "path": "rnc-mod-v16/v16-detection-gaps.md",
+      "sha256": "ffb0ec71317d4af9e8cb49c270b0865deb726a6dbd8fa3234666f56a60fbdf3c"
+    },
+    {
+      "bytes": 10571,
+      "path": "rnc-mod-v16/v16-development-backlog.md",
+      "sha256": "88ad0c7cb94bf984a15aa8fb3be93041a99b6584a3fca62e54cdc3e164c47977"
+    },
+    {
+      "bytes": 220557,
+      "path": "rnc-mod-v16/v16-location-analysis.csv",
+      "sha256": "9ee5687e82a7c17bbb2b5d92b003370c2f8029510b5aefff3d7953d2e93c0d30"
+    },
+    {
+      "bytes": 466307,
+      "path": "rnc-mod-v16/v16-missed-targets.csv",
+      "sha256": "9d33a17031f630e4a502ea7fc5d9fed58fbc994f1c0a7d1400ad66dd8f4fb028"
+    },
+    {
+      "bytes": 281443,
+      "path": "rnc-mod-v16/v16-provider-context.csv",
+      "sha256": "efe20294f2b060e2a94b7f9b06c66e24e94950dcb357e17545c18bf5bb765fa8"
+    },
+    {
+      "bytes": 9208,
+      "path": "rnc-mod-v16/v16-root-causes.md",
+      "sha256": "982e964d97d8b051da109fc3cfc696eb7b5a40a7de5eb5321e777f453e5dd0b4"
+    },
+    {
+      "bytes": 122308,
+      "path": "rnc-mod-v16/v16-summary.json",
+      "sha256": "28acc98c24faab43da7a9d269d23b9550425018403292973ba213ba5ae154a00"
+    },
+    {
+      "bytes": 897984,
+      "path": "rnc-mod-v16/v16-target-inventory.csv",
+      "sha256": "2137b1d219c4cd4a7575080bbb4017fd396b01fc2032dfd8296fc0f25b39c5d9"
+    }
+  ],
+  "generated_at": "2026-11-17T00:25:14+00:00",
+  "note": "Final only when status is COMPLETE and every file hash matches. An IN_PROGRESS marker means the directory must not be consumed as a finalized report set.",
+  "run_metadata": {
+    "command": [
+      "python",
+      "-m",
+      "harness",
+      "detection-gaps",
+      "detection-gaps",
+      "--input-lock",
+      "reports/detection-gaps/analysis-inputs.json",
+      "--out-dir",
+      "reports/detection-gaps",
+      "--replace"
+    ],
+    "command_redacted": false,
+    "input_lock": "reports/detection-gaps/analysis-inputs.json",
+    "input_selections": {
+      "betterleaks": {
+        "build_id": "betterleaks-lts",
+        "key": "betterleaks",
+        "lock_path": "reports/detection-gaps/analysis-inputs.json",
+        "lock_sha256": "2cf4bc857e57f99cf2fa0d44167ba865688f75a919511318ad4f7b73eb246b80",
+        "locked_sha256": "e484374e52dd5ccea93418fe3b65e78d2e34fbb39d6132d06fab418a03b689d6",
+        "override": false,
+        "path": "run/reports/all-windows-baselines/betterleaks-lts/betterleaks-lts-current-baseline-5eab48332cc4-default.json",
+        "profile": "default",
+        "run_id": "20261115T235951Z-407bdf96",
+        "selection": "pinned-lock",
+        "sha256": "e484374e52dd5ccea93418fe3b65e78d2e34fbb39d6132d06fab418a03b689d6",
+        "source_commit": "5eab48332cc48565864514e3bc6de89df091a7c4",
+        "warnings": []
+      },
+      "cp4c": {
+        "build_id": "rnc-cp4c",
+        "key": "cp4c",
+        "lock_path": "reports/detection-gaps/analysis-inputs.json",
+        "lock_sha256": "2cf4bc857e57f99cf2fa0d44167ba865688f75a919511318ad4f7b73eb246b80",
+        "locked_sha256": "ec2f5efe50d3dddd9e0b7b1a1e03628ccd97c748b3cf2b38a7deab806902b1f8",
+        "override": false,
+        "path": "run/reports/all-windows-baselines/rnc-cp4c/rnc-cp4c-current-baseline-805e3bb79276-default.json",
+        "profile": "default",
+        "run_id": "20261115T235444Z-dbf46367",
+        "selection": "pinned-lock",
+        "sha256": "ec2f5efe50d3dddd9e0b7b1a1e03628ccd97c748b3cf2b38a7deab806902b1f8",
+        "source_commit": "805e3bb79276b94de636e27024f38773da303b44",
+        "warnings": []
+      },
+      "gitleaks": {
+        "build_id": "gitleaks-master",
+        "key": "gitleaks",
+        "lock_path": "reports/detection-gaps/analysis-inputs.json",
+        "lock_sha256": "2cf4bc857e57f99cf2fa0d44167ba865688f75a919511318ad4f7b73eb246b80",
+        "locked_sha256": "fa80019006f9a515ee82ae107122dbd7871602e3fc5c2461587a4cfa397f2569",
+        "override": false,
+        "path": "run/reports/all-windows-baselines/gitleaks-master/gitleaks-master-current-baseline-5f6ec56cfa6f-default.json",
+        "profile": "default",
+        "run_id": "20261115T235801Z-0198709c",
+        "selection": "pinned-lock",
+        "sha256": "fa80019006f9a515ee82ae107122dbd7871602e3fc5c2461587a4cfa397f2569",
+        "source_commit": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+        "warnings": []
+      },
+      "v14": {
+        "build_id": "gl-rnc-mod-v14",
+        "key": "v14",
+        "lock_path": "reports/detection-gaps/analysis-inputs.json",
+        "lock_sha256": "2cf4bc857e57f99cf2fa0d44167ba865688f75a919511318ad4f7b73eb246b80",
+        "locked_sha256": "1480f1bb80ef77dc303fe61527ef7d930823c6287dc92557f6b36115fe02151a",
+        "override": false,
+        "path": "run/reports/all-windows-baselines/gl-rnc-mod-v14/gl-rnc-mod-v14-current-baseline-7d7492184111-default.json",
+        "profile": "default",
+        "run_id": "20261116T000424Z-080efee1",
+        "selection": "pinned-lock",
+        "sha256": "1480f1bb80ef77dc303fe61527ef7d930823c6287dc92557f6b36115fe02151a",
+        "source_commit": "7d74921841114be7677a423cf60620210e832bf7",
+        "warnings": []
+      },
+      "v16": {
+        "build_id": "gl-rnc-mod-v16",
+        "key": "v16",
+        "lock_path": "reports/detection-gaps/analysis-inputs.json",
+        "lock_sha256": "2cf4bc857e57f99cf2fa0d44167ba865688f75a919511318ad4f7b73eb246b80",
+        "locked_sha256": "c82cab9e710676b689412c43843cdc2a593f248f0dd687271cd0843b19e93969",
+        "override": false,
+        "path": "run/reports/all-windows-baselines/gl-rnc-mod-v16/gl-rnc-mod-v16-current-baseline-11897cd27e57-full-11897cd27e57-default.json",
+        "profile": "default",
+        "run_id": "20261116T022413Z-04c1ef8c",
+        "selection": "pinned-lock",
+        "sha256": "c82cab9e710676b689412c43843cdc2a593f248f0dd687271cd0843b19e93969",
+        "source_commit": "11897cd27e57d5eee7262c9d053a4356bca59cd8",
+        "warnings": []
+      }
+    }
+  },
+  "schema_version": 1,
+  "status": "COMPLETE"
+}

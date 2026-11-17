@@ -79,6 +79,9 @@ class LeakyRepoSuite(TestingSuite):
                 "status": statuses.BLOCKED,
                 "reason": f"scanner invocation problem: {problem}",
                 "metrics": {},
+                "invocation_id": getattr(context.adapter, "last_invocation_id", None),
+                "exit_code": invocation.exit_code,
+                "duration_seconds": invocation.duration_seconds,
             }
         findings = context.adapter.parse_findings(invocation.report_bytes)
         context.raw_artifacts.append(
@@ -119,6 +122,9 @@ class LeakyRepoSuite(TestingSuite):
             "metrics": legacy,
             "findings": findings,
             "scan_root": str(scan_root),
+            "invocation_id": getattr(context.adapter, "last_invocation_id", None),
+            "exit_code": invocation.exit_code,
+            "duration_seconds": invocation.duration_seconds,
         }
 
     def _run_history(self, context: SuiteContext, artifact, prepared) -> dict:
@@ -333,6 +339,7 @@ class LeakyRepoSuite(TestingSuite):
                 "expected_commits": expected_commits,
                 "scope_matches": scope_matches,
                 "coverage": coverage,
+                "invocation_id": getattr(context.adapter, "last_invocation_id", None),
                 "duration_seconds": invocation.duration_seconds,
                 "exit_code": invocation.exit_code,
                 "metrics": metrics,

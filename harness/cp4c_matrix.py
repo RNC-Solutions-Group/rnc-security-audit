@@ -36,6 +36,14 @@ from .profiler_contract import (
     validate_profile,
     validate_profile_schema,
 )
+from .provenance import (
+    ORIGIN_MATRIX,
+    build_argument_policy,
+    command_digest,
+    redact_argv,
+    render_command,
+)
+from .safe_text import csv_cell, markdown_code
 from .util import sha256_bytes, sha256_file
 
 EXPERIMENT = "cp4c-matrix0"
@@ -486,19 +494,31 @@ def _reference_run(
     report_path = temp / "report.json"
     profile_path = temp / "profile.json" if profile else None
     adapter.bind_run(run_id)
-    started = time.perf_counter()
-    invocation = adapter.invoke_native(
-        artifact.artifact_path,
-        workload.target,
-        report_path,
-        extra_args=scan_arguments(
+    adapter.experiment_id = EXPERIMENT
+    adapter.workspace_root = None
+    adapter.argument_origin = ORIGIN_MATRIX
+    reference_args = (
+        scan_arguments(
             workload,
             1,
             profiler=profile,
             profile_path=profile_path,
         )
         if label.startswith("cp4c")
-        else (),
+        else ()
+    )
+    adapter.argument_policy = build_argument_policy(
+        "rnc",
+        reference_args,
+        profile="default",
+        origin=ORIGIN_MATRIX,
+    )
+    started = time.perf_counter()
+    invocation = adapter.invoke_native(
+        artifact.artifact_path,
+        workload.target,
+        report_path,
+        extra_args=reference_args,
         mode=workload.mode,
         timeout_seconds=DEFAULT_TIMEOUT,
         collect_telemetry=True,
@@ -546,11 +566,18 @@ def _reference_run(
         profile_validation.update(
             validate_profile_schema(profile_document)
         )
+    invocation_evidence = (
+        adapter.invocations[-1] if getattr(adapter, "invocations", None) else {}
+    )
     return {
         "label": label,
         "workload": workload.key,
         "run_id": run_id,
-        "command": list(invocation.argv),
+        "invocation_id": invocation_evidence.get("invocation_id"),
+        "command": invocation_evidence.get("command") or list(invocation.argv),
+        "command_sha256": invocation_evidence.get("command_sha256"),
+        "command_template": invocation_evidence.get("command_template"),
+        "argument_policy": invocation_evidence.get("argument_policy"),
         "exit_code": invocation.exit_code,
         "wall_seconds": invocation.duration_seconds,
         "external_wall_seconds": round(external_wall, 6),
@@ -703,6 +730,21 @@ def _run_attempt(
         / f"r{repetition:02d}"
     )
     adapter.bind_run(run_id)
+    adapter.experiment_id = EXPERIMENT
+    adapter.workspace_root = None
+    adapter.argument_origin = ORIGIN_MATRIX
+    matrix_args = scan_arguments(
+        workload,
+        workers,
+        profiler=profiler,
+        profile_path=profile_path,
+    )
+    adapter.argument_policy = build_argument_policy(
+        "rnc",
+        matrix_args,
+        profile="default",
+        origin=ORIGIN_MATRIX,
+    )
     started = time.perf_counter()
     record: dict[str, Any] = {
         "schema": SCHEMA,
@@ -719,6 +761,13 @@ def _run_attempt(
         "accepted": False,
         "profile": None,
         "profile_validation": None,
+        "requested_settings": expected_profile_settings(workload, workers),
+        "effective_settings": None,
+        "effective_settings_source": (
+            "profiling disabled; scanner does not expose effective settings"
+            if not profiler
+            else "profile schema-v1"
+        ),
         "error": None,
     }
     try:
@@ -726,12 +775,7 @@ def _run_attempt(
             artifact.artifact_path,
             workload.target,
             report_path,
-            extra_args=scan_arguments(
-                workload,
-                workers,
-                profiler=profiler,
-                profile_path=profile_path,
-            ),
+            extra_args=matrix_args,
             mode=workload.mode,
             timeout_seconds=DEFAULT_TIMEOUT,
             collect_telemetry=True,
@@ -741,9 +785,19 @@ def _run_attempt(
             workload=workload.key,
         )
         external_wall = time.perf_counter() - started
+        invocation_evidence = (
+            adapter.invocations[-1] if getattr(adapter, "invocations", None) else {}
+        )
         record.update(
             {
-                "command": list(invocation.argv),
+                "invocation_id": invocation_evidence.get("invocation_id"),
+                "command": invocation_evidence.get("command") or list(invocation.argv),
+                "command_sha256": invocation_evidence.get("command_sha256"),
+                "command_template": invocation_evidence.get("command_template"),
+                "command_redacted": bool(
+                    invocation_evidence.get("command_redacted")
+                ),
+                "argument_policy": invocation_evidence.get("argument_policy"),
                 "exit_code": invocation.exit_code,
                 "timed_out": invocation.timed_out,
                 "wall_seconds": invocation.duration_seconds,
@@ -769,7 +823,16 @@ def _run_attempt(
                 "stderr_excerpt": invocation.stderr.decode("utf-8", "replace")[:500],
             }
         )
-        _write_json(raw_dir / "command.json", {"command": list(invocation.argv)})
+        _write_json(
+            raw_dir / "command.json",
+            {
+                "invocation_id": record.get("invocation_id"),
+                "command": record.get("command"),
+                "command_sha256": record.get("command_sha256"),
+                "command_template": record.get("command_template"),
+                "note": "Sanitized argv as executed; not reconstructed from intended settings.",
+            },
+        )
         problem = adapter.invocation_problem(invocation)
         partial = None
         if problem:
@@ -822,6 +885,8 @@ def _run_attempt(
             validation.update(validate_profile_schema(profile_document))
             record["profile"] = profile_document
             record["profile_validation"] = validation
+            record["requested_settings"] = validation.get("requested")
+            record["effective_settings"] = validation.get("effective")
             record["profile_sha256"] = _copy_artifact(
                 profile_path, raw_dir / "profile.json"
             )
@@ -900,6 +965,19 @@ def _baseline_lookup(
     return baselines
 
 
+def _harness_revision() -> str | None:
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(Path(__file__).resolve().parents[1]), "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    return result.stdout.strip() if result.returncode == 0 else None
+
+
 def _context(
     *,
     workloads: dict[str, Workload],
@@ -914,6 +992,7 @@ def _context(
         "experiment": EXPERIMENT,
         "generated_at": _utc_now(),
         "harness_version": __version__,
+        "harness_source_commit": _harness_revision(),
         "python": telemetry.host_metadata(),
         "command": command,
         "out_dir": str(out_dir),
@@ -1293,6 +1372,110 @@ def _render_tables(document: dict) -> str:
             f"- Profile schema v1: **{'PASS' if summary['profiles_valid'] else 'FAIL'}**.",
             f"- Detection/coverage equivalence: **{'PASS' if summary['detection_equivalent'] else 'FAIL'}**.",
             f"- Environment: **{document['environment']['mode']}** — {document['environment']['description']}",
+            "",
+            "## Execution commands and effective configuration",
+            "",
+            "Every matrix attempt is an actual scanner invocation. The literal "
+            "sanitized argv is stored per run in `matrix0-summary.json` under "
+            "`execution_provenance.invocations`; the template below is a derived "
+            "display form, not the literal command.",
+            "",
+        ]
+    )
+    execution = document.get("execution_provenance") or {}
+    policy = execution.get("configuration_policy") or {}
+    lines.extend(
+        [
+            f"- Detection configuration: **{policy.get('detection_configuration')}**",
+            f"- Execution configuration: **{policy.get('execution_configuration')}**",
+            f"- Source scope: **{policy.get('source_scope_configuration')}**",
+            f"- Comparability: **{policy.get('comparability')}**",
+            f"- Baseline metrics included: **{policy.get('baseline_metrics_included')}**",
+            "",
+            "Harness invocation: " + markdown_code(
+                (execution.get("harness_command") or {}).get("rendered") or "(not recorded)"
+            ),
+            "",
+            "### Effective settings",
+            "",
+            "Profile-on runs validate schema-v1 requested/effective settings. Profile-off "
+            "runs have no independent effective-value artifact; the requested value is "
+            "shown and the effective value remains unobservable.",
+            "",
+            "| Config | Phase | Requested | Effective | Effective source |",
+            "|---|---|---|---|---|",
+        ]
+    )
+    seen_settings: set[tuple[str, str]] = set()
+    for item in execution.get("invocations") or []:
+        settings_key = (
+            str(item.get("config_key")),
+            str(item.get("profiler")),
+        )
+        if settings_key in seen_settings:
+            continue
+        seen_settings.add(settings_key)
+        requested = item.get("requested_settings")
+        effective = item.get("effective_settings")
+        lines.append(
+            f"| {markdown_code(item.get('config_key'))} | {item.get('phase')} | "
+            f"{markdown_code(json.dumps(requested, sort_keys=True) if requested else 'not recorded')} | "
+            f"{markdown_code(json.dumps(effective, sort_keys=True) if effective else 'unavailable')} | "
+            f"{item.get('effective_settings_source') or 'not observable'} |"
+        )
+    lines.extend(
+        [
+            "",
+            "### Command templates",
+            "",
+            "| Workload | W | Profiler | Phase | Runs | Invocation IDs | Sanitized actual command (first run) | Normalized template |",
+            "|---|---:|---|---|---:|---|---|---|",
+        ]
+    )
+    groups: dict[tuple[str, int, bool, str, str], list[dict]] = {}
+    for item in execution.get("invocations") or []:
+        key = (
+            str(item.get("workload")),
+            int(item.get("workers") or 0),
+            bool(item.get("profiler")),
+            str(item.get("phase")),
+            str(item.get("command_template") or ""),
+        )
+        groups.setdefault(key, []).append(item)
+    for (workload, workers, profiler, phase, template), items in groups.items():
+        ids = ", ".join(
+            str(item.get("invocation_id") or "not recorded") for item in items
+        )
+        command = items[0].get("command") or []
+        lines.append(
+            f"| {workload} | {workers} | {'on' if profiler else 'off'} | {phase} | "
+            f"{len(items)} | {markdown_code(ids)} | "
+            f"{markdown_code(render_command(command) if command else 'not recorded')} | "
+            f"{markdown_code(template or 'not recorded (pre-CP-HI1 evidence)')} |"
+        )
+    failures = [
+        item
+        for item in execution.get("invocations") or []
+        if item.get("status") not in (None, "PASS") or item.get("timed_out")
+    ]
+    if failures:
+        lines.extend(
+            [
+                "",
+                "### Failed or blocked matrix invocations",
+                "",
+                "| Invocation | Config | Phase | Exit | Error |",
+                "|---|---|---|---:|---|",
+            ]
+        )
+        for item in failures:
+            lines.append(
+                f"| {markdown_code(item.get('invocation_id'))} | "
+                f"{markdown_code(item.get('config_key'))} | {item.get('phase')} | "
+                f"{item.get('exit_code')} | {item.get('error') or 'none recorded'} |"
+            )
+    lines.extend(
+        [
             "",
             "## CP4B reference and scoring context",
             "",
@@ -1936,6 +2119,32 @@ def generate_report(out_dir: Path) -> dict:
         ]
     )
     limitations = list(dict.fromkeys(limitations))
+    harness_argv = [str(item) for item in (context.get("command") or [])]
+    harness_redacted, harness_redactions = redact_argv(harness_argv)
+    execution_records = [
+        {
+            "invocation_id": record.get("invocation_id"),
+            "config_key": record.get("config_key"),
+            "workload": record.get("workload"),
+            "workers": record.get("workers"),
+            "profiler": record.get("profiler"),
+            "phase": record.get("phase"),
+            "repetition": record.get("repetition"),
+            "sequence": record.get("sequence"),
+            "requested_settings": record.get("requested_settings"),
+            "effective_settings": record.get("effective_settings"),
+            "effective_settings_source": record.get("effective_settings_source"),
+            "command": record.get("command"),
+            "command_sha256": record.get("command_sha256"),
+            "command_template": record.get("command_template"),
+            "argument_policy": record.get("argument_policy"),
+            "exit_code": record.get("exit_code"),
+            "timed_out": record.get("timed_out"),
+            "status": record.get("status"),
+            "error": record.get("error"),
+        }
+        for record in records
+    ]
     document = {
         "schema": SCHEMA,
         "experiment": EXPERIMENT,
@@ -1976,6 +2185,49 @@ def generate_report(out_dir: Path) -> dict:
         "run_count": len(records),
         "accepted_measured_count": len(measured),
         "configurations": configurations,
+        "execution_provenance": {
+            "schema_version": 1,
+            "experiment_id": EXPERIMENT,
+            "harness_command": {
+                "argv": harness_redacted,
+                "argv_sha256": command_digest(harness_argv),
+                "rendered": render_command(harness_redacted),
+                "redacted": bool(harness_redactions),
+                "redacted_argument_indexes": harness_redactions,
+                "note": "Command used to invoke the Matrix runner, not a scanner command.",
+            },
+            "scanner_identity": {
+                "build_id": context.get("build_id"),
+                "executable_sha256": artifact.get("executable_sha256"),
+                "source_commit": artifact.get("source_commit"),
+                "rules_sha256": artifact.get("rules_sha256"),
+                "manifest_sha256": (artifact.get("manifest") or {}).get("sha256"),
+                "platform": "windows-amd64",
+                "execution_method": "native",
+            },
+            "configuration_policy": {
+                "detection_configuration": "DEFAULT",
+                "execution_configuration": "EXPLICIT_MATRIX",
+                "source_scope_configuration": "EXPLICIT_MATRIX_HISTORY_MODE",
+                "reporting_configuration": "HARNESS_CONTROLLED",
+                "comparability": "PERFORMANCE_EXPERIMENT_NOT_DEFAULT_BASELINE",
+                "baseline_metrics_included": False,
+                "note": (
+                    "The Matrix varies worker, profiler and Git acquisition settings; "
+                    "detection equivalence is verified per configuration, but the "
+                    "experiment is not a replacement for the DEFAULT baseline."
+                ),
+            },
+            "invocations": execution_records,
+            "command_template_count": len(
+                {
+                    item.get("command_template")
+                    for item in execution_records
+                    if item.get("command_template")
+                }
+            ),
+            "direct_scanner_invocation_count": len(execution_records),
+        },
     }
     _write_json(out_dir / "matrix0-summary.json", document)
     (out_dir / "matrix0-summary.md").write_text(_render_tables(document), encoding="utf-8", newline="\n")
@@ -2018,15 +2270,20 @@ def _write_csv(path: Path, records: list[dict]) -> None:
         "raw_dir",
     ]
     with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fields, extrasaction="ignore")
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=fields,
+            extrasaction="ignore",
+            lineterminator="\n",
+        )
         writer.writeheader()
         for record in records:
             execution = record.get("execution") or {}
             writer.writerow(
                 {
-                    **{key: record.get(key) for key in fields if key in record},
-                    "result_code": execution.get("result_code"),
-                    "coverage": execution.get("coverage"),
+                    **{key: csv_cell(record.get(key)) for key in fields if key in record},
+                    "result_code": csv_cell(execution.get("result_code")),
+                    "coverage": csv_cell(execution.get("coverage")),
                 }
             )
 

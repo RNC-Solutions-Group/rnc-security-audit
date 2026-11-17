@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+from dataclasses import replace
 from dataclasses import asdict
 
 from .. import dataset as dataset_module
@@ -44,6 +45,8 @@ def _assess_invocation(context: SuiteContext, invocation, target, sections) -> R
             results=None,
             unattributed=(),
             notes=(),
+            invocation_id=getattr(context.adapter, "last_invocation_id", None),
+            command_sha256=invocation.command_sha256,
         )
     normalized = context.adapter.parse_findings(invocation.report_bytes)
     expected_by_file: dict[str, dict[str, str]] = {}
@@ -85,8 +88,13 @@ def _assess_invocation(context: SuiteContext, invocation, target, sections) -> R
     coverage = context.adapter.execution_coverage(
         invocation, target.directory, expected_files
     )
-    return assess_findings(
+    result = assess_findings(
         invocation, findings, target, sections, coverage=coverage
+    )
+    return replace(
+        result,
+        invocation_id=getattr(context.adapter, "last_invocation_id", None),
+        command_sha256=invocation.command_sha256,
     )
 
 
@@ -250,6 +258,8 @@ class LevainSuite(TestingSuite):
                     "results": run.results,
                     "control": asdict(run.control) if run.control else None,
                     "coverage": run.coverage,
+                    "invocation_id": run.invocation_id,
+                    "command_sha256": run.command_sha256,
                 }
                 for run in runs
             ],

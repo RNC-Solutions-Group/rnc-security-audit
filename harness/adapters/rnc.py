@@ -494,7 +494,12 @@ class RNCAdapter(ScannerAdapter):
             suite=None,
             workload="ruleset-validation",
         )
-        self.record_invocation(invocation, artifact)
+        self.record_invocation(
+            invocation,
+            artifact,
+            target_path=rules_path,
+            execution_origin="ruleset-verification",
+        )
         return invocation
 
     def _rules_validate_docker(
@@ -546,7 +551,12 @@ class RNCAdapter(ScannerAdapter):
         except BaseException:
             self._remove_container(container)
             raise
-        self.record_invocation(invocation, artifact)
+        self.record_invocation(
+            invocation,
+            artifact,
+            target_path=rules_path,
+            execution_origin="ruleset-verification",
+        )
         if invocation.timed_out or invocation.error_code:
             self._remove_container(container)
         return invocation
@@ -748,7 +758,14 @@ class RNCAdapter(ScannerAdapter):
             suite=suite,
             workload=workload,
         )
-        self.record_invocation(invocation, artifact)
+        self.record_invocation(
+            invocation,
+            artifact,
+            target_path=target,
+            config_path=repo_config,
+            supplied_args=(*self.default_extra_args, *extra_args),
+            argument_origin=self.argument_origin,
+        )
         return invocation
 
     def invoke_container(
@@ -858,7 +875,14 @@ class RNCAdapter(ScannerAdapter):
         except BaseException:
             self._remove_container(container)
             raise
-        self.record_invocation(invocation, artifact)
+        self.record_invocation(
+            invocation,
+            artifact,
+            target_path=target,
+            config_path=repo_config,
+            supplied_args=(*self.default_extra_args, *extra_args),
+            argument_origin=self.argument_origin,
+        )
         if invocation.timed_out or invocation.error_code:
             self._remove_container(container)
         return invocation

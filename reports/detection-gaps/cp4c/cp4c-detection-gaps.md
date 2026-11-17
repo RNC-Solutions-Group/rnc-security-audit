@@ -8,7 +8,7 @@ RNC Scanner CP4C missed **555 of 1125 expected positive occurrences** (49.33%) a
 
 Largest missed families: wordpress_salt (142 risk); database_password (54 risk); application_password (36 risk); application_signing_key (32 risk); application_hmac_key (21 risk); generic_api_key (17 risk).
 
-Confirmed mechanisms account for **419** misses, of which **332** are risk-bearing; **124** are probable and **12** remain unresolved. The largest actionable family is `wordpress_authentication_material` (142 risk-bearing targets).
+Confirmed mechanisms account for **333** misses, of which **246** are risk-bearing; **184** are probable and **38** remain unresolved. The largest actionable family is `wordpress_authentication_material` (142 risk-bearing targets).
 
 ## Evidence and identity
 
@@ -21,13 +21,13 @@ Confirmed mechanisms account for **419** misses, of which **332** are risk-beari
 | Executable SHA-256 | 170bd1df345c4985043ff449051c247f22a1012fe9c054cae5c2edcc190fb1cb |
 | Rules/configuration | rules/rnc-cp4c-providers-v1.json |
 | Rules SHA-256 | 2eb315fa40553ab1e133322a1f0a014a4593ab2ca6164152149eb59c1197a6b7 |
-| Retained report | C:\Dev\rnc-benchmark-harness\run\reports\all-windows-baselines\rnc-cp4c\rnc-cp4c-current-baseline-805e3bb79276-default.json |
+| Retained report | run/reports/all-windows-baselines/rnc-cp4c/rnc-cp4c-current-baseline-805e3bb79276-default.json |
 | Report SHA-256 | ec2f5efe50d3dddd9e0b7b1a1e03628ccd97c748b3cf2b38a7deab806902b1f8 |
 | Run ID | 20261115T235444Z-dbf46367 |
 | Configuration profile | default |
 | Scoring epoch | Current post-scoring-integrity remediation |
 | Platform | Windows AMD64 |
-| Analysis version | 1.0.0 |
+| Analysis version | 2.0.0 |
 
 The harness is an independent evaluator. This analysis consumed frozen oracles and retained scanner reports; it did not rebuild either scanner, change a rule, rewrite an oracle, or alter the scoring policy.
 
@@ -94,15 +94,15 @@ Every expected target is in `cp4c-target-inventory.csv`; every uncredited target
 
 | Root cause | Missed | Risk misses | Confirmed | Probable |
 | --- | --- | --- | --- | --- |
-| IDENTIFIER_MISMATCH | 257 | 257 | 244 | 13 |
-| FORMAT_UNSUPPORTED | 100 | 100 | 15 | 85 |
+| IDENTIFIER_MISMATCH | 257 | 257 | 192 | 65 |
+| FORMAT_UNSUPPORTED | 100 | 100 | 9 | 91 |
 | INFORMATIVE_REFERENCE | 87 | 0 | 87 | 0 |
-| RULE_ABSENT | 48 | 48 | 46 | 2 |
-| SOURCE_UNSUPPORTED | 26 | 26 | 26 | 0 |
+| RULE_ABSENT | 48 | 48 | 45 | 3 |
+| SOURCE_INSPECTION_UNVERIFIED | 26 | 26 | 0 | 0 |
 | CONTEXT_INSUFFICIENT | 22 | 22 | 0 | 22 |
 | UNKNOWN | 12 | 12 | 0 | 0 |
 | VALIDATOR_REJECTION | 2 | 2 | 0 | 2 |
-| CAPTURE_MISMATCH | 1 | 1 | 1 | 0 |
+| CAPTURE_MISMATCH | 1 | 1 | 0 | 1 |
 
 ## Required focused investigations
 
@@ -127,8 +127,8 @@ Every expected target is in `cp4c-target-inventory.csv`; every uncredited target
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | filesystem | RNC-SL-POS-000108 | jwt_signing_key | env_value | JWT_SIGNING_KEY | IDENTIFIER_MISMATCH | CONFIRMED | observed-subtype:generic-secret-assignment |
 | filesystem | RNC-SL-POS-000114 | jwt_signing_key | kubernetes_secret_data | jwt-signing-key | IDENTIFIER_MISMATCH | CONFIRMED | observed-subtype:generic-secret-assignment |
-| filesystem | RNC-SL-POS-000130 | application_hmac_key | sqlite_table_cell | value | SOURCE_UNSUPPORTED | CONFIRMED | observed-subtype:generic-secret-assignment |
-| filesystem | RNC-SL-POS-000135 | application_hmac_key | sqlite_table_cell | value | SOURCE_UNSUPPORTED | CONFIRMED | observed-subtype:generic-secret-assignment |
+| filesystem | RNC-SL-POS-000130 | application_hmac_key | sqlite_table_cell | value | SOURCE_INSPECTION_UNVERIFIED | UNRESOLVED | observed-subtype:generic-secret-assignment |
+| filesystem | RNC-SL-POS-000135 | application_hmac_key | sqlite_table_cell | value | SOURCE_INSPECTION_UNVERIFIED | UNRESOLVED | observed-subtype:generic-secret-assignment |
 | filesystem | RNC-SL-POS-000155 | application_hmac_key | python_string_literal | SECRET_KEY | UNKNOWN | UNRESOLVED | observed-subtype:generic-secret-assignment |
 | filesystem | RNC-SL-POS-000179 | application_hmac_key | json_string | SigningKey | IDENTIFIER_MISMATCH | CONFIRMED | observed-subtype:generic-secret-assignment |
 | filesystem | RNC-SL-POS-000190 | application_hmac_key | python_string_literal | SECRET_KEY | UNKNOWN | UNRESOLVED | observed-subtype:generic-secret-assignment |
@@ -156,15 +156,15 @@ Every expected target is in `cp4c-target-inventory.csv`; every uncredited target
 | filesystem | RNC-SL-POS-000584 | application_hmac_key | kubernetes_secret_data | jwt-signing-key | IDENTIFIER_MISMATCH | CONFIRMED | observed-subtype:generic-secret-assignment |
 | filesystem | RNC-SL-POS-000593 | application_hmac_key | json_string | SigningKey | IDENTIFIER_MISMATCH | CONFIRMED | observed-subtype:generic-secret-assignment |
 | filesystem | RNC-SL-POS-000601 | application_hmac_key | json_string | SigningKey | IDENTIFIER_MISMATCH | CONFIRMED | observed-subtype:generic-secret-assignment |
-| Git | RNC-SL-POS-000643 | application_signing_key | env_value | SIGNING_KEY | IDENTIFIER_MISMATCH | CONFIRMED | observed-representation:generic-secret-assignment |
-| Git | RNC-SL-POS-000649 | application_signing_key | env_value | SIGNING_KEY | IDENTIFIER_MISMATCH | CONFIRMED | observed-representation:generic-secret-assignment |
-| Git | RNC-SL-POS-000655 | application_signing_key | env_value | SIGNING_KEY | IDENTIFIER_MISMATCH | CONFIRMED | observed-representation:generic-secret-assignment |
-| Git | RNC-SL-POS-000660 | application_signing_key | env_value | SIGNING_KEY | IDENTIFIER_MISMATCH | CONFIRMED | observed-representation:generic-secret-assignment |
-| Git | RNC-SL-POS-000666 | application_signing_key | env_value | SIGNING_KEY | IDENTIFIER_MISMATCH | CONFIRMED | observed-representation:generic-secret-assignment |
-| Git | RNC-SL-POS-000671 | application_signing_key | env_value | SIGNING_KEY | IDENTIFIER_MISMATCH | CONFIRMED | observed-representation:generic-secret-assignment |
-| Git | RNC-SL-POS-000675 | application_signing_key | env_value | SIGNING_KEY | IDENTIFIER_MISMATCH | CONFIRMED | observed-representation:generic-secret-assignment |
-| Git | RNC-SL-POS-000681 | application_signing_key | env_value | SIGNING_KEY | IDENTIFIER_MISMATCH | CONFIRMED | observed-representation:generic-secret-assignment |
-| Git | RNC-SL-POS-000686 | application_signing_key | env_value | SIGNING_KEY | IDENTIFIER_MISMATCH | CONFIRMED | observed-representation:generic-secret-assignment |
+| Git | RNC-SL-POS-000643 | application_signing_key | env_value | SIGNING_KEY | IDENTIFIER_MISMATCH | PROBABLE | observed-representation:generic-secret-assignment |
+| Git | RNC-SL-POS-000649 | application_signing_key | env_value | SIGNING_KEY | IDENTIFIER_MISMATCH | PROBABLE | observed-representation:generic-secret-assignment |
+| Git | RNC-SL-POS-000655 | application_signing_key | env_value | SIGNING_KEY | IDENTIFIER_MISMATCH | PROBABLE | observed-representation:generic-secret-assignment |
+| Git | RNC-SL-POS-000660 | application_signing_key | env_value | SIGNING_KEY | IDENTIFIER_MISMATCH | PROBABLE | observed-representation:generic-secret-assignment |
+| Git | RNC-SL-POS-000666 | application_signing_key | env_value | SIGNING_KEY | IDENTIFIER_MISMATCH | PROBABLE | observed-representation:generic-secret-assignment |
+| Git | RNC-SL-POS-000671 | application_signing_key | env_value | SIGNING_KEY | IDENTIFIER_MISMATCH | PROBABLE | observed-representation:generic-secret-assignment |
+| Git | RNC-SL-POS-000675 | application_signing_key | env_value | SIGNING_KEY | IDENTIFIER_MISMATCH | PROBABLE | observed-representation:generic-secret-assignment |
+| Git | RNC-SL-POS-000681 | application_signing_key | env_value | SIGNING_KEY | IDENTIFIER_MISMATCH | PROBABLE | observed-representation:generic-secret-assignment |
+| Git | RNC-SL-POS-000686 | application_signing_key | env_value | SIGNING_KEY | IDENTIFIER_MISMATCH | PROBABLE | observed-representation:generic-secret-assignment |
 
 Showing 40 of 62 HMAC misses; the CSV contains every target.
 
@@ -228,9 +228,9 @@ CP4C's password gap is dominated by WordPress authentication material (`AUTH_KEY
 | api_key \| generic_api_key \| Unidentified API provider \| env_value \| ordinary_file \| RULE_ABSENT | 5 | observed-subtype:generic-secret-assignment | RNC-SL-POS-000040 |
 | otp_seed \| totp_seed \| TOTP / OTP \| otpauth_secret \| ordinary_file \| RULE_ABSENT | 5 | no-matching-rule | RNC-SL-POS-000047 |
 | provider_token \| azure_storage_account_key \| Microsoft Azure Storage \| json_string \| ordinary_file \| FORMAT_UNSUPPORTED | 5 | provider-rule:azure-storage-account-key | RNC-SL-POS-000176 |
-| api_key \| generic_api_key \| Unidentified API provider \| sqlite_table_cell \| database_record \| SOURCE_UNSUPPORTED | 4 | observed-subtype:generic-secret-assignment | RNC-SL-POS-000128 |
-| api_key \| generic_api_key \| Unidentified API provider \| bson_string_value \| database_record \| SOURCE_UNSUPPORTED | 1 | observed-subtype:generic-secret-assignment | RNC-SL-POS-000127 |
-| api_key \| generic_api_key \| Unidentified API provider \| env_value \| archive_member \| SOURCE_UNSUPPORTED | 1 | observed-subtype:generic-secret-assignment | RNC-SL-POS-000032 |
+| api_key \| generic_api_key \| Unidentified API provider \| sqlite_table_cell \| database_record \| SOURCE_INSPECTION_UNVERIFIED | 4 | observed-subtype:generic-secret-assignment | RNC-SL-POS-000128 |
+| api_key \| generic_api_key \| Unidentified API provider \| bson_string_value \| database_record \| SOURCE_INSPECTION_UNVERIFIED | 1 | observed-subtype:generic-secret-assignment | RNC-SL-POS-000127 |
+| api_key \| generic_api_key \| Unidentified API provider \| env_value \| archive_member \| SOURCE_INSPECTION_UNVERIFIED | 1 | observed-subtype:generic-secret-assignment | RNC-SL-POS-000032 |
 | api_key \| generic_api_key \| Unidentified API provider \| nuget_clear_text_password \| ordinary_file \| RULE_ABSENT | 1 | observed-subtype:generic-secret-assignment | RNC-SL-POS-000498 |
 | provider_token \| sendgrid_api_key \| Twilio SendGrid \| yaml_value \| git_blob \| VALIDATOR_REJECTION | 1 | provider-rule:sendgrid-api-key | RNC-SL-POS-000791 |
 | provider_token \| slack_bot_token \| Slack \| kubernetes_secret_data \| ordinary_file \| FORMAT_UNSUPPORTED | 1 | provider-rule:slack-token | RNC-SL-POS-000415 |
@@ -265,7 +265,7 @@ CP4C's password gap is dominated by WordPress authentication material (`AUTH_KEY
 | tls_private_key_pkcs8 \| kubeconfig_client_key \| ordinary_file | 1 | 1 | 0 | 100.00% |
 | tls_private_key_pkcs8 \| kubernetes_tls_key \| ordinary_file | 1 | 1 | 0 | 100.00% |
 
-Most remaining private-key failures are format/container gaps: PuTTY PPK v2 and PKCS#12 are not PEM blocks, and archived PEM material never reaches the matcher. Wallet seed phrases are a distinct mnemonic credential and should not be counted as private-key material. Do not mark a public-key-only, SPKI-only, encrypted-container-only or filename-only observation as private-key credit. The existing PEM findings that are credited must remain credited; no historical scoring artifact is being reclassified as a new false negative here.
+Most remaining private-key failures are representation or source-acquisition hypotheses: PuTTY PPK v2 and PKCS#12 are not PEM blocks, and the retained reports do not prove that archived PEM members were inspected. Wallet seed phrases are a distinct mnemonic credential and should not be counted as private-key material. Do not mark a public-key-only, SPKI-only, encrypted-container-only or filename-only observation as private-key credit. The existing PEM findings that are credited must remain credited; no historical scoring artifact is being reclassified as a new false negative here.
 
 Private-key passphrases are counted separately as password targets when the oracle models them as such; a passphrase is not interchangeable with the key material.
 
@@ -325,16 +325,21 @@ Private-key passphrases are counted separately as password targets when the orac
 | alembic_url | 7 | 7 | 0 |
 | log_command_argument | 7 | 7 | 0 |
 
-| Inspection disposition | Expected | Matched | Missed |
+| Inspection state | Expected | Matched | Missed |
 | --- | --- | --- | --- |
-| INSPECTED | 1099 | 570 | 529 |
-| UNSUPPORTED_CONTAINER | 26 | 0 | 26 |
+| INSPECTED_VERIFIED | 916 | 570 | 346 |
+| INSPECTION_UNVERIFIED | 209 | 0 | 209 |
+
+| Source capability declaration | Expected | Matched | Missed |
+| --- | --- | --- | --- |
+| CLAIMED_SUPPORTED | 1099 | 570 | 529 |
+| NOT_DECLARED | 26 | 0 | 26 |
 
 26 expected positives live in a non-plaintext container. Of these, 10 are archive members, 12 are database records and 4 are binary key containers.
 
-The scanner emitted no finding with a non-null archive member, database row or PKCS#12 container across this run. A miss in this category is therefore classified as `SOURCE_UNSUPPORTED`, not as a regex false negative. An archive file being encountered is not evidence that its members were scanned.
+The retained report contains no unit/member/record evidence for these targets. That does **not** prove the scanner failed to inspect the container. They are therefore classified as `SOURCE_INSPECTION_UNVERIFIED` / `UNRESOLVED`, not as confirmed `SOURCE_UNSUPPORTED`. A validated capability declaration or a source-unit probe that records member inspection is required before that stronger claim is permitted.
 
-Eligible-but-uninspected expected positives: 0. The RNC Lab filesystem lane reports 11 uninspected symlink aliases; none of them is an expected positive target in the frozen oracle. That is a scanner coverage caveat, not a positive-recall gap.
+Eligible-but-uninspected expected positives with proof: 0. Expected positives whose inspection is not independently verified: 209. The RNC Lab filesystem lane reports 11 uninspected symlink aliases; none of them is an expected positive target in the frozen oracle. That is a scanner coverage caveat, not a positive-recall gap.
 
 ### Load-replicated evidence (not canonical accuracy)
 
@@ -369,7 +374,7 @@ Regression fixtures available for proposed changes: the RNC Lab oracle has 400 n
 
 ## Root-cause interpretation
 
-A target is marked `SOURCE_UNSUPPORTED` only when the same run produced no credited finding in that container class. `SOURCE_NOT_INSPECTED` requires a coverage record, not merely an absent finding. `CAPTURE_MISMATCH` requires a retained same-location observation whose value evidence failed. `SCORING_MISMATCH` requires a usable scanner observation rejected by the scorer. `IDENTIFIER_MISMATCH`, `RULE_ABSENT`, `FORMAT_UNSUPPORTED`, `CONTEXT_INSUFFICIENT`, `VALIDATOR_REJECTION` and `UNKNOWN` are kept distinct because they imply different development work.
+A target is marked `SOURCE_UNSUPPORTED` only when a scanner/source capability declaration or an independently validated capability contract says the source type is unsupported. `SOURCE_INSPECTION_UNVERIFIED` is used when the specific member/record/unit has no retained inspection evidence and no capability declaration; it is not proof of a scanner failure. `SOURCE_NOT_INSPECTED` requires a coverage record, not merely an absent finding. `CAPTURE_MISMATCH` requires a retained same-location observation whose value evidence failed. `SCORING_MISMATCH` requires a usable scanner observation rejected by the scorer. `IDENTIFIER_MISMATCH`, `RULE_ABSENT`, `FORMAT_UNSUPPORTED`, `CONTEXT_INSUFFICIENT`, `VALIDATOR_REJECTION` and `UNKNOWN` are kept distinct because they imply different development work.
 
 See the standalone root-cause dossier for the full evidence and reproduction table.
 
@@ -389,7 +394,7 @@ This is an oracle-target join, not raw string similarity. It demonstrates that t
 1. **wordpress authentication material** - 142 risk-bearing targets; `IDENTIFIER_MISMATCH`; Add a reviewed WordPress authentication-key/salt identifier family to the generic assignment matcher (AUTH_KEY, SECURE_AUTH_KEY, LOGGED_IN_KEY, NONCE_KEY, AUTH_SALT, SECURE_AUTH_SALT, LOGGED_IN_SALT, NONCE_SALT and WP_SALT_n). Use the existing assignment and high-entropy checks; do not add a bare SALT keyword.
 2. **password positional or encoded** - 66 risk-bearing targets; `FORMAT_UNSUPPORTED`; Add bounded parsers for positional credential files (.pgpass, .netrc, .git-credentials), Docker auth, FileZilla/JetBrains encoded fields and SQL COPY/INSERT password columns. Add reviewed identifier aliases only for fields that remain ordinary assignments. Emit findings only when the field role and value shape agree.
 3. **hmac and signing identifiers** - 61 risk-bearing targets; `IDENTIFIER_MISMATCH`; Extend the generic assignment identifier family for SIGNING_KEY, HMAC_KEY, HMAC_SECRET and camelCase JSON fields such as SigningKey, while retaining the current assignment-context and value-entropy requirements. Add a JWT_SIGNING_KEY alias rather than a bare KEY rule. The expression-wrapped and JSON subcases need the matching context/decoder work; the identifier change alone recovers the direct assignment subset.
-4. **structured container** - 26 risk-bearing targets; `SOURCE_UNSUPPORTED`; Add archive-member, SQLite-row/BSON-field and binary-container traversal with bounded expansion and source attribution. Do not count an archive container as inspected unless its members are actually inspected.
+4. **container inspection evidence** - 26 risk-bearing targets; `SOURCE_INSPECTION_UNVERIFIED`; Collect scanner-side candidate diagnostics for this group before proposing a rule change; the retained evidence does not distinguish rule, context and validator causes.
 5. **application password identifiers** - 25 risk-bearing targets; `IDENTIFIER_MISMATCH`; Add the missing reviewed application-password aliases (SMTP, FTP, Redis, registry and admin qualifiers) and, where the alias is already recognized, extend the field-role/context association instead of adding a broad rule. Do not add a generic USERNAME or EMAIL rule.
 
 The detailed backlog is in the companion file; it ranks by recoverable count, severity, concentration, context availability, false-positive risk and implementation complexity.
@@ -399,7 +404,7 @@ The detailed backlog is in the companion file; it ranks by recoverable count, se
 - This is an independent evaluator report. No scanner rule, source file, oracle, or scoring policy was modified.
 - Leaky Repo filesystem is a line-level detection benchmark without a complete negative oracle; precision and F1 are not certified.
 - Leaky Repo Git precision/F1 are not certified; 65 source occurrences and 53 unique groups are separate denominators.
-- Leaky Git source units are marked INSPECTED_UNVERIFIED for adapters that do not return a true coverage attestation; this is not evidence that a unit was skipped.
+- Leaky Git source units are marked INSPECTION_UNVERIFIED for adapters that do not return a true coverage attestation; this is not evidence that a unit was skipped.
 - RNC Lab precision/F1 are not certified; the 640 filesystem and 160 Git positive denominators are separate and are not combined.
 - The 11 RNC Lab symlink aliases are not followed by the scanner. They contain no expected positive target in this oracle, so they do not change the positive recall denominator.
 - Provider and subtype labels for Leaky Repo and Levain are source-context inferences because those oracles do not expose the Lab's fine-grained subtype taxonomy. RNC Lab labels come directly from its oracle.

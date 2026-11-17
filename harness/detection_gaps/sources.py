@@ -15,13 +15,16 @@ import zipfile
 from pathlib import Path
 from typing import Any, Iterable
 
-from ..util import slugify
+from ..errors import HarnessError
+from ..provenance import redact_argv
+from ..safe_text import safe_message, safe_path
+from ..util import sha256_bytes, slugify
+from .inputs import InputSelectionError, ReportSelection, select_report
 from .model import (
     Context,
     LANE_DENOMINATORS,
     LANE_ORDER,
     PURPOSE_BY_CATEGORY,
-    REPORT_GLOBS,
     SCANNER_LABELS,
     Target,
     Observation,
@@ -41,7 +44,7 @@ from .model import (
 )
 
 
-class DetectionGapError(RuntimeError):
+class DetectionGapError(HarnessError):
     pass
 
 
@@ -49,17 +52,28 @@ def repo_root() -> Path:
     return Path(__file__).resolve().parents[2]
 
 
-def find_report(key: str, explicit: str | Path | None = None) -> Path:
-    if explicit:
-        path = Path(explicit).expanduser()
-        if not path.is_file():
-            raise DetectionGapError(f"report not found: {path}")
-        return path
-    pattern = REPORT_GLOBS[key]
-    paths = [p for p in repo_root().glob(pattern) if p.is_file() and p.suffix == ".json"]
-    if not paths:
-        raise DetectionGapError(f"no retained report matches {pattern}")
-    return max(paths, key=lambda p: (p.stat().st_mtime_ns, p.name))
+def find_report(
+    key: str,
+    explicit: str | Path | None = None,
+    *,
+    lock_path: str | Path | None = None,
+    root: Path | None = None,
+) -> Path:
+    """Select a retained report deterministically.
+
+    The default path is the pinned analysis input lock.  Modification time is
+    deliberately never consulted.  An explicit path remains supported for
+    investigation and is recorded as an override by the CLI.
+    """
+    try:
+        return select_report(
+            key,
+            explicit=explicit,
+            lock_path=lock_path,
+            root=root,
+        ).path
+    except InputSelectionError as exc:
+        raise DetectionGapError(str(exc)) from exc
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -1094,12 +1108,30 @@ def _mark_targets(
                 obs.exception_status = "UNVERIFIED_EVIDENCE"
 
 
-def _metadata_for_report(key: str, report: dict[str, Any], path: Path) -> dict[str, Any]:
+def _metadata_for_report(
+    key: str,
+    report: dict[str, Any],
+    path: Path,
+    selection: ReportSelection | None = None,
+) -> dict[str, Any]:
     build = report.get("registered_build") or {}
     summary = report.get("summary") or {}
     profile = report.get("profile") or {}
     scanner = report.get("scanner") or {}
-    return {
+    options = report.get("report_options") or {}
+    raw_args = options.get("scanner_extra_args") or []
+    redacted_args, _redactions = redact_argv(list(raw_args))
+    policy = options.get("argument_policy") or profile.get("argument_policy")
+    safe_policy = None
+    if isinstance(policy, dict):
+        safe_policy = json.loads(json.dumps(policy))
+        for argument in safe_policy.get("arguments") or []:
+            if not isinstance(argument, dict):
+                continue
+            for field in ("token", "value"):
+                if isinstance(argument.get(field), str):
+                    argument[field] = safe_message(argument[field])
+    metadata = {
         "key": key,
         "label": SCANNER_LABELS[key],
         "build_id": str(build.get("id") or summary.get("build_id") or ""),
@@ -1108,15 +1140,25 @@ def _metadata_for_report(key: str, report: dict[str, Any], path: Path) -> dict[s
         "executable_sha256": str(build.get("executable_sha256") or ""),
         "rules_file": build.get("rules_file"),
         "rules_sha256": str(build.get("rules_sha256") or ""),
-        "report_path": str(path),
+        "report_path": safe_path(path),
         "run_id": str(report.get("run_id") or ""),
         "generated_at": str(report.get("generated_at") or ""),
         "profile": str(profile.get("name") or "default"),
         "overall": str(summary.get("overall") or ""),
         "report_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
-        "scanner_extra_args": (report.get("report_options") or {}).get("scanner_extra_args"),
+        "scanner_extra_args": redacted_args,
+        "scanner_extra_args_sha256": options.get("scanner_extra_args_sha256")
+        or sha256_bytes(json.dumps(raw_args, separators=(",", ":")).encode("utf-8")),
+        "scanner_extra_args_redacted": bool(
+            options.get("scanner_extra_args_redacted") or _redactions
+        ),
+        "argument_policy": safe_policy,
         "history_coverage": None,
     }
+    if selection is not None:
+        metadata["input_selection"] = selection.to_dict()
+        metadata["report_sha256"] = selection.sha256
+    return metadata
 
 
 def _match_levain(
@@ -1329,9 +1371,11 @@ def load_scanner_evidence(
     key: str,
     report_path: Path,
     targets: list[Target],
+    *,
+    selection: ReportSelection | None = None,
 ) -> ScannerEvidence:
     report = load_json(report_path)
-    metadata = _metadata_for_report(key, report, report_path)
+    metadata = _metadata_for_report(key, report, report_path, selection)
     observations: dict[str, Observation] = {}
     metrics: dict[str, Any] = {}
     if key in {"cp4c", "v14", "v16"}:
@@ -1345,41 +1389,218 @@ def load_scanner_evidence(
     leaky_git_expected, history_lane = _match_leaky_git(report, observations)
     rnclab_expected, coverage = _match_rnclab(report, observations)
     metadata["history_coverage"] = history_lane.get("coverage")
-    # Fill default observations and inspection annotations.
-    uninspected = set()
-    for caveat in coverage.values():
+    # Fill source inspection states from scanner-native evidence only.  A
+    # parseable report or an absent finding is not inspection proof.
+    uninspected: set[str] = set()
+    caveats: dict[str, dict[str, Any]] = {}
+    for lane_name, caveat in coverage.items():
         if isinstance(caveat, dict):
-            uninspected.update(caveat.get("uninspected_units") or [])
+            caveats[lane_name] = caveat
+            uninspected.update(str(item) for item in (caveat.get("uninspected_units") or []))
+    rnclab_lanes = (
+        ((report.get("suites") or {}).get("rnclab") or {})
+        .get("details", {})
+        .get("lanes", {})
+        .get("windows-amd64", {})
+    )
+    leaky_lanes = (
+        ((report.get("suites") or {}).get("leaky-repo") or {})
+        .get("details", {})
+        .get("lanes", {})
+        .get("windows-amd64", {})
+    )
+    levain_lane = (
+        ((report.get("suites") or {}).get("levain") or {})
+        .get("details", {})
+        .get("lanes", {})
+        .get("windows-amd64", {})
+    )
+
+    def set_inspection(
+        observation: Observation,
+        state: str,
+        capability: str,
+        evidence: str,
+    ) -> None:
+        observation.source_inspected = state
+        observation.source_capability = capability
+        observation.inspection_evidence = evidence
+
     for target in targets:
         observation = observations.setdefault(target.target_id, Observation())
+        if observation.matched:
+            set_inspection(
+                observation,
+                "INSPECTED_VERIFIED",
+                "CLAIMED_SUPPORTED",
+                "a credited finding at this source location proves the unit was reached",
+            )
+            continue
         if target.lane == "rnclab_filesystem":
-            observation.source_inspected = "UNINSPECTED" if target.path in uninspected else "INSPECTED"
+            lane = rnclab_lanes.get("filesystem") or {}
+            caveat = caveats.get("rnclab_filesystem") or lane.get("coverage_caveat")
+            lane_status = str(lane.get("status") or "")
+            if lane_status in {"BLOCKED", "NOT_RUN"}:
+                set_inspection(
+                    observation,
+                    "NOT_INSPECTED_VERIFIED",
+                    "NOT_DECLARED",
+                    f"RNC Lab filesystem lane status is {lane_status}; no completed inspection is recorded",
+                )
+            elif target.container_kind in {"archive_member", "database_record", "binary_file"}:
+                set_inspection(
+                    observation,
+                    "INSPECTION_UNVERIFIED",
+                    "NOT_DECLARED",
+                    (
+                        "the retained report has no unit/member/record identity for this "
+                        "container target, and no validated capability contract says the "
+                        "container type is unsupported"
+                    ),
+                )
+            elif target.path in uninspected:
+                set_inspection(
+                    observation,
+                    "NOT_INSPECTED_VERIFIED",
+                    "CLAIMED_SUPPORTED",
+                    "scanner-native coverage caveat lists this unit as uninspected",
+                )
+            elif isinstance(caveat, dict) and caveat.get("accepted") and int(
+                caveat.get("inspected_units") or 0
+            ) > 0:
+                set_inspection(
+                    observation,
+                    "INSPECTED_VERIFIED",
+                    "CLAIMED_SUPPORTED",
+                    (
+                        "scanner-native coverage record reports regular source units "
+                        "inspected and this unit is not in the uninspected list"
+                    ),
+                )
+            else:
+                set_inspection(
+                    observation,
+                    "INSPECTION_UNVERIFIED",
+                    "CLAIMED_SUPPORTED",
+                    "no scanner-native source-unit coverage record is retained for this lane",
+                )
         elif target.lane == "rnclab_git":
-            observation.source_inspected = "INSPECTED"
+            lane = rnclab_lanes.get("git") or {}
+            capability = lane.get("capability") or {}
+            lane_status = str(lane.get("status") or "")
+            if lane_status == "NOT_APPLICABLE" or capability.get("supported") is False:
+                set_inspection(
+                    observation,
+                    "UNSUPPORTED_VERIFIED",
+                    "DECLARED_UNSUPPORTED",
+                    "the retained scanner capability record marks Git-history mode unsupported",
+                )
+            elif target.container_kind in {"archive_member", "database_record", "binary_file"}:
+                set_inspection(
+                    observation,
+                    "INSPECTION_UNVERIFIED",
+                    "NOT_DECLARED",
+                    "no container member/record inspection identity is retained",
+                )
+            elif lane_status in {"BLOCKED", "NOT_RUN"}:
+                set_inspection(
+                    observation,
+                    "NOT_INSPECTED_VERIFIED",
+                    "CLAIMED_SUPPORTED",
+                    f"RNC Lab Git lane status is {lane_status}; no completed inspection is recorded",
+                )
+            else:
+                set_inspection(
+                    observation,
+                    "INSPECTION_UNVERIFIED",
+                    "CLAIMED_SUPPORTED",
+                    "Git lane completed, but the retained report has no per-unit coverage attestation",
+                )
         elif target.lane == "leaky_git":
             if not history_lane:
-                observation.source_inspected = "NOT_APPLICABLE"
+                set_inspection(
+                    observation,
+                    "UNSUPPORTED_VERIFIED",
+                    "DECLARED_UNSUPPORTED",
+                    "no Leaky Repo history lane or scanner Git capability is retained",
+                )
             else:
                 history_verified = bool(
                     history_lane.get("coverage_verified")
                     or (history_lane.get("coverage") or {}).get("verified")
                 )
-                observation.source_inspected = "INSPECTED" if history_verified else "INSPECTED_UNVERIFIED"
+                if target.container_kind in {"archive_member", "database_record", "binary_file"}:
+                    set_inspection(
+                        observation,
+                        "INSPECTION_UNVERIFIED",
+                        "NOT_DECLARED",
+                        "no container member/record inspection identity is retained",
+                    )
+                elif history_verified:
+                    set_inspection(
+                        observation,
+                        "INSPECTED_VERIFIED",
+                        "CLAIMED_SUPPORTED",
+                        "scanner-native history coverage record proves the selected ref scope was inspected",
+                    )
+                else:
+                    set_inspection(
+                        observation,
+                        "INSPECTION_UNVERIFIED",
+                        "CLAIMED_SUPPORTED",
+                        "history execution completed without a retained per-unit coverage attestation",
+                    )
+        elif target.lane == "leaky_filesystem":
+            if target.container_kind in {"archive_member", "database_record", "binary_file"}:
+                set_inspection(
+                    observation,
+                    "INSPECTION_UNVERIFIED",
+                    "NOT_DECLARED",
+                    "no container member/record inspection identity is retained",
+                )
+            elif str((leaky_lanes.get("rich") or {}).get("execution_status") or "") != "PASS":
+                set_inspection(
+                    observation,
+                    "NOT_INSPECTED_VERIFIED",
+                    "CLAIMED_SUPPORTED",
+                    "Leaky Repo rich scoring did not record a completed execution",
+                )
+            else:
+                set_inspection(
+                    observation,
+                    "INSPECTION_UNVERIFIED",
+                    "CLAIMED_SUPPORTED",
+                    "no scanner-native per-file coverage attestation is retained for Leaky Repo filesystem",
+                )
         elif target.lane == "levain":
-            levain_lane = (
-                ((report.get("suites") or {}).get("levain") or {})
-                .get("details", {})
-                .get("lanes", {})
-                .get("windows-amd64", {})
-            )
-            verified = bool((levain_lane.get("metrics") or {}).get("coverage_verified"))
-            observation.source_inspected = "INSPECTED" if verified else "INSPECTED_UNVERIFIED"
+            if target.container_kind in {"archive_member", "database_record", "binary_file"}:
+                set_inspection(
+                    observation,
+                    "INSPECTION_UNVERIFIED",
+                    "NOT_DECLARED",
+                    "no container member/record inspection identity is retained",
+                )
+            elif (levain_lane.get("metrics") or {}).get("coverage_verified") is True:
+                set_inspection(
+                    observation,
+                    "INSPECTED_VERIFIED",
+                    "CLAIMED_SUPPORTED",
+                    "scanner-native Levain coverage record proves the corpus units were inspected",
+                )
+            else:
+                set_inspection(
+                    observation,
+                    "INSPECTION_UNVERIFIED",
+                    "CLAIMED_SUPPORTED",
+                    "no scanner-native Levain coverage attestation is retained",
+                )
         else:
-            observation.source_inspected = "INSPECTED"
-        if target.container_kind in {"archive_member", "database_record", "binary_file"}:
-            observation.source_inspected = "UNSUPPORTED_CONTAINER"
-        if observation.matched and observation.source_inspected == "UNSUPPORTED_CONTAINER":
-            observation.source_inspected = "INSPECTED"
+            set_inspection(
+                observation,
+                "INSPECTION_UNVERIFIED",
+                "NOT_DECLARED",
+                "unrecognized lane; no source coverage evidence is available",
+            )
     # Report metrics are the authoritative checkpoint and must reconcile with
     # the reconstructed per-target observations.
     detection = report.get("detection") or {}

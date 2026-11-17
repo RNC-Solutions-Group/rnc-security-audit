@@ -13,7 +13,7 @@ Ranking is by recoverable risk-bearing target count, operational severity, conce
 - **Change:** Add a reviewed WordPress authentication-key/salt identifier family to the generic assignment matcher (AUTH_KEY, SECURE_AUTH_KEY, LOGGED_IN_KEY, NONCE_KEY, AUTH_SALT, SECURE_AUTH_SALT, LOGGED_IN_SALT, NONCE_SALT and WP_SALT_n). Use the existing assignment and high-entropy checks; do not add a bare SALT keyword.
 - **False-positive risk:** LOW; **complexity:** LOW.
 - **Reuse:** All PHP, .env, Kubernetes Secret and Git occurrences; no provider-network requirement.
-- **Examples:** `leaky-repo:web/var/www/public_html/wp-config.php:33:risk, `leaky-repo:web/var/www/public_html/wp-config.php:35:risk, `leaky-repo:web/var/www/public_html/wp-config.php:37:risk, `leaky-repo:web/var/www/public_html/wp-config.php:39:risk, `leaky-repo:web/var/www/public_html/wp-config.php:41:risk, `leaky-repo:web/var/www/public_html/wp-config.php:43:risk, `leaky-repo:web/var/www/public_html/wp-config.php:45:risk, `leaky-repo:web/var/www/public_html/wp-config.php:47:risk.
+- **Examples:** `leaky-repo:web/var/www/public_html/wp-config.php:33:risk`, `leaky-repo:web/var/www/public_html/wp-config.php:35:risk`, `leaky-repo:web/var/www/public_html/wp-config.php:37:risk`, `leaky-repo:web/var/www/public_html/wp-config.php:39:risk`, `leaky-repo:web/var/www/public_html/wp-config.php:41:risk`, `leaky-repo:web/var/www/public_html/wp-config.php:43:risk`, `leaky-repo:web/var/www/public_html/wp-config.php:45:risk`, `leaky-repo:web/var/www/public_html/wp-config.php:47:risk`.
 
 ### 2. Database Password Identifiers - 76 recoverable targets
 
@@ -24,7 +24,7 @@ Ranking is by recoverable risk-bearing target count, operational severity, conce
 - **Change:** Instrument the database-password candidate pipeline and context association before broadening the identifier set. The same subtype and representation is credited for other values, so the decisive difference may be a value check or field-role association, not a missing identifier. Add no broad new pattern until an A/B candidate trace identifies the rejecting stage.
 - **False-positive risk:** MEDIUM; **complexity:** MEDIUM.
 - **Reuse:** A validator/context fix would apply to every database and application format.
-- **Examples:** `leaky-repo:db/mongoid.yml:4:risk, `leaky-repo:db/robomongo.json:14:risk, `leaky-repo:db/robomongo.json:27:risk, `leaky-repo:web/var/www/.env:14:risk, `leaky-repo:web/var/www/.env:23:risk, `leaky-repo:web/var/www/public_html/wp-config.php:20:risk, `LH-0103, `LH-0105.
+- **Examples:** `leaky-repo:db/mongoid.yml:4:risk`, `leaky-repo:db/robomongo.json:14:risk`, `leaky-repo:db/robomongo.json:27:risk`, `leaky-repo:web/var/www/.env:14:risk`, `leaky-repo:web/var/www/.env:23:risk`, `leaky-repo:web/var/www/public_html/wp-config.php:20:risk`, `LH-0103`, `LH-0105`.
 
 ### 3. Application Password Identifiers - 68 recoverable targets
 
@@ -35,7 +35,7 @@ Ranking is by recoverable risk-bearing target count, operational severity, conce
 - **Change:** Instrument and extend the application-password field-role/context association. The same subtype, identifier and representation is credited for other values, so a broad identifier rule is not the right first change. Verify whether the candidate was generated and rejected at the value/context stage.
 - **False-positive risk:** MEDIUM; **complexity:** MEDIUM.
 - **Reuse:** Context-model fix applies across configuration formats.
-- **Examples:** `LEV-S04-K01, `LEV-S09-K01, `LEV-S10-K01, `LEV-S11-K01, `LEV-S26-K01, `LEV-S40-K01, `leaky-repo:.bash_profile:20:risk, `leaky-repo:.bash_profile:24:risk.
+- **Examples:** `LEV-S04-K01`, `LEV-S09-K01`, `LEV-S10-K01`, `LEV-S11-K01`, `LEV-S26-K01`, `LEV-S40-K01`, `leaky-repo:.bash_profile:20:risk`, `leaky-repo:.bash_profile:24:risk`.
 
 ### 4. Password Positional Or Encoded - 61 recoverable targets
 
@@ -46,7 +46,7 @@ Ranking is by recoverable risk-bearing target count, operational severity, conce
 - **Change:** Add bounded parsers for positional credential files (.pgpass, .netrc, .git-credentials), Docker auth, FileZilla/JetBrains encoded fields and SQL COPY/INSERT password columns. Add reviewed identifier aliases only for fields that remain ordinary assignments. Emit findings only when the field role and value shape agree.
 - **False-positive risk:** MEDIUM; **complexity:** HIGH.
 - **Reuse:** Several legacy formats share the same field-role model; avoid one-off regexes.
-- **Examples:** `LEV-S43-K01, `leaky-repo:.esmtprc:4:risk, `leaky-repo:.git-credentials:1:risk, `leaky-repo:.netrc:1:risk, `leaky-repo:.netrc:2:risk, `leaky-repo:.npmrc:7:risk, `leaky-repo:db/.pgpass:2:risk, `leaky-repo:db/dump.sql:32:risk.
+- **Examples:** `LEV-S43-K01`, `leaky-repo:.esmtprc:4:risk`, `leaky-repo:.git-credentials:1:risk`, `leaky-repo:.netrc:1:risk`, `leaky-repo:.netrc:2:risk`, `leaky-repo:.npmrc:7:risk`, `leaky-repo:db/.pgpass:2:risk`, `leaky-repo:db/dump.sql:32:risk`.
 
 ### 5. Password In Uri Or Connection String - 27 recoverable targets
 
@@ -57,7 +57,7 @@ Ranking is by recoverable risk-bearing target count, operational severity, conce
 - **Change:** Implement a URI/connection-string password parser for password-only userinfo (redis://:password@host), driver-qualified schemes (postgresql+psycopg2), percent-decoding and SQLAlchemy/Alembic URL settings. Preserve the current database-uri rule for user:password forms.
 - **False-positive risk:** LOW; **complexity:** MEDIUM.
 - **Reuse:** All application formats; provider-agnostic and directly reusable.
-- **Examples:** `RNC-SL-POS-000105, `RNC-SL-POS-000106, `RNC-SL-POS-000121, `RNC-SL-POS-000123, `RNC-SL-POS-000154, `RNC-SL-POS-000189, `RNC-SL-POS-000200, `RNC-SL-POS-000201.
+- **Examples:** `RNC-SL-POS-000105`, `RNC-SL-POS-000106`, `RNC-SL-POS-000121`, `RNC-SL-POS-000123`, `RNC-SL-POS-000154`, `RNC-SL-POS-000189`, `RNC-SL-POS-000200`, `RNC-SL-POS-000201`.
 
 ## Full opportunity table
 
@@ -68,13 +68,13 @@ Ranking is by recoverable risk-bearing target count, operational severity, conce
 | 3 | application_password_identifiers | CONTEXT_INSUFFICIENT | 68 | 51 | PROBABLE | MEDIUM | MEDIUM |
 | 4 | password_positional_or_encoded | FORMAT_UNSUPPORTED | 61 | 0 | PROBABLE | MEDIUM | HIGH |
 | 5 | password_in_uri_or_connection_string | FORMAT_UNSUPPORTED | 27 | 20 | PROBABLE | LOW | MEDIUM |
-| 6 | structured_container | SOURCE_UNSUPPORTED | 26 | 8 | CONFIRMED | MEDIUM | VERY HIGH |
+| 6 | container_inspection_evidence | SOURCE_INSPECTION_UNVERIFIED | 26 | 8 | UNRESOLVED | UNKNOWN | UNKNOWN |
 | 7 | passphrase_identifiers | IDENTIFIER_MISMATCH | 16 | 0 | PROBABLE | MEDIUM | LOW |
 | 8 | provider_token:Unidentified provider token | RULE_ABSENT | 13 | 3 | PROBABLE | HIGH | MEDIUM |
 | 9 | private_key_container_or_pem | FORMAT_UNSUPPORTED | 12 | 0 | PROBABLE | MEDIUM | HIGH |
 | 10 | totp_seed | RULE_ABSENT | 12 | 0 | PROBABLE | MEDIUM | LOW |
 | 11 | generic_api_key | RULE_ABSENT | 10 | 0 | PROBABLE | HIGH | MEDIUM |
-| 12 | encrypted_browser_credentials | FORMAT_UNSUPPORTED | 8 | 4 | CONFIRMED | MEDIUM | HIGH |
+| 12 | encrypted_browser_credentials | FORMAT_UNSUPPORTED | 8 | 4 | PROBABLE | MEDIUM | HIGH |
 | 13 | other:application_secret | UNKNOWN | 5 | 2 | PROBABLE | UNKNOWN | UNKNOWN |
 | 14 | api_key:Amazon Web Services (AWS) | IDENTIFIER_MISMATCH | 4 | 4 | PROBABLE | UNKNOWN | UNKNOWN |
 | 15 | hmac_and_signing_identifiers | VALIDATOR_REJECTION | 4 | 1 | PROBABLE | MEDIUM | LOW |

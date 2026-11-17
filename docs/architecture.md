@@ -359,12 +359,19 @@ observations, performance, exact scanner invocation records, errors, and
 cleanup status.
 
 `harness/execution.py` captures the actual executed argv for every scanner
-invocation. `harness/adapters/base.py` records scanner, build ID, executable
-SHA-256/image ID, suite, workload, platform, invocation type, argv, exit status,
-duration, timeout/error status, and report digest. Detection, warm-up, measured
-performance, and artifact/ruleset verification invocations are all retained.
-The JSON report exposes them as `invocations`; Markdown renders a readable
-command/execution table.
+invocation. `harness/provenance.py` classifies experiment-owned arguments and
+derives display-only normalized templates. `harness/adapters/base.py` records
+scanner, build ID, executable SHA-256/image ID, suite/workload/lane, platform,
+phase, actual cwd, cleared environment, configuration identity, argv, exit status,
+whether the process started, duration, timeout/error status, and report digest.
+Detection, warm-up, measured performance, and artifact/ruleset verification
+invocations are all retained. Harness and auxiliary commands are recorded in
+separate fields and are never mislabelled as scanner invocations.
+
+The JSON report exposes `execution_provenance`, `invocations` and
+`auxiliary_commands`; Markdown renders configuration comparability, explicit
+overrides, command templates, per-run sanitized argv, failures, and auxiliary
+operations. See [execution provenance](contracts/execution-provenance.md).
 
 One invocation writes one Markdown and one JSON report with a collision-resistant
 name containing scanner, source-commit metadata, and profile. Previous

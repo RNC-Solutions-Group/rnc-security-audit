@@ -8,6 +8,7 @@ missing, and it never prints raw matched values.
 
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import time
@@ -17,7 +18,7 @@ from pathlib import Path
 from . import telemetry
 from .errors import ExecutionError, ReportError
 from .model import Finding
-from .util import sha256_bytes, sha256_file
+from .util import sha256_bytes, sha256_file, utc_now
 
 ACCEPTED_EXIT_CODES = (0, 1)
 
@@ -42,10 +43,22 @@ class Invocation:
     invocation_type: str = "detection"
     suite: str | None = None
     workload: str | None = None
+    process_started: bool = True
+    cwd: str | None = None
+    environment_cleared: tuple[str, ...] = ()
+    environment_overrides: dict = field(default_factory=dict)
+    started_at: str = ""
+    finished_at: str = ""
 
     @property
     def report_sha256(self) -> str | None:
         return sha256_bytes(self.report_bytes) if self.report_bytes is not None else None
+
+    @property
+    def command_sha256(self) -> str:
+        return sha256_bytes(
+            json.dumps(list(self.argv), separators=(",", ":")).encode("utf-8")
+        )
 
     @property
     def stdout_sha256(self) -> str:
@@ -128,6 +141,10 @@ def run_process(
         report_path.unlink()
 
     started = time.perf_counter()
+    started_at = utc_now()
+    cwd_value = str(cwd) if cwd is not None else str(Path.cwd())
+    cleared = tuple(str(item) for item in unset_env)
+    overrides = _environment_overrides(env)
     try:
         process = subprocess.run(
             argv,
@@ -153,6 +170,12 @@ def run_process(
             invocation_type=invocation_type,
             suite=suite,
             workload=workload,
+            process_started=True,
+            cwd=cwd_value,
+            environment_cleared=cleared,
+            environment_overrides=overrides,
+            started_at=started_at,
+            finished_at=utc_now(),
         )
     except subprocess.TimeoutExpired as exc:
         duration = time.perf_counter() - started
@@ -174,6 +197,12 @@ def run_process(
             invocation_type=invocation_type,
             suite=suite,
             workload=workload,
+            process_started=True,
+            cwd=cwd_value,
+            environment_cleared=cleared,
+            environment_overrides=overrides,
+            started_at=started_at,
+            finished_at=utc_now(),
         )
     except OSError as exc:
         duration = time.perf_counter() - started
@@ -195,6 +224,12 @@ def run_process(
             invocation_type=invocation_type,
             suite=suite,
             workload=workload,
+            process_started=False,
+            cwd=cwd_value,
+            environment_cleared=cleared,
+            environment_overrides=overrides,
+            started_at=started_at,
+            finished_at=utc_now(),
         )
 
     if report_path.is_file():
@@ -224,6 +259,10 @@ def _run_sampled(
     if report_path.exists():
         report_path.unlink()
     started = time.perf_counter()
+    started_at = utc_now()
+    cwd_value = str(cwd) if cwd is not None else str(Path.cwd())
+    cleared = tuple(str(item) for item in unset_env)
+    overrides = _environment_overrides(env)
     try:
         process = subprocess.Popen(
             argv,
@@ -253,6 +292,12 @@ def _run_sampled(
             invocation_type=invocation_type,
             suite=suite,
             workload=workload,
+            process_started=False,
+            cwd=cwd_value,
+            environment_cleared=cleared,
+            environment_overrides=overrides,
+            started_at=started_at,
+            finished_at=utc_now(),
         )
     sampler, thread = telemetry.start_process_sampler(process.pid, argv)
     try:
@@ -301,6 +346,12 @@ def _run_sampled(
         invocation_type=invocation_type,
         suite=suite,
         workload=workload,
+        process_started=True,
+        cwd=cwd_value,
+        environment_cleared=cleared,
+        environment_overrides=overrides,
+        started_at=started_at,
+        finished_at=utc_now(),
     )
     if report_path.is_file():
         invocation = Invocation(
@@ -338,6 +389,23 @@ def execute(
         timeout_seconds=timeout_seconds,
         env=env,
     )
+
+
+def _environment_overrides(env: dict[str, str] | None) -> dict[str, str]:
+    """Record only explicit environment differences, never the whole shell.
+
+    Adapters pass a cleaned copy of the caller environment to prevent scanner
+    configuration variables from leaking into a DEFAULT run.  Most of that map is
+    therefore identical to the current process environment; copying it wholesale
+    would publish unrelated local state.
+    """
+    if not env:
+        return {}
+    return {
+        str(key): str(value)
+        for key, value in env.items()
+        if os.environ.get(key) != value
+    }
 
 
 def _merged_environment(
