@@ -1,26 +1,188 @@
-# CP1 — First-party RNC detection engine handoff (planned)
+# CP1 — First-party RNC detection engine handoff
 
-> **Not authorized to implement until CP0 contract review.** This is the downstream acceptance brief, not a claim that detection exists.
+> **CP1 implementation complete; awaiting operator acceptance.** Rust is selected in [ADR-007](../architecture/adr-007-detector-language.md). The implementation lives in `crates/rnc-core` and `crates/rnc-cli`; see [CP1 validation](cp1-validation.md) for measured evidence, limitations and CI status.
 
-## Scope
+## CP1 objective
 
-- One local working-tree input adapter with approved scope and stable source/byte offsets.
-- Versioned rule bundle and deterministic matching/validation interface in the CP0-selected language.
-- Normalized finding events conforming to the [finding schema](../contracts/schemas/finding.schema.json); no policy/CI/report formatting logic in the engine.
-- Explicit unit coverage, failures, timeouts and resource caps; no silent skipped targets.
-- Read-only source access and no unauthorized network verification, credential uploads, or secret printing.
+Implement one authorized local-working-tree adapter and the Rust detection core that consumes a versioned rule bundle, emits normalized v0.2 finding events, and accounts for every inspected, blocked, uninspected, failed or partially processed unit. Detection only: policy, reporting and CI enforcement remain outside this checkpoint.
+
+## Implemented modules
+
+| Module | Responsibility |
+| --- | --- |
+| `crates/rnc-core/src/path.rs` | Strict source-locator and unit identity |
+| `crates/rnc-core/src/input.rs` | Read-only deterministic discovery, scope pre-filter, limits |
+| `crates/rnc-core/src/rules.rs` | Rule bundle load, finite-bound validation, compile, digest |
+| `crates/rnc-core/src/validate.rs` | Deterministic candidate validation |
+| `crates/rnc-core/src/finding.rs` | Canonical finding events, byte/line index, private digests |
+| `crates/rnc-core/src/stream.rs` | Whole-file and bounded streaming matching |
+| `crates/rnc-core/src/coverage.rs` | v0.2 source-unit and execution records |
+| `crates/rnc-core/src/engine.rs` | Coverage-aware orchestration and stable ordering |
+| `crates/rnc-cli/src/main.rs` | Development CLI, safe summary, private JSON output |
+
+The production crate pins Rust 1.85.0 and dependencies in `Cargo.lock`. `cargo fmt`, `cargo clippy -- -D warnings`, `cargo test --workspace --locked` and release builds are required CI checks.
+
+## Module boundaries
+
+Suggested workspace (names may change; responsibilities may not):
+
+```text
+crates/
+  rnc-core/            # library; no CLI, policy, reporting or CI
+    src/input.rs       # AuthorizedUnit, adapter boundary types
+    src/rules.rs       # rule-bundle load, compile, validate, digest
+    src/matcher.rs     # byte-oriented regex execution and overlap handling
+    src/validate.rs    # deterministic candidate validators
+    src/finding.rs     # canonical finding identity and event emission
+    src/coverage.rs    # unit outcomes, errors, limits, cancellation
+    src/stream.rs      # bounded streaming and whole-file path
+  rnc-cli/             # thin adapter/runner for CP1; no detection logic
+```
+
+Hard boundaries:
+
+- `rnc-core` must not read `.rncscanner.toml`, policy dispositions, exemptions, CI acceptance, report formats or the independent harness truth.
+- The CLI may acquire authorized bytes and serialize records; it must not reinterpret findings.
+- Policy/reporting modules in CP2 consume core records; they never rewrite them.
+- The harness adapter lives outside the engine and receives no answer key.
+
+## Input interface
+
+The input adapter provides immutable, read-only units:
+
+```rust
+pub struct AuthorizedUnit {
+    pub run_id: String,
+    pub unit_id: String,          // u-<sha256(source_id, canonical_locator)>
+    pub source_id: String,
+    pub locator: String,          // private, relative, normalized
+    pub required_scope: bool,
+    pub adapter_version: String,
+    pub bytes: UnitBytes,         // bounded whole buffer or streaming handle
+}
+```
+
+Adapter requirements:
+
+- Resolve scope before reading content. A blocked unit reaches the engine only as a scope outcome, never as bytes.
+- Do not follow symlinks outside the authorized root. Detect circular links and record an explicit uninspected outcome.
+- Record the content length, line count and content SHA-256 actually inspected. A file that changes during access is not silently accepted as the enumerated file; record a stability/TOCTOU error.
+- Handle empty, binary, malformed UTF-8, CRLF, CR-only, BOM, nested paths and oversized files explicitly. Matching is byte-oriented; Unicode decoding is not a prerequisite for byte/line identity.
+- Enforce configurable max file bytes, max total bytes, timeout and max findings. Truncation or omission is an `UNINSPECTED`/error outcome with a reason code.
+
+## Output interface
+
+Every finding must validate against `docs/contracts/schemas/finding.schema.json` v0.2 and use:
+
+```text
+finding_id = "f-" + sha256(unit_id + NUL + rule_id + NUL + rule_version + NUL
+                           + start_byte + NUL + end_byte + NUL + evidence_digest)
+```
+
+Fields: `schema_version`, `run_id`, `finding_id`, `unit_id`, `rule_id`, `rule_version`, `category`, `start_byte`, `end_byte`, `line`, optional `line_end`, `confidence`, `validation`, `evidence_digest`. Never include raw matched bytes, a file path, a policy disposition or a CI decision.
+
+Unit outcomes must validate against `source-unit.schema.json` and feed `execution.schema.json`:
+
+- `INSPECTED` with `byte_length`, `line_count`, `content_sha256`;
+- `VERIFIED_BLOCKED` with a reason code and no content fields;
+- `UNINSPECTED` with a reason code and no content fields.
+
+The engine emits no final `result_code`; CP2's reporter reconciles execution, findings and policy.
+
+## Initial rule bundle
+
+Use a versioned canonical JSON rule bundle (or an equivalently deterministic typed format) with at least:
+
+```json
+{
+  "schema_version": "0.1.0",
+  "ruleset_id": "rnc-synthetic-v1",
+  "ruleset_version": "2026.11.1",
+  "rules": [
+    {
+      "rule_id": "synthetic-aws",
+      "rule_version": "2026.11.1",
+      "category": "synthetic-credential",
+      "pattern": "RNC_SYNTH_KEY_AWS_[A-Z0-9]{4,24}",
+      "capture_group": 0,
+      "validators": ["FORMAT_MATCH", "MARKER_PREFIX"],
+      "confidence": "high",
+      "max_match_bytes": 128
+    }
+  ]
+}
+```
+
+Rules are data, not code. Reject unknown fields, invalid regexes, unsupported constructs, duplicate `rule_id`, missing versions and patterns whose bounded match length cannot be established. Compute `ruleset_digest` over canonical serialized content (sorted keys, explicit schema version). The digest is carried into every execution and result; a changed bundle changes the digest even when the engine binary is unchanged.
+
+### Rule versioning and validation lifecycle
+
+1. Author a rule with stable `rule_id`, immutable semantic `rule_version`, category, pattern, capture group, validators and confidence.
+2. Load and schema-validate the bundle. Reject duplicate IDs, unknown validator names and unsupported regex features.
+3. Compile patterns once with the pinned Rust `regex` crate. Reject backreferences, lookaround, unbounded ambiguous repetition and other non-linear constructs. Enforce a maximum compiled size and match budget.
+4. Validate every candidate deterministically (format, length, allowed alphabet, checksum/context where defined). Validation failure is not a finding.
+5. Emit findings with rule ID/version and validation reason codes.
+6. Record the bundle digest in execution. Changing a pattern, validator, category, confidence threshold or capture group requires a rule-version change and re-benchmarking.
+7. Deprecate rules explicitly; never silently reuse a `rule_id` for different semantics. Rollback means selecting a previous immutable bundle, not editing history.
+
+No remote rule download, network validation or secret exfiltration is permitted in CP1.
+
+## Streaming and resource controls
+
+- Prefer byte-oriented streaming over whole-file allocation. Default chunk size and overlap are explicit constants/config; overlap must cover the longest possible match plus capture context and never silently truncate it.
+- Deduplicate the same `(rule_id, start_byte, end_byte)` across overlap windows. Emit findings in canonical `(unit_id, start_byte, end_byte, rule_id, rule_version, finding_id)` order.
+- Whole-file fallback is allowed only under a configured limit; record which path was used.
+- Enforce max file bytes, max total bytes, timeout, max findings, max regex match length and cancellation. A timeout/cancellation produces an `INTERRUPTED`/`ERROR` execution outcome with partial evidence, not a clean result.
+- No unbounded allocation from attacker-controlled file size or rule count. Rule compilation and matching budgets are tested adversarially.
+
+## Stable locations and evidence
+
+- Byte offsets are the authority. Line numbers are derived from bytes, treating LF, CRLF and CR as line boundaries consistently.
+- `line_end` is required when a match spans lines; otherwise equal to `line`.
+- `evidence_digest` is SHA-256 of exactly `bytes[start_byte..end_byte]`. It is a **private matching/integrity digest**, not a public redaction. Raw bytes and digests stay in the private evidence boundary; see [evidence-privacy.md](../architecture/evidence-privacy.md).
+- `finding_id` is a stable private correlation identity and must not be printed in ordinary logs or public reports. It does not include `run_id`; the same unit/rule/version/location/evidence is stable across runs.
+- No Unicode normalization, lowercasing or line-ending rewriting may change the finding's byte identity. Rule semantics may be case-sensitive unless the rule pattern explicitly says otherwise.
+- Source locators follow the strict CP0 grammar: NFC, forward-slash-only, relative, case-sensitive, no backslash/`./` repair. The adapter normalizes native acquisition paths and rejects collisions; detection code does not repair locators.
+
+## Error and coverage propagation
+
+- Every discovered unit has exactly one disposition. A required unit that cannot be read is `UNINSPECTED`, not a zero-finding inspected file.
+- Pre-scan block events are emitted by policy/adapter code, not the engine. A block must prove non-access; an ignore flag that reads then suppresses does not qualify.
+- Operational errors are explicit `fatal_errors`/`failure_codes`; findings already emitted remain valid partial evidence.
+- Coverage caps that stop work must mark the remaining units uninspected with a reason code.
+- The engine never computes `CLEAN` or any result code. It reports what was inspected, what was not, and what was found.
+
+## Acceptance tests
+
+CP1 is complete only when all of these are executable and pass:
+
+1. **Corpus truth.** Run against `tests/fixtures/synthetic-v1` and the generated edge corpus. Every inspected expected marker is found with the correct rule, byte range, line and evidence digest; every blocked/uninspected target is accounted for and produces no finding.
+2. **Determinism.** Two runs with identical bytes, ruleset and settings produce identical ordered finding IDs, offsets, digests and coverage records (ignoring run IDs/timestamps).
+3. **Line endings and Unicode.** LF, CRLF, CR-only, UTF-8 BOM and multibyte prefixes preserve byte offsets and line numbers.
+4. **Binary and malformed input.** NUL bytes and invalid UTF-8 are handled without panic or silent skip; matches are byte-oriented.
+5. **Boundaries.** Empty files, no trailing newline, marker at offset 0, marker at EOF, nested paths and maximum-size files produce explicit outcomes.
+6. **Duplicate and overlapping rules.** Repeated occurrences are distinct findings; overlapping rules produce distinct rule events; no double-counting from overlap windows.
+7. **Blocked versus uninspected.** A blocked unit has verified no-access and no finding; an inaccessible required unit is uninspected and forces incomplete classification when combined with a reporter.
+8. **Cancellation, timeout and partial execution.** A cancelled run retains partial findings and explicit coverage gaps; it never reports clean.
+9. **Resource limits.** Oversized file, total-byte cap, max findings and rule compile limits fail closed with reason codes.
+10. **Redaction.** Findings/logs contain no raw matched values; only digests, offsets, rule IDs and safe reason codes.
+11. **Schema conformance.** All emitted records validate against v0.2 schemas and pass the reference cross-record validator when paired with synthetic policy/reporting fixtures.
+12. **Performance.** Record throughput, median/tail latency, peak memory and build characteristics on the pinned runner; compare against the CP0 comparator and investigate regressions. Do not publish a recall/precision claim until the independent harness scores the engine.
+
+## Independent harness integration path
+
+CP1 exposes a neutral adapter surface (JSON records plus a line-addressed projection). The CP0 handoff in [`harness-handoff.md`](../contracts/harness-handoff.md) is the starting contract:
+
+1. Emit normalized findings with `file`, `line`, `rule_id`, digest fields and byte metadata.
+2. Export truth separately from the manifest; never let the engine read it.
+3. Preserve native corpus scoring and RNC normalized scoring as separate lanes.
+4. Run the pinned external scoring engine against a controlled stub before scoring RNC Scanner. Then run external corpora only with authorization, integrity checks and resource limits.
+5. Resolve the external harness's line-granularity limitation: either define a documented composite line identity or extend the harness with byte-range matching. Byte offsets are retained in CP0 metadata for this purpose.
 
 ## Non-goals
 
-No full audit orchestrator, remote targets, GUI, cloud service, active testing, standalone installer, arbitrary command plug-ins, or self-scoring. Policy/reporting implementation follows in CP2; the CP1 detector emits records that those modules will consume.
+No policy engine, exemptions, report formatting, CI pass/fail decision, self-scoring, external corpus execution, remote targets, GUI, installer or audit orchestration in CP1. No production release is implied by passing CP1.
 
-## Acceptance
+## Entry gate
 
-1. Consume a pinned approved synthetic corpus and rule bundle with reproducible findings and accurate byte/line mappings, including Unicode and CRLF.
-2. Produce expected immutable finding IDs and per-unit inspection/error records; all detector output validates against CP0 schemas.
-3. Confirm blocked units cannot enter detection; post-scan exemption does not modify raw detection events.
-4. Demonstrate bounds and explicit errors for invalid input, symlink/TOCTOU cases, oversize files and cancellation.
-5. Record measured throughput/memory and actual correctness separately by corpus; never publish a recall/precision score until the independent harness is validated.
-6. No leaked synthetic matched values in any public report or CI log.
-
-Implement through a feature branch and PR. Final engine language is not pre-selected; it is an explicit CP0 dependency.
+Do not begin CP1 until the operator accepts the CP0 package, including schema v0.2, the Rust selection, `.rncscanner.toml`, the CI acceptance semantics and the remaining limitations in the CP0 validation report.

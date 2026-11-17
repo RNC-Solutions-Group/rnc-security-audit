@@ -1,0 +1,217 @@
+{
+  "version": "synthetic-v1.0",
+  "description": "Expanded CP0 authored truth corpus. Every marker is a deliberately nonfunctional RNC_SYNTH_* value. Expected entries declare ground truth; scope controls whether a target is eligible for detection.",
+  "marker_prefix": "RNC_SYNTH_KEY_",
+  "targets": [
+    {
+      "id": "clean",
+      "path": "clean.txt",
+      "scope": "INSPECTED",
+      "required": true,
+      "labels": ["clean", "required"],
+      "expected": []
+    },
+    {
+      "id": "env",
+      "path": "credentials.env",
+      "scope": "INSPECTED",
+      "required": true,
+      "labels": ["true-positive", "multi-finding"],
+      "expected": [
+        {"marker": "RNC_SYNTH_KEY_AWS_ALPHA", "rule_id": "synthetic-aws", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"},
+        {"marker": "RNC_SYNTH_KEY_GITHUB_BRAVO", "rule_id": "synthetic-github", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"},
+        {"marker": "RNC_SYNTH_KEY_GENERIC_CHARLIE", "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"}
+      ]
+    },
+    {
+      "id": "json",
+      "path": "credentials.json",
+      "scope": "INSPECTED",
+      "required": true,
+      "labels": ["true-positive", "json", "url"],
+      "expected": [
+        {"marker": "RNC_SYNTH_KEY_STRIPE_DELTA", "rule_id": "synthetic-stripe", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"},
+        {"marker": "RNC_SYNTH_KEY_HTTPS_ECHO", "rule_id": "synthetic-https", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"}
+      ]
+    },
+    {
+      "id": "unicode",
+      "path": "mixed-unicode.txt",
+      "scope": "INSPECTED",
+      "required": true,
+      "labels": ["unicode", "true-positive"],
+      "expected": [
+        {"marker": "RNC_SYNTH_KEY_UNICODE_FOXTROT", "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"}
+      ]
+    },
+    {
+      "id": "duplicate-marker",
+      "path": "duplicate-marker.txt",
+      "scope": "INSPECTED",
+      "required": true,
+      "labels": ["duplicate-occurrences", "true-positive"],
+      "expected": [
+        {"marker": "RNC_SYNTH_KEY_REPEAT_GOLF", "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 2, "disposition": "ACTIONABLE"}
+      ]
+    },
+    {
+      "id": "overlapping-rules",
+      "path": "overlapping-rules.txt",
+      "scope": "INSPECTED",
+      "required": true,
+      "labels": ["overlapping-rules", "true-positive"],
+      "expected": [
+        {"marker": "RNC_SYNTH_KEY_OVERLAP_HOTEL", "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"},
+        {"marker": "RNC_SYNTH_KEY_OVERLAP_HOTEL", "rule_id": "synthetic-overlap", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"}
+      ]
+    },
+    {
+      "id": "blocked",
+      "path": "blocked.txt",
+      "scope": "VERIFIED_BLOCKED",
+      "required": true,
+      "labels": ["pre-scan-block", "must-not-be-inspected"],
+      "expected": [
+        {"marker": "RNC_SYNTH_KEY_BLOCKED_INDIA", "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"}
+      ]
+    },
+    {
+      "id": "uninspected-optional",
+      "path": "uninspected-optional.txt",
+      "scope": "UNINSPECTED",
+      "required": false,
+      "labels": ["optional", "uninspected", "must-not-be-inspected"],
+      "expected": [
+        {"marker": "RNC_SYNTH_KEY_OPTIONAL_JULIET", "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"}
+      ]
+    },
+    {
+      "id": "exempted",
+      "path": "exempted.env",
+      "scope": "INSPECTED",
+      "required": true,
+      "labels": ["post-scan-exemption", "mixed-disposition"],
+      "expected": [
+        {"marker": "RNC_SYNTH_KEY_EXEMPT_KILO", "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 1, "disposition": "EXEMPTED"},
+        {"marker": "RNC_SYNTH_KEY_EXEMPT_LIMA", "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 1, "disposition": "EXEMPTED"},
+        {"marker": "RNC_SYNTH_KEY_ACTIVE_MIKE", "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"}
+      ]
+    },
+    {
+      "id": "decoys",
+      "path": "decoys.txt",
+      "scope": "INSPECTED",
+      "required": true,
+      "labels": ["negative", "false-positive-resistance"],
+      "expected": []
+    },
+    {
+      "id": "boundary",
+      "path": "boundary.txt",
+      "scope": "INSPECTED",
+      "required": true,
+      "labels": ["boundary", "no-trailing-newline"],
+      "expected": [
+        {"marker": "RNC_SYNTH_KEY_EDGE_NOVEMBER", "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"},
+        {"marker": "RNC_SYNTH_KEY_EDGE_OSCAR", "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"}
+      ]
+    },
+    {
+      "id": "crlf",
+      "path": "crlf.txt",
+      "scope": "INSPECTED",
+      "required": true,
+      "labels": ["crlf", "true-positive"],
+      "expected": [
+        {"marker": "RNC_SYNTH_KEY_CRLF_PAPA", "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"},
+        {"marker": "RNC_SYNTH_KEY_CRLF_QUEBEC", "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"}
+      ]
+    },
+    {
+      "id": "cr-only",
+      "path": "cr-only.txt",
+      "scope": "INSPECTED",
+      "required": true,
+      "labels": ["cr-only", "legacy-line-ending"],
+      "expected": [
+        {"marker": "RNC_SYNTH_KEY_CREOL_ROMEO", "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"}
+      ]
+    },
+    {
+      "id": "unicode-bom",
+      "path": "unicode-bom.txt",
+      "scope": "INSPECTED",
+      "required": true,
+      "labels": ["unicode", "bom", "true-positive"],
+      "expected": [
+        {"marker": "RNC_SYNTH_KEY_BOM_SIERRA", "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"},
+        {"marker": "RNC_SYNTH_KEY_BOM_TANGO", "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"}
+      ]
+    },
+    {
+      "id": "binary",
+      "path": "binary.bin",
+      "scope": "INSPECTED",
+      "required": true,
+      "labels": ["binary", "malformed-utf8", "nul-bytes"],
+      "expected": [
+        {"marker": "RNC_SYNTH_KEY_BINARY_UNIFORM", "rule_id": "synthetic-binary", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"},
+        {"marker": "RNC_SYNTH_KEY_BINARY_VICTOR", "rule_id": "synthetic-binary", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"}
+      ]
+    },
+    {
+      "id": "empty",
+      "path": "empty.bin",
+      "scope": "INSPECTED",
+      "required": true,
+      "labels": ["empty", "boundary"],
+      "expected": []
+    },
+    {
+      "id": "multiline",
+      "path": "multiline.pem",
+      "scope": "INSPECTED",
+      "required": true,
+      "labels": ["multiline", "pem-like", "true-positive"],
+      "expected": [
+        {"marker": "RNC_SYNTH_KEY_MULTILINE_WHISKEY", "rule_id": "synthetic-multiline", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"}
+      ]
+    },
+    {
+      "id": "nested",
+      "path": "nested/deep/path/config.toml",
+      "scope": "INSPECTED",
+      "required": true,
+      "labels": ["nested-path", "true-positive"],
+      "expected": [
+        {"marker": "RNC_SYNTH_KEY_NESTED_XRAY", "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"}
+      ]
+    },
+    {
+      "id": "no-trailing-newline",
+      "path": "no-trailing-newline.txt",
+      "scope": "INSPECTED",
+      "required": true,
+      "labels": ["eof", "no-trailing-newline"],
+      "expected": [
+        {"marker": "RNC_SYNTH_KEY_EOF_YANKEE", "rule_id": "synthetic-generic", "rule_version": "synthetic-v1", "count": 1, "disposition": "ACTIONABLE"}
+      ]
+    },
+    {
+      "id": "case-decoys",
+      "path": "case-decoys.txt",
+      "scope": "INSPECTED",
+      "required": true,
+      "labels": ["negative", "case-sensitivity", "split-marker"],
+      "expected": []
+    },
+    {
+      "id": "optional-clean",
+      "path": "optional-clean.txt",
+      "scope": "INSPECTED",
+      "required": false,
+      "labels": ["optional", "clean"],
+      "expected": []
+    }
+  ]
+}

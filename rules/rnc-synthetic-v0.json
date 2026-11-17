@@ -1,0 +1,87 @@
+{
+  "schema_version": "0.1.0",
+  "ruleset_id": "rnc-synthetic-v0",
+  "ruleset_version": "2026.11.1",
+  "rules": [
+    {
+      "rule_id": "synthetic-aws",
+      "rule_version": "2026.11.1",
+      "category": "synthetic-credential",
+      "pattern": "RNC_SYNTH_KEY_AWS_[A-Z0-9_]{1,64}",
+      "capture_group": 0,
+      "validators": ["MARKER_FORMAT", "MARKER_SUFFIX", "ASCII_ONLY"],
+      "confidence": "high",
+      "max_match_bytes": 128
+    },
+    {
+      "rule_id": "synthetic-github",
+      "rule_version": "2026.11.1",
+      "category": "synthetic-credential",
+      "pattern": "RNC_SYNTH_KEY_GITHUB_[A-Z0-9_]{1,64}",
+      "capture_group": 0,
+      "validators": ["MARKER_FORMAT", "MARKER_SUFFIX", "ASCII_ONLY"],
+      "confidence": "high",
+      "max_match_bytes": 128
+    },
+    {
+      "rule_id": "synthetic-stripe",
+      "rule_version": "2026.11.1",
+      "category": "synthetic-credential",
+      "pattern": "RNC_SYNTH_KEY_STRIPE_[A-Z0-9_]{1,64}",
+      "capture_group": 0,
+      "validators": ["MARKER_FORMAT", "MARKER_SUFFIX", "ASCII_ONLY"],
+      "confidence": "high",
+      "max_match_bytes": 128
+    },
+    {
+      "rule_id": "synthetic-https",
+      "rule_version": "2026.11.1",
+      "category": "synthetic-credential",
+      "pattern": "RNC_SYNTH_KEY_HTTPS_[A-Z0-9_]{1,64}",
+      "capture_group": 0,
+      "validators": ["MARKER_FORMAT", "MARKER_SUFFIX", "ASCII_ONLY"],
+      "confidence": "high",
+      "max_match_bytes": 128
+    },
+    {
+      "rule_id": "synthetic-generic",
+      "rule_version": "2026.11.1",
+      "category": "synthetic-credential",
+      "pattern": "RNC_SYNTH_KEY_GENERIC_[A-Z0-9_]{1,64}",
+      "capture_group": 0,
+      "validators": ["MARKER_FORMAT", "MARKER_SUFFIX", "ASCII_ONLY"],
+      "confidence": "high",
+      "max_match_bytes": 128
+    },
+    {
+      "rule_id": "synthetic-blocked",
+      "rule_version": "2026.11.1",
+      "category": "synthetic-credential",
+      "pattern": "RNC_SYNTH_KEY_BLOCKED_[A-Z0-9_]{1,64}",
+      "capture_group": 0,
+      "validators": ["MARKER_FORMAT", "MARKER_SUFFIX", "ASCII_ONLY"],
+      "confidence": "high",
+      "max_match_bytes": 128
+    },
+    {
+      "rule_id": "synthetic-exempt",
+      "rule_version": "2026.11.1",
+      "category": "synthetic-credential",
+      "pattern": "RNC_SYNTH_KEY_EXEMPT_[A-Z0-9_]{1,64}",
+      "capture_group": 0,
+      "validators": ["MARKER_FORMAT", "MARKER_SUFFIX", "ASCII_ONLY"],
+      "confidence": "high",
+      "max_match_bytes": 128
+    },
+    {
+      "rule_id": "synthetic-edge",
+      "rule_version": "2026.11.1",
+      "category": "synthetic-credential",
+      "pattern": "RNC_SYNTH_KEY_EDGE_[A-Z0-9_]{1,64}",
+      "capture_group": 0,
+      "validators": ["MARKER_FORMAT", "MARKER_SUFFIX", "ASCII_ONLY"],
+      "confidence": "high",
+      "max_match_bytes": 128
+    }
+  ]
+}

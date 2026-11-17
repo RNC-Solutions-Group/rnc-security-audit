@@ -1,0 +1,23 @@
+[package]
+name = "rnc-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "rnc"
+path = "src/main.rs"
+
+[dependencies]
+rnc-core = { path = "../rnc-core" }
+serde_json.workspace = true
+
+[target.'cfg(unix)'.dependencies]
+libc.workspace = true
+
+[dev-dependencies]
+hex.workspace = true
+sha2.workspace = true
+tempfile.workspace = true

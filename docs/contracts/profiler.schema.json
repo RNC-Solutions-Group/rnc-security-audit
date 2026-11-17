@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.rncsolutionsgroup.com/security-audit/v1/profiler.schema.json",
+  "title": "RNC Scanner CP4C execution profile",
+  "description": "Opt-in execution profile. Durations are integer nanoseconds. Wall phases describe main-thread elapsed time; worker phases are accumulated across workers and must not be interpreted as elapsed time.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "engine_version",
+    "run_id",
+    "settings",
+    "phases",
+    "worker_phases",
+    "counters"
+  ],
+  "properties": {
+    "schema_version": {"const": "1"},
+    "engine_version": {"type": "string", "minLength": 1, "maxLength": 64},
+    "run_id": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "settings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requested", "effective"],
+      "properties": {
+        "requested": {"$ref": "#/$defs/string_map"},
+        "effective": {"$ref": "#/$defs/string_map"}
+      }
+    },
+    "phases": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/phase"}
+    },
+    "worker_phases": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/phase"}
+    },
+    "counters": {
+      "type": "object",
+      "additionalProperties": {"type": "integer", "minimum": 0}
+    }
+  },
+  "$defs": {
+    "phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ns", "exclusive_ns", "count", "bytes"],
+      "properties": {
+        "ns": {"type": "integer", "minimum": 0},
+        "exclusive_ns": {"type": "integer", "minimum": 0},
+        "count": {"type": "integer", "minimum": 0},
+        "bytes": {"type": "integer", "minimum": 0}
+      }
+    },
+    "string_map": {
+      "type": "object",
+      "additionalProperties": {"type": "string", "maxLength": 256}
+    }
+  }
+}

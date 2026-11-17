@@ -6,64 +6,96 @@ The production result finalizer will be independently implemented in CP2.
 
 from __future__ import annotations
 
-from tools.cp0.contract_oracle import RESULT_NAMES, classify
+from typing import Mapping
+
+from tools.cp0.contracts import (
+    DEFAULT_ACCEPTED,
+    RESULT_NAMES,
+    SCHEMA_VERSION,
+    assert_public_report_safe,
+    canonical_json,
+    ci_decision,
+    classify,
+    compute_counts,
+    coverage_for,
+    reason_codes_for,
+    record_digest,
+    sorted_findings,
+    validate_records,
+)
 
 
-def reconcile(execution: dict, findings: list[dict], policy: dict) -> dict:
-    run_id = execution["run_id"]
-    if policy["run_id"] != run_id or any(item["run_id"] != run_id for item in findings):
-        raise ValueError("run ID mismatch")
+def _normalize(execution: dict, findings: list[dict], policy: dict) -> tuple[dict, list[dict], dict]:
+    execution = dict(execution)
+    execution["units"] = sorted(execution["units"], key=lambda unit: unit["unit_id"])
+    findings = sorted_findings(findings)
+    policy = dict(policy)
+    policy["effective_policies"] = sorted(policy["effective_policies"], key=lambda entry: entry["policy_id"])
+    policy["requests"] = sorted(policy["requests"], key=lambda entry: entry["request_id"])
+    policy["applied_blocks"] = sorted(policy["applied_blocks"], key=lambda entry: (entry["unit_id"], entry["request_id"]))
+    policy["dispositions"] = sorted(policy["dispositions"], key=lambda entry: entry["finding_id"])
+    policy["effective_policy_digest"] = record_digest(policy["effective_policies"])
+    return execution, findings, policy
 
-    units = execution["units"]
-    by_unit = {unit["unit_id"]: unit for unit in units}
-    if len(by_unit) != len(units):
-        raise ValueError("duplicate source unit")
-    finding_ids = [f["finding_id"] for f in findings]
-    if len(set(finding_ids)) != len(finding_ids):
-        raise ValueError("duplicate finding")
-    for finding in findings:
-        unit = by_unit.get(finding["unit_id"])
-        if not unit or unit["disposition"] != "INSPECTED":
-            raise ValueError("finding outside inspected scope")
-        if finding["start_byte"] >= finding["end_byte"]:
-            raise ValueError("invalid finding byte range")
 
-    blocked_ids = [unit["unit_id"] for unit in units if unit["disposition"] == "VERIFIED_BLOCKED"]
-    applied = policy["applied_blocks"]
-    applied_ids = [entry["unit_id"] for entry in applied]
-    if len(set(applied_ids)) != len(applied_ids) or sorted(applied_ids) != sorted(blocked_ids):
-        raise ValueError("blocked units and verified policy events disagree")
-    if any(not entry["verified_non_access"] for entry in applied):
-        raise ValueError("unverified block cannot be applied")
-
-    dispositions = policy["dispositions"]
-    disposition_ids = [entry["finding_id"] for entry in dispositions]
-    if len(set(disposition_ids)) != len(disposition_ids) or set(disposition_ids) != set(finding_ids):
-        raise ValueError("detection and policy findings do not reconcile")
-    exempted = sum(entry["status"] == "EXEMPTED" for entry in dispositions)
-    actionable = sum(entry["status"] == "ACTIONABLE" for entry in dispositions)
-    if exempted + actionable != len(findings):
-        raise ValueError("unrecognized finding disposition")
-
-    inspected = sum(unit["disposition"] == "INSPECTED" for unit in units)
-    blocked = len(blocked_ids)
-    uninspected = sum(unit["disposition"] == "UNINSPECTED" for unit in units)
-    case = {
-        "inspected": inspected, "blocked": blocked, "uninspected": uninspected,
-        "actionable": actionable, "exempted": exempted,
-        "state": execution["state"], "evidence_valid": execution["evidence_valid"],
-        "fatal": bool(execution["fatal_errors"]),
-    }
-    if execution.get("required_scanners_missing", 0) > 0:
-        case["uninspected"] += execution["required_scanners_missing"]
-    code = classify(case)
-    return {
-        "schema_version": "0.1.0", "run_id": run_id,
-        "result_code": code, "result": RESULT_NAMES[code],
-        "reason_codes": [],
-        "counts": {
-            "discovered": len(units), "inspected": inspected,
-            "verified_blocked": blocked, "uninspected": uninspected,
-            "detected": len(findings), "actionable": actionable, "exempted": exempted,
+def build_result(execution: dict, findings: list[dict], policy: dict) -> dict:
+    counts = compute_counts(execution["units"], findings, policy["dispositions"])
+    code = classify(execution, policy, counts)
+    result = {
+        "schema_version": SCHEMA_VERSION,
+        "run_id": execution["run_id"],
+        "result_code": code,
+        "result": RESULT_NAMES[code],
+        "coverage": coverage_for(code, counts),
+        "evidence_valid": execution["evidence_valid"],
+        "engine_version": execution["engine_version"],
+        "ruleset_id": execution["ruleset_id"],
+        "ruleset_digest": execution["ruleset_digest"],
+        "source_adapter": execution["source_adapter"],
+        "counts": counts,
+        "reason_codes": reason_codes_for(execution, policy, counts, code),
+        "records": {
+            "execution_digest": record_digest(execution),
+            "findings_digest": record_digest(findings),
+            "policy_digest": record_digest(policy),
         },
     }
+    assert_public_report_safe(result)
+    return result
+
+
+def reconcile(
+    execution: dict,
+    findings: list[dict],
+    policy: dict,
+    *,
+    contents: Mapping[str, bytes] | None = None,
+) -> dict:
+    execution, findings, policy = _normalize(execution, findings, policy)
+    result = build_result(execution, findings, policy)
+    validate_records(execution, findings, policy, result, contents=contents)
+    return result
+
+
+def reconcile_bundle(
+    execution: dict,
+    findings: list[dict],
+    policy: dict,
+    *,
+    contents: Mapping[str, bytes] | None = None,
+    accepted: set[int] | frozenset[int] = DEFAULT_ACCEPTED,
+) -> tuple[dict, dict]:
+    execution, findings, policy = _normalize(execution, findings, policy)
+    result = build_result(execution, findings, policy)
+    decision = ci_decision(
+        result["result_code"],
+        accepted,
+        run_id=result["run_id"],
+        result_digest=record_digest(result),
+    )
+    validate_records(execution, findings, policy, result, decision, contents=contents)
+    return result, decision
+
+
+def canonical_result_document(result: dict) -> str:
+    return canonical_json(result) + "\n"

@@ -1,0 +1,6 @@
+# Preserve exact synthetic bytes: CRLF, CR-only, BOM, NUL and malformed UTF-8
+# fixtures are part of the truth contract and must not be normalized by Git.
+tests/fixtures/synthetic-v0/** -text
+tests/fixtures/synthetic-v1/** -text
+tests/fixtures/config/** -text
+tools/cp0/bench/rules.tsv -text

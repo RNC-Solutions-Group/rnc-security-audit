@@ -1,0 +1,1 @@
+final=RNC_SYNTH_KEY_EOF_YANKEE

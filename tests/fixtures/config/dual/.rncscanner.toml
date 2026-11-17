@@ -1,0 +1,33 @@
+schema_version = "0.2.0"
+
+[ruleset]
+id = "synthetic-v1"
+version = "1"
+digest = "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+
+[scan]
+max_file_bytes = 1048576
+max_total_bytes = 8388608
+timeout_ms = 120000
+max_findings = 1000
+follow_symlinks = false
+
+[[policy.effective_policies]]
+policy_id = "REPO-BLOCK-001"
+origin = "repository"
+version = "1"
+digest = "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+mandatory = false
+
+[[policy.blocks]]
+policy_id = "REPO-BLOCK-001"
+origin = "repository"
+selector = "vendor/**"
+reason = "Synthetic fixture policy"
+
+[reporting]
+sanitized_only = true
+redaction_fail_closed = true
+
+[ci]
+accepted_result_codes = [1, 2]

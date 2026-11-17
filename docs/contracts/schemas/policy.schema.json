@@ -1,25 +1,141 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.rncsolutionsgroup.com/security-audit/v0.1/policy.schema.json",
+  "$id": "https://schemas.rncsolutionsgroup.com/security-audit/v0.2/policy.schema.json",
   "title": "Applied policy audit record",
+  "description": "Policy owns scope blocks and post-detection dispositions. It never copies or rewrites detector evidence. Requests retain applied, unsupported and unmatched outcomes.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "run_id", "effective_policy_digest", "applied_blocks", "dispositions"],
+  "required": [
+    "schema_version",
+    "run_id",
+    "policy_valid",
+    "effective_policy_digest",
+    "effective_policies",
+    "requests",
+    "applied_blocks",
+    "dispositions"
+  ],
   "properties": {
-    "schema_version": {"const": "0.1.0"},
+    "schema_version": {"const": "0.2.0"},
     "run_id": {"type": "string", "minLength": 1},
-    "effective_policy_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "policy_valid": {"type": "boolean"},
+    "errors": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[A-Z0-9_]+$"}
+    },
+    "effective_policy_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "SHA-256 of the canonical effective_policies array."
+    },
+    "effective_policies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["policy_id", "origin", "version", "digest", "mandatory"],
+        "properties": {
+          "policy_id": {"type": "string", "minLength": 1},
+          "origin": {"enum": ["global", "repository", "cli"]},
+          "version": {"type": "string", "minLength": 1},
+          "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "mandatory": {"type": "boolean"}
+        }
+      }
+    },
+    "requests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "request_id",
+          "kind",
+          "policy_id",
+          "origin",
+          "selector",
+          "reason",
+          "status"
+        ],
+        "properties": {
+          "request_id": {"type": "string", "minLength": 1},
+          "kind": {"enum": ["BLOCK", "EXEMPTION"]},
+          "policy_id": {"type": "string", "minLength": 1},
+          "origin": {"enum": ["global", "repository", "cli"]},
+          "selector": {"type": "string", "minLength": 1},
+          "reason": {"type": "string", "minLength": 1},
+          "status": {"enum": ["APPLIED", "NOT_MATCHED", "UNSUPPORTED", "INVALID"]},
+          "matched_unit_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^u-[0-9a-f]{64}$"}
+          },
+          "matched_finding_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^f-[0-9a-f]{64}$"}
+          }
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"kind": {"const": "BLOCK"}}, "required": ["kind"]},
+            "then": {"required": ["matched_unit_ids"]}
+          },
+          {
+            "if": {"properties": {"kind": {"const": "EXEMPTION"}}, "required": ["kind"]},
+            "then": {"required": ["matched_finding_ids"]}
+          },
+          {
+            "if": {"properties": {"status": {"const": "APPLIED"}}, "required": ["status"]},
+            "then": {},
+            "else": {
+              "properties": {
+                "matched_unit_ids": {"maxItems": 0},
+                "matched_finding_ids": {"maxItems": 0}
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {"kind": {"const": "BLOCK"}, "status": {"const": "APPLIED"}},
+              "required": ["kind", "status"]
+            },
+            "then": {"properties": {"matched_unit_ids": {"minItems": 1}}}
+          },
+          {
+            "if": {
+              "properties": {"kind": {"const": "EXEMPTION"}, "status": {"const": "APPLIED"}},
+              "required": ["kind", "status"]
+            },
+            "then": {"properties": {"matched_finding_ids": {"minItems": 1}}}
+          }
+        ]
+      }
+    },
     "applied_blocks": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["unit_id", "policy_id", "origin", "reason", "verified_non_access"],
+        "required": [
+          "unit_id",
+          "request_id",
+          "policy_id",
+          "origin",
+          "reason",
+          "enforcement_method",
+          "verified_non_access"
+        ],
         "properties": {
-          "unit_id": {"type": "string", "minLength": 1},
+          "unit_id": {"type": "string", "pattern": "^u-[0-9a-f]{64}$"},
+          "request_id": {"type": "string", "minLength": 1},
           "policy_id": {"type": "string", "minLength": 1},
           "origin": {"enum": ["global", "repository", "cli"]},
           "reason": {"type": "string", "minLength": 1},
+          "enforcement_method": {
+            "enum": ["ADAPTER_ENUMERATION_FILTER", "FILTERED_SNAPSHOT"]
+          },
           "verified_non_access": {"const": true}
         }
       }
@@ -31,15 +147,26 @@
         "additionalProperties": false,
         "required": ["finding_id", "status"],
         "properties": {
-          "finding_id": {"type": "string", "minLength": 1},
+          "finding_id": {"type": "string", "pattern": "^f-[0-9a-f]{64}$"},
           "status": {"enum": ["ACTIONABLE", "EXEMPTED"]},
+          "request_id": {"type": "string", "minLength": 1},
           "policy_id": {"type": "string", "minLength": 1},
           "origin": {"enum": ["global", "repository", "cli"]},
           "reason": {"type": "string", "minLength": 1}
         },
-        "allOf": [{"if": {"properties": {"status": {"const": "EXEMPTED"}}}, "then": {"required": ["policy_id", "origin", "reason"]}}]
+        "allOf": [
+          {
+            "if": {"properties": {"status": {"const": "EXEMPTED"}}, "required": ["status"]},
+            "then": {"required": ["request_id", "policy_id", "origin", "reason"]}
+          }
+        ]
       }
-    },
-    "requested_policy_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
-  }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"policy_valid": {"const": false}}, "required": ["policy_valid"]},
+      "then": {"required": ["errors"], "properties": {"errors": {"minItems": 1}}}
+    }
+  ]
 }

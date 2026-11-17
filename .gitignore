@@ -4,3 +4,9 @@ __pycache__/
 .venv/
 artifacts/
 .cp0-generated/
+tools/cp0/bench/target/
+AGENTS.md
+/target/
+
+tests/fixtures/providers/tier2/
+tests/fixtures/providers/tier3/

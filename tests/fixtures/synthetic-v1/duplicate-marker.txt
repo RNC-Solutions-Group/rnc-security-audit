@@ -1,0 +1,3 @@
+RNC_SYNTH_KEY_REPEAT_GOLF
+The same harmless marker is intentionally repeated.
+RNC_SYNTH_KEY_REPEAT_GOLF

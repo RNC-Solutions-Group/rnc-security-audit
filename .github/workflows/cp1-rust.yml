@@ -1,0 +1,249 @@
+name: CP1 Rust detection engine
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/cp1-rust.yml"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "rust-toolchain.toml"
+      - "rustfmt.toml"
+      - "crates/**"
+      - "rules/**"
+      - "tools/cp1/**"
+      - "tests/cp1/**"
+      - "tests/fixtures/**"
+      - "docs/contracts/**"
+      - "docs/architecture/**"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/cp1-rust.yml"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "rust-toolchain.toml"
+      - "crates/**"
+      - "rules/**"
+      - "tools/cp1/**"
+      - "tests/cp1/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: "1"
+
+concurrency:
+  group: cp1-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rust-quality-and-integration:
+    name: "required: Rust quality, integration and benchmark"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pinned Python dependency
+        run: python -m pip install --disable-pip-version-check --no-cache-dir -r requirements-cp0.txt
+
+      - name: Install pinned Rust compiler and components
+        run: |
+          rustup toolchain uninstall 1.85.0 2>/dev/null || true
+          rustup toolchain install 1.85.0 --profile minimal --component rustfmt,clippy
+          rustup default 1.85.0
+          rustc --version
+          cargo --version
+
+      - name: Verify formatting
+        run: cargo fmt --all -- --check
+
+      - name: Lint with warnings denied
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+
+      - name: Run Rust unit and integration tests
+        run: cargo test --workspace --locked
+
+      - name: Run CP1 Python contract tests
+        run: python -m unittest discover -s tests/cp1 -v
+
+      - name: Build release scanner and record build characteristics
+        run: |
+          mkdir -p artifacts/cp1
+          START=$(date +%s%N)
+          cargo build --release --workspace --locked
+          END=$(date +%s%N)
+          python -c "print(round((int('$END') - int('$START')) / 1e9, 3))" > artifacts/cp1/build-seconds.txt
+          sha256sum target/release/rnc | awk '{print $1}' > artifacts/cp1/binary.sha256
+          cat artifacts/cp1/build-seconds.txt
+          cat artifacts/cp1/binary.sha256
+          ls -l target/release/rnc
+
+      - name: Generate edge corpus
+        run: python -m tools.cp0.generate_edge_corpus --output artifacts/cp1/edge-corpus
+
+      - name: Validate real engine against independent synthetic truth
+        run: |
+          python -m tools.cp1.integration_check \
+            --binary target/release/rnc \
+            --output artifacts/cp1/integration.json \
+            --edge-corpus artifacts/cp1/edge-corpus
+
+      - name: Benchmark the real engine
+        run: |
+          python -m tools.cp1.bench \
+            --binary target/release/rnc \
+            --runs 5 \
+            --build-seconds "$(cat artifacts/cp1/build-seconds.txt)" \
+            --binary-sha256 "$(cat artifacts/cp1/binary.sha256)" \
+            --output artifacts/cp1/benchmark.json
+
+      - name: Preserve CP1 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cp1-rust-engine-evidence
+          path: |
+            artifacts/cp1/integration.json
+            artifacts/cp1/benchmark.json
+            artifacts/cp1/build-seconds.txt
+            artifacts/cp1/binary.sha256
+          if-no-files-found: warn
+          retention-days: 90
+
+  cross-platform-build-and-test:
+    name: "required: ${{ matrix.os }} build and tests"
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest, macos-latest]
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install pinned Rust compiler
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+          rustc --version
+          cargo --version
+
+      - name: Build release binary
+        run: cargo build --release --workspace --locked
+
+      - name: Run workspace tests
+        run: cargo test --workspace --locked
+
+
+  external-harness-scoring:
+    name: "required: pinned external harness scores CP1 output"
+    needs: rust-quality-and-integration
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pinned Python dependency
+        run: python -m pip install --disable-pip-version-check --no-cache-dir -r requirements-cp0.txt
+
+      - name: Install pinned Rust compiler
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+
+      - name: Build scanner and generate private handoff
+        run: |
+          cargo build --release --workspace --locked
+          mkdir -p artifacts/cp1
+          python -m tools.cp0.generate_edge_corpus --output artifacts/cp1/edge-corpus
+          python -m tools.cp1.integration_check \
+            --binary target/release/rnc \
+            --output artifacts/cp1/integration.json \
+            --edge-corpus artifacts/cp1/edge-corpus \
+            --handoff-dir "$RUNNER_TEMP/cp1-handoff"
+
+      - name: Check out the pinned independent harness
+        run: |
+          mkdir -p "$RUNNER_TEMP/scanner-harness"
+          git -C "$RUNNER_TEMP/scanner-harness" init -q
+          git -C "$RUNNER_TEMP/scanner-harness" remote add origin https://github.com/RNC-Solutions-Group/gitleaks.git
+          git -C "$RUNNER_TEMP/scanner-harness" fetch -q --depth 1 origin 86de44bf1cb13abf9a0c375a8b91d102c9b6dc9f
+          git -C "$RUNNER_TEMP/scanner-harness" checkout -q --detach FETCH_HEAD
+          git -C "$RUNNER_TEMP/scanner-harness" rev-parse HEAD
+
+      - name: Score actual CP1 findings with the external engine
+        run: |
+          python -m tools.cp1.external_harness_score             --harness-root "$RUNNER_TEMP/scanner-harness"             --handoff "$RUNNER_TEMP/cp1-handoff/v1-whole.json"             --expected 25             --output artifacts/cp1/external-harness-score.json
+
+      - name: Preserve external scoring evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cp1-external-harness-score
+          path: artifacts/cp1/
+          if-no-files-found: warn
+          retention-days: 90
+
+
+  static-musl-build:
+    name: "required: static Linux musl build"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install pinned Rust compiler and musl target
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+          rustup target add x86_64-unknown-linux-musl
+
+      - name: Build static musl binary
+        run: |
+          cargo build --release --locked --target x86_64-unknown-linux-musl
+          file target/x86_64-unknown-linux-musl/release/rnc
+          ls -lh target/x86_64-unknown-linux-musl/release/rnc
+
+  dependency-audit:
+    name: "required: dependency advisory audit"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install pinned Rust compiler
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+
+      - name: Install cargo-audit
+        run: cargo install cargo-audit --locked --version 0.22.1
+
+      - name: Audit locked dependencies
+        run: cargo audit --deny warnings

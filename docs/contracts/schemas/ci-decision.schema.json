@@ -1,15 +1,45 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.rncsolutionsgroup.com/security-audit/v0.1/ci-decision.schema.json",
+  "$id": "https://schemas.rncsolutionsgroup.com/security-audit/v0.2/ci-decision.schema.json",
   "title": "Independent CI acceptance event",
+  "description": "A separate enforcement record. It references the immutable result digest and never changes the result.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["run_id", "result_code", "accepted_result_codes", "accepted", "process_exit_code"],
+  "required": [
+    "schema_version",
+    "run_id",
+    "result_code",
+    "result_digest",
+    "accepted_result_codes",
+    "accepted",
+    "process_exit_code"
+  ],
   "properties": {
+    "schema_version": {"const": "0.2.0"},
     "run_id": {"type": "string", "minLength": 1},
     "result_code": {"enum": [1, 2, 3, 4, 5]},
-    "accepted_result_codes": {"type": "array", "uniqueItems": true, "items": {"enum": [1, 2, 3]}},
+    "result_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "accepted_result_codes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"enum": [1, 2, 3]}
+    },
     "accepted": {"type": "boolean"},
-    "process_exit_code": {"enum": [0, 10, 20, 30, 64, 130]}
-  }
+    "process_exit_code": {"enum": [0, 10, 20, 30]}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"result_code": {"enum": [4, 5]}}, "required": ["result_code"]},
+      "then": {
+        "properties": {
+          "accepted": {"const": false},
+          "process_exit_code": {"enum": [20, 30]}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"result_code": {"enum": [1, 2, 3]}}, "required": ["result_code"]},
+      "then": {"properties": {"process_exit_code": {"enum": [0, 10]}}}
+    }
+  ]
 }

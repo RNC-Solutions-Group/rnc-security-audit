@@ -1,0 +1,1 @@
+A=RNC_SYNTH_KEY_CREOL_ROMEOB=ordinary
