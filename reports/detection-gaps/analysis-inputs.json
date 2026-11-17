@@ -21,7 +21,7 @@
       "sha256": "83dea16b343ff7a9340ff463513f4bdb454cea6faaf3234696a78fe8e6b85214"
     }
   },
-  "harness_source_commit": "094394e289c95ef5362b9ed329acdeb7a345dcd3",
+  "harness_source_commit": "b14bd526ee06d6ea40d814a37c3c7176c0bda5b7",
   "harness_version": "0.6.0",
   "reports": {
     "betterleaks": {
